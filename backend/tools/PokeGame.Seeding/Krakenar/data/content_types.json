@@ -1,0 +1,68 @@
+﻿[
+  {
+    "Id": "4bd6ba59-6d0e-4a61-8d6e-cc65deb6baab",
+    "IsInvariant": false,
+    "UniqueName": "Region",
+    "DisplayName": null,
+    "Description": null,
+    "Fields": [
+      {
+        "Id": "424ba3b5-f8d8-400a-9233-7aebf74faf18",
+        "FieldType": "Url",
+        "IsInvariant": false,
+        "IsRequired": false,
+        "IsIndexed": false,
+        "IsUnique": false,
+        "UniqueName": "Url",
+        "DisplayName": "URL",
+        "Description": null,
+        "Placeholder": null
+      },
+      {
+        "Id": "566207de-3c60-4eff-abf7-c1d5dbfaa412",
+        "FieldType": "Notes",
+        "IsInvariant": false,
+        "IsRequired": false,
+        "IsIndexed": false,
+        "IsUnique": false,
+        "UniqueName": "Notes",
+        "DisplayName": null,
+        "Description": null,
+        "Placeholder": null
+      }
+    ]
+  },
+  {
+    "Id": "748ded48-8f53-4e17-8524-e098a468daf4",
+    "IsInvariant": false,
+    "UniqueName": "Ability",
+    "DisplayName": null,
+    "Description": null,
+    "Fields": [
+      {
+        "Id": "3422e23b-685f-4037-9061-6158664d789d",
+        "FieldType": "Url",
+        "IsInvariant": false,
+        "IsRequired": false,
+        "IsIndexed": false,
+        "IsUnique": false,
+        "UniqueName": "Url",
+        "DisplayName": "URL",
+        "Description": null,
+        "Placeholder": null
+      },
+      {
+        "Id": "894900bb-5ee5-4dfd-83f8-6818b5997b2e",
+        "FieldType": "Notes",
+        "IsInvariant": false,
+        "IsRequired": false,
+        "IsIndexed": false,
+        "IsUnique": false,
+        "UniqueName": "Notes",
+        "DisplayName": null,
+        "Description": null,
+        "Placeholder": null
+      }
+    ]
+  }
+]

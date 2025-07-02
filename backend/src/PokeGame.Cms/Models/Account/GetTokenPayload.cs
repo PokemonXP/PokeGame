@@ -1,5 +1,4 @@
 ﻿using FluentValidation;
-using System.Text.Json.Serialization;
 
 namespace PokeGame.Cms.Models.Account;
 

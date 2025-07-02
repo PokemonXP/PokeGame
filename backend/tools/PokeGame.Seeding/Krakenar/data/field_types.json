@@ -1,0 +1,22 @@
+﻿[
+  {
+    "Id": "d188bca6-efe6-4d00-8df4-65d7a2a6562f",
+    "UniqueName": "Url",
+    "DisplayName": "URL",
+    "Description": null,
+    "String": {
+      "MinimumLength": 8,
+      "MaximumLength": 2048,
+      "Pattern": "^https?:\/\/.+$"
+    }
+  },
+  {
+    "Id": "2598df0e-3b42-467a-aa31-c72a39f27bbc",
+    "UniqueName": "Notes",
+    "DisplayName": null,
+    "Description": null,
+    "RichText": {
+      "ContentType": "text/plain"
+    }
+  }
+]
