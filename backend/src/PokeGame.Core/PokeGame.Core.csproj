@@ -15,11 +15,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Krakenar.Infrastructure" Version="1.0.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\PokeGame.Core\PokeGame.Core.csproj" />
+    <PackageReference Include="Krakenar.Core" Version="1.0.1" />
   </ItemGroup>
 
 </Project>

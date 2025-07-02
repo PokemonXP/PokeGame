@@ -1,5 +1,4 @@
-﻿using Krakenar.Core;
-using Krakenar.EntityFrameworkCore.Relational;
+﻿using Krakenar.EntityFrameworkCore.Relational;
 using Krakenar.Infrastructure;
 using Krakenar.Web;
 using Krakenar.Web.Middlewares;
@@ -7,6 +6,7 @@ using Krakenar.Web.Settings;
 using Logitar.EventSourcing.EntityFrameworkCore.Relational;
 using PokeGame.Cms.Extensions;
 using PokeGame.Cms.Settings;
+using PokeGame.Core;
 using PokeGame.EntityFrameworkCore;
 using PokeGame.EntityFrameworkCore.PostgreSQL;
 using PokeGame.Infrastructure;
@@ -29,7 +29,7 @@ internal class Startup : StartupBase
 
     services.AddApplicationInsightsTelemetry();
 
-    services.AddKrakenarCore();
+    services.AddPokeGameCore();
     services.AddPokeGameInfrastructure();
     services.AddKrakenarWeb(_configuration);
 

@@ -26,6 +26,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PokeGame.Seeding", "tools\P
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PokeGame.Infrastructure", "src\PokeGame.Infrastructure\PokeGame.Infrastructure.csproj", "{48F16D29-5F1F-4085-BD6F-697BB84DAC6D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PokeGame.Core", "src\PokeGame.Core\PokeGame.Core.csproj", "{4C92CF1B-4295-40EF-A468-1CF1CF2AD02D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -56,6 +58,10 @@ Global
 		{48F16D29-5F1F-4085-BD6F-697BB84DAC6D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{48F16D29-5F1F-4085-BD6F-697BB84DAC6D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{48F16D29-5F1F-4085-BD6F-697BB84DAC6D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4C92CF1B-4295-40EF-A468-1CF1CF2AD02D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4C92CF1B-4295-40EF-A468-1CF1CF2AD02D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4C92CF1B-4295-40EF-A468-1CF1CF2AD02D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4C92CF1B-4295-40EF-A468-1CF1CF2AD02D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
