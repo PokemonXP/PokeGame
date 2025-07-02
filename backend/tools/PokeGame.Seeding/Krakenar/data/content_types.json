@@ -82,7 +82,7 @@
         "UniqueName": "Type",
         "DisplayName": null,
         "Description": null,
-        "Placeholder": null
+        "Placeholder": "Select a type"
       },
       {
         "Id": "b325f242-f94d-439d-95e7-145118d0b9e8",
@@ -94,7 +94,7 @@
         "UniqueName": "Category",
         "DisplayName": null,
         "Description": null,
-        "Placeholder": null
+        "Placeholder": "Select a category"
       },
       {
         "Id": "e8d3f9ba-8145-4bcd-8816-4fd2491d3f33",
@@ -142,7 +142,7 @@
         "UniqueName": "InflictedCondition",
         "DisplayName": "Inflicted Condition",
         "Description": null,
-        "Placeholder": null
+        "Placeholder": "Select a status condition"
       },
       {
         "Id": "674a9693-b680-49bc-bbd9-b243d6db2c4c",
@@ -178,7 +178,7 @@
         "UniqueName": "VolatileConditions",
         "DisplayName": "Volatile Conditions",
         "Description": null,
-        "Placeholder": null
+        "Placeholder": "Select volatile conditions"
       },
       {
         "Id": "db5c1377-ff36-42c8-958a-47fc1ab383d9",
@@ -194,6 +194,111 @@
       },
       {
         "Id": "4fad4bbf-0407-415f-99b5-90009fb1b7b0",
+        "FieldType": "Notes",
+        "IsInvariant": false,
+        "IsRequired": false,
+        "IsIndexed": false,
+        "IsUnique": false,
+        "UniqueName": "Notes",
+        "DisplayName": null,
+        "Description": null,
+        "Placeholder": null
+      }
+    ]
+  },
+  {
+    "Id": "da10e8b3-6284-487a-9e48-48b8f356e4b7",
+    "IsInvariant": false,
+    "UniqueName": "Species",
+    "DisplayName": null,
+    "Description": null,
+    "Fields": [
+      {
+        "Id": "133bcda0-ca62-4018-8a55-8db7663e28a1",
+        "FieldType": "PokemonNumber",
+        "IsInvariant": true,
+        "IsRequired": true,
+        "IsIndexed": true,
+        "IsUnique": true,
+        "UniqueName": "Number",
+        "DisplayName": null,
+        "Description": null,
+        "Placeholder": null
+      },
+      {
+        "Id": "ec5a64ec-9a47-47fc-a964-993bdf67b8ec",
+        "FieldType": "PokemonCategory",
+        "IsInvariant": true,
+        "IsRequired": true,
+        "IsIndexed": true,
+        "IsUnique": false,
+        "UniqueName": "Category",
+        "DisplayName": null,
+        "Description": null,
+        "Placeholder": "Select a category"
+      },
+      {
+        "Id": "36cac8f0-6032-4a66-9385-7b8f3161a4cc",
+        "FieldType": "PokemonFriendship",
+        "IsInvariant": true,
+        "IsRequired": true,
+        "IsIndexed": true,
+        "IsUnique": false,
+        "UniqueName": "BaseFriendship",
+        "DisplayName": "Base Friendship",
+        "Description": null,
+        "Placeholder": null
+      },
+      {
+        "Id": "3d115576-43bb-4461-a4a9-21d1aaa5c38f",
+        "FieldType": "CatchRate",
+        "IsInvariant": true,
+        "IsRequired": true,
+        "IsIndexed": true,
+        "IsUnique": false,
+        "UniqueName": "CatchRate",
+        "DisplayName": "Catch Rate",
+        "Description": null,
+        "Placeholder": null
+      },
+      {
+        "Id": "45675df4-900f-4e42-8e5e-e666c973b0a8",
+        "FieldType": "GrowthRate",
+        "IsInvariant": true,
+        "IsRequired": true,
+        "IsIndexed": true,
+        "IsUnique": false,
+        "UniqueName": "GrowthRate",
+        "DisplayName": "Growth Rate",
+        "Description": null,
+        "Placeholder": "Select a growth rate"
+      },
+      {
+        "Id": "3158131a-3103-400d-bba2-e2dd00489ea3",
+        "FieldType": "RegionalNumbers",
+        "IsInvariant": true,
+        "IsRequired": false,
+        "IsIndexed": false,
+        "IsUnique": false,
+        "UniqueName": "RegionalNumbers",
+        "DisplayName": "Regional Numbers",
+        "Description": null,
+        "Placeholder": null
+      },
+      {
+        "Id": "d33331b0-ac7d-4585-b1eb-6d97dfbf7853",
+        "FieldType": "Url",
+        "IsInvariant": false,
+        "IsRequired": false,
+        "IsIndexed": false,
+        "IsUnique": false,
+        "UniqueName": "Url",
+        "DisplayName": "URL",
+        "Description": null,
+        "Placeholder": null
+      },
+      {
+        "Id": "79806038-4e5a-4615-9241-e4068b9495ec",
         "FieldType": "Notes",
         "IsInvariant": false,
         "IsRequired": false,

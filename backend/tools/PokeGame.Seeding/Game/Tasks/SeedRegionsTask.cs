@@ -1,9 +1,12 @@
-﻿using Krakenar.Contracts.Contents;
+﻿using FluentValidation.Results;
+using Krakenar.Contracts.Contents;
 using Krakenar.Contracts.Fields;
 using Krakenar.Contracts.Search;
+using Krakenar.Core;
 using MediatR;
 using PokeGame.Infrastructure.Data;
 using PokeGame.Seeding.Game.Payloads;
+using PokeGame.Seeding.Game.Validators;
 
 namespace PokeGame.Seeding.Game.Tasks;
 
@@ -20,11 +23,13 @@ internal class SeedRegionsTask : SeedingTask
 
 internal class SeedRegionsTaskHandler : INotificationHandler<SeedRegionsTask>
 {
+  private readonly IApplicationContext _applicationContext;
   private readonly IContentService _contentService;
   private readonly ILogger<SeedRegionsTaskHandler> _logger;
 
-  public SeedRegionsTaskHandler(IContentService contentService, ILogger<SeedRegionsTaskHandler> logger)
+  public SeedRegionsTaskHandler(IApplicationContext applicationContext, IContentService contentService, ILogger<SeedRegionsTaskHandler> logger)
   {
+    _applicationContext = applicationContext;
     _contentService = contentService;
     _logger = logger;
   }
@@ -42,8 +47,17 @@ internal class SeedRegionsTaskHandler : INotificationHandler<SeedRegionsTask>
       SearchResults<ContentLocale> results = await _contentService.SearchLocalesAsync(search, cancellationToken);
       HashSet<Guid> existingIds = results.Items.Select(locale => locale.Content.Id).ToHashSet();
 
+      RegionValidator validator = new(_applicationContext.UniqueNameSettings);
       foreach (RegionPayload region in regions)
       {
+        ValidationResult result = validator.Validate(region);
+        if (!result.IsValid)
+        {
+          string errors = SeedingSerializer.Serialize(result.Errors);
+          _logger.LogError("The region '{Region}' was not seeded because there are validation errors.|Errors: {Errors}", region, errors);
+          continue;
+        }
+
         Content content;
         if (existingIds.Contains(region.Id))
         {

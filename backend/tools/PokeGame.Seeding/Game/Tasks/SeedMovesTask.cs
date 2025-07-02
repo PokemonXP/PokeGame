@@ -1,11 +1,14 @@
-﻿using Krakenar.Contracts.Contents;
+﻿using FluentValidation.Results;
+using Krakenar.Contracts.Contents;
 using Krakenar.Contracts.Fields;
 using Krakenar.Contracts.Search;
+using Krakenar.Core;
 using MediatR;
 using PokeGame.Core;
 using PokeGame.Core.Moves;
 using PokeGame.Infrastructure.Data;
 using PokeGame.Seeding.Game.Payloads;
+using PokeGame.Seeding.Game.Validators;
 
 namespace PokeGame.Seeding.Game.Tasks;
 
@@ -22,11 +25,13 @@ internal class SeedMovesTask : SeedingTask
 
 internal class SeedMovesTaskHandler : INotificationHandler<SeedMovesTask>
 {
+  private readonly IApplicationContext _applicationContext;
   private readonly IContentService _contentService;
   private readonly ILogger<SeedMovesTaskHandler> _logger;
 
-  public SeedMovesTaskHandler(IContentService contentService, ILogger<SeedMovesTaskHandler> logger)
+  public SeedMovesTaskHandler(IApplicationContext applicationContext, IContentService contentService, ILogger<SeedMovesTaskHandler> logger)
   {
+    _applicationContext = applicationContext;
     _contentService = contentService;
     _logger = logger;
   }
@@ -44,14 +49,23 @@ internal class SeedMovesTaskHandler : INotificationHandler<SeedMovesTask>
       SearchResults<ContentLocale> results = await _contentService.SearchLocalesAsync(search, cancellationToken);
       HashSet<Guid> existingIds = results.Items.Select(locale => locale.Content.Id).ToHashSet();
 
+      MoveValidator validator = new(_applicationContext.UniqueNameSettings);
       foreach (MovePayload move in moves)
       {
+        ValidationResult result = validator.Validate(move);
+        if (!result.IsValid)
+        {
+          string errors = SeedingSerializer.Serialize(result.Errors);
+          _logger.LogError("The move '{Move}' was not seeded because there are validation errors.|Errors: {Errors}", move, errors);
+          continue;
+        }
+
         string type = SeedingSerializer.Serialize<PokemonType[]>([move.Type]).ToLowerInvariant();
         string category = SeedingSerializer.Serialize<MoveCategory[]>([move.Category]).ToLowerInvariant();
         string inflictedCondition = move.InflictedStatus is null ? string.Empty : SeedingSerializer.Serialize<StatusCondition[]>([move.InflictedStatus.Condition]).ToLowerInvariant();
         string statusChance = move.InflictedStatus is null ? string.Empty : move.InflictedStatus.Chance.ToString();
         string statisticChanges = FormatStatisticChanges(move.StatisticChanges);
-        string volatileConditions = move.VolatileConditions.Count < 1 ? string.Empty : SeedingSerializer.Serialize(move.VolatileConditions).ToLowerInvariant();
+        string volatileConditions = move.VolatileConditions.Count < 1 ? string.Empty : SeedingSerializer.Serialize(move.VolatileConditions.Distinct()).ToLowerInvariant();
 
         Content content;
         if (existingIds.Contains(move.Id))
@@ -119,10 +133,6 @@ internal class SeedMovesTaskHandler : INotificationHandler<SeedMovesTask>
     Dictionary<PokemonStatistic, int> changes = new(capacity: payloads.Count());
     foreach (StatisticChangePayload payload in payloads)
     {
-      if (payload.Statistic == PokemonStatistic.HP || payload.Stages == 0 || payload.Stages < -6 || payload.Stages > 6)
-      {
-        continue;
-      }
       changes[payload.Statistic] = payload.Stages;
     }
     return string.Join('|', changes.Select(change => string.Concat(change.Key, change.Value > 0 ? '+' : string.Empty, change.Value)));

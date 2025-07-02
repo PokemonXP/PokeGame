@@ -20,7 +20,7 @@ internal class MovePayload
 
   public InflictedStatusPayload? InflictedStatus { get; set; }
   public List<StatisticChangePayload> StatisticChanges { get; set; } = [];
-  public List<string> VolatileConditions { get; set; } = [];
+  public List<VolatileCondition> VolatileConditions { get; set; } = [];
 
   public string? Url { get; set; }
   public string? Notes { get; set; }
