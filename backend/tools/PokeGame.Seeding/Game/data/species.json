@@ -1,0 +1,92 @@
+﻿[
+  {
+    "Id": "b04f4a30-753d-4239-bd32-c3a0682c4787",
+    "UniqueName": "rowlet",
+    "DisplayName": "Rowlet",
+    "Number": 722,
+    "Category": "Standard",
+    "BaseFriendship": 70,
+    "CatchRate": 45,
+    "GrowthRate": "MediumSlow",
+    "RegionalNumbers": [
+      {
+        "Region": "queros",
+        "Number": 1
+      }
+    ],
+    "Url": "https://bulbapedia.bulbagarden.net/wiki/Rowlet_(Pok%C3%A9mon)",
+    "Notes": null
+  },
+  {
+    "Id": "a01a7c5b-67f7-4b05-9c76-593a6974e8ce",
+    "UniqueName": "tepig",
+    "DisplayName": "Tepig",
+    "Number": 498,
+    "Category": "Standard",
+    "BaseFriendship": 70,
+    "CatchRate": 45,
+    "GrowthRate": "MediumSlow",
+    "RegionalNumbers": [
+      {
+        "Region": "queros",
+        "Number": 4
+      }
+    ],
+    "Url": "https://bulbapedia.bulbagarden.net/wiki/Tepig_(Pok%C3%A9mon)",
+    "Notes": null
+  },
+  {
+    "Id": "dfb348bb-c11f-4701-b837-865decfb3b20",
+    "UniqueName": "mudkip",
+    "DisplayName": "Mudkip",
+    "Number": 258,
+    "Category": "Standard",
+    "BaseFriendship": 70,
+    "CatchRate": 45,
+    "GrowthRate": "MediumSlow",
+    "RegionalNumbers": [
+      {
+        "Region": "queros",
+        "Number": 7
+      }
+    ],
+    "Url": "https://bulbapedia.bulbagarden.net/wiki/Mudkip_(Pok%C3%A9mon)",
+    "Notes": null
+  },
+  {
+    "Id": "cfc81d3e-d005-4ef2-b8bf-d4bdc3b0d6f0",
+    "UniqueName": "wurmple",
+    "DisplayName": "Wurmple",
+    "Number": 265,
+    "Category": "Standard",
+    "BaseFriendship": 70,
+    "CatchRate": 255,
+    "GrowthRate": "MediumFast",
+    "RegionalNumbers": [
+      {
+        "Region": "queros",
+        "Number": 10
+      }
+    ],
+    "Url": "https://bulbapedia.bulbagarden.net/wiki/Wurmple_(Pok%C3%A9mon)",
+    "Notes": null
+  },
+  {
+    "Id": "4a1a8f47-3f35-4342-bd0d-8768030ba3ed",
+    "UniqueName": "pichu",
+    "DisplayName": "Pichu",
+    "Number": 172,
+    "Category": "Baby",
+    "BaseFriendship": 70,
+    "CatchRate": 190,
+    "GrowthRate": "MediumFast",
+    "RegionalNumbers": [
+      {
+        "Region": "queros",
+        "Number": 24
+      }
+    ],
+    "Url": "https://bulbapedia.bulbagarden.net/wiki/Pichu_(Pok%C3%A9mon)",
+    "Notes": null
+  }
+]

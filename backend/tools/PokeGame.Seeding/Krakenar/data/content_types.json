@@ -209,8 +209,8 @@
   {
     "Id": "da10e8b3-6284-487a-9e48-48b8f356e4b7",
     "IsInvariant": false,
-    "UniqueName": "PokemonSpecies",
-    "DisplayName": "Pokémon Species",
+    "UniqueName": "Species",
+    "DisplayName": null,
     "Description": null,
     "Fields": [
       {
