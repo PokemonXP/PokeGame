@@ -9,6 +9,7 @@ using PokeGame.Cms.Extensions;
 using PokeGame.Cms.Settings;
 using PokeGame.EntityFrameworkCore;
 using PokeGame.EntityFrameworkCore.PostgreSQL;
+using PokeGame.Infrastructure;
 using PokeGame.MongoDB;
 
 namespace PokeGame.Cms;
@@ -29,7 +30,7 @@ internal class Startup : StartupBase
     services.AddApplicationInsightsTelemetry();
 
     services.AddKrakenarCore();
-    services.AddKrakenarInfrastructure();
+    services.AddPokeGameInfrastructure();
     services.AddKrakenarWeb(_configuration);
 
     AdminSettings? adminSettings = services.Where(x => x.ServiceType.Equals(typeof(AdminSettings)) && x.ImplementationInstance is AdminSettings)

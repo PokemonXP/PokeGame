@@ -1,0 +1,42 @@
+﻿[
+  {
+    "Id": "4b078d41-b736-428a-b656-705c2ddfe878",
+    "UniqueName": "overgrow",
+    "DisplayName": "Overgrow",
+    "Description": "Powers up Grass-type moves when the Pokémon's HP is low.",
+    "Url": "https://bulbapedia.bulbagarden.net/wiki/Overgrow_(Ability)",
+    "Notes": "When a Pokémon with Overgrow uses a Grass-type move, the move's Attack or Special Attack will be increased by 50% if the user has less than or equal to ⅓ of its maximum HP remaining."
+  },
+  {
+    "Id": "121f2289-4bfb-47c8-892d-b5c686278fe8",
+    "UniqueName": "blaze",
+    "DisplayName": "Blaze",
+    "Description": "Powers up Fire-type moves when the Pokémon's HP is low.",
+    "Url": "https://bulbapedia.bulbagarden.net/wiki/Blaze_(Ability)",
+    "Notes": "When a Pokémon with Blaze uses a Fire-type move, the move's Attack or Special Attack will be increased by 50% if the user has less than or equal to ⅓ of its maximum HP remaining."
+  },
+  {
+    "Id": "c5eab299-7c46-419e-b014-c6e6ca1eedac",
+    "UniqueName": "torrent",
+    "DisplayName": "Torrent",
+    "Description": "Powers up Water-type moves when the Pokémon's HP is low.",
+    "Url": "https://bulbapedia.bulbagarden.net/wiki/Torrent_(Ability)",
+    "Notes": "When a Pokémon with Torrent uses a Water-type move, the move's Attack or Special Attack will be increased by 50% if the user has less than or equal to ⅓ of its maximum HP remaining."
+  },
+  {
+    "Id": "6715724b-0ac5-4714-b823-84eeb66ac50d",
+    "UniqueName": "static",
+    "DisplayName": "Static",
+    "Description": "The Pokémon is charged with static electricity and may paralyze attackers that make direct contact with it.",
+    "Url": "https://bulbapedia.bulbagarden.net/wiki/Static_(Ability)",
+    "Notes": "When a Pokémon with this Ability is hit by a move that makes contact, there is a 30% chance that the attacking Pokémon will become paralyzed. This can affect Ground-type Pokémon.\n\nIf a Pokémon with this Ability is hit by a multistrike move that makes contact, each hit has an independent chance to activate this Ability."
+  },
+  {
+    "Id": "a3e5ba64-8197-454e-9544-33b6ca7b325e",
+    "UniqueName": "shield-dust",
+    "DisplayName": "Shield Dust",
+    "Description": "Protective dust shields the Pokémon from the additional effects of moves.",
+    "Url": "https://bulbapedia.bulbagarden.net/wiki/Shield_Dust_(Ability)",
+    "Notes": "Pokémon with Shield Dust are unaffected by the additional effects of other Pokémon's damaging moves, including additional effects provided by Poison Touch, Toxic Chain, Stench, King's Rock, and Razor Fang."
+  }
+]

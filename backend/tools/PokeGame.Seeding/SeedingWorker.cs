@@ -3,6 +3,7 @@ using Krakenar.Core;
 using Krakenar.Core.Users;
 using Logitar.EventSourcing;
 using MediatR;
+using PokeGame.Seeding.Game.Tasks;
 using PokeGame.Seeding.Krakenar.Tasks;
 using PokeGame.Seeding.Settings;
 using UserDto = Krakenar.Contracts.Users.User;
@@ -63,6 +64,9 @@ internal class SeedingWorker : BackgroundService
       await ExecuteAsync(new SeedContentTypesTask(), cancellationToken);
       await ExecuteAsync(new SeedFieldTypesTask(), cancellationToken);
       await ExecuteAsync(new SeedContentTypesTask(fieldDefinitions: true), cancellationToken);
+
+      await ExecuteAsync(new SeedRegionsTask(defaults.Locale), cancellationToken);
+      await ExecuteAsync(new SeedAbilitiesTask(defaults.Locale), cancellationToken);
     }
     catch (Exception exception)
     {
