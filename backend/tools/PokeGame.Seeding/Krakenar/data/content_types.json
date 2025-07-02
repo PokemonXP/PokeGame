@@ -1,0 +1,209 @@
+﻿[
+  {
+    "Id": "4bd6ba59-6d0e-4a61-8d6e-cc65deb6baab",
+    "IsInvariant": false,
+    "UniqueName": "Region",
+    "DisplayName": null,
+    "Description": null,
+    "Fields": [
+      {
+        "Id": "424ba3b5-f8d8-400a-9233-7aebf74faf18",
+        "FieldType": "Url",
+        "IsInvariant": false,
+        "IsRequired": false,
+        "IsIndexed": false,
+        "IsUnique": false,
+        "UniqueName": "Url",
+        "DisplayName": "URL",
+        "Description": null,
+        "Placeholder": null
+      },
+      {
+        "Id": "566207de-3c60-4eff-abf7-c1d5dbfaa412",
+        "FieldType": "Notes",
+        "IsInvariant": false,
+        "IsRequired": false,
+        "IsIndexed": false,
+        "IsUnique": false,
+        "UniqueName": "Notes",
+        "DisplayName": null,
+        "Description": null,
+        "Placeholder": null
+      }
+    ]
+  },
+  {
+    "Id": "748ded48-8f53-4e17-8524-e098a468daf4",
+    "IsInvariant": false,
+    "UniqueName": "Ability",
+    "DisplayName": null,
+    "Description": null,
+    "Fields": [
+      {
+        "Id": "3422e23b-685f-4037-9061-6158664d789d",
+        "FieldType": "Url",
+        "IsInvariant": false,
+        "IsRequired": false,
+        "IsIndexed": false,
+        "IsUnique": false,
+        "UniqueName": "Url",
+        "DisplayName": "URL",
+        "Description": null,
+        "Placeholder": null
+      },
+      {
+        "Id": "894900bb-5ee5-4dfd-83f8-6818b5997b2e",
+        "FieldType": "Notes",
+        "IsInvariant": false,
+        "IsRequired": false,
+        "IsIndexed": false,
+        "IsUnique": false,
+        "UniqueName": "Notes",
+        "DisplayName": null,
+        "Description": null,
+        "Placeholder": null
+      }
+    ]
+  },
+  {
+    "Id": "ee1f0b92-6970-4d27-aa8f-b2e779608ecc",
+    "IsInvariant": false,
+    "UniqueName": "Move",
+    "DisplayName": null,
+    "Description": null,
+    "Fields": [
+      {
+        "Id": "35886920-4e7e-4998-af75-752e1fd3a7b6",
+        "FieldType": "PokemonType",
+        "IsInvariant": true,
+        "IsRequired": true,
+        "IsIndexed": true,
+        "IsUnique": false,
+        "UniqueName": "Type",
+        "DisplayName": null,
+        "Description": null,
+        "Placeholder": null
+      },
+      {
+        "Id": "b325f242-f94d-439d-95e7-145118d0b9e8",
+        "FieldType": "MoveCategory",
+        "IsInvariant": true,
+        "IsRequired": true,
+        "IsIndexed": true,
+        "IsUnique": false,
+        "UniqueName": "Category",
+        "DisplayName": null,
+        "Description": null,
+        "Placeholder": null
+      },
+      {
+        "Id": "e8d3f9ba-8145-4bcd-8816-4fd2491d3f33",
+        "FieldType": "Percentage",
+        "IsInvariant": true,
+        "IsRequired": false,
+        "IsIndexed": true,
+        "IsUnique": false,
+        "UniqueName": "Accuracy",
+        "DisplayName": null,
+        "Description": null,
+        "Placeholder": null
+      },
+      {
+        "Id": "2aede7ae-9b55-4738-b0c6-77f899d7019a",
+        "FieldType": "MovePower",
+        "IsInvariant": true,
+        "IsRequired": false,
+        "IsIndexed": true,
+        "IsUnique": false,
+        "UniqueName": "Power",
+        "DisplayName": null,
+        "Description": null,
+        "Placeholder": null
+      },
+      {
+        "Id": "6e892bdf-60e3-4d71-9130-f08bf5439532",
+        "FieldType": "PowerPoints",
+        "IsInvariant": true,
+        "IsRequired": true,
+        "IsIndexed": true,
+        "IsUnique": false,
+        "UniqueName": "PowerPoints",
+        "DisplayName": "Power Points",
+        "Description": null,
+        "Placeholder": null
+      },
+      {
+        "Id": "c191d0dd-1313-40a1-a470-0047d0200e5a",
+        "FieldType": "StatusCondition",
+        "IsInvariant": true,
+        "IsRequired": false,
+        "IsIndexed": false,
+        "IsUnique": false,
+        "UniqueName": "InflictedCondition",
+        "DisplayName": "Inflicted Condition",
+        "Description": null,
+        "Placeholder": null
+      },
+      {
+        "Id": "674a9693-b680-49bc-bbd9-b243d6db2c4c",
+        "FieldType": "Percentage",
+        "IsInvariant": true,
+        "IsRequired": false,
+        "IsIndexed": false,
+        "IsUnique": false,
+        "UniqueName": "StatusChance",
+        "DisplayName": "Status Chance",
+        "Description": null,
+        "Placeholder": null
+      },
+      {
+        "Id": "af31919f-c092-431f-9a64-8d4c4f7c878f",
+        "FieldType": "StatisticChanges",
+        "IsInvariant": true,
+        "IsRequired": false,
+        "IsIndexed": false,
+        "IsUnique": false,
+        "UniqueName": "StatisticChanges",
+        "DisplayName": "Statistic Changes",
+        "Description": null,
+        "Placeholder": null
+      },
+      {
+        "Id": "34a6bcd9-deaf-4e54-a11b-2d26126e56da",
+        "FieldType": "VolatileConditions",
+        "IsInvariant": true,
+        "IsRequired": false,
+        "IsIndexed": false,
+        "IsUnique": false,
+        "UniqueName": "VolatileConditions",
+        "DisplayName": "Volatile Conditions",
+        "Description": null,
+        "Placeholder": null
+      },
+      {
+        "Id": "db5c1377-ff36-42c8-958a-47fc1ab383d9",
+        "FieldType": "Url",
+        "IsInvariant": false,
+        "IsRequired": false,
+        "IsIndexed": false,
+        "IsUnique": false,
+        "UniqueName": "Url",
+        "DisplayName": "URL",
+        "Description": null,
+        "Placeholder": null
+      },
+      {
+        "Id": "4fad4bbf-0407-415f-99b5-90009fb1b7b0",
+        "FieldType": "Notes",
+        "IsInvariant": false,
+        "IsRequired": false,
+        "IsIndexed": false,
+        "IsUnique": false,
+        "UniqueName": "Notes",
+        "DisplayName": null,
+        "Description": null,
+        "Placeholder": null
+      }
+    ]
+  }
+]

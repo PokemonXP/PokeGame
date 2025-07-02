@@ -9,7 +9,6 @@ using Krakenar.Web.Settings;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using PokeGame.Cms.Models.Account;
-using System.Text.Json;
 
 namespace PokeGame.Cms.Controllers;
 

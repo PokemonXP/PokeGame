@@ -1,0 +1,30 @@
+# Move
+
+| Field                | Map                       |
+| -------------------- | ------------------------- |
+| accuracy             | Accuracy                  |
+| contest_combos       | —                         |
+| contest_effect       | —                         |
+| contest_type         | —                         |
+| damage_class         | Category                  |
+| effect_chance        | —                         |
+| effect_changes       | VolatileConditions        |
+| effect_entries       | Notes                     |
+| flavor_text_entries  | Description               |
+| generation           | —                         |
+| id                   | —                         |
+| learned_by_pokemon   | —                         |
+| machines             | —                         |
+| meta.ailment         | InflictedStatus.Condition |
+| meta.ailment_chance  | InflictedStatus.Chance    |
+| meta.\*              | —                         |
+| name                 | UniqueName                |
+| names                | DisplayName               |
+| past_values          | —                         |
+| power                | Power                     |
+| pp                   | PowerPoints               |
+| priority             | —                         |
+| stat_changes         | StatisticChanges          |
+| super_contest_effect | —                         |
+| target               | —                         |
+| type                 | Type                      |

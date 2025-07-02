@@ -1,0 +1,24 @@
+﻿[
+  {
+    "Id": "c5aa0083-284c-4113-897f-3cb30faf3c8e",
+    "UniqueSlug": "pokegame",
+    "DisplayName": "PokéGame",
+    "Description": "This is the realm for gamemasters & players.",
+    "Url": "https://pokegame.francispion.ca/",
+    "UniqueNameSettings": {
+      "AllowedCharacters": "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+"
+    },
+    "PasswordSettings": {
+      "RequiredLength": 8,
+      "RequiredUniqueChars": 8,
+      "RequireNonAlphanumeric": true,
+      "RequireLowercase": true,
+      "RequireUppercase": true,
+      "RequireDigit": true,
+      "HashingStrategy": "PBKDF2"
+    },
+    "RequireUniqueEmail": true,
+    "RequireConfirmedAccount": true,
+    "CustomAttributes": []
+  }
+]

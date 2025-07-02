@@ -15,12 +15,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Krakenar.EntityFrameworkCore.Relational" Version="1.0.1" />
-    <PackageReference Include="MediatR" Version="12.5.0" />
+    <PackageReference Include="Krakenar.Infrastructure" Version="1.0.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\PokeGame.Infrastructure\PokeGame.Infrastructure.csproj" />
+    <ProjectReference Include="..\PokeGame.Core\PokeGame.Core.csproj" />
   </ItemGroup>
 
 </Project>

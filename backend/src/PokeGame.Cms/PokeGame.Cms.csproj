@@ -35,4 +35,13 @@
     <ProjectReference Include="..\PokeGame.MongoDB\PokeGame.MongoDB.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Using Include="System.Text.Json" />
+    <Using Include="System.Text.Json.Serialization" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\" />
+  </ItemGroup>
+
 </Project>

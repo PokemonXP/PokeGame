@@ -1,0 +1,216 @@
+﻿[
+  {
+    "Id": "d188bca6-efe6-4d00-8df4-65d7a2a6562f",
+    "UniqueName": "Url",
+    "DisplayName": "URL",
+    "Description": null,
+    "String": {
+      "MinimumLength": 8,
+      "MaximumLength": 2048,
+      "Pattern": "^https?:\/\/.+$"
+    }
+  },
+  {
+    "Id": "2598df0e-3b42-467a-aa31-c72a39f27bbc",
+    "UniqueName": "Notes",
+    "DisplayName": null,
+    "Description": null,
+    "RichText": {
+      "ContentType": "text/plain"
+    }
+  },
+  {
+    "Id": "3a966bb8-94a3-47d1-832e-6dd0a6a2cbab",
+    "UniqueName": "PokemonType",
+    "DisplayName": "Pokémon Type",
+    "Description": null,
+    "Select": {
+      "IsMultiple": false,
+      "Options": [
+        {
+          "Text": "Bug",
+          "Value": "bug"
+        },
+        {
+          "Text": "Dark",
+          "Value": "dark"
+        },
+        {
+          "Text": "Dragon",
+          "Value": "dragon"
+        },
+        {
+          "Text": "Electric",
+          "Value": "electric"
+        },
+        {
+          "Text": "Fairy",
+          "Value": "fairy"
+        },
+        {
+          "Text": "Fighting",
+          "Value": "fighting"
+        },
+        {
+          "Text": "Fire",
+          "Value": "fire"
+        },
+        {
+          "Text": "Flying",
+          "Value": "flying"
+        },
+        {
+          "Text": "Ghost",
+          "Value": "ghost"
+        },
+        {
+          "Text": "Grass",
+          "Value": "grass"
+        },
+        {
+          "Text": "Ground",
+          "Value": "ground"
+        },
+        {
+          "Text": "Ice",
+          "Value": "ice"
+        },
+        {
+          "Text": "Normal",
+          "Value": "normal"
+        },
+        {
+          "Text": "Poison",
+          "Value": "poison"
+        },
+        {
+          "Text": "Psychic",
+          "Value": "psychic"
+        },
+        {
+          "Text": "Rock",
+          "Value": "rock"
+        },
+        {
+          "Text": "Steel",
+          "Value": "steel"
+        },
+        {
+          "Text": "Water",
+          "Value": "water"
+        }
+      ]
+    }
+  },
+  {
+    "Id": "1c732209-7f07-487c-ba35-c60368b2d849",
+    "UniqueName": "MoveCategory",
+    "DisplayName": "Move Category",
+    "Description": null,
+    "Select": {
+      "IsMultiple": false,
+      "Options": [
+        {
+          "Text": "Status",
+          "Value": "status"
+        },
+        {
+          "Text": "Physical",
+          "Value": "physical"
+        },
+        {
+          "Text": "Special",
+          "Value": "special"
+        }
+      ]
+    }
+  },
+  {
+    "Id": "a5216a71-8743-4c3a-b8cc-251be65fe818",
+    "UniqueName": "Percentage",
+    "DisplayName": null,
+    "Description": null,
+    "Number": {
+      "MinimumValue": 0,
+      "MaximumValue": 100,
+      "Step": 1.0
+    }
+  },
+  {
+    "Id": "2a8af6fa-dbff-4163-aa01-c70c353da296",
+    "UniqueName": "MovePower",
+    "DisplayName": "Move Power",
+    "Description": null,
+    "Number": {
+      "MinimumValue": 0,
+      "MaximumValue": 250,
+      "Step": 1.0
+    }
+  },
+  {
+    "Id": "27bd6760-c49c-4c27-a9ee-ae13c39e2acc",
+    "UniqueName": "PowerPoints",
+    "DisplayName": "Power Points",
+    "Description": null,
+    "Number": {
+      "MinimumValue": 0,
+      "MaximumValue": 40,
+      "Step": 1.0
+    }
+  },
+  {
+    "Id": "829be1a0-87d0-4ee7-99e2-c47acf14b852",
+    "UniqueName": "StatusCondition",
+    "DisplayName": "Status Condition",
+    "Description": null,
+    "Select": {
+      "IsMultiple": false,
+      "Options": [
+        {
+          "Text": "Burn",
+          "Value": "burn"
+        },
+        {
+          "Text": "Freeze",
+          "Value": "freeze"
+        },
+        {
+          "Text": "Paralysis",
+          "Value": "paralysis"
+        },
+        {
+          "Text": "Poison",
+          "Value": "poison"
+        },
+        {
+          "Text": "Sleep",
+          "Value": "sleep"
+        }
+      ]
+    }
+  },
+  {
+    "Id": "dbd83c4a-b488-48c9-bb8a-b6d606cb418b",
+    "UniqueName": "StatisticChanges",
+    "DisplayName": "Statistic Changes",
+    "Description": null,
+    "String": {
+      "MaximumLength": 80
+    }
+  },
+  {
+    "Id": "14a8dcc2-cfc8-436d-a186-d3a8ace8d866",
+    "UniqueName": "VolatileConditions",
+    "DisplayName": "Volatile Conditions",
+    "Description": null,
+    "Select": {
+      "IsMultiple": true,
+      "Options": [
+        {
+          "Text": "Flinch",
+          "Value": "flinch"
+        }
+      ]
+    }
+  }
+]

@@ -1,0 +1,42 @@
+﻿[
+  {
+    "Id": "31d4c9be-aa68-450f-80f1-59702b5f5251",
+    "UniqueName": "kanto",
+    "DisplayName": "Kanto",
+    "Description": null,
+    "Url": "https://bulbapedia.bulbagarden.net/wiki/Kanto",
+    "Notes": null
+  },
+  {
+    "Id": "db94ace2-3901-48c2-8f91-ad9ec1ba5f80",
+    "UniqueName": "johto",
+    "DisplayName": "Johto",
+    "Description": null,
+    "Url": "https://bulbapedia.bulbagarden.net/wiki/Johto",
+    "Notes": null
+  },
+  {
+    "Id": "304d435c-05d5-42f3-b00e-bbc63418da30",
+    "UniqueName": "hoenn",
+    "DisplayName": "Hoenn",
+    "Description": null,
+    "Url": "https://bulbapedia.bulbagarden.net/wiki/Hoenn",
+    "Notes": null
+  },
+  {
+    "Id": "fd34f556-c585-4c23-b53b-b24e84a1cdb1",
+    "UniqueName": "sinnoh",
+    "DisplayName": "Sinnoh",
+    "Description": null,
+    "Url": "https://bulbapedia.bulbagarden.net/wiki/Sinnoh",
+    "Notes": null
+  },
+  {
+    "Id": "920799e9-7b02-49cf-9a32-ae7e19f80c9c",
+    "UniqueName": "queros",
+    "DisplayName": "Quéros",
+    "Description": null,
+    "Url": null,
+    "Notes": null
+  }
+]
