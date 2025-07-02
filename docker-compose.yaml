@@ -1,2 +1,45 @@
 name: pokegame
-#services:
+services:
+  pokegame_mongo:
+    image: mongo
+    container_name: PokeGame_mongo
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: pokegame
+      MONGO_INITDB_ROOT_PASSWORD: VQf5kLvtyEcb8FR7
+    ports:
+      - 27042:27017
+    volumes:
+      - mongodata:/data/db
+
+  pokegame_postgres:
+    image: postgres
+    container_name: PokeGame_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_PASSWORD: V4zf8BvAy6cX2bjD
+    ports:
+      - 5442:5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  pokegame_cms:
+    build:
+      context: ./backend
+      dockerfile: /src/PokeGame.Cms/Dockerfile
+    image: pokegame_cms
+    container_name: PokeGame_cms
+    depends_on:
+      - pokegame_mongo
+      - pokegame_postgres
+    restart: unless-stopped
+    environment:
+      ASPNETCORE_Environment: Development
+      MONGOCONNSTR_Pokemon: mongodb://pokegame:VQf5kLvtyEcb8FR7@pokegame_mongo:27017/
+      POSTGRESQLCONNSTR_Pokemon: User ID=postgres;Password=V4zf8BvAy6cX2bjD;Host=pokegame_postgres;Port=5432;Database=pokegame;
+    ports:
+      - 8092:8080
+
+volumes:
+  mongodata:
+  postgres_data:
