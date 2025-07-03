@@ -16,8 +16,11 @@ internal class FormPayload
   public int Height { get; set; }
   public int Weight { get; set; }
 
-  // TODO(fpion): Primary/Secondary Types
-  // TODO(fpion): Primary/Secondary/Hidden Abilities
+  public TypesPayload Types { get; set; } = new();
+  public AbilitiesPayload Abilities { get; set; } = new();
+  public BaseStatisticsPayload BaseStatistics { get; set; } = new();
+  public YieldPayload Yield { get; set; } = new();
+  public SpritesPayload Sprites { get; set; } = new();
 
   public string? Url { get; set; }
   public string? Notes { get; set; }

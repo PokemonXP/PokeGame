@@ -385,5 +385,38 @@
       "IsMultiple": false,
       "ContentTypeId": "748ded48-8f53-4e17-8524-e098a468daf4"
     }
+  },
+  {
+    "Id": "bf9cca6a-414c-4824-a4be-c8d9c49e2509",
+    "UniqueName": "StatisticBase",
+    "DisplayName": "Statistic Base",
+    "Description": null,
+    "Number": {
+      "MinimumValue": 0,
+      "MaximumValue": 255,
+      "Step": 1.0
+    }
+  },
+  {
+    "Id": "adbf31c0-2200-4601-95ef-2d867c8a1b85",
+    "UniqueName": "ExperienceYield",
+    "DisplayName": "Experience Yield",
+    "Description": null,
+    "Number": {
+      "MinimumValue": 0,
+      "MaximumValue": 635,
+      "Step": 1.0
+    }
+  },
+  {
+    "Id": "726c411b-d9f6-4e96-a7c2-9057e062e052",
+    "UniqueName": "StatisticYield",
+    "DisplayName": "Statistic Yield",
+    "Description": null,
+    "Number": {
+      "MinimumValue": 0,
+      "MaximumValue": 3,
+      "Step": 1.0
+    }
   }
 ]
