@@ -19,8 +19,8 @@ internal class MovePayload
   public int PowerPoints { get; set; }
 
   public InflictedStatusPayload? InflictedStatus { get; set; }
-  public List<StatisticChangePayload> StatisticChanges { get; set; } = [];
   public List<VolatileCondition> VolatileConditions { get; set; } = [];
+  public List<StatisticChangePayload> StatisticChanges { get; set; } = [];
 
   public string? Url { get; set; }
   public string? Notes { get; set; }

@@ -45,7 +45,7 @@ internal class SeedVarietiesTaskHandler : INotificationHandler<SeedVarietiesTask
         ContentTypeId = Species.ContentTypeId
       };
       SearchResults<ContentLocale> results = await _contentService.SearchLocalesAsync(search, cancellationToken);
-      ContentIndex speciesIndex = new(results);
+      ContentIndex speciesIndex = new(results); // TODO(fpion): should only load published?
 
       search.ContentTypeId = Varieties.ContentTypeId;
       results = await _contentService.SearchLocalesAsync(search, cancellationToken);

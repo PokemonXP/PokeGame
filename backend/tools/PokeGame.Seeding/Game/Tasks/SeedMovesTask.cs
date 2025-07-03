@@ -64,7 +64,6 @@ internal class SeedMovesTaskHandler : INotificationHandler<SeedMovesTask>
         string category = SeedingSerializer.Serialize<MoveCategory[]>([move.Category]).ToLowerInvariant();
         string inflictedCondition = move.InflictedStatus is null ? string.Empty : SeedingSerializer.Serialize<StatusCondition[]>([move.InflictedStatus.Condition]).ToLowerInvariant();
         string statusChance = move.InflictedStatus is null ? string.Empty : move.InflictedStatus.Chance.ToString();
-        string statisticChanges = FormatStatisticChanges(move.StatisticChanges);
         string volatileConditions = move.VolatileConditions.Count < 1 ? string.Empty : SeedingSerializer.Serialize(move.VolatileConditions.Distinct()).ToLowerInvariant();
 
         Content content;
@@ -83,8 +82,8 @@ internal class SeedMovesTaskHandler : INotificationHandler<SeedMovesTask>
           invariant.FieldValues.Add(new FieldValuePayload(Moves.PowerPoints.ToString(), move.PowerPoints.ToString()));
           invariant.FieldValues.Add(new FieldValuePayload(Moves.InflictedCondition.ToString(), inflictedCondition));
           invariant.FieldValues.Add(new FieldValuePayload(Moves.StatusChance.ToString(), statusChance));
-          invariant.FieldValues.Add(new FieldValuePayload(Moves.StatisticChanges.ToString(), statisticChanges));
           invariant.FieldValues.Add(new FieldValuePayload(Moves.VolatileConditions.ToString(), volatileConditions));
+          invariant.FieldValues.AddRange(GetStatisticChanges(move.StatisticChanges));
           _ = await _contentService.SaveLocaleAsync(move.Id, invariant, language: null, cancellationToken);
 
           SaveContentLocalePayload locale = new()
@@ -117,8 +116,8 @@ internal class SeedMovesTaskHandler : INotificationHandler<SeedMovesTask>
           payload.FieldValues.Add(new FieldValuePayload(Moves.PowerPoints.ToString(), move.PowerPoints.ToString()));
           payload.FieldValues.Add(new FieldValuePayload(Moves.InflictedCondition.ToString(), inflictedCondition));
           payload.FieldValues.Add(new FieldValuePayload(Moves.StatusChance.ToString(), statusChance));
-          payload.FieldValues.Add(new FieldValuePayload(Moves.StatisticChanges.ToString(), statisticChanges));
           payload.FieldValues.Add(new FieldValuePayload(Moves.VolatileConditions.ToString(), volatileConditions));
+          payload.FieldValues.AddRange(GetStatisticChanges(move.StatisticChanges));
           payload.FieldValues.Add(new FieldValuePayload(Moves.Url.ToString(), move.Url ?? string.Empty));
           payload.FieldValues.Add(new FieldValuePayload(Moves.Notes.ToString(), move.Notes ?? string.Empty));
           content = await _contentService.CreateAsync(payload, cancellationToken);
@@ -128,13 +127,30 @@ internal class SeedMovesTaskHandler : INotificationHandler<SeedMovesTask>
     }
   }
 
-  private static string FormatStatisticChanges(IEnumerable<StatisticChangePayload> payloads)
+  private static IReadOnlyCollection<FieldValuePayload> GetStatisticChanges(IEnumerable<StatisticChangePayload> payloads)
   {
     Dictionary<PokemonStatistic, int> changes = new(capacity: payloads.Count());
     foreach (StatisticChangePayload payload in payloads)
     {
       changes[payload.Statistic] = payload.Stages;
     }
-    return string.Join('|', changes.Select(change => string.Concat(change.Key, change.Value > 0 ? '+' : string.Empty, change.Value)));
+
+    List<FieldValuePayload> fieldValues = new(capacity: changes.Count);
+    foreach (KeyValuePair<PokemonStatistic, int> change in changes)
+    {
+      Guid fieldId = change.Key switch
+      {
+        PokemonStatistic.Accuracy => Moves.AccuracyChange,
+        PokemonStatistic.Attack => Moves.AttackChange,
+        PokemonStatistic.Defense => Moves.DefenseChange,
+        PokemonStatistic.Evasion => Moves.EvasionChange,
+        PokemonStatistic.SpecialAttack => Moves.SpecialAttackChange,
+        PokemonStatistic.SpecialDefense => Moves.SpecialDefenseChange,
+        PokemonStatistic.Speed => Moves.SpeedChange,
+        _ => throw new NotSupportedException($"The Pokémon statistic '{change.Key}' is not supported."),
+      };
+      fieldValues.Add(new FieldValuePayload(fieldId.ToString(), change.Value.ToString()));
+    }
+    return fieldValues.AsReadOnly();
   }
 }

@@ -190,15 +190,6 @@
     }
   },
   {
-    "Id": "dbd83c4a-b488-48c9-bb8a-b6d606cb418b",
-    "UniqueName": "StatisticChanges",
-    "DisplayName": "Statistic Changes",
-    "Description": null,
-    "String": {
-      "MaximumLength": 80
-    }
-  },
-  {
     "Id": "14a8dcc2-cfc8-436d-a186-d3a8ace8d866",
     "UniqueName": "VolatileConditions",
     "DisplayName": "Volatile Conditions",
@@ -207,10 +198,25 @@
       "IsMultiple": true,
       "Options": [
         {
+          "Text": "Confusion",
+          "Value": "confusion"
+        },
+        {
           "Text": "Flinch",
           "Value": "flinch"
         }
       ]
+    }
+  },
+  {
+    "Id": "dbd83c4a-b488-48c9-bb8a-b6d606cb418b",
+    "UniqueName": "StatisticChange",
+    "DisplayName": "Statistic Change",
+    "Description": null,
+    "Number": {
+      "MinimumValue": -6,
+      "MaximumValue": 6,
+      "Step": 1.0
     }
   },
   {
@@ -352,6 +358,16 @@
     "Description": null,
     "String": {
       "MaximumLength": 16
+    }
+  },
+  {
+    "Id": "d8e8b56a-76dd-43bf-92b9-370e8539b3b7",
+    "UniqueName": "PokemonVariety",
+    "DisplayName": "Pokémon Variety",
+    "Description": null,
+    "RelatedContent": {
+      "IsMultiple": false,
+      "ContentTypeId": "31ae9c83-d4a1-44cf-9007-c614c68cc1d3"
     }
   },
   {

@@ -156,19 +156,6 @@
         "Description": null,
         "Placeholder": null
       },
-      // TODO(fpion): éclater StatisticChanges en 7 champs Number{-6..+6}
-      {
-        "Id": "af31919f-c092-431f-9a64-8d4c4f7c878f",
-        "FieldType": "StatisticChanges",
-        "IsInvariant": true,
-        "IsRequired": false,
-        "IsIndexed": false,
-        "IsUnique": false,
-        "UniqueName": "StatisticChanges",
-        "DisplayName": "Statistic Changes",
-        "Description": null,
-        "Placeholder": null
-      },
       {
         "Id": "34a6bcd9-deaf-4e54-a11b-2d26126e56da",
         "FieldType": "VolatileConditions",
@@ -180,6 +167,90 @@
         "DisplayName": "Volatile Conditions",
         "Description": null,
         "Placeholder": "Select one or more volatile conditions"
+      },
+      {
+        "Id": "af31919f-c092-431f-9a64-8d4c4f7c878f",
+        "FieldType": "StatisticChange",
+        "IsInvariant": true,
+        "IsRequired": false,
+        "IsIndexed": false,
+        "IsUnique": false,
+        "UniqueName": "AttackChange",
+        "DisplayName": "Attack Change",
+        "Description": null,
+        "Placeholder": null
+      },
+      {
+        "Id": "8a7d4557-a5b1-4d63-a8f5-cfb8510d9311",
+        "FieldType": "StatisticChange",
+        "IsInvariant": true,
+        "IsRequired": false,
+        "IsIndexed": false,
+        "IsUnique": false,
+        "UniqueName": "DefenseChange",
+        "DisplayName": "Defense Change",
+        "Description": null,
+        "Placeholder": null
+      },
+      {
+        "Id": "f4fbe153-2a26-4236-800c-e34a7c3131d3",
+        "FieldType": "StatisticChange",
+        "IsInvariant": true,
+        "IsRequired": false,
+        "IsIndexed": false,
+        "IsUnique": false,
+        "UniqueName": "SpecialAttackChange",
+        "DisplayName": "Sp. Attack Change",
+        "Description": null,
+        "Placeholder": null
+      },
+      {
+        "Id": "a0d5f4bc-1675-4023-859a-6abcc967b81f",
+        "FieldType": "StatisticChange",
+        "IsInvariant": true,
+        "IsRequired": false,
+        "IsIndexed": false,
+        "IsUnique": false,
+        "UniqueName": "SpecialDefenseChange",
+        "DisplayName": "Sp. Defense Change",
+        "Description": null,
+        "Placeholder": null
+      },
+      {
+        "Id": "4a0e8a9e-7b5d-4a27-853b-0fdc135b08a1",
+        "FieldType": "StatisticChange",
+        "IsInvariant": true,
+        "IsRequired": false,
+        "IsIndexed": false,
+        "IsUnique": false,
+        "UniqueName": "SpeedChange",
+        "DisplayName": "Speed Change",
+        "Description": null,
+        "Placeholder": null
+      },
+      {
+        "Id": "7309bff6-5f34-4c2c-8902-d052fa5cd856",
+        "FieldType": "StatisticChange",
+        "IsInvariant": true,
+        "IsRequired": false,
+        "IsIndexed": false,
+        "IsUnique": false,
+        "UniqueName": "AccuracyChange",
+        "DisplayName": "Accuracy Change",
+        "Description": null,
+        "Placeholder": null
+      },
+      {
+        "Id": "c2bcf747-e3be-4998-9afa-b2fafcb904f6",
+        "FieldType": "StatisticChange",
+        "IsInvariant": true,
+        "IsRequired": false,
+        "IsIndexed": false,
+        "IsUnique": false,
+        "UniqueName": "EvasionChange",
+        "DisplayName": "Evasion Change",
+        "Description": null,
+        "Placeholder": null
       },
       {
         "Id": "db5c1377-ff36-42c8-958a-47fc1ab383d9",
