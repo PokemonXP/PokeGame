@@ -353,5 +353,37 @@
     "String": {
       "MaximumLength": 16
     }
+  },
+  {
+    "Id": "dc4ba92d-59f4-4dcd-b477-65bf52ad0170",
+    "UniqueName": "PokemonHeight",
+    "DisplayName": "Pokémon Height",
+    "Description": null,
+    "Number": {
+      "MinimumValue": 0,
+      "MaximumValue": 145,
+      "Step": 1.0
+    }
+  },
+  {
+    "Id": "c359fb25-a627-43b8-9f2e-3a33d515add7",
+    "UniqueName": "PokemonWeight",
+    "DisplayName": "Pokémon Weight",
+    "Description": null,
+    "Number": {
+      "MinimumValue": 0,
+      "MaximumValue": 9999,
+      "Step": 1.0
+    }
+  },
+  {
+    "Id": "ae4c0ef1-32ca-4ea6-82c5-53b061968789",
+    "UniqueName": "PokemonAbility",
+    "DisplayName": "Pokémon Ability",
+    "Description": null,
+    "RelatedContent": {
+      "IsMultiple": false,
+      "ContentTypeId": "748ded48-8f53-4e17-8524-e098a468daf4"
+    }
   }
 ]

@@ -6,9 +6,9 @@
 | form_names        | —                                   |
 | form_order        | —                                   |
 | id                | —                                   |
-| is_battle_only    | ❓                                  |
+| is_battle_only    | IsBattleOnly                        |
 | is_default        | IsDefault                           |
-| is_mega           | ❓                                  |
+| is_mega           | IsMega                              |
 | name              | UniqueName                          |
 | names             | DisplayName                         |
 | order             | —                                   |
