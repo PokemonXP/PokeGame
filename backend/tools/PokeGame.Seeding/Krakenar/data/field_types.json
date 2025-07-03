@@ -316,5 +316,42 @@
     "String": {
       "MaximumLength": 100
     }
+  },
+  {
+    "Id": "7513ac29-5cf0-41d7-8fd9-f47ee9a20b02",
+    "UniqueName": "PokemonSpecies",
+    "DisplayName": "Pokémon Species",
+    "Description": null,
+    "RelatedContent": {
+      "IsMultiple": false,
+      "ContentTypeId": "da10e8b3-6284-487a-9e48-48b8f356e4b7"
+    }
+  },
+  {
+    "Id": "18c75e67-dd44-4287-9ea2-91824e8e45d3",
+    "UniqueName": "Boolean",
+    "DisplayName": null,
+    "Description": null,
+    "Boolean": {}
+  },
+  {
+    "Id": "16b8875e-3e41-4282-a26d-fea26812654f",
+    "UniqueName": "GenderRatio",
+    "DisplayName": "Gender Ratio",
+    "Description": null,
+    "Number": {
+      "MinimumValue": 0,
+      "MaximumValue": 8,
+      "Step": 1.0
+    }
+  },
+  {
+    "Id": "a4829296-3f9d-4152-9c4d-bc8e9eab0a60",
+    "UniqueName": "PokemonGenus",
+    "DisplayName": "Pokémon Genus",
+    "Description": null,
+    "String": {
+      "MaximumLength": 16
+    }
   }
 ]

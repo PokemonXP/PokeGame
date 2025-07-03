@@ -310,5 +310,98 @@
         "Placeholder": null
       }
     ]
+  },
+  {
+    "Id": "31ae9c83-d4a1-44cf-9007-c614c68cc1d3",
+    "IsInvariant": false,
+    "UniqueName": "Variety",
+    "DisplayName": null,
+    "Description": null,
+    "Fields": [
+      {
+        "Id": "04b028ce-08ae-4e5d-8598-093186031cdc",
+        "FieldType": "PokemonSpecies",
+        "IsInvariant": true,
+        "IsRequired": true,
+        "IsIndexed": false,
+        "IsUnique": false,
+        "UniqueName": "Species",
+        "DisplayName": null,
+        "Description": null,
+        "Placeholder": "Select a species"
+      },
+      {
+        "Id": "5cd0edac-0065-480a-939e-d8286df04ef8",
+        "FieldType": "Boolean",
+        "IsInvariant": true,
+        "IsRequired": true,
+        "IsIndexed": true,
+        "IsUnique": false,
+        "UniqueName": "IsDefault",
+        "DisplayName": "Is Default",
+        "Description": null,
+        "Placeholder": null
+      },
+      {
+        "Id": "fdf6c3ec-68c9-4db6-ac2d-7d9327dd118c",
+        "FieldType": "Boolean",
+        "IsInvariant": true,
+        "IsRequired": true,
+        "IsIndexed": true,
+        "IsUnique": false,
+        "UniqueName": "CanChangeForm",
+        "DisplayName": "Can Change Form",
+        "Description": null,
+        "Placeholder": null
+      },
+      {
+        "Id": "25b82654-7957-4616-b215-ec6c3ed0a6c7",
+        "FieldType": "GenderRatio",
+        "IsInvariant": true,
+        "IsRequired": true,
+        "IsIndexed": true,
+        "IsUnique": false,
+        "UniqueName": "GenderRatio",
+        "DisplayName": "Gender Ratio",
+        "Description": null,
+        "Placeholder": null
+      },
+      {
+        "Id": "f0bd8648-b2d2-49a6-92e5-f83fb0441e6d",
+        "FieldType": "PokemonGenus",
+        "IsInvariant": false,
+        "IsRequired": true,
+        "IsIndexed": true,
+        "IsUnique": false,
+        "UniqueName": "Genus",
+        "DisplayName": null,
+        "Description": null,
+        "Placeholder": null
+      },
+      {
+        "Id": "2927e6da-155d-42b8-af98-a9daa9d429fa",
+        "FieldType": "Url",
+        "IsInvariant": false,
+        "IsRequired": false,
+        "IsIndexed": false,
+        "IsUnique": false,
+        "UniqueName": "Url",
+        "DisplayName": "URL",
+        "Description": null,
+        "Placeholder": null
+      },
+      {
+        "Id": "81dac961-81c1-457a-bca3-c423c9f9021d",
+        "FieldType": "Notes",
+        "IsInvariant": false,
+        "IsRequired": false,
+        "IsIndexed": false,
+        "IsUnique": false,
+        "UniqueName": "Notes",
+        "DisplayName": null,
+        "Description": null,
+        "Placeholder": null
+      }
+    ]
   }
 ]

@@ -4,7 +4,7 @@
 | ---------------------- | ------------------ |
 | base_happiness         | BaseFriendship     |
 | capture_rate           | CatchRate          |
-| color                  | _Moved to Variety_ |
+| color                  | —                  |
 | egg_groups             | —                  |
 | evolution_chain        | —                  |
 | evolves_from_species   | —                  |
