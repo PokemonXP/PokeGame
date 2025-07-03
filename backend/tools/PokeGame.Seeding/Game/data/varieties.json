@@ -1,0 +1,67 @@
+﻿[
+  {
+    "Id": "6c23dda6-3522-400e-b5d5-1eeb77686f8f",
+    "UniqueName": "rowlet",
+    "DisplayName": "Rowlet",
+    "Description": null,
+    "Species": "rowlet",
+    "IsDefault": true,
+    "CanChangeForm": false,
+    "GenderRatio": 7,
+    "Genus": "Grass Quill",
+    "Url": "https://bulbapedia.bulbagarden.net/wiki/Rowlet_(Pok%C3%A9mon)",
+    "Notes": null
+  },
+  {
+    "Id": "eedec63a-f1cb-403a-a201-dfead3183995",
+    "UniqueName": "tepig",
+    "DisplayName": "Tepig",
+    "Description": null,
+    "Species": "tepig",
+    "IsDefault": true,
+    "CanChangeForm": false,
+    "GenderRatio": 7,
+    "Genus": "Fire Pig",
+    "Url": "https://bulbapedia.bulbagarden.net/wiki/Tepig_(Pok%C3%A9mon)",
+    "Notes": null
+  },
+  {
+    "Id": "ba2bc72d-f4e3-4aa9-92e4-32ef7799c96f",
+    "UniqueName": "mudkip",
+    "DisplayName": "Mudkip",
+    "Description": null,
+    "Species": "mudkip",
+    "IsDefault": true,
+    "CanChangeForm": false,
+    "GenderRatio": 7,
+    "Genus": "Mud Fish",
+    "Url": "https://bulbapedia.bulbagarden.net/wiki/Mudkip_(Pok%C3%A9mon)",
+    "Notes": null
+  },
+  {
+    "Id": "cea4f058-e3f6-4e13-9080-75f73c74b44e",
+    "UniqueName": "wurmple",
+    "DisplayName": "Wurmple",
+    "Description": null,
+    "Species": "wurmple",
+    "IsDefault": true,
+    "CanChangeForm": false,
+    "GenderRatio": 4,
+    "Genus": "Worm",
+    "Url": "https://bulbapedia.bulbagarden.net/wiki/Wurmple_(Pok%C3%A9mon)",
+    "Notes": null
+  },
+  {
+    "Id": "c447e11a-0141-4856-93d8-3599cb90079e",
+    "UniqueName": "pichu",
+    "DisplayName": "Pichu",
+    "Description": null,
+    "Species": "pichu",
+    "IsDefault": true,
+    "CanChangeForm": false,
+    "GenderRatio": 4,
+    "Genus": "Tiny Mouse",
+    "Url": "https://bulbapedia.bulbagarden.net/wiki/Pichu_(Pok%C3%A9mon)",
+    "Notes": null
+  }
+]
