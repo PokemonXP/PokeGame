@@ -1,6 +1,5 @@
 ﻿using CsvHelper;
 using PokeGame.Seeding.Game.Payloads;
-using System.Globalization;
 
 namespace PokeGame.Seeding;
 
@@ -17,6 +16,7 @@ internal static class CsvHelper
 
     csv.Context.RegisterClassMap<AbilityPayload.Map>();
     csv.Context.RegisterClassMap<FormPayload.Map>();
+    csv.Context.RegisterClassMap<MedicinePayload.Map>();
     csv.Context.RegisterClassMap<MovePayload.Map>();
     csv.Context.RegisterClassMap<RegionPayload.Map>();
     csv.Context.RegisterClassMap<SpeciesPayload.Map>();

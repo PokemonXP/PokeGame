@@ -51,7 +51,7 @@ internal class MovePayload
       {
         StatusCondition? condition = args.Row.GetField<StatusCondition?>(9);
         int? chance = args.Row.GetField<int?>(10);
-        return condition.HasValue && chance.HasValue ? new InflictedStatusPayload(condition.Value, chance.Value) : null;
+        return condition.HasValue ? new InflictedStatusPayload(condition.Value, chance ?? 0) : null;
       });
       Map(x => x.VolatileConditions).Index(11);
       References<StatisticChangesMap>(x => x.StatisticChanges);

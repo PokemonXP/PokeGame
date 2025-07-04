@@ -844,5 +844,170 @@
         "Placeholder": null
       }
     ]
+  },
+  {
+    "Id": "07ca76cf-d73c-44d8-926e-9ead192427c0",
+    "IsInvariant": false,
+    "UniqueName": "Medicine",
+    "DisplayName": null,
+    "Description": null,
+    "Fields": [
+      {
+        "Id": "a0b823fa-0279-402a-8968-1752839d138f",
+        "FieldType": "ItemPrice",
+        "IsInvariant": true,
+        "IsRequired": false,
+        "IsIndexed": false,
+        "IsUnique": false,
+        "UniqueName": "Price",
+        "DisplayName": null,
+        "Description": null,
+        "Placeholder": null
+      },
+      {
+        "Id": "74b76161-c12e-4ead-80ad-b41e363b77de",
+        "FieldType": "Boolean",
+        "IsInvariant": true,
+        "IsRequired": false,
+        "IsIndexed": false,
+        "IsUnique": false,
+        "UniqueName": "IsHerbal",
+        "DisplayName": "Is Herbal",
+        "Description": null,
+        "Placeholder": null
+      },
+      {
+        "Id": "8b9a3ea1-9f25-41c7-8d5a-e6ccd7d41ea4",
+        "FieldType": "ItemHealing",
+        "IsInvariant": true,
+        "IsRequired": false,
+        "IsIndexed": false,
+        "IsUnique": false,
+        "UniqueName": "Healing",
+        "DisplayName": null,
+        "Description": null,
+        "Placeholder": null
+      },
+      {
+        "Id": "eaee91fd-cba9-4cfd-8519-827df4760f31",
+        "FieldType": "Boolean",
+        "IsInvariant": true,
+        "IsRequired": false,
+        "IsIndexed": false,
+        "IsUnique": false,
+        "UniqueName": "IsHealingPercentage",
+        "DisplayName": "Is Healing Percentage",
+        "Description": null,
+        "Placeholder": null
+      },
+      {
+        "Id": "f3afa2bb-9769-4c3a-82cf-1fdf446bfb81",
+        "FieldType": "Boolean",
+        "IsInvariant": true,
+        "IsRequired": false,
+        "IsIndexed": false,
+        "IsUnique": false,
+        "UniqueName": "Revive",
+        "DisplayName": null,
+        "Description": null,
+        "Placeholder": null
+      },
+      {
+        "Id": "de383033-d5c3-44e6-aa6f-ec7e9a52ba7f",
+        "FieldType": "StatusCondition",
+        "IsInvariant": true,
+        "IsRequired": false,
+        "IsIndexed": false,
+        "IsUnique": false,
+        "UniqueName": "StatusCondition",
+        "DisplayName": "Status Condition",
+        "Description": null,
+        "Placeholder": "Select a status condition"
+      },
+      {
+        "Id": "6097fc0c-8ca4-4775-ba29-e2cac813cdbe",
+        "FieldType": "Boolean",
+        "IsInvariant": true,
+        "IsRequired": false,
+        "IsIndexed": false,
+        "IsUnique": false,
+        "UniqueName": "AllConditions",
+        "DisplayName": "All Conditions",
+        "Description": null,
+        "Placeholder": null
+      },
+      {
+        "Id": "bfb8dc36-1c19-4212-9664-bc1ee226ea5b",
+        "FieldType": "PowerPointRestore",
+        "IsInvariant": true,
+        "IsRequired": false,
+        "IsIndexed": false,
+        "IsUnique": false,
+        "UniqueName": "PowerPoints",
+        "DisplayName": "Power Points",
+        "Description": null,
+        "Placeholder": null
+      },
+      {
+        "Id": "fcf3c853-8976-4a73-a635-24b49efb5a5b",
+        "FieldType": "Boolean",
+        "IsInvariant": true,
+        "IsRequired": false,
+        "IsIndexed": false,
+        "IsUnique": false,
+        "UniqueName": "IsPowerPointPercentage",
+        "DisplayName": "Is Power Point Percentage",
+        "Description": null,
+        "Placeholder": null
+      },
+      {
+        "Id": "a2b2557b-bffc-4d0f-ad6e-3f28f5fb61f3",
+        "FieldType": "Boolean",
+        "IsInvariant": true,
+        "IsRequired": false,
+        "IsIndexed": false,
+        "IsUnique": false,
+        "UniqueName": "AllMoves",
+        "DisplayName": "All Moves",
+        "Description": null,
+        "Placeholder": null
+      },
+      {
+        "Id": "1d3956a3-704f-4d5e-bb37-0ded0b7de0a4",
+        "FieldType": "Url",
+        "IsInvariant": true,
+        "IsRequired": false,
+        "IsIndexed": false,
+        "IsUnique": false,
+        "UniqueName": "Sprite",
+        "DisplayName": null,
+        "Description": null,
+        "Placeholder": null
+      },
+      {
+        "Id": "34892414-9512-4965-af84-e3ae699f3847",
+        "FieldType": "Url",
+        "IsInvariant": false,
+        "IsRequired": false,
+        "IsIndexed": false,
+        "IsUnique": false,
+        "UniqueName": "Url",
+        "DisplayName": "URL",
+        "Description": null,
+        "Placeholder": null
+      },
+      {
+        "Id": "9acd4185-045e-423c-8879-6c428b49f255",
+        "FieldType": "Notes",
+        "IsInvariant": false,
+        "IsRequired": false,
+        "IsIndexed": false,
+        "IsUnique": false,
+        "UniqueName": "Notes",
+        "DisplayName": null,
+        "Description": null,
+        "Placeholder": null
+      }
+    ]
   }
 ]

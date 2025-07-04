@@ -434,5 +434,38 @@
       "MaximumValue": 3,
       "Step": 1.0
     }
+  },
+  {
+    "Id": "a30bd4bd-b42e-41db-981a-06cbd71fa570",
+    "UniqueName": "ItemPrice",
+    "DisplayName": "Item Price",
+    "Description": null,
+    "Number": {
+      "MinimumValue": 0,
+      "MaximumValue": 99999,
+      "Step": 1.0
+    }
+  },
+  {
+    "Id": "94ad5cfa-6d22-4e17-9b8d-e4c84ddb11c2",
+    "UniqueName": "ItemHealing",
+    "DisplayName": "Item Healing",
+    "Description": null,
+    "Number": {
+      "MinimumValue": 0,
+      "MaximumValue": 999,
+      "Step": 1.0
+    }
+  },
+  {
+    "Id": "4cbc0d04-39f5-4edb-9dcc-18e1efe286cd",
+    "UniqueName": "PowerPointRestore",
+    "DisplayName": "PowerPointRestore",
+    "Description": null,
+    "Number": {
+      "MinimumValue": 0,
+      "MaximumValue": 100,
+      "Step": 1.0
+    }
   }
 ]
