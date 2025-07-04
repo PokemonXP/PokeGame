@@ -1,6 +1,5 @@
 ﻿using FluentValidation.Results;
 using Krakenar.Contracts.Contents;
-using Krakenar.Contracts.Fields;
 using Krakenar.Contracts.Search;
 using Krakenar.Core;
 using MediatR;
@@ -36,91 +35,88 @@ internal class SeedVarietiesTaskHandler : INotificationHandler<SeedVarietiesTask
 
   public async Task Handle(SeedVarietiesTask task, CancellationToken cancellationToken)
   {
-    string json = await File.ReadAllTextAsync("Game/data/varieties.json", Encoding.UTF8, cancellationToken);
-    IEnumerable<VarietyPayload>? varieties = SeedingSerializer.Deserialize<IEnumerable<VarietyPayload>>(json);
-    if (varieties is not null)
+    IReadOnlyCollection<VarietyPayload> varieties = await CsvHelper.ExtractAsync<VarietyPayload>("Game/data/varieties.csv", cancellationToken);
+
+    SearchContentLocalesPayload search = new()
     {
-      SearchContentLocalesPayload search = new()
+      ContentTypeId = Species.ContentTypeId
+    };
+    SearchResults<ContentLocale> results = await _contentService.SearchLocalesAsync(search, cancellationToken);
+    ContentIndex speciesIndex = new(results); // TODO(fpion): should only load published?
+
+    search.ContentTypeId = Varieties.ContentTypeId;
+    results = await _contentService.SearchLocalesAsync(search, cancellationToken);
+    HashSet<Guid> existingIds = results.Items.Select(locale => locale.Content.Id).ToHashSet();
+
+    VarietyValidator validator = new(_applicationContext.UniqueNameSettings);
+    foreach (VarietyPayload variety in varieties)
+    {
+      ValidationResult result = validator.Validate(variety);
+      if (!result.IsValid)
       {
-        ContentTypeId = Species.ContentTypeId
-      };
-      SearchResults<ContentLocale> results = await _contentService.SearchLocalesAsync(search, cancellationToken);
-      ContentIndex speciesIndex = new(results);
+        string errors = SeedingSerializer.Serialize(result.Errors);
+        _logger.LogError("The variety '{Variety}' was not seeded because there are validation errors.|Errors: {Errors}", variety, errors);
+        continue;
+      }
 
-      search.ContentTypeId = Varieties.ContentTypeId;
-      results = await _contentService.SearchLocalesAsync(search, cancellationToken);
-      HashSet<Guid> existingIds = results.Items.Select(locale => locale.Content.Id).ToHashSet();
-
-      VarietyValidator validator = new(_applicationContext.UniqueNameSettings);
-      foreach (VarietyPayload variety in varieties)
+      Guid? speciesId = speciesIndex.Get(variety.Species)?.Content.Id;
+      if (!speciesId.HasValue)
       {
-        ValidationResult result = validator.Validate(variety);
-        if (!result.IsValid)
-        {
-          string errors = SeedingSerializer.Serialize(result.Errors);
-          _logger.LogError("The variety '{Variety}' was not seeded because there are validation errors.|Errors: {Errors}", variety, errors);
-          continue;
-        }
+        _logger.LogError("The variety '{Variety}' was not seeded because the species '{Species}' was not found.", variety, variety.Species);
+        continue;
+      }
 
-        Guid? speciesId = speciesIndex.Get(variety.Species)?.Content.Id;
-        if (!speciesId.HasValue)
-        {
-          _logger.LogError("The variety '{Variety}' was not seeded because the species '{Species}' was not found.", variety, variety.Species);
-          continue;
-        }
+      string species = SeedingSerializer.Serialize<Guid[]>([speciesId.Value]);
+      string genderRatio = variety.GenderRatio.HasValue ? variety.GenderRatio.Value.ToString() : string.Empty;
 
-        string species = SeedingSerializer.Serialize<Guid[]>([speciesId.Value]);
-        string genderRatio = variety.GenderRatio.HasValue ? variety.GenderRatio.Value.ToString() : string.Empty;
-
-        Content content;
-        if (existingIds.Contains(variety.Id))
+      Content content;
+      if (existingIds.Contains(variety.Id))
+      {
+        SaveContentLocalePayload invariant = new()
         {
-          SaveContentLocalePayload invariant = new()
-          {
-            UniqueName = variety.UniqueName,
-            DisplayName = variety.DisplayName,
-            Description = variety.Description
-          };
-          invariant.FieldValues.Add(new FieldValuePayload(Varieties.Species.ToString(), species));
-          invariant.FieldValues.Add(new FieldValuePayload(Varieties.IsDefault.ToString(), variety.IsDefault.ToString()));
-          invariant.FieldValues.Add(new FieldValuePayload(Varieties.CanChangeForm.ToString(), variety.CanChangeForm.ToString()));
-          invariant.FieldValues.Add(new FieldValuePayload(Varieties.GenderRatio.ToString(), genderRatio));
-          _ = await _contentService.SaveLocaleAsync(variety.Id, invariant, language: null, cancellationToken);
+          UniqueName = variety.UniqueName,
+          DisplayName = variety.DisplayName,
+          Description = variety.Description
+        };
+        invariant.FieldValues.Add(Varieties.Species, species);
+        invariant.FieldValues.Add(Varieties.IsDefault, variety.IsDefault);
+        invariant.FieldValues.Add(Varieties.CanChangeForm, variety.CanChangeForm);
+        invariant.FieldValues.Add(Varieties.GenderRatio, genderRatio);
+        _ = await _contentService.SaveLocaleAsync(variety.Id, invariant, language: null, cancellationToken);
 
-          SaveContentLocalePayload locale = new()
-          {
-            UniqueName = variety.UniqueName,
-            DisplayName = variety.DisplayName,
-            Description = variety.Description
-          };
-          locale.FieldValues.Add(new FieldValuePayload(Varieties.Genus.ToString(), variety.Genus));
-          locale.FieldValues.Add(new FieldValuePayload(Varieties.Url.ToString(), variety.Url ?? string.Empty));
-          locale.FieldValues.Add(new FieldValuePayload(Varieties.Notes.ToString(), variety.Notes ?? string.Empty));
-          content = await _contentService.SaveLocaleAsync(variety.Id, locale, task.Language, cancellationToken)
-            ?? throw new InvalidOperationException($"The variety content 'Id={variety.Id}' was not found.");
-          _logger.LogInformation("The variety content 'Id={ContentId}' was updated.", content.Id);
-        }
-        else
+        SaveContentLocalePayload locale = new()
         {
-          CreateContentPayload payload = new()
-          {
-            Id = variety.Id,
-            ContentType = Varieties.ContentTypeId.ToString(),
-            Language = task.Language,
-            UniqueName = variety.UniqueName,
-            DisplayName = variety.DisplayName,
-            Description = variety.Description
-          };
-          payload.FieldValues.Add(new FieldValuePayload(Varieties.Species.ToString(), species));
-          payload.FieldValues.Add(new FieldValuePayload(Varieties.IsDefault.ToString(), variety.IsDefault.ToString()));
-          payload.FieldValues.Add(new FieldValuePayload(Varieties.CanChangeForm.ToString(), variety.CanChangeForm.ToString()));
-          payload.FieldValues.Add(new FieldValuePayload(Varieties.GenderRatio.ToString(), genderRatio));
-          payload.FieldValues.Add(new FieldValuePayload(Varieties.Genus.ToString(), variety.Genus));
-          payload.FieldValues.Add(new FieldValuePayload(Varieties.Url.ToString(), variety.Url ?? string.Empty));
-          payload.FieldValues.Add(new FieldValuePayload(Varieties.Notes.ToString(), variety.Notes ?? string.Empty));
-          content = await _contentService.CreateAsync(payload, cancellationToken);
-          _logger.LogInformation("The variety content 'Id={ContentId}' was created.", content.Id);
-        }
+          UniqueName = variety.UniqueName,
+          DisplayName = variety.DisplayName,
+          Description = variety.Description
+        };
+        locale.FieldValues.Add(Varieties.Genus, variety.Genus);
+        locale.FieldValues.Add(Varieties.Url, variety.Url);
+        locale.FieldValues.Add(Varieties.Notes, variety.Notes);
+        content = await _contentService.SaveLocaleAsync(variety.Id, locale, task.Language, cancellationToken)
+          ?? throw new InvalidOperationException($"The variety content 'Id={variety.Id}' was not found.");
+        _logger.LogInformation("The variety content 'Id={ContentId}' was updated.", content.Id);
+      }
+      else
+      {
+        CreateContentPayload payload = new()
+        {
+          Id = variety.Id,
+          ContentType = Varieties.ContentTypeId.ToString(),
+          Language = task.Language,
+          UniqueName = variety.UniqueName,
+          DisplayName = variety.DisplayName,
+          Description = variety.Description
+        };
+        payload.FieldValues.Add(Varieties.Species, species);
+        payload.FieldValues.Add(Varieties.IsDefault, variety.IsDefault);
+        payload.FieldValues.Add(Varieties.CanChangeForm, variety.CanChangeForm);
+        payload.FieldValues.Add(Varieties.GenderRatio, genderRatio);
+        payload.FieldValues.Add(Varieties.Genus, variety.Genus);
+        payload.FieldValues.Add(Varieties.Url, variety.Url);
+        payload.FieldValues.Add(Varieties.Notes, variety.Notes);
+        content = await _contentService.CreateAsync(payload, cancellationToken);
+        _logger.LogInformation("The variety content 'Id={ContentId}' was created.", content.Id);
       }
     }
   }

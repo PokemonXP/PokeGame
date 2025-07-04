@@ -190,15 +190,6 @@
     }
   },
   {
-    "Id": "dbd83c4a-b488-48c9-bb8a-b6d606cb418b",
-    "UniqueName": "StatisticChanges",
-    "DisplayName": "Statistic Changes",
-    "Description": null,
-    "String": {
-      "MaximumLength": 80
-    }
-  },
-  {
     "Id": "14a8dcc2-cfc8-436d-a186-d3a8ace8d866",
     "UniqueName": "VolatileConditions",
     "DisplayName": "Volatile Conditions",
@@ -207,10 +198,25 @@
       "IsMultiple": true,
       "Options": [
         {
+          "Text": "Confusion",
+          "Value": "confusion"
+        },
+        {
           "Text": "Flinch",
           "Value": "flinch"
         }
       ]
+    }
+  },
+  {
+    "Id": "dbd83c4a-b488-48c9-bb8a-b6d606cb418b",
+    "UniqueName": "StatisticChange",
+    "DisplayName": "Statistic Change",
+    "Description": null,
+    "Number": {
+      "MinimumValue": -6,
+      "MaximumValue": 6,
+      "Step": 1.0
     }
   },
   {
@@ -352,6 +358,81 @@
     "Description": null,
     "String": {
       "MaximumLength": 16
+    }
+  },
+  {
+    "Id": "d8e8b56a-76dd-43bf-92b9-370e8539b3b7",
+    "UniqueName": "PokemonVariety",
+    "DisplayName": "Pokémon Variety",
+    "Description": null,
+    "RelatedContent": {
+      "IsMultiple": false,
+      "ContentTypeId": "31ae9c83-d4a1-44cf-9007-c614c68cc1d3"
+    }
+  },
+  {
+    "Id": "dc4ba92d-59f4-4dcd-b477-65bf52ad0170",
+    "UniqueName": "PokemonHeight",
+    "DisplayName": "Pokémon Height",
+    "Description": null,
+    "Number": {
+      "MinimumValue": 0,
+      "MaximumValue": 145,
+      "Step": 1.0
+    }
+  },
+  {
+    "Id": "c359fb25-a627-43b8-9f2e-3a33d515add7",
+    "UniqueName": "PokemonWeight",
+    "DisplayName": "Pokémon Weight",
+    "Description": null,
+    "Number": {
+      "MinimumValue": 0,
+      "MaximumValue": 9999,
+      "Step": 1.0
+    }
+  },
+  {
+    "Id": "ae4c0ef1-32ca-4ea6-82c5-53b061968789",
+    "UniqueName": "PokemonAbility",
+    "DisplayName": "Pokémon Ability",
+    "Description": null,
+    "RelatedContent": {
+      "IsMultiple": false,
+      "ContentTypeId": "748ded48-8f53-4e17-8524-e098a468daf4"
+    }
+  },
+  {
+    "Id": "bf9cca6a-414c-4824-a4be-c8d9c49e2509",
+    "UniqueName": "StatisticBase",
+    "DisplayName": "Statistic Base",
+    "Description": null,
+    "Number": {
+      "MinimumValue": 0,
+      "MaximumValue": 255,
+      "Step": 1.0
+    }
+  },
+  {
+    "Id": "adbf31c0-2200-4601-95ef-2d867c8a1b85",
+    "UniqueName": "ExperienceYield",
+    "DisplayName": "Experience Yield",
+    "Description": null,
+    "Number": {
+      "MinimumValue": 0,
+      "MaximumValue": 635,
+      "Step": 1.0
+    }
+  },
+  {
+    "Id": "726c411b-d9f6-4e96-a7c2-9057e062e052",
+    "UniqueName": "StatisticYield",
+    "DisplayName": "Statistic Yield",
+    "Description": null,
+    "Number": {
+      "MinimumValue": 0,
+      "MaximumValue": 3,
+      "Step": 1.0
     }
   }
 ]

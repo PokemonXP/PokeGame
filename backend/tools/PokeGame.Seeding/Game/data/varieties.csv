@@ -1,0 +1,6 @@
+﻿id,species,is_default,unique_name,display_name,description,can_change_form,gender_ratio,genus,url,notes
+6c23dda6-3522-400e-b5d5-1eeb77686f8f,rowlet,TRUE,rowlet,Rowlet,,FALSE,7,Grass Quill,https://bulbapedia.bulbagarden.net/wiki/Rowlet_(Pok%C3%A9mon),
+eedec63a-f1cb-403a-a201-dfead3183995,tepig,TRUE,tepig,Tepig,,FALSE,7,Fire Pig,https://bulbapedia.bulbagarden.net/wiki/Tepig_(Pok%C3%A9mon),
+ba2bc72d-f4e3-4aa9-92e4-32ef7799c96f,mudkip,TRUE,mudkip,Mudkip,,FALSE,7,Mud Fish,https://bulbapedia.bulbagarden.net/wiki/Mudkip_(Pok%C3%A9mon),
+c447e11a-0141-4856-93d8-3599cb90079e,pichu,TRUE,pichu,Pichu,,FALSE,4,Tiny Mouse,https://bulbapedia.bulbagarden.net/wiki/Wurmple_(Pok%C3%A9mon),
+cea4f058-e3f6-4e13-9080-75f73c74b44e,wurmple,TRUE,wurmple,Wurmple,,FALSE,4,Worm,https://bulbapedia.bulbagarden.net/wiki/Pichu_(Pok%C3%A9mon),

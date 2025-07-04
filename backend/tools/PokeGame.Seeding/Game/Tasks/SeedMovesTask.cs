@@ -38,103 +38,110 @@ internal class SeedMovesTaskHandler : INotificationHandler<SeedMovesTask>
 
   public async Task Handle(SeedMovesTask task, CancellationToken cancellationToken)
   {
-    string json = await File.ReadAllTextAsync("Game/data/moves.json", Encoding.UTF8, cancellationToken);
-    IEnumerable<MovePayload>? moves = SeedingSerializer.Deserialize<IEnumerable<MovePayload>>(json);
-    if (moves is not null)
+    IReadOnlyCollection<MovePayload> moves = await CsvHelper.ExtractAsync<MovePayload>("Game/data/moves.csv", cancellationToken);
+
+    SearchContentLocalesPayload search = new()
     {
-      SearchContentLocalesPayload search = new()
+      ContentTypeId = Moves.ContentTypeId
+    };
+    SearchResults<ContentLocale> results = await _contentService.SearchLocalesAsync(search, cancellationToken);
+    HashSet<Guid> existingIds = results.Items.Select(locale => locale.Content.Id).ToHashSet();
+
+    MoveValidator validator = new(_applicationContext.UniqueNameSettings);
+    foreach (MovePayload move in moves)
+    {
+      ValidationResult result = validator.Validate(move);
+      if (!result.IsValid)
       {
-        ContentTypeId = Moves.ContentTypeId
-      };
-      SearchResults<ContentLocale> results = await _contentService.SearchLocalesAsync(search, cancellationToken);
-      HashSet<Guid> existingIds = results.Items.Select(locale => locale.Content.Id).ToHashSet();
+        string errors = SeedingSerializer.Serialize(result.Errors);
+        _logger.LogError("The move '{Move}' was not seeded because there are validation errors.|Errors: {Errors}", move, errors);
+        continue;
+      }
 
-      MoveValidator validator = new(_applicationContext.UniqueNameSettings);
-      foreach (MovePayload move in moves)
+      string type = SeedingSerializer.Serialize<PokemonType[]>([move.Type]).ToLowerInvariant();
+      string category = SeedingSerializer.Serialize<MoveCategory[]>([move.Category]).ToLowerInvariant();
+      string inflictedCondition = move.InflictedStatus is null ? string.Empty : SeedingSerializer.Serialize<StatusCondition[]>([move.InflictedStatus.Condition]).ToLowerInvariant();
+      string statusChance = move.InflictedStatus is null ? string.Empty : move.InflictedStatus.Chance.ToString();
+      string volatileConditions = SerializeVolatileConditions(move.VolatileConditions);
+
+      Content content;
+      if (existingIds.Contains(move.Id))
       {
-        ValidationResult result = validator.Validate(move);
-        if (!result.IsValid)
+        SaveContentLocalePayload invariant = new()
         {
-          string errors = SeedingSerializer.Serialize(result.Errors);
-          _logger.LogError("The move '{Move}' was not seeded because there are validation errors.|Errors: {Errors}", move, errors);
-          continue;
-        }
+          UniqueName = move.UniqueName,
+          DisplayName = move.DisplayName,
+          Description = move.Description
+        };
+        invariant.FieldValues.Add(Moves.Type, type);
+        invariant.FieldValues.Add(Moves.Category, category);
+        invariant.FieldValues.Add(Moves.Accuracy, move.Accuracy);
+        invariant.FieldValues.Add(Moves.Power, move.Power);
+        invariant.FieldValues.Add(Moves.PowerPoints, move.PowerPoints);
+        invariant.FieldValues.Add(Moves.InflictedCondition, inflictedCondition);
+        invariant.FieldValues.Add(Moves.StatusChance, statusChance);
+        invariant.FieldValues.Add(Moves.VolatileConditions, volatileConditions);
+        AddStatisticChangeFieldValues(invariant.FieldValues, move.StatisticChanges);
+        _ = await _contentService.SaveLocaleAsync(move.Id, invariant, language: null, cancellationToken);
 
-        string type = SeedingSerializer.Serialize<PokemonType[]>([move.Type]).ToLowerInvariant();
-        string category = SeedingSerializer.Serialize<MoveCategory[]>([move.Category]).ToLowerInvariant();
-        string inflictedCondition = move.InflictedStatus is null ? string.Empty : SeedingSerializer.Serialize<StatusCondition[]>([move.InflictedStatus.Condition]).ToLowerInvariant();
-        string statusChance = move.InflictedStatus is null ? string.Empty : move.InflictedStatus.Chance.ToString();
-        string statisticChanges = FormatStatisticChanges(move.StatisticChanges);
-        string volatileConditions = move.VolatileConditions.Count < 1 ? string.Empty : SeedingSerializer.Serialize(move.VolatileConditions.Distinct()).ToLowerInvariant();
-
-        Content content;
-        if (existingIds.Contains(move.Id))
+        SaveContentLocalePayload locale = new()
         {
-          SaveContentLocalePayload invariant = new()
-          {
-            UniqueName = move.UniqueName,
-            DisplayName = move.DisplayName,
-            Description = move.Description
-          };
-          invariant.FieldValues.Add(new FieldValuePayload(Moves.Type.ToString(), type));
-          invariant.FieldValues.Add(new FieldValuePayload(Moves.Category.ToString(), category));
-          invariant.FieldValues.Add(new FieldValuePayload(Moves.Accuracy.ToString(), move.Accuracy?.ToString() ?? string.Empty));
-          invariant.FieldValues.Add(new FieldValuePayload(Moves.Power.ToString(), move.Power?.ToString() ?? string.Empty));
-          invariant.FieldValues.Add(new FieldValuePayload(Moves.PowerPoints.ToString(), move.PowerPoints.ToString()));
-          invariant.FieldValues.Add(new FieldValuePayload(Moves.InflictedCondition.ToString(), inflictedCondition));
-          invariant.FieldValues.Add(new FieldValuePayload(Moves.StatusChance.ToString(), statusChance));
-          invariant.FieldValues.Add(new FieldValuePayload(Moves.StatisticChanges.ToString(), statisticChanges));
-          invariant.FieldValues.Add(new FieldValuePayload(Moves.VolatileConditions.ToString(), volatileConditions));
-          _ = await _contentService.SaveLocaleAsync(move.Id, invariant, language: null, cancellationToken);
-
-          SaveContentLocalePayload locale = new()
-          {
-            UniqueName = move.UniqueName,
-            DisplayName = move.DisplayName,
-            Description = move.Description
-          };
-          locale.FieldValues.Add(new FieldValuePayload(Moves.Url.ToString(), move.Url ?? string.Empty));
-          locale.FieldValues.Add(new FieldValuePayload(Moves.Notes.ToString(), move.Notes ?? string.Empty));
-          content = await _contentService.SaveLocaleAsync(move.Id, locale, task.Language, cancellationToken)
-            ?? throw new InvalidOperationException($"The move content 'Id={move.Id}' was not found.");
-          _logger.LogInformation("The move content 'Id={ContentId}' was updated.", content.Id);
-        }
-        else
+          UniqueName = move.UniqueName,
+          DisplayName = move.DisplayName,
+          Description = move.Description
+        };
+        locale.FieldValues.Add(Moves.Url, move.Url);
+        locale.FieldValues.Add(Moves.Notes, move.Notes);
+        content = await _contentService.SaveLocaleAsync(move.Id, locale, task.Language, cancellationToken)
+          ?? throw new InvalidOperationException($"The move content 'Id={move.Id}' was not found.");
+        _logger.LogInformation("The move content 'Id={ContentId}' was updated.", content.Id);
+      }
+      else
+      {
+        CreateContentPayload payload = new()
         {
-          CreateContentPayload payload = new()
-          {
-            Id = move.Id,
-            ContentType = Moves.ContentTypeId.ToString(),
-            Language = task.Language,
-            UniqueName = move.UniqueName,
-            DisplayName = move.DisplayName,
-            Description = move.Description
-          };
-          payload.FieldValues.Add(new FieldValuePayload(Moves.Type.ToString(), type));
-          payload.FieldValues.Add(new FieldValuePayload(Moves.Category.ToString(), category));
-          payload.FieldValues.Add(new FieldValuePayload(Moves.Accuracy.ToString(), move.Accuracy?.ToString() ?? string.Empty));
-          payload.FieldValues.Add(new FieldValuePayload(Moves.Power.ToString(), move.Power?.ToString() ?? string.Empty));
-          payload.FieldValues.Add(new FieldValuePayload(Moves.PowerPoints.ToString(), move.PowerPoints.ToString()));
-          payload.FieldValues.Add(new FieldValuePayload(Moves.InflictedCondition.ToString(), inflictedCondition));
-          payload.FieldValues.Add(new FieldValuePayload(Moves.StatusChance.ToString(), statusChance));
-          payload.FieldValues.Add(new FieldValuePayload(Moves.StatisticChanges.ToString(), statisticChanges));
-          payload.FieldValues.Add(new FieldValuePayload(Moves.VolatileConditions.ToString(), volatileConditions));
-          payload.FieldValues.Add(new FieldValuePayload(Moves.Url.ToString(), move.Url ?? string.Empty));
-          payload.FieldValues.Add(new FieldValuePayload(Moves.Notes.ToString(), move.Notes ?? string.Empty));
-          content = await _contentService.CreateAsync(payload, cancellationToken);
-          _logger.LogInformation("The move content 'Id={ContentId}' was created.", content.Id);
-        }
+          Id = move.Id,
+          ContentType = Moves.ContentTypeId.ToString(),
+          Language = task.Language,
+          UniqueName = move.UniqueName,
+          DisplayName = move.DisplayName,
+          Description = move.Description
+        };
+        payload.FieldValues.Add(Moves.Type, type);
+        payload.FieldValues.Add(Moves.Category, category);
+        payload.FieldValues.Add(Moves.Accuracy, move.Accuracy);
+        payload.FieldValues.Add(Moves.Power, move.Power);
+        payload.FieldValues.Add(Moves.PowerPoints, move.PowerPoints);
+        payload.FieldValues.Add(Moves.InflictedCondition, inflictedCondition);
+        payload.FieldValues.Add(Moves.StatusChance, statusChance);
+        payload.FieldValues.Add(Moves.VolatileConditions, volatileConditions);
+        AddStatisticChangeFieldValues(payload.FieldValues, move.StatisticChanges);
+        payload.FieldValues.Add(Moves.Url, move.Url);
+        payload.FieldValues.Add(Moves.Notes, move.Notes);
+        content = await _contentService.CreateAsync(payload, cancellationToken);
+        _logger.LogInformation("The move content 'Id={ContentId}' was created.", content.Id);
       }
     }
   }
 
-  private static string FormatStatisticChanges(IEnumerable<StatisticChangePayload> payloads)
+  private static void AddStatisticChangeFieldValues(List<FieldValuePayload> fieldValues, StatisticChangesPayload changes)
   {
-    Dictionary<PokemonStatistic, int> changes = new(capacity: payloads.Count());
-    foreach (StatisticChangePayload payload in payloads)
+    fieldValues.Add(Moves.AttackChange, changes.Attack);
+    fieldValues.Add(Moves.DefenseChange, changes.Defense);
+    fieldValues.Add(Moves.SpecialAttackChange, changes.SpecialAttack);
+    fieldValues.Add(Moves.SpecialDefenseChange, changes.SpecialDefense);
+    fieldValues.Add(Moves.SpeedChange, changes.Speed);
+    fieldValues.Add(Moves.AccuracyChange, changes.Accuracy);
+    fieldValues.Add(Moves.EvasionChange, changes.Evasion);
+  }
+
+  private static string SerializeVolatileConditions(string? volatileConditions)
+  {
+    if (string.IsNullOrWhiteSpace(volatileConditions))
     {
-      changes[payload.Statistic] = payload.Stages;
+      return string.Empty;
     }
-    return string.Join('|', changes.Select(change => string.Concat(change.Key, change.Value > 0 ? '+' : string.Empty, change.Value)));
+
+    return SeedingSerializer.Serialize(volatileConditions.Split('|').Distinct().Select(Enum.Parse<VolatileCondition>)).ToLowerInvariant();
   }
 }

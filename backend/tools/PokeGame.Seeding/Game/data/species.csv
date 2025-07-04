@@ -1,0 +1,6 @@
+﻿id,number,category,unique_name,display_name,base_friendship,catch_rate,growth_rate,regional_numbers,url,notes
+b04f4a30-753d-4239-bd32-c3a0682c4787,722,Standard,rowlet,Rowlet,70,45,MediumSlow,queros:1,https://bulbapedia.bulbagarden.net/wiki/Rowlet_(Pok%C3%A9mon),
+a01a7c5b-67f7-4b05-9c76-593a6974e8ce,498,Standard,tepig,Tepig,70,45,MediumSlow,queros:4,https://bulbapedia.bulbagarden.net/wiki/Tepig_(Pok%C3%A9mon),
+dfb348bb-c11f-4701-b837-865decfb3b20,258,Standard,mudkip,Mudkip,70,45,MediumSlow,queros:7,https://bulbapedia.bulbagarden.net/wiki/Mudkip_(Pok%C3%A9mon),
+4a1a8f47-3f35-4342-bd0d-8768030ba3ed,172,Baby,pichu,Pichu,70,190,MediumFast,queros:24,https://bulbapedia.bulbagarden.net/wiki/Pichu_(Pok%C3%A9mon),
+cfc81d3e-d005-4ef2-b8bf-d4bdc3b0d6f0,265,Standard,wurmple,Wurmple,70,255,MediumFast,queros:10,https://bulbapedia.bulbagarden.net/wiki/Wurmple_(Pok%C3%A9mon),

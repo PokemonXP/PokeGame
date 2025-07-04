@@ -16,6 +16,37 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Game\data\abilities.csv" />
+    <None Remove="Game\data\forms.csv" />
+    <None Remove="Game\data\moves.csv" />
+    <None Remove="Game\data\regions.csv" />
+    <None Remove="Game\data\species.csv" />
+    <None Remove="Game\data\varieties.csv" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Game\data\abilities.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Game\data\forms.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Game\data\moves.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Game\data\regions.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Game\data\species.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Game\data\varieties.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CsvHelper" Version="33.1.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.6" />
   </ItemGroup>
 
