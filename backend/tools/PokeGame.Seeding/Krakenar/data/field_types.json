@@ -467,5 +467,27 @@
       "MaximumValue": 100,
       "Step": 1.0
     }
+  },
+  {
+    "Id": "51e48482-abf2-4ea2-93c8-e3077aa504ee",
+    "UniqueName": "CatchMultiplier",
+    "DisplayName": "Catch Multiplier",
+    "Description": null,
+    "Number": {
+      "MinimumValue": 0,
+      "MaximumValue": 255,
+      "Step": 0.1
+    }
+  },
+  {
+    "Id": "21b9644b-4489-4423-bf6f-03858a18afb9",
+    "UniqueName": "FriendshipMultiplier",
+    "DisplayName": "Friendship Multiplier",
+    "Description": null,
+    "Number": {
+      "MinimumValue": 1,
+      "MaximumValue": 2,
+      "Step": 1.0
+    }
   }
 ]
