@@ -23,9 +23,21 @@ internal class MoveValidator : AbstractValidator<MovePayload>
     RuleFor(x => x.PowerPoints).InclusiveBetween(1, 40);
 
     When(x => x.InflictedStatus is not null, () => RuleFor(x => x.InflictedStatus!).SetValidator(new InflictedStatusValidator()));
-    RuleForEach(x => x.StatisticChanges).SetValidator(new StatisticChangeValidator());
-    RuleForEach(x => x.VolatileConditions).IsInEnum();
+    RuleFor(x => x.VolatileConditions).Must(BeValidVolatileConditions)
+      .WithErrorCode("VolatileConditionsValidator")
+      .WithMessage("'{PropertyName}' must be a list of valid volatile conditions separated by pipes (|).");
+    RuleFor(x => x.StatisticChanges).SetValidator(new StatisticChangesValidator());
 
     When(x => !string.IsNullOrWhiteSpace(x.Url), () => RuleFor(x => x.Url!).Url());
+  }
+
+  private static bool BeValidVolatileConditions(string? volatileConditions)
+  {
+    if (string.IsNullOrWhiteSpace(volatileConditions))
+    {
+      return true;
+    }
+
+    return volatileConditions.Split('|').All(value => Enum.TryParse(value, out VolatileCondition volatileCondition) && Enum.IsDefined(volatileCondition));
   }
 }

@@ -36,67 +36,64 @@ internal class SeedRegionsTaskHandler : INotificationHandler<SeedRegionsTask>
 
   public async Task Handle(SeedRegionsTask task, CancellationToken cancellationToken)
   {
-    string json = await File.ReadAllTextAsync("Game/data/regions.json", Encoding.UTF8, cancellationToken);
-    IEnumerable<RegionPayload>? regions = SeedingSerializer.Deserialize<IEnumerable<RegionPayload>>(json);
-    if (regions is not null)
+    IReadOnlyCollection<RegionPayload> regions = await CsvHelper.ExtractAsync<RegionPayload>("Game/data/regions.csv", cancellationToken);
+
+    SearchContentLocalesPayload search = new()
     {
-      SearchContentLocalesPayload search = new()
+      ContentTypeId = Regions.ContentTypeId
+    };
+    SearchResults<ContentLocale> results = await _contentService.SearchLocalesAsync(search, cancellationToken);
+    HashSet<Guid> existingIds = results.Items.Select(locale => locale.Content.Id).ToHashSet();
+
+    RegionValidator validator = new(_applicationContext.UniqueNameSettings);
+    foreach (RegionPayload region in regions)
+    {
+      ValidationResult result = validator.Validate(region);
+      if (!result.IsValid)
       {
-        ContentTypeId = Regions.ContentTypeId
-      };
-      SearchResults<ContentLocale> results = await _contentService.SearchLocalesAsync(search, cancellationToken);
-      HashSet<Guid> existingIds = results.Items.Select(locale => locale.Content.Id).ToHashSet();
+        string errors = SeedingSerializer.Serialize(result.Errors);
+        _logger.LogError("The region '{Region}' was not seeded because there are validation errors.|Errors: {Errors}", region, errors);
+        continue;
+      }
 
-      RegionValidator validator = new(_applicationContext.UniqueNameSettings);
-      foreach (RegionPayload region in regions)
+      Content content;
+      if (existingIds.Contains(region.Id))
       {
-        ValidationResult result = validator.Validate(region);
-        if (!result.IsValid)
+        SaveContentLocalePayload invariant = new()
         {
-          string errors = SeedingSerializer.Serialize(result.Errors);
-          _logger.LogError("The region '{Region}' was not seeded because there are validation errors.|Errors: {Errors}", region, errors);
-          continue;
-        }
+          UniqueName = region.UniqueName,
+          DisplayName = region.DisplayName,
+          Description = region.Description
+        };
+        _ = await _contentService.SaveLocaleAsync(region.Id, invariant, language: null, cancellationToken);
 
-        Content content;
-        if (existingIds.Contains(region.Id))
+        SaveContentLocalePayload locale = new()
         {
-          SaveContentLocalePayload invariant = new()
-          {
-            UniqueName = region.UniqueName,
-            DisplayName = region.DisplayName,
-            Description = region.Description
-          };
-          _ = await _contentService.SaveLocaleAsync(region.Id, invariant, language: null, cancellationToken);
-
-          SaveContentLocalePayload locale = new()
-          {
-            UniqueName = region.UniqueName,
-            DisplayName = region.DisplayName,
-            Description = region.Description
-          };
-          locale.FieldValues.Add(new FieldValuePayload(Regions.Url.ToString(), region.Url ?? string.Empty));
-          locale.FieldValues.Add(new FieldValuePayload(Regions.Notes.ToString(), region.Notes ?? string.Empty));
-          content = await _contentService.SaveLocaleAsync(region.Id, locale, task.Language, cancellationToken)
-            ?? throw new InvalidOperationException($"The region content 'Id={region.Id}' was not found.");
-          _logger.LogInformation("The region content 'Id={ContentId}' was updated.", content.Id);
-        }
-        else
+          UniqueName = region.UniqueName,
+          DisplayName = region.DisplayName,
+          Description = region.Description
+        };
+        locale.FieldValues.Add(new FieldValuePayload(Regions.Url.ToString(), region.Url ?? string.Empty));
+        locale.FieldValues.Add(new FieldValuePayload(Regions.Notes.ToString(), region.Notes ?? string.Empty));
+        content = await _contentService.SaveLocaleAsync(region.Id, locale, task.Language, cancellationToken)
+          ?? throw new InvalidOperationException($"The region content 'Id={region.Id}' was not found.");
+        _logger.LogInformation("The region content 'Id={ContentId}' was updated.", content.Id);
+      }
+      else
+      {
+        CreateContentPayload payload = new()
         {
-          CreateContentPayload payload = new()
-          {
-            Id = region.Id,
-            ContentType = Regions.ContentTypeId.ToString(),
-            Language = task.Language,
-            UniqueName = region.UniqueName,
-            DisplayName = region.DisplayName,
-            Description = region.Description
-          };
-          payload.FieldValues.Add(new FieldValuePayload(Regions.Url.ToString(), region.Url ?? string.Empty));
-          payload.FieldValues.Add(new FieldValuePayload(Regions.Notes.ToString(), region.Notes ?? string.Empty));
-          content = await _contentService.CreateAsync(payload, cancellationToken);
-          _logger.LogInformation("The region content 'Id={ContentId}' was created.", content.Id);
-        }
+          Id = region.Id,
+          ContentType = Regions.ContentTypeId.ToString(),
+          Language = task.Language,
+          UniqueName = region.UniqueName,
+          DisplayName = region.DisplayName,
+          Description = region.Description
+        };
+        payload.FieldValues.Add(new FieldValuePayload(Regions.Url.ToString(), region.Url ?? string.Empty));
+        payload.FieldValues.Add(new FieldValuePayload(Regions.Notes.ToString(), region.Notes ?? string.Empty));
+        content = await _contentService.CreateAsync(payload, cancellationToken);
+        _logger.LogInformation("The region content 'Id={ContentId}' was created.", content.Id);
       }
     }
   }

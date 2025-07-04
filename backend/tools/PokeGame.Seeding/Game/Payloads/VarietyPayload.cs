@@ -1,4 +1,6 @@
-﻿namespace PokeGame.Seeding.Game.Payloads;
+﻿using CsvHelper.Configuration;
+
+namespace PokeGame.Seeding.Game.Payloads;
 
 internal class VarietyPayload
 {
@@ -10,6 +12,7 @@ internal class VarietyPayload
 
   public string Species { get; set; } = string.Empty;
   public bool IsDefault { get; set; }
+
   public bool CanChangeForm { get; set; }
   public int? GenderRatio { get; set; }
 
@@ -20,4 +23,26 @@ internal class VarietyPayload
   public override bool Equals(object? obj) => obj is VarietyPayload variety && variety.Id == Id;
   public override int GetHashCode() => Id.GetHashCode();
   public override string ToString() => $"{DisplayName ?? UniqueName} | {GetType()} (Id={Id})";
+
+  public class Map : ClassMap<VarietyPayload>
+  {
+    public Map()
+    {
+      Map(x => x.Id).Index(0);
+
+      Map(x => x.UniqueName).Index(3);
+      Map(x => x.DisplayName).Index(4);
+      Map(x => x.Description).Index(5);
+
+      Map(x => x.Species).Index(1);
+      Map(x => x.IsDefault).Index(2);
+
+      Map(x => x.CanChangeForm).Index(6);
+      Map(x => x.GenderRatio).Index(7);
+
+      Map(x => x.Genus).Index(8);
+      Map(x => x.Url).Index(9);
+      Map(x => x.Notes).Index(10);
+    }
+  }
 }

@@ -1,4 +1,6 @@
-﻿namespace PokeGame.Seeding.Game.Payloads;
+﻿using CsvHelper.Configuration;
+
+namespace PokeGame.Seeding.Game.Payloads;
 
 internal class RegionPayload
 {
@@ -14,4 +16,19 @@ internal class RegionPayload
   public override bool Equals(object? obj) => obj is RegionPayload region && region.Id == Id;
   public override int GetHashCode() => Id.GetHashCode();
   public override string ToString() => $"{DisplayName ?? UniqueName} | {GetType()} (Id={Id})";
+
+  public class Map : ClassMap<RegionPayload>
+  {
+    public Map()
+    {
+      Map(x => x.Id).Index(0);
+
+      Map(x => x.UniqueName).Index(1);
+      Map(x => x.DisplayName).Index(2);
+      Map(x => x.Description).Index(3);
+
+      Map(x => x.Url).Index(4);
+      Map(x => x.Notes).Index(5);
+    }
+  }
 }

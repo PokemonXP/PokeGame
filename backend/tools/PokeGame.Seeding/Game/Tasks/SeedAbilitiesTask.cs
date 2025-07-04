@@ -36,67 +36,64 @@ internal class SeedAbilitiesTaskHandler : INotificationHandler<SeedAbilitiesTask
 
   public async Task Handle(SeedAbilitiesTask task, CancellationToken cancellationToken)
   {
-    string json = await File.ReadAllTextAsync("Game/data/abilities.json", Encoding.UTF8, cancellationToken);
-    IEnumerable<AbilityPayload>? abilities = SeedingSerializer.Deserialize<IEnumerable<AbilityPayload>>(json);
-    if (abilities is not null)
+    IReadOnlyCollection<AbilityPayload> abilities = await CsvHelper.ExtractAsync<AbilityPayload>("Game/data/abilities.csv", cancellationToken);
+
+    SearchContentLocalesPayload search = new()
     {
-      SearchContentLocalesPayload search = new()
+      ContentTypeId = Abilities.ContentTypeId
+    };
+    SearchResults<ContentLocale> results = await _contentService.SearchLocalesAsync(search, cancellationToken);
+    HashSet<Guid> existingIds = results.Items.Select(locale => locale.Content.Id).ToHashSet();
+
+    AbilityValidator validator = new(_applicationContext.UniqueNameSettings);
+    foreach (AbilityPayload ability in abilities)
+    {
+      ValidationResult result = validator.Validate(ability);
+      if (!result.IsValid)
       {
-        ContentTypeId = Abilities.ContentTypeId
-      };
-      SearchResults<ContentLocale> results = await _contentService.SearchLocalesAsync(search, cancellationToken);
-      HashSet<Guid> existingIds = results.Items.Select(locale => locale.Content.Id).ToHashSet();
+        string errors = SeedingSerializer.Serialize(result.Errors);
+        _logger.LogError("The ability '{Ability}' was not seeded because there are validation errors.|Errors: {Errors}", ability, errors);
+        continue;
+      }
 
-      AbilityValidator validator = new(_applicationContext.UniqueNameSettings);
-      foreach (AbilityPayload ability in abilities)
+      Content content;
+      if (existingIds.Contains(ability.Id))
       {
-        ValidationResult result = validator.Validate(ability);
-        if (!result.IsValid)
+        SaveContentLocalePayload invariant = new()
         {
-          string errors = SeedingSerializer.Serialize(result.Errors);
-          _logger.LogError("The ability '{Ability}' was not seeded because there are validation errors.|Errors: {Errors}", ability, errors);
-          continue;
-        }
+          UniqueName = ability.UniqueName,
+          DisplayName = ability.DisplayName,
+          Description = ability.Description
+        };
+        _ = await _contentService.SaveLocaleAsync(ability.Id, invariant, language: null, cancellationToken);
 
-        Content content;
-        if (existingIds.Contains(ability.Id))
+        SaveContentLocalePayload locale = new()
         {
-          SaveContentLocalePayload invariant = new()
-          {
-            UniqueName = ability.UniqueName,
-            DisplayName = ability.DisplayName,
-            Description = ability.Description
-          };
-          _ = await _contentService.SaveLocaleAsync(ability.Id, invariant, language: null, cancellationToken);
-
-          SaveContentLocalePayload locale = new()
-          {
-            UniqueName = ability.UniqueName,
-            DisplayName = ability.DisplayName,
-            Description = ability.Description
-          };
-          locale.FieldValues.Add(new FieldValuePayload(Abilities.Url.ToString(), ability.Url ?? string.Empty));
-          locale.FieldValues.Add(new FieldValuePayload(Abilities.Notes.ToString(), ability.Notes ?? string.Empty));
-          content = await _contentService.SaveLocaleAsync(ability.Id, locale, task.Language, cancellationToken)
-            ?? throw new InvalidOperationException($"The ability content 'Id={ability.Id}' was not found.");
-          _logger.LogInformation("The ability content 'Id={ContentId}' was updated.", content.Id);
-        }
-        else
+          UniqueName = ability.UniqueName,
+          DisplayName = ability.DisplayName,
+          Description = ability.Description
+        };
+        locale.FieldValues.Add(new FieldValuePayload(Abilities.Url.ToString(), ability.Url ?? string.Empty));
+        locale.FieldValues.Add(new FieldValuePayload(Abilities.Notes.ToString(), ability.Notes ?? string.Empty));
+        content = await _contentService.SaveLocaleAsync(ability.Id, locale, task.Language, cancellationToken)
+          ?? throw new InvalidOperationException($"The ability content 'Id={ability.Id}' was not found.");
+        _logger.LogInformation("The ability content 'Id={ContentId}' was updated.", content.Id);
+      }
+      else
+      {
+        CreateContentPayload payload = new()
         {
-          CreateContentPayload payload = new()
-          {
-            Id = ability.Id,
-            ContentType = Abilities.ContentTypeId.ToString(),
-            Language = task.Language,
-            UniqueName = ability.UniqueName,
-            DisplayName = ability.DisplayName,
-            Description = ability.Description
-          };
-          payload.FieldValues.Add(new FieldValuePayload(Abilities.Url.ToString(), ability.Url ?? string.Empty));
-          payload.FieldValues.Add(new FieldValuePayload(Abilities.Notes.ToString(), ability.Notes ?? string.Empty));
-          content = await _contentService.CreateAsync(payload, cancellationToken);
-          _logger.LogInformation("The ability content 'Id={ContentId}' was created.", content.Id);
-        }
+          Id = ability.Id,
+          ContentType = Abilities.ContentTypeId.ToString(),
+          Language = task.Language,
+          UniqueName = ability.UniqueName,
+          DisplayName = ability.DisplayName,
+          Description = ability.Description
+        };
+        payload.FieldValues.Add(new FieldValuePayload(Abilities.Url.ToString(), ability.Url ?? string.Empty));
+        payload.FieldValues.Add(new FieldValuePayload(Abilities.Notes.ToString(), ability.Notes ?? string.Empty));
+        content = await _contentService.CreateAsync(payload, cancellationToken);
+        _logger.LogInformation("The ability content 'Id={ContentId}' was created.", content.Id);
       }
     }
   }

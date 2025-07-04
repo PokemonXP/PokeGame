@@ -1,4 +1,5 @@
-﻿using PokeGame.Core;
+﻿using CsvHelper.Configuration;
+using PokeGame.Core;
 using PokeGame.Core.Moves;
 
 namespace PokeGame.Seeding.Game.Payloads;
@@ -19,8 +20,8 @@ internal class MovePayload
   public int PowerPoints { get; set; }
 
   public InflictedStatusPayload? InflictedStatus { get; set; }
-  public List<VolatileCondition> VolatileConditions { get; set; } = [];
-  public List<StatisticChangePayload> StatisticChanges { get; set; } = [];
+  public string? VolatileConditions { get; set; }
+  public StatisticChangesPayload StatisticChanges { get; set; } = new();
 
   public string? Url { get; set; }
   public string? Notes { get; set; }
@@ -28,4 +29,49 @@ internal class MovePayload
   public override bool Equals(object? obj) => obj is MovePayload move && move.Id == Id;
   public override int GetHashCode() => Id.GetHashCode();
   public override string ToString() => $"{DisplayName ?? UniqueName} | {GetType()} (Id={Id})";
+
+  public class Map : ClassMap<MovePayload>
+  {
+    public Map()
+    {
+      Map(x => x.Id).Index(0);
+
+      Map(x => x.UniqueName).Index(3);
+      Map(x => x.DisplayName).Index(4);
+      Map(x => x.Description).Index(5);
+
+      Map(x => x.Type).Index(1);
+      Map(x => x.Category).Index(2);
+
+      Map(x => x.Accuracy).Index(6);
+      Map(x => x.Power).Index(7);
+      Map(x => x.PowerPoints).Index(8);
+
+      Map(x => x.InflictedStatus).Convert(args =>
+      {
+        StatusCondition? condition = args.Row.GetField<StatusCondition?>(9);
+        int? chance = args.Row.GetField<int?>(10);
+        return condition.HasValue && chance.HasValue ? new InflictedStatusPayload(condition.Value, chance.Value) : null;
+      });
+      Map(x => x.VolatileConditions).Index(11);
+      References<StatisticChangesMap>(x => x.StatisticChanges);
+
+      Map(x => x.Url).Index(19);
+      Map(x => x.Notes).Index(20);
+    }
+  }
+
+  private class StatisticChangesMap : ClassMap<StatisticChangesPayload>
+  {
+    public StatisticChangesMap()
+    {
+      Map(x => x.Attack).Index(12).Default(0);
+      Map(x => x.Defense).Index(13).Default(0);
+      Map(x => x.SpecialAttack).Index(14).Default(0);
+      Map(x => x.SpecialDefense).Index(15).Default(0);
+      Map(x => x.Speed).Index(16).Default(0);
+      Map(x => x.Accuracy).Index(17).Default(0);
+      Map(x => x.Evasion).Index(18).Default(0);
+    }
+  }
 }
