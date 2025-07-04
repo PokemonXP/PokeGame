@@ -1,6 +1,5 @@
 ﻿using FluentValidation.Results;
 using Krakenar.Contracts.Contents;
-using Krakenar.Contracts.Fields;
 using Krakenar.Contracts.Search;
 using Krakenar.Core;
 using MediatR;
@@ -79,10 +78,10 @@ internal class SeedVarietiesTaskHandler : INotificationHandler<SeedVarietiesTask
           DisplayName = variety.DisplayName,
           Description = variety.Description
         };
-        invariant.FieldValues.Add(new FieldValuePayload(Varieties.Species.ToString(), species));
-        invariant.FieldValues.Add(new FieldValuePayload(Varieties.IsDefault.ToString(), variety.IsDefault.ToString()));
-        invariant.FieldValues.Add(new FieldValuePayload(Varieties.CanChangeForm.ToString(), variety.CanChangeForm.ToString()));
-        invariant.FieldValues.Add(new FieldValuePayload(Varieties.GenderRatio.ToString(), genderRatio));
+        invariant.FieldValues.Add(Varieties.Species, species);
+        invariant.FieldValues.Add(Varieties.IsDefault, variety.IsDefault);
+        invariant.FieldValues.Add(Varieties.CanChangeForm, variety.CanChangeForm);
+        invariant.FieldValues.Add(Varieties.GenderRatio, genderRatio);
         _ = await _contentService.SaveLocaleAsync(variety.Id, invariant, language: null, cancellationToken);
 
         SaveContentLocalePayload locale = new()
@@ -91,9 +90,9 @@ internal class SeedVarietiesTaskHandler : INotificationHandler<SeedVarietiesTask
           DisplayName = variety.DisplayName,
           Description = variety.Description
         };
-        locale.FieldValues.Add(new FieldValuePayload(Varieties.Genus.ToString(), variety.Genus));
-        locale.FieldValues.Add(new FieldValuePayload(Varieties.Url.ToString(), variety.Url ?? string.Empty));
-        locale.FieldValues.Add(new FieldValuePayload(Varieties.Notes.ToString(), variety.Notes ?? string.Empty));
+        locale.FieldValues.Add(Varieties.Genus, variety.Genus);
+        locale.FieldValues.Add(Varieties.Url, variety.Url);
+        locale.FieldValues.Add(Varieties.Notes, variety.Notes);
         content = await _contentService.SaveLocaleAsync(variety.Id, locale, task.Language, cancellationToken)
           ?? throw new InvalidOperationException($"The variety content 'Id={variety.Id}' was not found.");
         _logger.LogInformation("The variety content 'Id={ContentId}' was updated.", content.Id);
@@ -109,13 +108,13 @@ internal class SeedVarietiesTaskHandler : INotificationHandler<SeedVarietiesTask
           DisplayName = variety.DisplayName,
           Description = variety.Description
         };
-        payload.FieldValues.Add(new FieldValuePayload(Varieties.Species.ToString(), species));
-        payload.FieldValues.Add(new FieldValuePayload(Varieties.IsDefault.ToString(), variety.IsDefault.ToString()));
-        payload.FieldValues.Add(new FieldValuePayload(Varieties.CanChangeForm.ToString(), variety.CanChangeForm.ToString()));
-        payload.FieldValues.Add(new FieldValuePayload(Varieties.GenderRatio.ToString(), genderRatio));
-        payload.FieldValues.Add(new FieldValuePayload(Varieties.Genus.ToString(), variety.Genus));
-        payload.FieldValues.Add(new FieldValuePayload(Varieties.Url.ToString(), variety.Url ?? string.Empty));
-        payload.FieldValues.Add(new FieldValuePayload(Varieties.Notes.ToString(), variety.Notes ?? string.Empty));
+        payload.FieldValues.Add(Varieties.Species, species);
+        payload.FieldValues.Add(Varieties.IsDefault, variety.IsDefault);
+        payload.FieldValues.Add(Varieties.CanChangeForm, variety.CanChangeForm);
+        payload.FieldValues.Add(Varieties.GenderRatio, genderRatio);
+        payload.FieldValues.Add(Varieties.Genus, variety.Genus);
+        payload.FieldValues.Add(Varieties.Url, variety.Url);
+        payload.FieldValues.Add(Varieties.Notes, variety.Notes);
         content = await _contentService.CreateAsync(payload, cancellationToken);
         _logger.LogInformation("The variety content 'Id={ContentId}' was created.", content.Id);
       }

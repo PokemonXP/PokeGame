@@ -70,6 +70,7 @@ internal class SeedingWorker : BackgroundService
       await ExecuteAsync(new SeedMovesTask(defaults.Locale), cancellationToken);
       await ExecuteAsync(new SeedSpeciesTask(defaults.Locale), cancellationToken);
       await ExecuteAsync(new SeedVarietiesTask(defaults.Locale), cancellationToken);
+      await ExecuteAsync(new SeedFormsTask(defaults.Locale), cancellationToken);
     }
     catch (Exception exception)
     {

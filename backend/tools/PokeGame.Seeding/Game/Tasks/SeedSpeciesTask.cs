@@ -1,6 +1,5 @@
 ﻿using FluentValidation.Results;
 using Krakenar.Contracts.Contents;
-using Krakenar.Contracts.Fields;
 using Krakenar.Contracts.Search;
 using Krakenar.Core;
 using MediatR;
@@ -69,12 +68,12 @@ internal class SeedSpeciesTaskHandler : INotificationHandler<SeedSpeciesTask>
           UniqueName = species.UniqueName,
           DisplayName = species.DisplayName
         };
-        invariant.FieldValues.Add(new FieldValuePayload(Species.Number.ToString(), species.Number.ToString()));
-        invariant.FieldValues.Add(new FieldValuePayload(Species.Category.ToString(), category));
-        invariant.FieldValues.Add(new FieldValuePayload(Species.BaseFriendship.ToString(), species.BaseFriendship.ToString()));
-        invariant.FieldValues.Add(new FieldValuePayload(Species.CatchRate.ToString(), species.CatchRate.ToString()));
-        invariant.FieldValues.Add(new FieldValuePayload(Species.GrowthRate.ToString(), growthRate));
-        invariant.FieldValues.Add(new FieldValuePayload(Species.RegionalNumbers.ToString(), regionalNumbers));
+        invariant.FieldValues.Add(Species.Number, species.Number);
+        invariant.FieldValues.Add(Species.Category, category);
+        invariant.FieldValues.Add(Species.BaseFriendship, species.BaseFriendship);
+        invariant.FieldValues.Add(Species.CatchRate, species.CatchRate);
+        invariant.FieldValues.Add(Species.GrowthRate, growthRate);
+        invariant.FieldValues.Add(Species.RegionalNumbers, regionalNumbers);
         _ = await _contentService.SaveLocaleAsync(species.Id, invariant, language: null, cancellationToken);
 
         SaveContentLocalePayload locale = new()
@@ -82,8 +81,8 @@ internal class SeedSpeciesTaskHandler : INotificationHandler<SeedSpeciesTask>
           UniqueName = species.UniqueName,
           DisplayName = species.DisplayName
         };
-        locale.FieldValues.Add(new FieldValuePayload(Species.Url.ToString(), species.Url ?? string.Empty));
-        locale.FieldValues.Add(new FieldValuePayload(Species.Notes.ToString(), species.Notes ?? string.Empty));
+        locale.FieldValues.Add(Species.Url, species.Url);
+        locale.FieldValues.Add(Species.Notes, species.Notes);
         content = await _contentService.SaveLocaleAsync(species.Id, locale, task.Language, cancellationToken)
           ?? throw new InvalidOperationException($"The species content 'Id={species.Id}' was not found.");
         _logger.LogInformation("The species content 'Id={ContentId}' was updated.", content.Id);
@@ -98,14 +97,14 @@ internal class SeedSpeciesTaskHandler : INotificationHandler<SeedSpeciesTask>
           UniqueName = species.UniqueName,
           DisplayName = species.DisplayName
         };
-        payload.FieldValues.Add(new FieldValuePayload(Species.Number.ToString(), species.Number.ToString()));
-        payload.FieldValues.Add(new FieldValuePayload(Species.Category.ToString(), category));
-        payload.FieldValues.Add(new FieldValuePayload(Species.BaseFriendship.ToString(), species.BaseFriendship.ToString()));
-        payload.FieldValues.Add(new FieldValuePayload(Species.CatchRate.ToString(), species.CatchRate.ToString()));
-        payload.FieldValues.Add(new FieldValuePayload(Species.GrowthRate.ToString(), growthRate));
-        payload.FieldValues.Add(new FieldValuePayload(Species.RegionalNumbers.ToString(), regionalNumbers));
-        payload.FieldValues.Add(new FieldValuePayload(Species.Url.ToString(), species.Url ?? string.Empty));
-        payload.FieldValues.Add(new FieldValuePayload(Species.Notes.ToString(), species.Notes ?? string.Empty));
+        payload.FieldValues.Add(Species.Number, species.Number);
+        payload.FieldValues.Add(Species.Category, category);
+        payload.FieldValues.Add(Species.BaseFriendship, species.BaseFriendship);
+        payload.FieldValues.Add(Species.CatchRate, species.CatchRate);
+        payload.FieldValues.Add(Species.GrowthRate, growthRate);
+        payload.FieldValues.Add(Species.RegionalNumbers, regionalNumbers);
+        payload.FieldValues.Add(Species.Url, species.Url);
+        payload.FieldValues.Add(Species.Notes, species.Notes);
         content = await _contentService.CreateAsync(payload, cancellationToken);
         _logger.LogInformation("The species content 'Id={ContentId}' was created.", content.Id);
       }

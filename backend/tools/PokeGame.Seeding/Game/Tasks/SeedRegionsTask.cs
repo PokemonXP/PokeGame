@@ -1,6 +1,5 @@
 ﻿using FluentValidation.Results;
 using Krakenar.Contracts.Contents;
-using Krakenar.Contracts.Fields;
 using Krakenar.Contracts.Search;
 using Krakenar.Core;
 using MediatR;
@@ -73,8 +72,8 @@ internal class SeedRegionsTaskHandler : INotificationHandler<SeedRegionsTask>
           DisplayName = region.DisplayName,
           Description = region.Description
         };
-        locale.FieldValues.Add(new FieldValuePayload(Regions.Url.ToString(), region.Url ?? string.Empty));
-        locale.FieldValues.Add(new FieldValuePayload(Regions.Notes.ToString(), region.Notes ?? string.Empty));
+        locale.FieldValues.Add(Regions.Url, region.Url);
+        locale.FieldValues.Add(Regions.Notes, region.Notes);
         content = await _contentService.SaveLocaleAsync(region.Id, locale, task.Language, cancellationToken)
           ?? throw new InvalidOperationException($"The region content 'Id={region.Id}' was not found.");
         _logger.LogInformation("The region content 'Id={ContentId}' was updated.", content.Id);
@@ -90,8 +89,8 @@ internal class SeedRegionsTaskHandler : INotificationHandler<SeedRegionsTask>
           DisplayName = region.DisplayName,
           Description = region.Description
         };
-        payload.FieldValues.Add(new FieldValuePayload(Regions.Url.ToString(), region.Url ?? string.Empty));
-        payload.FieldValues.Add(new FieldValuePayload(Regions.Notes.ToString(), region.Notes ?? string.Empty));
+        payload.FieldValues.Add(Regions.Url, region.Url);
+        payload.FieldValues.Add(Regions.Notes, region.Notes);
         content = await _contentService.CreateAsync(payload, cancellationToken);
         _logger.LogInformation("The region content 'Id={ContentId}' was created.", content.Id);
       }

@@ -1,6 +1,5 @@
 ﻿using FluentValidation.Results;
 using Krakenar.Contracts.Contents;
-using Krakenar.Contracts.Fields;
 using Krakenar.Contracts.Search;
 using Krakenar.Core;
 using MediatR;
@@ -73,8 +72,8 @@ internal class SeedAbilitiesTaskHandler : INotificationHandler<SeedAbilitiesTask
           DisplayName = ability.DisplayName,
           Description = ability.Description
         };
-        locale.FieldValues.Add(new FieldValuePayload(Abilities.Url.ToString(), ability.Url ?? string.Empty));
-        locale.FieldValues.Add(new FieldValuePayload(Abilities.Notes.ToString(), ability.Notes ?? string.Empty));
+        locale.FieldValues.Add(Abilities.Url, ability.Url);
+        locale.FieldValues.Add(Abilities.Notes, ability.Notes);
         content = await _contentService.SaveLocaleAsync(ability.Id, locale, task.Language, cancellationToken)
           ?? throw new InvalidOperationException($"The ability content 'Id={ability.Id}' was not found.");
         _logger.LogInformation("The ability content 'Id={ContentId}' was updated.", content.Id);
@@ -90,8 +89,8 @@ internal class SeedAbilitiesTaskHandler : INotificationHandler<SeedAbilitiesTask
           DisplayName = ability.DisplayName,
           Description = ability.Description
         };
-        payload.FieldValues.Add(new FieldValuePayload(Abilities.Url.ToString(), ability.Url ?? string.Empty));
-        payload.FieldValues.Add(new FieldValuePayload(Abilities.Notes.ToString(), ability.Notes ?? string.Empty));
+        payload.FieldValues.Add(Abilities.Url, ability.Url);
+        payload.FieldValues.Add(Abilities.Notes, ability.Notes);
         content = await _contentService.CreateAsync(payload, cancellationToken);
         _logger.LogInformation("The ability content 'Id={ContentId}' was created.", content.Id);
       }

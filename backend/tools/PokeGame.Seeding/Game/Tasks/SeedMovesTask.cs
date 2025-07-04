@@ -73,15 +73,15 @@ internal class SeedMovesTaskHandler : INotificationHandler<SeedMovesTask>
           DisplayName = move.DisplayName,
           Description = move.Description
         };
-        invariant.FieldValues.Add(new FieldValuePayload(Moves.Type.ToString(), type));
-        invariant.FieldValues.Add(new FieldValuePayload(Moves.Category.ToString(), category));
-        invariant.FieldValues.Add(new FieldValuePayload(Moves.Accuracy.ToString(), move.Accuracy?.ToString() ?? string.Empty));
-        invariant.FieldValues.Add(new FieldValuePayload(Moves.Power.ToString(), move.Power?.ToString() ?? string.Empty));
-        invariant.FieldValues.Add(new FieldValuePayload(Moves.PowerPoints.ToString(), move.PowerPoints.ToString()));
-        invariant.FieldValues.Add(new FieldValuePayload(Moves.InflictedCondition.ToString(), inflictedCondition));
-        invariant.FieldValues.Add(new FieldValuePayload(Moves.StatusChance.ToString(), statusChance));
-        invariant.FieldValues.Add(new FieldValuePayload(Moves.VolatileConditions.ToString(), volatileConditions));
-        invariant.FieldValues.AddRange(GetStatisticChanges(move.StatisticChanges));
+        invariant.FieldValues.Add(Moves.Type, type);
+        invariant.FieldValues.Add(Moves.Category, category);
+        invariant.FieldValues.Add(Moves.Accuracy, move.Accuracy);
+        invariant.FieldValues.Add(Moves.Power, move.Power);
+        invariant.FieldValues.Add(Moves.PowerPoints, move.PowerPoints);
+        invariant.FieldValues.Add(Moves.InflictedCondition, inflictedCondition);
+        invariant.FieldValues.Add(Moves.StatusChance, statusChance);
+        invariant.FieldValues.Add(Moves.VolatileConditions, volatileConditions);
+        AddStatisticChangeFieldValues(invariant.FieldValues, move.StatisticChanges);
         _ = await _contentService.SaveLocaleAsync(move.Id, invariant, language: null, cancellationToken);
 
         SaveContentLocalePayload locale = new()
@@ -90,8 +90,8 @@ internal class SeedMovesTaskHandler : INotificationHandler<SeedMovesTask>
           DisplayName = move.DisplayName,
           Description = move.Description
         };
-        locale.FieldValues.Add(new FieldValuePayload(Moves.Url.ToString(), move.Url ?? string.Empty));
-        locale.FieldValues.Add(new FieldValuePayload(Moves.Notes.ToString(), move.Notes ?? string.Empty));
+        locale.FieldValues.Add(Moves.Url, move.Url);
+        locale.FieldValues.Add(Moves.Notes, move.Notes);
         content = await _contentService.SaveLocaleAsync(move.Id, locale, task.Language, cancellationToken)
           ?? throw new InvalidOperationException($"The move content 'Id={move.Id}' was not found.");
         _logger.LogInformation("The move content 'Id={ContentId}' was updated.", content.Id);
@@ -107,33 +107,33 @@ internal class SeedMovesTaskHandler : INotificationHandler<SeedMovesTask>
           DisplayName = move.DisplayName,
           Description = move.Description
         };
-        payload.FieldValues.Add(new FieldValuePayload(Moves.Type.ToString(), type));
-        payload.FieldValues.Add(new FieldValuePayload(Moves.Category.ToString(), category));
-        payload.FieldValues.Add(new FieldValuePayload(Moves.Accuracy.ToString(), move.Accuracy?.ToString() ?? string.Empty));
-        payload.FieldValues.Add(new FieldValuePayload(Moves.Power.ToString(), move.Power?.ToString() ?? string.Empty));
-        payload.FieldValues.Add(new FieldValuePayload(Moves.PowerPoints.ToString(), move.PowerPoints.ToString()));
-        payload.FieldValues.Add(new FieldValuePayload(Moves.InflictedCondition.ToString(), inflictedCondition));
-        payload.FieldValues.Add(new FieldValuePayload(Moves.StatusChance.ToString(), statusChance));
-        payload.FieldValues.Add(new FieldValuePayload(Moves.VolatileConditions.ToString(), volatileConditions));
-        payload.FieldValues.AddRange(GetStatisticChanges(move.StatisticChanges));
-        payload.FieldValues.Add(new FieldValuePayload(Moves.Url.ToString(), move.Url ?? string.Empty));
-        payload.FieldValues.Add(new FieldValuePayload(Moves.Notes.ToString(), move.Notes ?? string.Empty));
+        payload.FieldValues.Add(Moves.Type, type);
+        payload.FieldValues.Add(Moves.Category, category);
+        payload.FieldValues.Add(Moves.Accuracy, move.Accuracy);
+        payload.FieldValues.Add(Moves.Power, move.Power);
+        payload.FieldValues.Add(Moves.PowerPoints, move.PowerPoints);
+        payload.FieldValues.Add(Moves.InflictedCondition, inflictedCondition);
+        payload.FieldValues.Add(Moves.StatusChance, statusChance);
+        payload.FieldValues.Add(Moves.VolatileConditions, volatileConditions);
+        AddStatisticChangeFieldValues(payload.FieldValues, move.StatisticChanges);
+        payload.FieldValues.Add(Moves.Url, move.Url);
+        payload.FieldValues.Add(Moves.Notes, move.Notes);
         content = await _contentService.CreateAsync(payload, cancellationToken);
         _logger.LogInformation("The move content 'Id={ContentId}' was created.", content.Id);
       }
     }
   }
 
-  private static IReadOnlyCollection<FieldValuePayload> GetStatisticChanges(StatisticChangesPayload changes) => new FieldValuePayload[]
+  private static void AddStatisticChangeFieldValues(List<FieldValuePayload> fieldValues, StatisticChangesPayload changes)
   {
-    new(Moves.AttackChange.ToString(), changes.Attack.ToString()),
-    new(Moves.DefenseChange.ToString(), changes.Defense.ToString()),
-    new(Moves.SpecialAttackChange.ToString(), changes.SpecialAttack.ToString()),
-    new(Moves.SpecialDefenseChange.ToString(), changes.SpecialDefense.ToString()),
-    new(Moves.SpeedChange.ToString(), changes.Speed.ToString()),
-    new(Moves.AccuracyChange.ToString(), changes.Accuracy.ToString()),
-    new(Moves.EvasionChange.ToString(), changes.Evasion.ToString())
-  };
+    fieldValues.Add(Moves.AttackChange, changes.Attack);
+    fieldValues.Add(Moves.DefenseChange, changes.Defense);
+    fieldValues.Add(Moves.SpecialAttackChange, changes.SpecialAttack);
+    fieldValues.Add(Moves.SpecialDefenseChange, changes.SpecialDefense);
+    fieldValues.Add(Moves.SpeedChange, changes.Speed);
+    fieldValues.Add(Moves.AccuracyChange, changes.Accuracy);
+    fieldValues.Add(Moves.EvasionChange, changes.Evasion);
+  }
 
   private static string SerializeVolatileConditions(string? volatileConditions)
   {
