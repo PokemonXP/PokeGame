@@ -489,5 +489,15 @@
       "MaximumValue": 2,
       "Step": 1.0
     }
+  },
+  {
+    "Id": "495dbb3f-29be-4a46-afb6-9e26ba2ca701",
+    "UniqueName": "PokemonMove",
+    "DisplayName": "Pokémon Move",
+    "Description": null,
+    "RelatedContent": {
+      "IsMultiple": false,
+      "ContentTypeId": "ee1f0b92-6970-4d27-aa8f-b2e779608ecc"
+    }
   }
 ]

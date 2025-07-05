@@ -1114,5 +1114,74 @@
         "Placeholder": null
       }
     ]
+  },
+  {
+    "Id": "7ea2356b-a0b5-45e3-a814-5fc71d5241dd",
+    "IsInvariant": false,
+    "UniqueName": "TechnicalMachine",
+    "DisplayName": "Technical Machine",
+    "Description": null,
+    "Fields": [
+      {
+        "Id": "eea54636-73eb-4bc7-b0b8-3003054b3895",
+        "FieldType": "ItemPrice",
+        "IsInvariant": true,
+        "IsRequired": false,
+        "IsIndexed": false,
+        "IsUnique": false,
+        "UniqueName": "Price",
+        "DisplayName": null,
+        "Description": null,
+        "Placeholder": null
+      },
+      {
+        "Id": "babaad95-3247-4fd5-a911-e6d23be679f4",
+        "FieldType": "PokemonMove",
+        "IsInvariant": true,
+        "IsRequired": true,
+        "IsIndexed": false,
+        "IsUnique": false,
+        "UniqueName": "Move",
+        "DisplayName": null,
+        "Description": null,
+        "Placeholder": null
+      },
+      {
+        "Id": "ca228d77-2dc1-4db5-b515-f3ab276503e2",
+        "FieldType": "Url",
+        "IsInvariant": true,
+        "IsRequired": false,
+        "IsIndexed": false,
+        "IsUnique": false,
+        "UniqueName": "Sprite",
+        "DisplayName": null,
+        "Description": null,
+        "Placeholder": null
+      },
+      {
+        "Id": "5830efe1-cb72-4b8c-a95b-d09f509da06f",
+        "FieldType": "Url",
+        "IsInvariant": false,
+        "IsRequired": false,
+        "IsIndexed": false,
+        "IsUnique": false,
+        "UniqueName": "Url",
+        "DisplayName": "URL",
+        "Description": null,
+        "Placeholder": null
+      },
+      {
+        "Id": "8905252d-9f40-43d7-9117-58792fbac8e5",
+        "FieldType": "Notes",
+        "IsInvariant": false,
+        "IsRequired": false,
+        "IsIndexed": false,
+        "IsUnique": false,
+        "UniqueName": "Notes",
+        "DisplayName": null,
+        "Description": null,
+        "Placeholder": null
+      }
+    ]
   }
 ]

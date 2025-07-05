@@ -35,7 +35,7 @@ internal class SeedPokeBallsTaskHandler : INotificationHandler<SeedPokeBallsTask
 
   public async Task Handle(SeedPokeBallsTask task, CancellationToken cancellationToken)
   {
-    IReadOnlyCollection<PokeBallPayload> pokeballs = await CsvHelper.ExtractAsync<PokeBallPayload>("Game/data/items/poke_balls.csv", cancellationToken);
+    IReadOnlyCollection<PokeBallPayload> pokeBalls = await CsvHelper.ExtractAsync<PokeBallPayload>("Game/data/items/poke_balls.csv", cancellationToken);
 
     SearchContentLocalesPayload search = new()
     {
@@ -45,66 +45,66 @@ internal class SeedPokeBallsTaskHandler : INotificationHandler<SeedPokeBallsTask
     HashSet<Guid> existingIds = results.Items.Select(locale => locale.Content.Id).ToHashSet();
 
     PokeBallValidator validator = new(_applicationContext.UniqueNameSettings);
-    foreach (PokeBallPayload pokeball in pokeballs)
+    foreach (PokeBallPayload pokeBall in pokeBalls)
     {
-      ValidationResult result = validator.Validate(pokeball);
+      ValidationResult result = validator.Validate(pokeBall);
       if (!result.IsValid)
       {
         string errors = SeedingSerializer.Serialize(result.Errors);
-        _logger.LogError("The pokeball '{PokeBall}' was not seeded because there are validation errors.|Errors: {Errors}", pokeball, errors);
+        _logger.LogError("The Poké Ball '{PokeBall}' was not seeded because there are validation errors.|Errors: {Errors}", pokeBall, errors);
         continue;
       }
 
       Content content;
-      if (existingIds.Contains(pokeball.Id))
+      if (existingIds.Contains(pokeBall.Id))
       {
         SaveContentLocalePayload invariant = new()
         {
-          UniqueName = pokeball.UniqueName,
-          DisplayName = pokeball.DisplayName,
-          Description = pokeball.Description
+          UniqueName = pokeBall.UniqueName,
+          DisplayName = pokeBall.DisplayName,
+          Description = pokeBall.Description
         };
-        invariant.FieldValues.Add(PokeBalls.Price, pokeball.Price);
-        invariant.FieldValues.Add(PokeBalls.CatchMultiplier, pokeball.CatchMultiplier);
-        invariant.FieldValues.Add(PokeBalls.Heal, pokeball.Heal);
-        invariant.FieldValues.Add(PokeBalls.BaseFriendship, pokeball.BaseFriendship);
-        invariant.FieldValues.Add(PokeBalls.FriendshipMultiplier, pokeball.FriendshipMultiplier);
-        invariant.FieldValues.Add(PokeBalls.Sprite, pokeball.Sprite);
-        _ = await _contentService.SaveLocaleAsync(pokeball.Id, invariant, language: null, cancellationToken);
+        invariant.FieldValues.Add(PokeBalls.Price, pokeBall.Price);
+        invariant.FieldValues.Add(PokeBalls.CatchMultiplier, pokeBall.CatchMultiplier);
+        invariant.FieldValues.Add(PokeBalls.Heal, pokeBall.Heal);
+        invariant.FieldValues.Add(PokeBalls.BaseFriendship, pokeBall.BaseFriendship);
+        invariant.FieldValues.Add(PokeBalls.FriendshipMultiplier, pokeBall.FriendshipMultiplier);
+        invariant.FieldValues.Add(PokeBalls.Sprite, pokeBall.Sprite);
+        _ = await _contentService.SaveLocaleAsync(pokeBall.Id, invariant, language: null, cancellationToken);
 
         SaveContentLocalePayload locale = new()
         {
-          UniqueName = pokeball.UniqueName,
-          DisplayName = pokeball.DisplayName,
-          Description = pokeball.Description
+          UniqueName = pokeBall.UniqueName,
+          DisplayName = pokeBall.DisplayName,
+          Description = pokeBall.Description
         };
-        locale.FieldValues.Add(PokeBalls.Url, pokeball.Url);
-        locale.FieldValues.Add(PokeBalls.Notes, pokeball.Notes);
-        content = await _contentService.SaveLocaleAsync(pokeball.Id, locale, task.Language, cancellationToken)
-          ?? throw new InvalidOperationException($"The pokeball content 'Id={pokeball.Id}' was not found.");
-        _logger.LogInformation("The pokeball content 'Id={ContentId}' was updated.", content.Id);
+        locale.FieldValues.Add(PokeBalls.Url, pokeBall.Url);
+        locale.FieldValues.Add(PokeBalls.Notes, pokeBall.Notes);
+        content = await _contentService.SaveLocaleAsync(pokeBall.Id, locale, task.Language, cancellationToken)
+          ?? throw new InvalidOperationException($"The Poké Ball content 'Id={pokeBall.Id}' was not found.");
+        _logger.LogInformation("The Poké Ball content 'Id={ContentId}' was updated.", content.Id);
       }
       else
       {
         CreateContentPayload payload = new()
         {
-          Id = pokeball.Id,
+          Id = pokeBall.Id,
           ContentType = PokeBalls.ContentTypeId.ToString(),
           Language = task.Language,
-          UniqueName = pokeball.UniqueName,
-          DisplayName = pokeball.DisplayName,
-          Description = pokeball.Description
+          UniqueName = pokeBall.UniqueName,
+          DisplayName = pokeBall.DisplayName,
+          Description = pokeBall.Description
         };
-        payload.FieldValues.Add(PokeBalls.Price, pokeball.Price);
-        payload.FieldValues.Add(PokeBalls.CatchMultiplier, pokeball.CatchMultiplier);
-        payload.FieldValues.Add(PokeBalls.Heal, pokeball.Heal);
-        payload.FieldValues.Add(PokeBalls.BaseFriendship, pokeball.BaseFriendship);
-        payload.FieldValues.Add(PokeBalls.FriendshipMultiplier, pokeball.FriendshipMultiplier);
-        payload.FieldValues.Add(PokeBalls.Sprite, pokeball.Sprite);
-        payload.FieldValues.Add(PokeBalls.Url, pokeball.Url);
-        payload.FieldValues.Add(PokeBalls.Notes, pokeball.Notes);
+        payload.FieldValues.Add(PokeBalls.Price, pokeBall.Price);
+        payload.FieldValues.Add(PokeBalls.CatchMultiplier, pokeBall.CatchMultiplier);
+        payload.FieldValues.Add(PokeBalls.Heal, pokeBall.Heal);
+        payload.FieldValues.Add(PokeBalls.BaseFriendship, pokeBall.BaseFriendship);
+        payload.FieldValues.Add(PokeBalls.FriendshipMultiplier, pokeBall.FriendshipMultiplier);
+        payload.FieldValues.Add(PokeBalls.Sprite, pokeBall.Sprite);
+        payload.FieldValues.Add(PokeBalls.Url, pokeBall.Url);
+        payload.FieldValues.Add(PokeBalls.Notes, pokeBall.Notes);
         content = await _contentService.CreateAsync(payload, cancellationToken);
-        _logger.LogInformation("The pokeball content 'Id={ContentId}' was created.", content.Id);
+        _logger.LogInformation("The Poké Ball content 'Id={ContentId}' was created.", content.Id);
       }
     }
   }
