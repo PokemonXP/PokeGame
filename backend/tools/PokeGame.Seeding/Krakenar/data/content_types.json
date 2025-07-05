@@ -253,6 +253,18 @@
         "Placeholder": null
       },
       {
+        "Id": "1f98fe7d-a968-4605-8edf-03bfb523ffd6",
+        "FieldType": "CriticalChange",
+        "IsInvariant": true,
+        "IsRequired": false,
+        "IsIndexed": false,
+        "IsUnique": false,
+        "UniqueName": "CriticalChange",
+        "DisplayName": "Critical Change",
+        "Description": null,
+        "Placeholder": null
+      },
+      {
         "Id": "db5c1377-ff36-42c8-958a-47fc1ab383d9",
         "FieldType": "Url",
         "IsInvariant": false,

@@ -21,7 +21,9 @@ internal class MovePayload
 
   public InflictedStatusPayload? InflictedStatus { get; set; }
   public string? VolatileConditions { get; set; }
+
   public StatisticChangesPayload StatisticChanges { get; set; } = new();
+  public int CriticalChange { get; set; }
 
   public string? Url { get; set; }
   public string? Notes { get; set; }
@@ -54,10 +56,12 @@ internal class MovePayload
         return condition.HasValue ? new InflictedStatusPayload(condition.Value, chance ?? 0) : null;
       });
       Map(x => x.VolatileConditions).Index(11);
-      References<StatisticChangesMap>(x => x.StatisticChanges);
 
-      Map(x => x.Url).Index(19);
-      Map(x => x.Notes).Index(20);
+      References<StatisticChangesMap>(x => x.StatisticChanges);
+      Map(x => x.CriticalChange).Index(19).Default(0);
+
+      Map(x => x.Url).Index(20);
+      Map(x => x.Notes).Index(21);
     }
   }
 

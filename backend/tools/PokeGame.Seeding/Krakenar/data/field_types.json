@@ -220,6 +220,17 @@
     }
   },
   {
+    "Id": "02b12f8e-e0cb-4d1e-bf75-ab35207d83cc",
+    "UniqueName": "CriticalChange",
+    "DisplayName": "Critical Change",
+    "Description": null,
+    "Number": {
+      "MinimumValue": 0,
+      "MaximumValue": 4,
+      "Step": 1.0
+    }
+  },
+  {
     "Id": "3a5fe365-2f29-4fbd-9c1f-3e017c50756f",
     "UniqueName": "PokemonNumber",
     "DisplayName": "Pokémon Number",
