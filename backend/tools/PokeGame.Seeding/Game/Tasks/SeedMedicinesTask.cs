@@ -37,7 +37,7 @@ internal class SeedMedicinesTaskHandler : INotificationHandler<SeedMedicinesTask
 
   public async Task Handle(SeedMedicinesTask task, CancellationToken cancellationToken)
   {
-    IReadOnlyCollection<MedicinePayload> medicines = await CsvHelper.ExtractAsync<MedicinePayload>("Game/data/items/medicine.csv", cancellationToken);
+    IReadOnlyCollection<MedicinePayload> medicines = await CsvHelper.ExtractAsync<MedicinePayload>("Game/data/items/medicines.csv", cancellationToken);
 
     SearchContentLocalesPayload search = new()
     {
