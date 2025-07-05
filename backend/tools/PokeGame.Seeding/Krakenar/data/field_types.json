@@ -442,7 +442,7 @@
     "Description": null,
     "Number": {
       "MinimumValue": 0,
-      "MaximumValue": 99999,
+      "MaximumValue": 999999,
       "Step": 1.0
     }
   },
@@ -498,6 +498,33 @@
     "RelatedContent": {
       "IsMultiple": false,
       "ContentTypeId": "ee1f0b92-6970-4d27-aa8f-b2e779608ecc"
+    }
+  },
+  {
+    "Id": "e6d88b09-38ac-4192-9300-af6d43281203",
+    "UniqueName": "ItemCategory",
+    "DisplayName": "Item Category",
+    "Description": null,
+    "Select": {
+      "IsMultiple": false,
+      "Options": [
+        {
+          "Text": "TM Material",
+          "Value": "tm-material"
+        },
+        {
+          "Text": "Treasure",
+          "Value": "treasure"
+        },
+        {
+          "Text": "Picnic Item",
+          "Value": "picnic"
+        },
+        {
+          "Text": "Key Item",
+          "Value": "key"
+        }
+      ]
     }
   }
 ]

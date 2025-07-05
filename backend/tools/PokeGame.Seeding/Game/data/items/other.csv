@@ -1,0 +1,5 @@
+﻿id,unique_name,display_name,description,price,category,sprite,url,notes
+a5f211a3-8d75-4225-9900-b4c57dcbc0e3,nugget,Nugget,A nugget of the purest gold that gives off a lustrous gleam in direct light. It can be sold at a high price to shops.,10000,Treasure,https://pokegame.blob.core.windows.net/items/nugget.png,https://bulbapedia.bulbagarden.net/wiki/Nugget,
+54fc12fc-2e77-4509-8807-4f5cbbf8a62a,tiny-mushroom,Tiny Mushroom,A small and rare mushroom. It's quite popular with a certain class of collectors.,500,Treasure,https://pokegame.blob.core.windows.net/items/tiny-mushroom.png,https://bulbapedia.bulbagarden.net/wiki/Tiny_Mushroom,
+35420dce-d135-4cdd-ac99-2afb41d7209d,old-rod,Old Rod,An old and beat-up fishing rod. Use it at bodies of water to fish for Pokémon.,,KeyItem,https://pokegame.blob.core.windows.net/items/old-rod.png,https://bulbapedia.bulbagarden.net/wiki/Old_Rod,
+1fe32143-520a-4361-acfd-9880060edaa7,ability-patch,Ability Patch,A patch that can be used to change the regular Ability of a Pokémon to a rarer Ability.,250000,,https://pokegame.blob.core.windows.net/items/ability-patch.png,https://bulbapedia.bulbagarden.net/wiki/Ability_Patch,

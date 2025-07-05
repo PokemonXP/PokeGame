@@ -1183,5 +1183,74 @@
         "Placeholder": null
       }
     ]
+  },
+  {
+    "Id": "f03d8207-3469-489c-8cef-ed2f55672048",
+    "IsInvariant": false,
+    "UniqueName": "Item",
+    "DisplayName": null,
+    "Description": null,
+    "Fields": [
+      {
+        "Id": "9181ea8f-fa32-4712-8bbb-8a978934f7ae",
+        "FieldType": "ItemPrice",
+        "IsInvariant": true,
+        "IsRequired": false,
+        "IsIndexed": false,
+        "IsUnique": false,
+        "UniqueName": "Price",
+        "DisplayName": null,
+        "Description": null,
+        "Placeholder": null
+      },
+      {
+        "Id": "09dfc12d-efee-451d-862f-567716666f3a",
+        "FieldType": "ItemCategory",
+        "IsInvariant": true,
+        "IsRequired": false,
+        "IsIndexed": false,
+        "IsUnique": false,
+        "UniqueName": "Category",
+        "DisplayName": null,
+        "Description": null,
+        "Placeholder": "Select an item category"
+      },
+      {
+        "Id": "83ea6abb-acbd-4fe4-b7f4-77563f65767f",
+        "FieldType": "Url",
+        "IsInvariant": true,
+        "IsRequired": false,
+        "IsIndexed": false,
+        "IsUnique": false,
+        "UniqueName": "Sprite",
+        "DisplayName": null,
+        "Description": null,
+        "Placeholder": null
+      },
+      {
+        "Id": "32e80c6f-01e3-4ee5-a8b2-05e4f7534ad1",
+        "FieldType": "Url",
+        "IsInvariant": false,
+        "IsRequired": false,
+        "IsIndexed": false,
+        "IsUnique": false,
+        "UniqueName": "Url",
+        "DisplayName": "URL",
+        "Description": null,
+        "Placeholder": null
+      },
+      {
+        "Id": "3aacfae0-6ecc-42d8-8d62-85ec08d01bd8",
+        "FieldType": "Notes",
+        "IsInvariant": false,
+        "IsRequired": false,
+        "IsIndexed": false,
+        "IsUnique": false,
+        "UniqueName": "Notes",
+        "DisplayName": null,
+        "Description": null,
+        "Placeholder": null
+      }
+    ]
   }
 ]
