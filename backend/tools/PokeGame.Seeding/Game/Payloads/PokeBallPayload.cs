@@ -12,7 +12,7 @@ internal class PokeBallPayload
 
   public int? Price { get; set; }
 
-  public int CatchMultiplier { get; set; }
+  public double CatchMultiplier { get; set; }
   public bool Heal { get; set; }
   public int? BaseFriendship { get; set; }
   public int? FriendshipMultiplier { get; set; }
@@ -39,7 +39,7 @@ internal class PokeBallPayload
       Map(x => x.Price).Index(4);
 
       Map(x => x.CatchMultiplier).Index(5);
-      Map(x => x.Heal).Index(6);
+      Map(x => x.Heal).Index(6).Default(false);
       Map(x => x.BaseFriendship).Index(7);
       Map(x => x.FriendshipMultiplier).Index(8);
 

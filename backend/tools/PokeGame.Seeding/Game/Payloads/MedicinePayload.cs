@@ -39,26 +39,26 @@ internal class MedicinePayload
       Map(x => x.Description).Index(3);
 
       Map(x => x.Price).Index(4);
-      Map(x => x.IsHerbal).Index(5);
+      Map(x => x.IsHerbal).Index(5).Default(false);
 
       Map(x => x.Healing).Convert(args =>
       {
         int? value = args.Row.GetField<int?>(6);
-        bool isPercentage = args.Row.GetField<bool>(7);
-        bool revive = args.Row.GetField<bool>(8);
+        bool isPercentage = args.Row.GetField<bool?>(7) ?? false;
+        bool revive = args.Row.GetField<bool?>(8) ?? false;
         return value.HasValue || isPercentage || revive ? new HealingPayload(value ?? 0, isPercentage, revive) : null;
       });
       Map(x => x.Status).Convert(args =>
       {
         StatusCondition? condition = args.Row.GetField<StatusCondition?>(9);
-        bool all = args.Row.GetField<bool>(10);
+        bool all = args.Row.GetField<bool?>(10) ?? false;
         return condition.HasValue || all ? new StatusHealingPayload(condition, all) : null;
       });
       Map(x => x.PowerPoints).Convert(args =>
       {
         int? value = args.Row.GetField<int?>(11);
-        bool isPercentage = args.Row.GetField<bool>(12);
-        bool allMoves = args.Row.GetField<bool>(13);
+        bool isPercentage = args.Row.GetField<bool?>(12) ?? false;
+        bool allMoves = args.Row.GetField<bool?>(13) ?? false;
         return value.HasValue || isPercentage || allMoves ? new PowerPointRestorePayload(value ?? 0, isPercentage, allMoves) : null;
       });
 

@@ -1,0 +1,26 @@
+﻿using FluentValidation;
+using Krakenar.Contracts.Settings;
+using Krakenar.Core;
+using PokeGame.Seeding.Game.Payloads;
+
+namespace PokeGame.Seeding.Game.Validators;
+
+internal class PokeBallValidator : AbstractValidator<PokeBallPayload>
+{
+  public PokeBallValidator(IUniqueNameSettings uniqueNameSettings)
+  {
+    RuleFor(x => x.UniqueName).UniqueName(uniqueNameSettings);
+    When(x => !string.IsNullOrWhiteSpace(x.DisplayName), () => RuleFor(x => x.DisplayName!).DisplayName());
+    When(x => !string.IsNullOrWhiteSpace(x.Description), () => RuleFor(x => x.Description!).Description());
+
+    RuleFor(x => x.Price).GreaterThan(0);
+
+    RuleFor(x => x.CatchMultiplier).GreaterThan(0);
+    RuleFor(x => x.BaseFriendship).GreaterThan(0);
+    RuleFor(x => x.FriendshipMultiplier).GreaterThan(0);
+
+    When(x => !string.IsNullOrWhiteSpace(x.Sprite), () => RuleFor(x => x.Sprite!).Url());
+
+    When(x => !string.IsNullOrWhiteSpace(x.Url), () => RuleFor(x => x.Url!).Url());
+  }
+}
