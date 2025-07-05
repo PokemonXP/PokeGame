@@ -15,6 +15,7 @@ internal static class CsvHelper
     using CsvReader csv = new(reader, culture);
 
     csv.Context.RegisterClassMap<AbilityPayload.Map>();
+    csv.Context.RegisterClassMap<BattleItemPayload.Map>();
     csv.Context.RegisterClassMap<FormPayload.Map>();
     csv.Context.RegisterClassMap<ItemPayload.Map>();
     csv.Context.RegisterClassMap<MedicinePayload.Map>();

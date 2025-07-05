@@ -1264,5 +1264,170 @@
         "Placeholder": null
       }
     ]
+  },
+  {
+    "Id": "e2712045-480f-40ed-81ee-f44d26def685",
+    "IsInvariant": false,
+    "UniqueName": "BattleItem",
+    "DisplayName": "Battle Item",
+    "Description": null,
+    "Fields": [
+      {
+        "Id": "d0ab748e-c863-4994-b145-cf6895ca9d89",
+        "FieldType": "ItemPrice",
+        "IsInvariant": true,
+        "IsRequired": false,
+        "IsIndexed": false,
+        "IsUnique": false,
+        "UniqueName": "Price",
+        "DisplayName": null,
+        "Description": null,
+        "Placeholder": null
+      },
+      {
+        "Id": "6ebbf956-e81a-45ad-96be-fa605fc8fd31",
+        "FieldType": "StatisticChange",
+        "IsInvariant": true,
+        "IsRequired": false,
+        "IsIndexed": false,
+        "IsUnique": false,
+        "UniqueName": "AttackChange",
+        "DisplayName": "Attack Change",
+        "Description": null,
+        "Placeholder": null
+      },
+      {
+        "Id": "cf202073-6aa6-4153-ade1-56aa24379131",
+        "FieldType": "StatisticChange",
+        "IsInvariant": true,
+        "IsRequired": false,
+        "IsIndexed": false,
+        "IsUnique": false,
+        "UniqueName": "DefenseChange",
+        "DisplayName": "Defense Change",
+        "Description": null,
+        "Placeholder": null
+      },
+      {
+        "Id": "d87f55dc-6bc8-439e-ba8c-f65baee3b7a0",
+        "FieldType": "StatisticChange",
+        "IsInvariant": true,
+        "IsRequired": false,
+        "IsIndexed": false,
+        "IsUnique": false,
+        "UniqueName": "SpecialAttackChange",
+        "DisplayName": "Sp. Attack Change",
+        "Description": null,
+        "Placeholder": null
+      },
+      {
+        "Id": "e80b74f8-686c-4db7-958b-4ec7c5ebdbcd",
+        "FieldType": "StatisticChange",
+        "IsInvariant": true,
+        "IsRequired": false,
+        "IsIndexed": false,
+        "IsUnique": false,
+        "UniqueName": "SpecialDefenseChange",
+        "DisplayName": "Sp. Defense Change",
+        "Description": null,
+        "Placeholder": null
+      },
+      {
+        "Id": "8307cbad-8c3f-47c6-897a-73e28cb296b7",
+        "FieldType": "StatisticChange",
+        "IsInvariant": true,
+        "IsRequired": false,
+        "IsIndexed": false,
+        "IsUnique": false,
+        "UniqueName": "SpeedChange",
+        "DisplayName": "Speed Change",
+        "Description": null,
+        "Placeholder": null
+      },
+      {
+        "Id": "0d65d9cb-51e6-4d1b-bc0c-29cccd742879",
+        "FieldType": "StatisticChange",
+        "IsInvariant": true,
+        "IsRequired": false,
+        "IsIndexed": false,
+        "IsUnique": false,
+        "UniqueName": "AccuracyChange",
+        "DisplayName": "Accuracy Change",
+        "Description": null,
+        "Placeholder": null
+      },
+      {
+        "Id": "a4843c0d-e1eb-4488-86c2-768650f28f2d",
+        "FieldType": "StatisticChange",
+        "IsInvariant": true,
+        "IsRequired": false,
+        "IsIndexed": false,
+        "IsUnique": false,
+        "UniqueName": "EvasionChange",
+        "DisplayName": "Evasion Change",
+        "Description": null,
+        "Placeholder": null
+      },
+      {
+        "Id": "e04e71c5-ac8b-4927-830d-9692125d77e8",
+        "FieldType": "CriticalChange",
+        "IsInvariant": true,
+        "IsRequired": false,
+        "IsIndexed": false,
+        "IsUnique": false,
+        "UniqueName": "CriticalChange",
+        "DisplayName": "Critical Change",
+        "Description": null,
+        "Placeholder": null
+      },
+      {
+        "Id": "c5dffec0-936d-44d5-9a01-4a9a6c13da2b",
+        "FieldType": "GuardTurns",
+        "IsInvariant": true,
+        "IsRequired": false,
+        "IsIndexed": false,
+        "IsUnique": false,
+        "UniqueName": "GuardTurns",
+        "DisplayName": "Guard Turns",
+        "Description": null,
+        "Placeholder": null
+      },
+      {
+        "Id": "faff8a64-9e50-402c-901d-039c05fcf90b",
+        "FieldType": "Url",
+        "IsInvariant": true,
+        "IsRequired": false,
+        "IsIndexed": false,
+        "IsUnique": false,
+        "UniqueName": "Sprite",
+        "DisplayName": null,
+        "Description": null,
+        "Placeholder": null
+      },
+      {
+        "Id": "3f239cdb-95d7-4fa6-aa21-c8364054462d",
+        "FieldType": "Url",
+        "IsInvariant": false,
+        "IsRequired": false,
+        "IsIndexed": false,
+        "IsUnique": false,
+        "UniqueName": "Url",
+        "DisplayName": "URL",
+        "Description": null,
+        "Placeholder": null
+      },
+      {
+        "Id": "1ef29ca2-342c-4364-af3b-15f9802c8670",
+        "FieldType": "Notes",
+        "IsInvariant": false,
+        "IsRequired": false,
+        "IsIndexed": false,
+        "IsUnique": false,
+        "UniqueName": "Notes",
+        "DisplayName": null,
+        "Description": null,
+        "Placeholder": null
+      }
+    ]
   }
 ]

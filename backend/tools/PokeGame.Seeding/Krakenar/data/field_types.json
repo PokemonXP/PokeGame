@@ -537,5 +537,16 @@
         }
       ]
     }
+  },
+  {
+    "Id": "d4c87429-b840-41e8-8e63-260269370c84",
+    "UniqueName": "GuardTurns",
+    "DisplayName": "Guard Turns",
+    "Description": null,
+    "Number": {
+      "MinimumValue": 0,
+      "MaximumValue": 10,
+      "Step": 1.0
+    }
   }
 ]
