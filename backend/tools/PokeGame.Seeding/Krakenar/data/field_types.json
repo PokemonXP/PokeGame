@@ -220,6 +220,17 @@
     }
   },
   {
+    "Id": "02b12f8e-e0cb-4d1e-bf75-ab35207d83cc",
+    "UniqueName": "CriticalChange",
+    "DisplayName": "Critical Change",
+    "Description": null,
+    "Number": {
+      "MinimumValue": 0,
+      "MaximumValue": 4,
+      "Step": 1.0
+    }
+  },
+  {
     "Id": "3a5fe365-2f29-4fbd-9c1f-3e017c50756f",
     "UniqueName": "PokemonNumber",
     "DisplayName": "Pokémon Number",
@@ -433,6 +444,144 @@
       "MinimumValue": 0,
       "MaximumValue": 3,
       "Step": 1.0
+    }
+  },
+  {
+    "Id": "a30bd4bd-b42e-41db-981a-06cbd71fa570",
+    "UniqueName": "ItemPrice",
+    "DisplayName": "Item Price",
+    "Description": null,
+    "Number": {
+      "MinimumValue": 0,
+      "MaximumValue": 999999,
+      "Step": 1.0
+    }
+  },
+  {
+    "Id": "94ad5cfa-6d22-4e17-9b8d-e4c84ddb11c2",
+    "UniqueName": "ItemHealing",
+    "DisplayName": "Item Healing",
+    "Description": null,
+    "Number": {
+      "MinimumValue": 0,
+      "MaximumValue": 999,
+      "Step": 1.0
+    }
+  },
+  {
+    "Id": "4cbc0d04-39f5-4edb-9dcc-18e1efe286cd",
+    "UniqueName": "PowerPointRestore",
+    "DisplayName": "PowerPointRestore",
+    "Description": null,
+    "Number": {
+      "MinimumValue": 0,
+      "MaximumValue": 100,
+      "Step": 1.0
+    }
+  },
+  {
+    "Id": "51e48482-abf2-4ea2-93c8-e3077aa504ee",
+    "UniqueName": "CatchMultiplier",
+    "DisplayName": "Catch Multiplier",
+    "Description": null,
+    "Number": {
+      "MinimumValue": 0,
+      "MaximumValue": 255,
+      "Step": 0.1
+    }
+  },
+  {
+    "Id": "21b9644b-4489-4423-bf6f-03858a18afb9",
+    "UniqueName": "FriendshipMultiplier",
+    "DisplayName": "Friendship Multiplier",
+    "Description": null,
+    "Number": {
+      "MinimumValue": 1,
+      "MaximumValue": 2,
+      "Step": 1.0
+    }
+  },
+  {
+    "Id": "495dbb3f-29be-4a46-afb6-9e26ba2ca701",
+    "UniqueName": "PokemonMove",
+    "DisplayName": "Pokémon Move",
+    "Description": null,
+    "RelatedContent": {
+      "IsMultiple": false,
+      "ContentTypeId": "ee1f0b92-6970-4d27-aa8f-b2e779608ecc"
+    }
+  },
+  {
+    "Id": "e6d88b09-38ac-4192-9300-af6d43281203",
+    "UniqueName": "ItemCategory",
+    "DisplayName": "Item Category",
+    "Description": null,
+    "Select": {
+      "IsMultiple": false,
+      "Options": [
+        {
+          "Text": "TM Material",
+          "Value": "tm-material"
+        },
+        {
+          "Text": "Treasure",
+          "Value": "treasure"
+        },
+        {
+          "Text": "Picnic Item",
+          "Value": "picnic"
+        },
+        {
+          "Text": "Key Item",
+          "Value": "key"
+        }
+      ]
+    }
+  },
+  {
+    "Id": "d4c87429-b840-41e8-8e63-260269370c84",
+    "UniqueName": "GuardTurns",
+    "DisplayName": "Guard Turns",
+    "Description": null,
+    "Number": {
+      "MinimumValue": 0,
+      "MaximumValue": 10,
+      "Step": 1.0
+    }
+  },
+  {
+    "Id": "0b78c3ac-0337-47ed-97a1-3a8efdcbca11",
+    "UniqueName": "PokemonStatistic",
+    "DisplayName": "Pokémon Statistic",
+    "Description": null,
+    "Select": {
+      "IsMultiple": false,
+      "Options": [
+        {
+          "Text": "HP",
+          "Value": "hp"
+        },
+        {
+          "Text": "Attack",
+          "Value": "attack"
+        },
+        {
+          "Text": "Defense",
+          "Value": "defense"
+        },
+        {
+          "Text": "Sp. Attack",
+          "Value": "special-attack"
+        },
+        {
+          "Text": "Sp. Defense",
+          "Value": "special-defense"
+        },
+        {
+          "Text": "Speed",
+          "Value": "speed"
+        }
+      ]
     }
   }
 ]

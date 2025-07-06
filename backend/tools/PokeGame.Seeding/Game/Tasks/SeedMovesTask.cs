@@ -82,6 +82,7 @@ internal class SeedMovesTaskHandler : INotificationHandler<SeedMovesTask>
         invariant.FieldValues.Add(Moves.StatusChance, statusChance);
         invariant.FieldValues.Add(Moves.VolatileConditions, volatileConditions);
         AddStatisticChangeFieldValues(invariant.FieldValues, move.StatisticChanges);
+        invariant.FieldValues.Add(Moves.CriticalChange, move.CriticalChange);
         _ = await _contentService.SaveLocaleAsync(move.Id, invariant, language: null, cancellationToken);
 
         SaveContentLocalePayload locale = new()
@@ -118,6 +119,7 @@ internal class SeedMovesTaskHandler : INotificationHandler<SeedMovesTask>
         AddStatisticChangeFieldValues(payload.FieldValues, move.StatisticChanges);
         payload.FieldValues.Add(Moves.Url, move.Url);
         payload.FieldValues.Add(Moves.Notes, move.Notes);
+        payload.FieldValues.Add(Moves.CriticalChange, move.CriticalChange);
         content = await _contentService.CreateAsync(payload, cancellationToken);
         _logger.LogInformation("The move content 'Id={ContentId}' was created.", content.Id);
       }

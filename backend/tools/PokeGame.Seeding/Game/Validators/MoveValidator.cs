@@ -26,7 +26,9 @@ internal class MoveValidator : AbstractValidator<MovePayload>
     RuleFor(x => x.VolatileConditions).Must(BeValidVolatileConditions)
       .WithErrorCode("VolatileConditionsValidator")
       .WithMessage("'{PropertyName}' must be a list of valid volatile conditions separated by pipes (|).");
+
     RuleFor(x => x.StatisticChanges).SetValidator(new StatisticChangesValidator());
+    RuleFor(x => x.CriticalChange).InclusiveBetween(0, 4);
 
     When(x => !string.IsNullOrWhiteSpace(x.Url), () => RuleFor(x => x.Url!).Url());
   }

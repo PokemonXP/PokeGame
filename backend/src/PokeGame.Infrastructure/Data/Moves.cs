@@ -8,6 +8,7 @@ public static class Moves
   public static readonly Guid AccuracyChange = Guid.Parse("7309bff6-5f34-4c2c-8902-d052fa5cd856");
   public static readonly Guid AttackChange = Guid.Parse("af31919f-c092-431f-9a64-8d4c4f7c878f");
   public static readonly Guid Category = Guid.Parse("b325f242-f94d-439d-95e7-145118d0b9e8");
+  public static readonly Guid CriticalChange = Guid.Parse("1f98fe7d-a968-4605-8edf-03bfb523ffd6");
   public static readonly Guid DefenseChange = Guid.Parse("8a7d4557-a5b1-4d63-a8f5-cfb8510d9311");
   public static readonly Guid EvasionChange = Guid.Parse("c2bcf747-e3be-4998-9afa-b2fafcb904f6");
   public static readonly Guid InflictedCondition = Guid.Parse("c191d0dd-1313-40a1-a470-0047d0200e5a");

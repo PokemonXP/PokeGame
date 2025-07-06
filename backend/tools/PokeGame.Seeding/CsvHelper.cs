@@ -1,6 +1,5 @@
 ﻿using CsvHelper;
 using PokeGame.Seeding.Game.Payloads;
-using System.Globalization;
 
 namespace PokeGame.Seeding;
 
@@ -16,10 +15,16 @@ internal static class CsvHelper
     using CsvReader csv = new(reader, culture);
 
     csv.Context.RegisterClassMap<AbilityPayload.Map>();
+    csv.Context.RegisterClassMap<BattleItemPayload.Map>();
+    csv.Context.RegisterClassMap<BerryPayload.Map>();
     csv.Context.RegisterClassMap<FormPayload.Map>();
+    csv.Context.RegisterClassMap<ItemPayload.Map>();
+    csv.Context.RegisterClassMap<MedicinePayload.Map>();
     csv.Context.RegisterClassMap<MovePayload.Map>();
+    csv.Context.RegisterClassMap<PokeBallPayload.Map>();
     csv.Context.RegisterClassMap<RegionPayload.Map>();
     csv.Context.RegisterClassMap<SpeciesPayload.Map>();
+    csv.Context.RegisterClassMap<TechnicalMachinePayload.Map>();
     csv.Context.RegisterClassMap<VarietyPayload.Map>();
 
     IAsyncEnumerable<T> records = csv.GetRecordsAsync<T>(cancellationToken);
