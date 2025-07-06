@@ -548,5 +548,40 @@
       "MaximumValue": 10,
       "Step": 1.0
     }
+  },
+  {
+    "Id": "0b78c3ac-0337-47ed-97a1-3a8efdcbca11",
+    "UniqueName": "PokemonStatistic",
+    "DisplayName": "Pokémon Statistic",
+    "Description": null,
+    "Select": {
+      "IsMultiple": false,
+      "Options": [
+        {
+          "Text": "HP",
+          "Value": "hp"
+        },
+        {
+          "Text": "Attack",
+          "Value": "attack"
+        },
+        {
+          "Text": "Defense",
+          "Value": "defense"
+        },
+        {
+          "Text": "Sp. Attack",
+          "Value": "special-attack"
+        },
+        {
+          "Text": "Sp. Defense",
+          "Value": "special-defense"
+        },
+        {
+          "Text": "Speed",
+          "Value": "speed"
+        }
+      ]
+    }
   }
 ]

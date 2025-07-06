@@ -18,7 +18,10 @@
   <ItemGroup>
     <None Remove="Game\data\abilities.csv" />
     <None Remove="Game\data\forms.csv" />
+    <None Remove="Game\data\items\battle.csv" />
+    <None Remove="Game\data\items\berries.csv" />
     <None Remove="Game\data\items\medicines.csv" />
+    <None Remove="Game\data\items\other.csv" />
     <None Remove="Game\data\items\poke_balls.csv" />
     <None Remove="Game\data\items\technical_machines.csv" />
     <None Remove="Game\data\moves.csv" />
@@ -34,7 +37,16 @@
     <Content Include="Game\data\forms.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Game\data\items\battle.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Game\data\items\berries.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Game\data\items\medicines.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Game\data\items\other.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Game\data\items\poke_balls.csv">

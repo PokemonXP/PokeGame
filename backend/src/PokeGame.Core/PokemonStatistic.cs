@@ -7,7 +7,5 @@ public enum PokemonStatistic
   Defense,
   SpecialAttack,
   SpecialDefense,
-  Speed,
-  Accuracy,
-  Evasion
+  Speed
 }
