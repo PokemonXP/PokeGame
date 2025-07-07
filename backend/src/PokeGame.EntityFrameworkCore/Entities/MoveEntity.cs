@@ -14,6 +14,9 @@ internal class MoveEntity : AggregateEntity
   public int MoveId { get; private set; }
   public Guid Id { get; private set; }
 
+  public PokemonType Type { get; private set; }
+  public MoveCategory Category { get; private set; }
+
   public string UniqueName { get; private set; } = string.Empty;
   public string UniqueNameNormalized
   {
@@ -22,9 +25,6 @@ internal class MoveEntity : AggregateEntity
   }
   public string? DisplayName { get; private set; }
   public string? Description { get; private set; }
-
-  public PokemonType Type { get; private set; }
-  public MoveCategory Category { get; private set; }
 
   public int Accuracy { get; private set; }
   public int Power { get; private set; }
@@ -64,12 +64,12 @@ internal class MoveEntity : AggregateEntity
 
     Update(published.Event);
 
+    Type = Enum.Parse<PokemonType>(invariant.FindSelectValue(Moves.Type).Single().Capitalize());
+    Category = Enum.Parse<MoveCategory>(invariant.FindSelectValue(Moves.Category).Single().Capitalize());
+
     UniqueName = locale.UniqueName.Value;
     DisplayName = locale.DisplayName?.Value;
     Description = locale.Description?.Value;
-
-    Type = Enum.Parse<PokemonType>(invariant.FindSelectValue(Moves.Type).Single().Capitalize());
-    Category = Enum.Parse<MoveCategory>(invariant.FindSelectValue(Moves.Category).Single().Capitalize());
 
     Accuracy = (int)invariant.GetNumberValue(Moves.Accuracy);
     Power = (int)invariant.GetNumberValue(Moves.Power);

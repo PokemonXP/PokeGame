@@ -19,21 +19,21 @@ internal class MoveConfiguration : AggregateConfiguration<MoveEntity>, IEntityTy
     builder.HasKey(x => x.MoveId);
 
     builder.HasIndex(x => x.Id).IsUnique();
+    builder.HasIndex(x => x.Type);
+    builder.HasIndex(x => x.Category);
     builder.HasIndex(x => x.UniqueName);
     builder.HasIndex(x => x.UniqueNameNormalized).IsUnique();
     builder.HasIndex(x => x.DisplayName);
-    builder.HasIndex(x => x.Type);
-    builder.HasIndex(x => x.Category);
     builder.HasIndex(x => x.Accuracy);
     builder.HasIndex(x => x.Power);
     builder.HasIndex(x => x.PowerPoints);
     builder.HasIndex(x => x.StatusCondition);
 
+    builder.Property(x => x.Type).HasMaxLength(byte.MaxValue).HasConversion(new EnumToStringConverter<PokemonType>());
+    builder.Property(x => x.Category).HasMaxLength(byte.MaxValue).HasConversion(new EnumToStringConverter<MoveCategory>());
     builder.Property(x => x.UniqueName).HasMaxLength(UniqueName.MaximumLength);
     builder.Property(x => x.UniqueNameNormalized).HasMaxLength(UniqueName.MaximumLength);
     builder.Property(x => x.DisplayName).HasMaxLength(DisplayName.MaximumLength);
-    builder.Property(x => x.Type).HasMaxLength(byte.MaxValue).HasConversion(new EnumToStringConverter<PokemonType>());
-    builder.Property(x => x.Category).HasMaxLength(byte.MaxValue).HasConversion(new EnumToStringConverter<MoveCategory>());
     builder.Property(x => x.StatusCondition).HasMaxLength(byte.MaxValue).HasConversion(new EnumToStringConverter<StatusCondition>());
     builder.Property(x => x.Url).HasMaxLength(Url.MaximumLength);
   }

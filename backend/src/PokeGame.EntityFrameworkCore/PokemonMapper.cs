@@ -51,11 +51,11 @@ internal class PokemonMapper
     MoveModel destination = new()
     {
       Id = source.Id,
+      Type = source.Type,
+      Category = source.Category,
       UniqueName = source.UniqueName,
       DisplayName = source.DisplayName,
       Description = source.Description,
-      Type = source.Type,
-      Category = source.Category,
       Accuracy = source.Accuracy,
       Power = source.Power,
       PowerPoints = source.PowerPoints,
@@ -108,10 +108,10 @@ internal class PokemonMapper
     SpeciesModel destination = new()
     {
       Id = source.Id,
-      UniqueName = source.UniqueName,
-      DisplayName = source.DisplayName,
       Number = source.Number,
       Category = source.Category,
+      UniqueName = source.UniqueName,
+      DisplayName = source.DisplayName,
       BaseFriendship = source.BaseFriendship,
       CatchRate = source.CatchRate,
       GrowthRate = source.GrowthRate,

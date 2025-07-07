@@ -13,6 +13,9 @@ internal class SpeciesEntity : AggregateEntity
   public int SpeciesId { get; private set; }
   public Guid Id { get; private set; }
 
+  public int Number { get; set; }
+  public PokemonCategory Category { get; set; }
+
   public string UniqueName { get; private set; } = string.Empty;
   public string UniqueNameNormalized
   {
@@ -20,9 +23,6 @@ internal class SpeciesEntity : AggregateEntity
     private set { }
   }
   public string? DisplayName { get; private set; }
-
-  public int Number { get; set; }
-  public PokemonCategory Category { get; set; }
 
   public int BaseFriendship { get; set; }
   public int CatchRate { get; set; }
@@ -65,11 +65,11 @@ internal class SpeciesEntity : AggregateEntity
 
     Update(published.Event);
 
-    UniqueName = locale.UniqueName.Value;
-    DisplayName = locale.DisplayName?.Value;
-
     Number = (int)invariant.FindNumberValue(Species.Number);
     Category = Enum.Parse<PokemonCategory>(invariant.FindSelectValue(Species.Category).Single().Capitalize());
+
+    UniqueName = locale.UniqueName.Value;
+    DisplayName = locale.DisplayName?.Value;
 
     BaseFriendship = (int)invariant.FindNumberValue(Species.BaseFriendship);
     CatchRate = (int)invariant.FindNumberValue(Species.CatchRate);

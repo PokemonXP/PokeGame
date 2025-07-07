@@ -18,19 +18,19 @@ internal class SpeciesConfiguration : AggregateConfiguration<SpeciesEntity>, IEn
     builder.HasKey(x => x.SpeciesId);
 
     builder.HasIndex(x => x.Id).IsUnique();
+    builder.HasIndex(x => x.Number).IsUnique();
+    builder.HasIndex(x => x.Category);
     builder.HasIndex(x => x.UniqueName);
     builder.HasIndex(x => x.UniqueNameNormalized).IsUnique();
     builder.HasIndex(x => x.DisplayName);
-    builder.HasIndex(x => x.Number).IsUnique();
-    builder.HasIndex(x => x.Category);
     builder.HasIndex(x => x.BaseFriendship);
     builder.HasIndex(x => x.CatchRate);
     builder.HasIndex(x => x.GrowthRate);
 
+    builder.Property(x => x.Category).HasMaxLength(byte.MaxValue).HasConversion(new EnumToStringConverter<PokemonCategory>());
     builder.Property(x => x.UniqueName).HasMaxLength(UniqueName.MaximumLength);
     builder.Property(x => x.UniqueNameNormalized).HasMaxLength(UniqueName.MaximumLength);
     builder.Property(x => x.DisplayName).HasMaxLength(DisplayName.MaximumLength);
-    builder.Property(x => x.Category).HasMaxLength(byte.MaxValue).HasConversion(new EnumToStringConverter<PokemonCategory>());
     builder.Property(x => x.GrowthRate).HasMaxLength(byte.MaxValue).HasConversion(new EnumToStringConverter<GrowthRate>());
     builder.Property(x => x.Url).HasMaxLength(Url.MaximumLength);
   }

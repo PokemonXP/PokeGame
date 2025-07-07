@@ -28,19 +28,19 @@ internal class VarietyPayload
   {
     public Map()
     {
-      Map(x => x.Id).Index(0);
+      Map(x => x.Id).Index(0).Default(Guid.Empty);
 
-      Map(x => x.UniqueName).Index(3);
+      Map(x => x.UniqueName).Index(3).Default(string.Empty);
       Map(x => x.DisplayName).Index(4);
       Map(x => x.Description).Index(5);
 
-      Map(x => x.Species).Index(1);
-      Map(x => x.IsDefault).Index(2);
+      Map(x => x.Species).Index(1).Default(string.Empty);
+      Map(x => x.IsDefault).Index(2).Default(false);
 
-      Map(x => x.CanChangeForm).Index(6);
+      Map(x => x.CanChangeForm).Index(6).Default(false);
       Map(x => x.GenderRatio).Index(7);
 
-      Map(x => x.Genus).Index(8);
+      Map(x => x.Genus).Index(8).Default(string.Empty); ;
       Map(x => x.Url).Index(9);
       Map(x => x.Notes).Index(10);
     }
