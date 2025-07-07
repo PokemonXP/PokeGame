@@ -1,4 +1,5 @@
-﻿using AggregateModel = Krakenar.Contracts.Aggregate;
+﻿using PokeGame.Core.Varieties.Models;
+using AggregateModel = Krakenar.Contracts.Aggregate;
 
 namespace PokeGame.Core.Species.Models;
 
@@ -15,6 +16,7 @@ public class SpeciesModel : AggregateModel
   public GrowthRate GrowthRate { get; set; }
 
   public List<RegionalNumberModel> RegionalNumbers { get; set; } = [];
+  public List<VarietyModel> Varieties { get; set; } = [];
 
   public string? Url { get; set; }
   public string? Notes { get; set; }

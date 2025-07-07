@@ -32,6 +32,7 @@ internal class SpeciesEntity : AggregateEntity
   public string? Notes { get; private set; }
 
   public List<RegionalNumberEntity> RegionalNumbers { get; private set; } = [];
+  public List<VarietyEntity> Varieties { get; private set; } = [];
 
   public SpeciesEntity(SpeciesPublished published) : base(published.Event)
   {
