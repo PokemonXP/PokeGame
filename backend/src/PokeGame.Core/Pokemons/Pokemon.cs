@@ -51,7 +51,6 @@ public class Pokemon : AggregateRoot
   private EffortValues? _effortValues = null;
   public EffortValues EffortValues => _effortValues ?? throw new InvalidOperationException("The Pokémon has not been initialized.");
   public PokemonStatistics Statistics => new(this);
-
   public int Vitality { get; private set; }
   public int Stamina { get; private set; }
 
@@ -140,10 +139,9 @@ public class Pokemon : AggregateRoot
     ArgumentOutOfRangeException.ThrowIfNegative(vitality, nameof(vitality));
     ArgumentOutOfRangeException.ThrowIfNegative(stamina, nameof(stamina));
 
+    int level = ExperienceTable.Instance.GetLevel(growthRate, experience);
     individualValues ??= new();
     effortValues ??= new();
-
-    int level = ExperienceTable.Instance.GetLevel(growthRate, experience);
     PokemonStatistics statistics = new(baseStatistics, individualValues, effortValues, level, nature);
     vitality = Math.Min(vitality, statistics.HP);
     stamina = Math.Min(stamina, statistics.HP);
@@ -183,7 +181,6 @@ public class Pokemon : AggregateRoot
     _baseStatistics = @event.BaseStatistics;
     _individualValues = @event.IndividualValues;
     _effortValues = @event.EffortValues;
-
     Vitality = @event.Vitality;
     Stamina = @event.Stamina;
 
