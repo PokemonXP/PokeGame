@@ -1,6 +1,7 @@
 ﻿using Krakenar.Contracts.Actors;
 using Logitar;
 using Logitar.EventSourcing;
+using PokeGame.Core.Abilities.Models;
 using PokeGame.Core.Regions.Models;
 using PokeGame.EntityFrameworkCore.Entities;
 using AggregateEntity = Krakenar.EntityFrameworkCore.Relational.Entities.Aggregate;
@@ -24,6 +25,23 @@ internal class PokemonMapper
     {
       _actors[actor.Key] = actor.Value;
     }
+  }
+
+  public AbilityModel ToAbility(AbilityEntity source)
+  {
+    AbilityModel destination = new()
+    {
+      Id = source.Id,
+      UniqueName = source.UniqueName,
+      DisplayName = source.DisplayName,
+      Description = source.Description,
+      Url = source.Url,
+      Notes = source.Notes
+    };
+
+    MapAggregate(source, destination);
+
+    return destination;
   }
 
   public RegionModel ToRegion(RegionEntity source)

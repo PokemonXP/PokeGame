@@ -2,5 +2,6 @@
 
 internal enum EntityKind
 {
+  Ability,
   Region
 }

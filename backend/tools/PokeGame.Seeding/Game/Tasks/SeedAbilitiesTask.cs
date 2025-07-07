@@ -94,6 +94,10 @@ internal class SeedAbilitiesTaskHandler : INotificationHandler<SeedAbilitiesTask
         content = await _contentService.CreateAsync(payload, cancellationToken);
         _logger.LogInformation("The ability content 'Id={ContentId}' was created.", content.Id);
       }
+
+      await _contentService.PublishAsync(content.Id, language: null, cancellationToken);
+      await _contentService.PublishAsync(content.Id, task.Language, cancellationToken);
+      _logger.LogInformation("The ability content 'Id={ContentId}' was published.", content.Id);
     }
   }
 }
