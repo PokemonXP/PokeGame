@@ -51,6 +51,15 @@ internal class TrainerQuerier : ITrainerQuerier
       .ApplyIdFilter(PokemonDb.Trainers.Id, payload.Ids);
     _sqlHelper.ApplyTextSearch(builder, payload.Search, PokemonDb.Trainers.UniqueName, PokemonDb.Trainers.DisplayName, PokemonDb.Trainers.License);
 
+    if (payload.Gender.HasValue)
+    {
+      builder.Where(PokemonDb.Trainers.Gender, Operators.IsEqualTo(payload.Gender.Value.ToString()));
+    }
+    if (payload.UserId.HasValue)
+    {
+      builder.Where(PokemonDb.Trainers.UserId, Operators.IsEqualTo(payload.UserId.Value));
+    }
+
     IQueryable<TrainerEntity> query = _trainers.FromQuery(builder).AsNoTracking();
     long total = await query.LongCountAsync(cancellationToken);
 

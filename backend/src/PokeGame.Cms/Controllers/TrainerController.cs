@@ -7,42 +7,42 @@ using PokeGame.Core.Trainers.Models;
 namespace PokeGame.Cms.Controllers;
 
 [ApiController]
-[Route("api/Trainers")]
+[Route("api/trainers")]
 public class TrainerController : ControllerBase
 {
-  private readonly ITrainerQuerier _TrainerQuerier;
+  private readonly ITrainerQuerier _trainerQuerier;
 
-  public TrainerController(ITrainerQuerier TrainerQuerier)
+  public TrainerController(ITrainerQuerier trainerQuerier)
   {
-    _TrainerQuerier = TrainerQuerier;
+    _trainerQuerier = trainerQuerier;
   }
 
   [HttpGet("{id}")]
   public async Task<ActionResult<TrainerModel>> ReadAsync(Guid id, CancellationToken cancellationToken)
   {
-    TrainerModel? Trainer = await _TrainerQuerier.ReadAsync(id, cancellationToken);
-    return Trainer is null ? NotFound() : Ok(Trainer);
+    TrainerModel? trainer = await _trainerQuerier.ReadAsync(id, cancellationToken);
+    return trainer is null ? NotFound() : Ok(trainer);
   }
 
   [HttpGet("name:{uniqueName}")]
   public async Task<ActionResult<TrainerModel>> ReadAsync(string uniqueName, CancellationToken cancellationToken)
   {
-    TrainerModel? Trainer = await _TrainerQuerier.ReadAsync(uniqueName, cancellationToken);
-    return Trainer is null ? NotFound() : Ok(Trainer);
+    TrainerModel? trainer = await _trainerQuerier.ReadAsync(uniqueName, cancellationToken);
+    return trainer is null ? NotFound() : Ok(trainer);
   }
 
   [HttpGet("license:{license}")]
   public async Task<ActionResult<TrainerModel>> ReadByLicenseAsync(string license, CancellationToken cancellationToken)
   {
-    TrainerModel? Trainer = await _TrainerQuerier.ReadByLicenseAsync(license, cancellationToken);
-    return Trainer is null ? NotFound() : Ok(Trainer);
+    TrainerModel? trainer = await _trainerQuerier.ReadByLicenseAsync(license, cancellationToken);
+    return trainer is null ? NotFound() : Ok(trainer);
   }
 
   [HttpGet]
   public async Task<ActionResult<SearchResults<TrainerModel>>> SearchAsync([FromQuery] SearchTrainersParameters parameters, CancellationToken cancellationToken)
   {
     SearchTrainersPayload payload = parameters.ToPayload();
-    SearchResults<TrainerModel> Trainers = await _TrainerQuerier.SearchAsync(payload, cancellationToken);
-    return Ok(Trainers);
+    SearchResults<TrainerModel> trainers = await _trainerQuerier.SearchAsync(payload, cancellationToken);
+    return Ok(trainers);
   }
 }
