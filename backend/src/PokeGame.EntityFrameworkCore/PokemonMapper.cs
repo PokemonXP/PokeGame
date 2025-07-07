@@ -7,6 +7,7 @@ using PokeGame.Core.Forms.Models;
 using PokeGame.Core.Moves.Models;
 using PokeGame.Core.Regions.Models;
 using PokeGame.Core.Species.Models;
+using PokeGame.Core.Trainers.Models;
 using PokeGame.Core.Varieties.Models;
 using PokeGame.EntityFrameworkCore.Entities;
 using AggregateEntity = Krakenar.EntityFrameworkCore.Relational.Entities.Aggregate;
@@ -203,6 +204,28 @@ internal class PokemonMapper
       }
       destination.RegionalNumbers.Add(new RegionalNumberModel(ToRegion(regionalNumber.Region), regionalNumber.Number));
     }
+
+    MapAggregate(source, destination);
+
+    return destination;
+  }
+
+  public TrainerModel ToTrainer(TrainerEntity source)
+  {
+    TrainerModel destination = new()
+    {
+      Id = source.Id,
+      UniqueName = source.UniqueName,
+      DisplayName = source.DisplayName,
+      Description = source.Description,
+      Gender = source.Gender,
+      License = source.License,
+      Money = source.Money,
+      UserId = source.UserId,
+      Sprite = source.Sprite,
+      Url = source.Url,
+      Notes = source.Notes
+    };
 
     MapAggregate(source, destination);
 
