@@ -45,20 +45,7 @@ internal class PokemonEntity : AggregateEntity
   public int MaximumExperience { get; private set; }
   public int ToNextLevel { get; private set; }
 
-  public byte IndividualValueHp { get; private set; }
-  public byte IndividualValueAttack { get; private set; }
-  public byte IndividualValueDefense { get; private set; }
-  public byte IndividualValueSpecialAttack { get; private set; }
-  public byte IndividualValueSpecialDefense { get; private set; }
-  public byte IndividualValueSpeed { get; private set; }
-
-  public byte EffortValueHp { get; private set; }
-  public byte EffortValueAttack { get; private set; }
-  public byte EffortValueDefense { get; private set; }
-  public byte EffortValueSpecialAttack { get; private set; }
-  public byte EffortValueSpecialDefense { get; private set; }
-  public byte EffortValueSpeed { get; private set; }
-
+  public string? Statistics { get; private set; }
   public int Vitality { get; private set; }
   public int Stamina { get; private set; }
 
@@ -96,26 +83,13 @@ internal class PokemonEntity : AggregateEntity
     AbilitySlot = @event.AbilitySlot;
     Nature = @event.Nature;
 
-    IndividualValueHp = @event.IndividualValues.HP;
-    IndividualValueAttack = @event.IndividualValues.Attack;
-    IndividualValueDefense = @event.IndividualValues.Defense;
-    IndividualValueSpecialAttack = @event.IndividualValues.SpecialAttack;
-    IndividualValueSpecialDefense = @event.IndividualValues.SpecialDefense;
-    IndividualValueSpeed = @event.IndividualValues.Speed;
-
-    EffortValueHp = @event.EffortValues.HP;
-    EffortValueAttack = @event.EffortValues.Attack;
-    EffortValueDefense = @event.EffortValues.Defense;
-    EffortValueSpecialAttack = @event.EffortValues.SpecialAttack;
-    EffortValueSpecialDefense = @event.EffortValues.SpecialDefense;
-    EffortValueSpeed = @event.EffortValues.Speed;
-
     GrowthRate = @event.GrowthRate;
     Experience = @event.Experience;
     Level = ExperienceTable.Instance.GetLevel(GrowthRate, Experience);
     MaximumExperience = ExperienceTable.Instance.GetMaximumExperience(GrowthRate, Level);
     ToNextLevel = Math.Max(MaximumExperience - Experience, 0);
 
+    Statistics = null; // TODO(fpion): implement
     Vitality = @event.Vitality;
     Stamina = @event.Stamina;
 
