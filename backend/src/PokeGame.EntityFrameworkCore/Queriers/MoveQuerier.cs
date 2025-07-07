@@ -44,6 +44,19 @@ internal class MoveQuerier : IMoveQuerier
       .ApplyIdFilter(PokemonDb.Moves.Id, payload.Ids);
     _sqlHelper.ApplyTextSearch(builder, payload.Search, PokemonDb.Moves.UniqueName, PokemonDb.Moves.DisplayName);
 
+    if (payload.Type.HasValue)
+    {
+      builder.Where(PokemonDb.Moves.Type, Operators.IsEqualTo(payload.Type.Value.ToString()));
+    }
+    if (payload.Category.HasValue)
+    {
+      builder.Where(PokemonDb.Moves.Category, Operators.IsEqualTo(payload.Category.Value.ToString()));
+    }
+    if (payload.StatusCondition.HasValue)
+    {
+      builder.Where(PokemonDb.Moves.StatusCondition, Operators.IsEqualTo(payload.StatusCondition.Value.ToString()));
+    }
+
     IQueryable<MoveEntity> query = _moves.FromQuery(builder).AsNoTracking();
     long total = await query.LongCountAsync(cancellationToken);
 

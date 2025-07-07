@@ -4,6 +4,7 @@ using Logitar.EventSourcing;
 using PokeGame.Core.Abilities.Models;
 using PokeGame.Core.Moves.Models;
 using PokeGame.Core.Regions.Models;
+using PokeGame.Core.Species.Models;
 using PokeGame.EntityFrameworkCore.Entities;
 using AggregateEntity = Krakenar.EntityFrameworkCore.Relational.Entities.Aggregate;
 using AggregateModel = Krakenar.Contracts.Aggregate;
@@ -96,6 +97,36 @@ internal class PokemonMapper
       Url = source.Url,
       Notes = source.Notes
     };
+
+    MapAggregate(source, destination);
+
+    return destination;
+  }
+
+  public SpeciesModel ToSpecies(SpeciesEntity source)
+  {
+    SpeciesModel destination = new()
+    {
+      Id = source.Id,
+      UniqueName = source.UniqueName,
+      DisplayName = source.DisplayName,
+      Number = source.Number,
+      Category = source.Category,
+      BaseFriendship = source.BaseFriendship,
+      CatchRate = source.CatchRate,
+      GrowthRate = source.GrowthRate,
+      Url = source.Url,
+      Notes = source.Notes
+    };
+
+    foreach (RegionalNumberEntity regionalNumber in source.RegionalNumbers)
+    {
+      if (regionalNumber.Region is null)
+      {
+        throw new ArgumentException("The region is required.", nameof(source));
+      }
+      destination.RegionalNumbers.Add(new RegionalNumberModel(ToRegion(regionalNumber.Region), regionalNumber.Number));
+    }
 
     MapAggregate(source, destination);
 

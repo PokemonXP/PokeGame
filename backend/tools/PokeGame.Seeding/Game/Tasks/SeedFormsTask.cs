@@ -44,11 +44,11 @@ internal class SeedFormsTaskHandler : INotificationHandler<SeedFormsTask>
       ContentTypeId = Varieties.ContentTypeId
     };
     SearchResults<ContentLocale> results = await _contentService.SearchLocalesAsync(search, cancellationToken);
-    ContentIndex varietiesIndex = new(results); // TODO(fpion): should only load published?
+    ContentIndex varietiesIndex = new(results);
 
     search.ContentTypeId = Abilities.ContentTypeId;
     results = await _contentService.SearchLocalesAsync(search, cancellationToken);
-    ContentIndex abilitiesIndex = new(results); // TODO(fpion): should only load published?
+    ContentIndex abilitiesIndex = new(results);
 
     search.ContentTypeId = Forms.ContentTypeId;
     results = await _contentService.SearchLocalesAsync(search, cancellationToken);
