@@ -3,6 +3,7 @@ using Krakenar.EntityFrameworkCore.Relational.KrakenarDb;
 using PokeGame.Core;
 using PokeGame.Core.Moves;
 using PokeGame.EntityFrameworkCore.Handlers;
+using PokeGame.Infrastructure;
 using PokeGame.Infrastructure.Data;
 using AggregateEntity = Krakenar.EntityFrameworkCore.Relational.Entities.Aggregate;
 
@@ -67,21 +68,21 @@ internal class MoveEntity : AggregateEntity
     DisplayName = locale.DisplayName?.Value;
     Description = locale.Description?.Value;
 
-    Type = Enum.Parse<PokemonType>(Capitalize(invariant.FindSelectValue(Moves.Type).Single()));
-    Category = Enum.Parse<MoveCategory>(Capitalize(invariant.FindSelectValue(Moves.Category).Single()));
+    Type = Enum.Parse<PokemonType>(invariant.FindSelectValue(Moves.Type).Single().Capitalize());
+    Category = Enum.Parse<MoveCategory>(invariant.FindSelectValue(Moves.Category).Single().Capitalize());
 
     Accuracy = (int)invariant.GetNumberValue(Moves.Accuracy);
     Power = (int)invariant.GetNumberValue(Moves.Power);
     PowerPoints = (int)invariant.FindNumberValue(Moves.PowerPoints);
 
     IReadOnlyCollection<string>? statusConditions = invariant.TryGetSelectValue(Moves.InflictedCondition);
-    StatusCondition = statusConditions is null || statusConditions.Count < 1 ? null : Enum.Parse<StatusCondition>(Capitalize(statusConditions.Single()));
+    StatusCondition = statusConditions is null || statusConditions.Count < 1 ? null : Enum.Parse<StatusCondition>(statusConditions.Single().Capitalize());
     StatusChance = (int)invariant.GetNumberValue(Moves.StatusChance);
 
     IReadOnlyCollection<string>? volatileConditions = invariant.TryGetSelectValue(Moves.VolatileConditions);
     VolatileConditions = volatileConditions is null || volatileConditions.Count < 1
       ? null
-      : JsonSerializer.Serialize(volatileConditions.Select(value => Enum.Parse<VolatileCondition>(Capitalize(value)).ToString()).Distinct());
+      : JsonSerializer.Serialize(volatileConditions.Select(value => Enum.Parse<VolatileCondition>(value.Capitalize()).ToString()).Distinct());
 
     AttackChange = (int)invariant.GetNumberValue(Moves.AttackChange);
     DefenseChange = (int)invariant.GetNumberValue(Moves.DefenseChange);
@@ -95,8 +96,6 @@ internal class MoveEntity : AggregateEntity
     Url = locale.TryGetStringValue(Moves.Url);
     Notes = locale.TryGetStringValue(Moves.Notes);
   }
-
-  private static string Capitalize(string value) => string.Concat(char.ToUpperInvariant(value.First()), value[1..]);
 
   public override string ToString() => $"{DisplayName ?? UniqueName} | {base.ToString()}";
 }
