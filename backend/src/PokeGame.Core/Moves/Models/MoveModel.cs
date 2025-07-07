@@ -4,12 +4,12 @@ namespace PokeGame.Core.Moves.Models;
 
 public class MoveModel : AggregateModel
 {
+  public PokemonType Type { get; set; }
+  public MoveCategory Category { get; set; }
+
   public string UniqueName { get; set; } = string.Empty;
   public string? DisplayName { get; set; }
   public string? Description { get; set; }
-
-  public PokemonType Type { get; set; }
-  public MoveCategory Category { get; set; }
 
   public int Accuracy { get; set; }
   public int Power { get; set; }

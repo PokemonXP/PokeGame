@@ -5,6 +5,7 @@ using PokeGame.Core.Abilities.Models;
 using PokeGame.Core.Moves.Models;
 using PokeGame.Core.Regions.Models;
 using PokeGame.Core.Species.Models;
+using PokeGame.Core.Varieties.Models;
 using PokeGame.EntityFrameworkCore.Entities;
 using AggregateEntity = Krakenar.EntityFrameworkCore.Relational.Entities.Aggregate;
 using AggregateModel = Krakenar.Contracts.Aggregate;
@@ -51,11 +52,11 @@ internal class PokemonMapper
     MoveModel destination = new()
     {
       Id = source.Id,
+      Type = source.Type,
+      Category = source.Category,
       UniqueName = source.UniqueName,
       DisplayName = source.DisplayName,
       Description = source.Description,
-      Type = source.Type,
-      Category = source.Category,
       Accuracy = source.Accuracy,
       Power = source.Power,
       PowerPoints = source.PowerPoints,
@@ -108,10 +109,10 @@ internal class PokemonMapper
     SpeciesModel destination = new()
     {
       Id = source.Id,
-      UniqueName = source.UniqueName,
-      DisplayName = source.DisplayName,
       Number = source.Number,
       Category = source.Category,
+      UniqueName = source.UniqueName,
+      DisplayName = source.DisplayName,
       BaseFriendship = source.BaseFriendship,
       CatchRate = source.CatchRate,
       GrowthRate = source.GrowthRate,
@@ -127,6 +128,34 @@ internal class PokemonMapper
       }
       destination.RegionalNumbers.Add(new RegionalNumberModel(ToRegion(regionalNumber.Region), regionalNumber.Number));
     }
+
+    MapAggregate(source, destination);
+
+    return destination;
+  }
+
+  public VarietyModel ToVariety(VarietyEntity source)
+  {
+    if (source.Species is null)
+    {
+      throw new ArgumentException("The species is required.", nameof(source));
+    }
+    SpeciesModel species = ToSpecies(source.Species);
+
+    VarietyModel destination = new()
+    {
+      Id = source.Id,
+      Species = species,
+      IsDefault = source.IsDefault,
+      UniqueName = source.UniqueName,
+      DisplayName = source.DisplayName,
+      Description = source.Description,
+      CanChangeForm = source.CanChangeForm,
+      GenderRatio = source.GenderRatio,
+      Genus = source.Genus,
+      Url = source.Url,
+      Notes = source.Notes
+    };
 
     MapAggregate(source, destination);
 

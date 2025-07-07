@@ -64,6 +64,9 @@ internal class PokemonContentEvents : IEventHandler<ContentLocalePublished>, IEv
       case EntityKind.Species:
         await _mediator.Publish(new SpeciesPublished(@event, content.PublishedInvariant, locale), cancellationToken);
         break;
+      case EntityKind.Variety:
+        await _mediator.Publish(new VarietyPublished(@event, content.PublishedInvariant, locale), cancellationToken);
+        break;
     }
 
     _logger.LogInformation("Event '{EventType} (Id={Id})' handled successfully.", @event.GetType(), @event.Id);
@@ -90,6 +93,9 @@ internal class PokemonContentEvents : IEventHandler<ContentLocalePublished>, IEv
         break;
       case EntityKind.Species:
         await _mediator.Publish(new SpeciesUnpublished(@event), cancellationToken);
+        break;
+      case EntityKind.Variety:
+        await _mediator.Publish(new VarietyUnpublished(@event), cancellationToken);
         break;
     }
 

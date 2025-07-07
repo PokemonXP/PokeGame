@@ -7,6 +7,7 @@ using PokeGame.Core.Abilities;
 using PokeGame.Core.Moves;
 using PokeGame.Core.Regions;
 using PokeGame.Core.Species;
+using PokeGame.Core.Varieties;
 using PokeGame.EntityFrameworkCore.Handlers;
 using PokeGame.EntityFrameworkCore.Queriers;
 
@@ -37,6 +38,7 @@ public static class DependencyInjectionExtensions
       .AddScoped<IAbilityQuerier, AbilityQuerier>()
       .AddScoped<IMoveQuerier, MoveQuerier>()
       .AddScoped<IRegionQuerier, RegionQuerier>()
-      .AddScoped<ISpeciesQuerier, SpeciesQuerier>();
+      .AddScoped<ISpeciesQuerier, SpeciesQuerier>()
+      .AddScoped<IVarietyQuerier, VarietyQuerier>();
   }
 }

@@ -5,5 +5,6 @@ internal enum EntityKind
   Ability,
   Move,
   Region,
-  Species
+  Species,
+  Variety
 }
