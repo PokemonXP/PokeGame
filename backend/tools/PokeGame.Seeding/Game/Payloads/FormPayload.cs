@@ -1,4 +1,5 @@
 ﻿using CsvHelper.Configuration;
+using PokeGame.Core;
 
 namespace PokeGame.Seeding.Game.Payloads;
 
@@ -36,20 +37,20 @@ internal class FormPayload
   {
     public Map()
     {
-      Map(x => x.Id).Index(0);
+      Map(x => x.Id).Index(0).Default(Guid.Empty);
 
-      Map(x => x.UniqueName).Index(3);
+      Map(x => x.UniqueName).Index(3).Default(string.Empty);
       Map(x => x.DisplayName).Index(4);
       Map(x => x.Description).Index(5);
 
-      Map(x => x.Variety).Index(1);
-      Map(x => x.IsDefault).Index(2);
+      Map(x => x.Variety).Index(1).Default(string.Empty);
+      Map(x => x.IsDefault).Index(2).Default(false);
 
-      Map(x => x.IsBattleOnly).Index(6);
-      Map(x => x.IsMega).Index(7);
+      Map(x => x.IsBattleOnly).Index(6).Default(false);
+      Map(x => x.IsMega).Index(7).Default(false);
 
-      Map(x => x.Height).Index(8);
-      Map(x => x.Weight).Index(9);
+      Map(x => x.Height).Index(8).Default(0);
+      Map(x => x.Weight).Index(9).Default(0);
 
       References<TypesMap>(x => x.Types);
       References<AbilitiesMap>(x => x.Abilities);
@@ -66,7 +67,7 @@ internal class FormPayload
   {
     public AbilitiesMap()
     {
-      Map(x => x.Primary).Index(12);
+      Map(x => x.Primary).Index(12).Default(string.Empty);
       Map(x => x.Secondary).Index(13);
       Map(x => x.Hidden).Index(14);
     }
@@ -76,12 +77,12 @@ internal class FormPayload
   {
     public BaseStatisticsMap()
     {
-      Map(x => x.HP).Index(15);
-      Map(x => x.Attack).Index(16);
-      Map(x => x.Defense).Index(17);
-      Map(x => x.SpecialAttack).Index(18);
-      Map(x => x.SpecialDefense).Index(19);
-      Map(x => x.Speed).Index(20);
+      Map(x => x.HP).Index(15).Default(0);
+      Map(x => x.Attack).Index(16).Default(0);
+      Map(x => x.Defense).Index(17).Default(0);
+      Map(x => x.SpecialAttack).Index(18).Default(0);
+      Map(x => x.SpecialDefense).Index(19).Default(0);
+      Map(x => x.Speed).Index(20).Default(0);
     }
   }
 
@@ -89,8 +90,8 @@ internal class FormPayload
   {
     public SpritesMap()
     {
-      Map(x => x.Default).Index(28);
-      Map(x => x.DefaultShiny).Index(29);
+      Map(x => x.Default).Index(28).Default(string.Empty);
+      Map(x => x.DefaultShiny).Index(29).Default(string.Empty);
       Map(x => x.Alternative).Index(30);
       Map(x => x.AlternativeShiny).Index(31);
     }
@@ -100,7 +101,7 @@ internal class FormPayload
   {
     public TypesMap()
     {
-      Map(x => x.Primary).Index(10);
+      Map(x => x.Primary).Index(10).Default(default(PokemonType));
       Map(x => x.Secondary).Index(11);
     }
   }
