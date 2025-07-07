@@ -15,9 +15,9 @@ internal class TrainerPayload
   public string License { get; set; } = string.Empty;
   public int Money { get; set; }
 
-  public string? Sprite { get; set; }
-
   public Guid? UserId { get; set; }
+
+  public string? Sprite { get; set; }
 
   public string? Url { get; set; }
   public string? Notes { get; set; }

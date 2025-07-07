@@ -1704,7 +1704,7 @@
         "IsInvariant": true,
         "IsRequired": true,
         "IsIndexed": false,
-        "IsUnique": false,
+        "IsUnique": true,
         "UniqueName": "License",
         "DisplayName": null,
         "Description": null,
@@ -1723,18 +1723,6 @@
         "Placeholder": null
       },
       {
-        "Id": "bb098cdb-5db8-45da-8955-df1884994d6e",
-        "FieldType": "Url",
-        "IsInvariant": true,
-        "IsRequired": false,
-        "IsIndexed": false,
-        "IsUnique": false,
-        "UniqueName": "Sprite",
-        "DisplayName": null,
-        "Description": null,
-        "Placeholder": null
-      },
-      {
         "Id": "85a3d212-5ce3-4566-a8e3-56a897051c14",
         "FieldType": "UUID",
         "IsInvariant": true,
@@ -1743,6 +1731,18 @@
         "IsUnique": false,
         "UniqueName": "UserId",
         "DisplayName": "User ID",
+        "Description": null,
+        "Placeholder": null
+      },
+      {
+        "Id": "bb098cdb-5db8-45da-8955-df1884994d6e",
+        "FieldType": "Url",
+        "IsInvariant": true,
+        "IsRequired": false,
+        "IsIndexed": false,
+        "IsUnique": false,
+        "UniqueName": "Sprite",
+        "DisplayName": null,
         "Description": null,
         "Placeholder": null
       },
