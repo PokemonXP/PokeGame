@@ -23,4 +23,8 @@
     <ProjectReference Include="..\PokeGame.Infrastructure\PokeGame.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Using Include="System.Reflection" />
+  </ItemGroup>
+
 </Project>
