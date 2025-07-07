@@ -17,7 +17,7 @@ internal record CreatePokemon(CreatePokemonPayload Payload) : ICommand<PokemonMo
 /// <exception cref="IdAlreadyUsedException{T}"></exception>
 /// <exception cref="PokemonUniqueNameAlreadyUsedException"></exception>
 /// <exception cref="ValidationException"></exception>
-internal class CreatePokemonHandler : ICommandHandler<CreatePokemon, PokemonModel>
+internal class CreatePokemonHandler : ICommandHandler<CreatePokemon, PokemonModel> // TODO(fpion): register in DI, with dependencies
 {
   private readonly IApplicationContext _applicationContext;
   private readonly IPokemonManager _pokemonManager;
