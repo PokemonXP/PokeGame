@@ -52,6 +52,9 @@ internal class PokemonContentEvents : IEventHandler<ContentLocalePublished>, IEv
 
     switch (context.Kind)
     {
+      case EntityKind.Ability:
+        await _mediator.Publish(new AbilityPublished(@event, content.PublishedInvariant, locale), cancellationToken);
+        break;
       case EntityKind.Region:
         await _mediator.Publish(new RegionPublished(@event, content.PublishedInvariant, locale), cancellationToken);
         break;
@@ -70,6 +73,9 @@ internal class PokemonContentEvents : IEventHandler<ContentLocalePublished>, IEv
 
     switch (context.Kind)
     {
+      case EntityKind.Ability:
+        await _mediator.Publish(new AbilityUnpublished(@event), cancellationToken);
+        break;
       case EntityKind.Region:
         await _mediator.Publish(new RegionUnpublished(@event), cancellationToken);
         break;
