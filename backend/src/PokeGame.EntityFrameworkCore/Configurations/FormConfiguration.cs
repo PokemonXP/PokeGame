@@ -23,6 +23,9 @@ internal class FormConfiguration : AggregateConfiguration<FormEntity>, IEntityTy
     builder.HasIndex(x => x.UniqueName);
     builder.HasIndex(x => x.UniqueNameNormalized).IsUnique();
     builder.HasIndex(x => x.DisplayName);
+    builder.HasIndex(x => x.Height);
+    builder.HasIndex(x => x.Weight);
+    builder.HasIndex(x => x.ExperienceYield);
 
     builder.Property(x => x.UniqueName).HasMaxLength(UniqueName.MaximumLength);
     builder.Property(x => x.UniqueNameNormalized).HasMaxLength(UniqueName.MaximumLength);
