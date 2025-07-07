@@ -3,6 +3,7 @@ using Krakenar.Core.Contents.Events;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using PokeGame.EntityFrameworkCore.Entities;
+using PokeGame.Infrastructure.Data;
 
 namespace PokeGame.EntityFrameworkCore.Handlers;
 
@@ -24,7 +25,11 @@ internal class VarietyPublishedHandler : INotificationHandler<VarietyPublished>
 
     if (variety is null)
     {
-      variety = new VarietyEntity(published);
+      Guid speciesId = published.Invariant.FindRelatedContentValue(Varieties.Species).Single();
+      SpeciesEntity species = await _context.Species.SingleOrDefaultAsync(x => x.Id == speciesId, cancellationToken)
+        ?? throw new InvalidOperationException($"The species entity 'Id={speciesId}' was not found.");
+
+      variety = new VarietyEntity(species, published);
 
       _context.Varieties.Add(variety);
     }

@@ -33,9 +33,13 @@ internal class VarietyEntity : AggregateEntity
   public string? Url { get; private set; }
   public string? Notes { get; private set; }
 
-  public VarietyEntity(VarietyPublished published) : base(published.Event)
+  public VarietyEntity(SpeciesEntity species, VarietyPublished published) : base(published.Event)
   {
     Id = new ContentId(published.Event.StreamId).EntityId;
+
+    Species = species;
+    SpeciesId = species.SpeciesId;
+    SpeciesUid = species.Id;
 
     Update(published);
   }
@@ -46,13 +50,21 @@ internal class VarietyEntity : AggregateEntity
 
   public void Update(VarietyPublished published)
   {
+    ContentLocale invariant = published.Invariant;
     ContentLocale locale = published.Locale;
 
     Update(published.Event);
 
+    IsDefault = invariant.FindBooleanValue(Varieties.IsDefault);
+
     UniqueName = locale.UniqueName.Value;
     DisplayName = locale.DisplayName?.Value;
     Description = locale.Description?.Value;
+
+    CanChangeForm = invariant.FindBooleanValue(Varieties.CanChangeForm);
+    GenderRatio = (int)invariant.FindNumberValue(Varieties.GenderRatio);
+
+    Genus = locale.FindStringValue(Varieties.Genus);
 
     Url = locale.TryGetStringValue(Varieties.Url);
     Notes = locale.TryGetStringValue(Varieties.Notes);
