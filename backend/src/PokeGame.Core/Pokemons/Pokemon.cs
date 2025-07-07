@@ -2,6 +2,7 @@
 using Logitar.EventSourcing;
 using PokeGame.Core.Forms;
 using PokeGame.Core.Pokemons.Events;
+using PokeGame.Core.Species;
 
 namespace PokeGame.Core.Pokemons;
 
@@ -42,9 +43,15 @@ public class Pokemon : AggregateRoot
   private EffortValues? _effortValues = null;
   public EffortValues EffortValues => _effortValues ?? throw new InvalidOperationException("The Pokémon has not been initialized.");
 
+  public GrowthRate GrowthRate { get; private set; }
   public int Experience { get; private set; }
+  public int Level => ExperienceTable.Instance.GetLevel(GrowthRate, Experience);
+  public int MaximumExperience => ExperienceTable.Instance.GetMaximumExperience(GrowthRate, Level);
+  public int ToNextLevel => Math.Max(MaximumExperience - Experience, 0);
+
   public int Vitality { get; private set; }
   public int Stamina { get; private set; }
+
   public byte Friendship { get; private set; }
 
   private Url? _sprite = null;
@@ -97,6 +104,7 @@ public class Pokemon : AggregateRoot
     PokemonNature nature = default,
     IndividualValues? individualValues = null,
     EffortValues? effortValues = null,
+    GrowthRate growthRate = default,
     int experience = 0,
     int vitality = 0,
     int stamina = 0,
@@ -120,13 +128,31 @@ public class Pokemon : AggregateRoot
     {
       throw new ArgumentOutOfRangeException(nameof(nature));
     }
+    if (!Enum.IsDefined(growthRate))
+    {
+      throw new ArgumentOutOfRangeException(nameof(growthRate));
+    }
     ArgumentOutOfRangeException.ThrowIfNegative(experience, nameof(experience));
     ArgumentOutOfRangeException.ThrowIfNegative(vitality, nameof(vitality)); // TODO(fpion): should not go over max. HP
     ArgumentOutOfRangeException.ThrowIfNegative(stamina, nameof(stamina)); // TODO(fpion): should not go over max. HP
 
     individualValues ??= new();
     effortValues ??= new();
-    Raise(new PokemonCreated(formId, uniqueName, gender, teraType, size, abilitySlot, nature, individualValues, effortValues, experience, vitality, stamina, friendship), actorId);
+    Raise(new PokemonCreated(
+      formId,
+      uniqueName,
+      gender,
+      teraType,
+      size,
+      abilitySlot,
+      nature,
+      individualValues,
+      effortValues,
+      growthRate,
+      experience,
+      vitality,
+      stamina,
+      friendship), actorId);
   }
   protected virtual void Handle(PokemonCreated @event)
   {
@@ -143,7 +169,9 @@ public class Pokemon : AggregateRoot
     _individualValues = @event.IndividualValues;
     _effortValues = @event.EffortValues;
 
+    GrowthRate = @event.GrowthRate;
     Experience = @event.Experience;
+
     Vitality = @event.Vitality;
     Stamina = @event.Stamina;
 

@@ -1,6 +1,9 @@
-﻿namespace PokeGame.Core.Pokemons;
+﻿using FluentValidation;
+using PokeGame.Core.Pokemons.Validators;
 
-public record EffortValues
+namespace PokeGame.Core.Pokemons;
+
+public record EffortValues : IEffortValues
 {
   public byte HP { get; }
   public byte Attack { get; }
@@ -21,5 +24,10 @@ public record EffortValues
     SpecialAttack = specialAttack;
     SpecialDefense = specialDefense;
     Speed = speed;
+    new EffortValuesValidator().ValidateAndThrow(this);
+  }
+
+  public EffortValues(IEffortValues ev) : this(ev.HP, ev.Attack, ev.Defense, ev.SpecialAttack, ev.SpecialDefense, ev.Speed)
+  {
   }
 }

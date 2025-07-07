@@ -2,6 +2,7 @@
 using PokeGame.Core;
 using PokeGame.Core.Pokemons;
 using PokeGame.Core.Pokemons.Events;
+using PokeGame.Core.Species;
 using AggregateEntity = Krakenar.EntityFrameworkCore.Relational.Entities.Aggregate;
 
 namespace PokeGame.EntityFrameworkCore.Entities;
@@ -52,9 +53,15 @@ internal class PokemonEntity : AggregateEntity
   public byte EffortValueSpecialDefense { get; private set; }
   public byte EffortValueSpeed { get; private set; }
 
+  public GrowthRate GrowthRate { get; private set; } // TODO(fpion): implement
   public int Experience { get; private set; }
+  public int Level { get; private set; } // TODO(fpion): implement
+  public int MaximumExperience { get; private set; } // TODO(fpion): implement
+  public int ToNextLevel { get; private set; } // TODO(fpion): implement
+
   public int Vitality { get; private set; }
   public int Stamina { get; private set; }
+
   public byte Friendship { get; private set; }
 
   public string? Sprite { get; private set; }

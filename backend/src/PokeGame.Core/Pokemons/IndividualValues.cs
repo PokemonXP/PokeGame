@@ -1,8 +1,9 @@
 ﻿using FluentValidation;
+using PokeGame.Core.Pokemons.Validators;
 
 namespace PokeGame.Core.Pokemons;
 
-public record IndividualValues
+public record IndividualValues : IIndividualValues
 {
   public byte HP { get; }
   public byte Attack { get; }
@@ -23,19 +24,10 @@ public record IndividualValues
     SpecialAttack = specialAttack;
     SpecialDefense = specialDefense;
     Speed = speed;
-    new Validator().ValidateAndThrow(this);
+    new IndividualValuesValidator().ValidateAndThrow(this);
   }
 
-  private class Validator : AbstractValidator<IndividualValues>
+  public IndividualValues(IIndividualValues iv) : this(iv.HP, iv.Attack, iv.Defense, iv.SpecialAttack, iv.SpecialDefense, iv.Speed)
   {
-    public Validator()
-    {
-      RuleFor(x => x.HP).InclusiveBetween((byte)0, (byte)31);
-      RuleFor(x => x.Attack).InclusiveBetween((byte)0, (byte)31);
-      RuleFor(x => x.Defense).InclusiveBetween((byte)0, (byte)31);
-      RuleFor(x => x.SpecialAttack).InclusiveBetween((byte)0, (byte)31);
-      RuleFor(x => x.SpecialDefense).InclusiveBetween((byte)0, (byte)31);
-      RuleFor(x => x.Speed).InclusiveBetween((byte)0, (byte)31);
-    }
   }
 }
