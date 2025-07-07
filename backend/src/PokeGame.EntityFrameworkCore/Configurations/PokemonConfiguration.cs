@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PokeGame.Core;
 using PokeGame.Core.Pokemons;
+using PokeGame.Core.Species;
 using PokeGame.EntityFrameworkCore.Entities;
 
 namespace PokeGame.EntityFrameworkCore.Configurations;
@@ -28,6 +29,7 @@ internal class PokemonConfiguration : AggregateConfiguration<PokemonEntity>, IEn
     builder.HasIndex(x => x.Gender);
     builder.HasIndex(x => x.TeraType);
     builder.HasIndex(x => x.Nature);
+    builder.HasIndex(x => x.Level);
 
     builder.Property(x => x.UniqueName).HasMaxLength(UniqueName.MaximumLength);
     builder.Property(x => x.UniqueNameNormalized).HasMaxLength(UniqueName.MaximumLength);
@@ -36,6 +38,7 @@ internal class PokemonConfiguration : AggregateConfiguration<PokemonEntity>, IEn
     builder.Property(x => x.TeraType).HasMaxLength(byte.MaxValue).HasConversion(new EnumToStringConverter<PokemonType>());
     builder.Property(x => x.AbilitySlot).HasMaxLength(byte.MaxValue).HasConversion(new EnumToStringConverter<AbilitySlot>());
     builder.Property(x => x.Nature).HasMaxLength(byte.MaxValue).HasConversion(new EnumToStringConverter<PokemonNature>());
+    builder.Property(x => x.GrowthRate).HasMaxLength(byte.MaxValue).HasConversion(new EnumToStringConverter<GrowthRate>());
     builder.Property(x => x.Sprite).HasMaxLength(Url.MaximumLength);
     builder.Property(x => x.Url).HasMaxLength(Url.MaximumLength);
 

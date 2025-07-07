@@ -53,11 +53,11 @@ internal class PokemonEntity : AggregateEntity
   public byte EffortValueSpecialDefense { get; private set; }
   public byte EffortValueSpeed { get; private set; }
 
-  public GrowthRate GrowthRate { get; private set; } // TODO(fpion): implement
+  public GrowthRate GrowthRate { get; private set; }
   public int Experience { get; private set; }
-  public int Level { get; private set; } // TODO(fpion): implement
-  public int MaximumExperience { get; private set; } // TODO(fpion): implement
-  public int ToNextLevel { get; private set; } // TODO(fpion): implement
+  public int Level { get; private set; }
+  public int MaximumExperience { get; private set; }
+  public int ToNextLevel { get; private set; }
 
   public int Vitality { get; private set; }
   public int Stamina { get; private set; }
@@ -110,9 +110,15 @@ internal class PokemonEntity : AggregateEntity
     EffortValueSpecialDefense = @event.EffortValues.SpecialDefense;
     EffortValueSpeed = @event.EffortValues.Speed;
 
+    GrowthRate = @event.GrowthRate;
     Experience = @event.Experience;
+    Level = ExperienceTable.Instance.GetLevel(GrowthRate, Experience);
+    MaximumExperience = ExperienceTable.Instance.GetMaximumExperience(GrowthRate, Level);
+    ToNextLevel = Math.Min(MaximumExperience - Experience, 0);
+
     Vitality = @event.Vitality;
     Stamina = @event.Stamina;
+
     Friendship = @event.Friendship;
   }
 
