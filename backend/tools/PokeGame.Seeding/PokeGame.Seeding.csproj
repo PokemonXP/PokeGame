@@ -27,6 +27,7 @@
     <None Remove="Game\data\moves.csv" />
     <None Remove="Game\data\regions.csv" />
     <None Remove="Game\data\species.csv" />
+    <None Remove="Game\data\trainers.csv" />
     <None Remove="Game\data\varieties.csv" />
   </ItemGroup>
 
@@ -62,6 +63,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Game\data\species.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Game\data\trainers.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Game\data\varieties.csv">
