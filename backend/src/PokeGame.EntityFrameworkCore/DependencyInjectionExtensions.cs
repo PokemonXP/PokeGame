@@ -4,6 +4,7 @@ using Krakenar.EntityFrameworkCore.Relational;
 using Krakenar.Infrastructure.Commands;
 using Microsoft.Extensions.DependencyInjection;
 using PokeGame.Core.Abilities;
+using PokeGame.Core.Moves;
 using PokeGame.Core.Regions;
 using PokeGame.EntityFrameworkCore.Handlers;
 using PokeGame.EntityFrameworkCore.Queriers;
@@ -33,6 +34,7 @@ public static class DependencyInjectionExtensions
   {
     return services
       .AddScoped<IAbilityQuerier, AbilityQuerier>()
+      .AddScoped<IMoveQuerier, MoveQuerier>()
       .AddScoped<IRegionQuerier, RegionQuerier>();
   }
 }

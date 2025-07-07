@@ -15,8 +15,8 @@ internal class MovePayload
   public PokemonType Type { get; set; }
   public MoveCategory Category { get; set; }
 
-  public int? Accuracy { get; set; }
-  public int? Power { get; set; }
+  public int Accuracy { get; set; }
+  public int Power { get; set; }
   public int PowerPoints { get; set; }
 
   public InflictedStatusPayload? InflictedStatus { get; set; }
@@ -36,18 +36,18 @@ internal class MovePayload
   {
     public Map()
     {
-      Map(x => x.Id).Index(0);
+      Map(x => x.Id).Index(0).Default(Guid.Empty);
 
-      Map(x => x.UniqueName).Index(3);
+      Map(x => x.UniqueName).Index(3).Default(string.Empty);
       Map(x => x.DisplayName).Index(4);
       Map(x => x.Description).Index(5);
 
-      Map(x => x.Type).Index(1);
-      Map(x => x.Category).Index(2);
+      Map(x => x.Type).Index(1).Default(default(PokemonType));
+      Map(x => x.Category).Index(2).Default(default(MoveCategory));
 
-      Map(x => x.Accuracy).Index(6);
-      Map(x => x.Power).Index(7);
-      Map(x => x.PowerPoints).Index(8);
+      Map(x => x.Accuracy).Index(6).Default(0);
+      Map(x => x.Power).Index(7).Default(0);
+      Map(x => x.PowerPoints).Index(8).Default(0);
 
       Map(x => x.InflictedStatus).Convert(args =>
       {
