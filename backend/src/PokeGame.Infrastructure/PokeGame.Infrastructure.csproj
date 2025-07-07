@@ -22,4 +22,8 @@
     <ProjectReference Include="..\PokeGame.Core\PokeGame.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Using Include="System.Text.Json" />
+  </ItemGroup>
+
 </Project>

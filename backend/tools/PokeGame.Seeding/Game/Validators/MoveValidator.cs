@@ -17,9 +17,9 @@ internal class MoveValidator : AbstractValidator<MovePayload>
     RuleFor(x => x.Type).IsInEnum();
     RuleFor(x => x.Category).IsInEnum();
 
-    RuleFor(x => x.Accuracy).InclusiveBetween(30, 100);
-    When(x => x.Category == MoveCategory.Special, () => RuleFor(x => x.Power).Null())
-      .Otherwise(() => RuleFor(x => x.Power).InclusiveBetween(10, 250));
+    RuleFor(x => x.Accuracy).InclusiveBetween(0, 100);
+    When(x => x.Category == MoveCategory.Status, () => RuleFor(x => x.Power).Equal(0))
+      .Otherwise(() => RuleFor(x => x.Power).InclusiveBetween(0, 250));
     RuleFor(x => x.PowerPoints).InclusiveBetween(1, 40);
 
     When(x => x.InflictedStatus is not null, () => RuleFor(x => x.InflictedStatus!).SetValidator(new InflictedStatusValidator()));
