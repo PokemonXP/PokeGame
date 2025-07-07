@@ -1,8 +1,10 @@
 ﻿using Krakenar.Core.Contents;
 using Krakenar.Core.Contents.Events;
+using Krakenar.EntityFrameworkCore.Relational.KrakenarDb;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using PokeGame.EntityFrameworkCore.Entities;
+using PokeGame.Infrastructure.Data;
 
 namespace PokeGame.EntityFrameworkCore.Handlers;
 
@@ -35,9 +37,56 @@ internal class SpeciesPublishedHandler : INotificationHandler<SpeciesPublished>
       species.Update(published);
     }
 
-    // TODO(fpion): Regional Numbers
+    IReadOnlyDictionary<RegionEntity, int> regionalNumbers = await GetRegionalNumbersAsync(published.Invariant, cancellationToken);
+    HashSet<int> regionIds = regionalNumbers.Select(x => x.Key.RegionId).ToHashSet();
+    foreach (RegionalNumberEntity regionalNumber in species.RegionalNumbers)
+    {
+      if (!regionIds.Contains(regionalNumber.RegionId))
+      {
+        _context.RegionalNumbers.Remove(regionalNumber);
+      }
+    }
+    foreach (KeyValuePair<RegionEntity, int> regionalNumber in regionalNumbers)
+    {
+      species.SetRegionalNumber(regionalNumber.Key, regionalNumber.Value);
+    }
 
     await _context.SaveChangesAsync(cancellationToken);
+  }
+
+  private async Task<IReadOnlyDictionary<RegionEntity, int>> GetRegionalNumbersAsync(ContentLocale invariant, CancellationToken cancellationToken)
+  {
+    string? fieldValue = invariant.TryGetStringValue(Species.RegionalNumbers);
+    if (string.IsNullOrWhiteSpace(fieldValue))
+    {
+      return new Dictionary<RegionEntity, int>();
+    }
+    string[] fieldValues = fieldValue.Split('|');
+
+    RegionEntity[] regions = await _context.Regions.ToArrayAsync(cancellationToken);
+    int capacity = regions.Length;
+    Dictionary<Guid, RegionEntity> regionsById = new(capacity);
+    Dictionary<string, RegionEntity> regionsByName = new(capacity);
+    foreach (RegionEntity region in regions)
+    {
+      regionsById[region.Id] = region;
+      regionsByName[region.UniqueNameNormalized] = region;
+    }
+
+    Dictionary<RegionEntity, int> regionalNumbers = new(capacity);
+    foreach (string value in fieldValues)
+    {
+      string[] values = value.Split(':');
+      if (values.Length == 2 && int.TryParse(values.Last(), out int number))
+      {
+        if ((Guid.TryParse(values.First(), out Guid id) && regionsById.TryGetValue(id, out RegionEntity? region))
+          || regionsByName.TryGetValue(Helper.Normalize(values.First()), out region))
+        {
+          regionalNumbers[region] = number;
+        }
+      }
+    }
+    return regionalNumbers.AsReadOnly();
   }
 }
 
