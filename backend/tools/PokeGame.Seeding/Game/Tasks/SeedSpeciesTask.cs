@@ -108,6 +108,10 @@ internal class SeedSpeciesTaskHandler : INotificationHandler<SeedSpeciesTask>
         content = await _contentService.CreateAsync(payload, cancellationToken);
         _logger.LogInformation("The species content 'Id={ContentId}' was created.", content.Id);
       }
+
+      await _contentService.PublishAsync(content.Id, language: null, cancellationToken);
+      await _contentService.PublishAsync(content.Id, task.Language, cancellationToken);
+      _logger.LogInformation("The species content 'Id={ContentId}' was published.", content.Id);
     }
   }
 
@@ -121,7 +125,7 @@ internal class SeedSpeciesTaskHandler : INotificationHandler<SeedSpeciesTask>
       GrowthRate.MediumFast => "medium",
       GrowthRate.MediumSlow => "medium-slow",
       GrowthRate.Slow => "slow",
-      _ => throw new NotSupportedException($"The growth rate '{growthRate}' is not supported."),
+      _ => throw new ArgumentException($"The growth rate '{growthRate}' is not valid.", nameof(growthRate)),
     };
     return SeedingSerializer.Serialize<string[]>([value]);
   }

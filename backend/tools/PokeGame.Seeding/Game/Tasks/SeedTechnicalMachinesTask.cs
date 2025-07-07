@@ -42,7 +42,7 @@ internal class SeedTechnicalMachinesTaskHandler : INotificationHandler<SeedTechn
       ContentTypeId = Moves.ContentTypeId
     };
     SearchResults<ContentLocale> results = await _contentService.SearchLocalesAsync(search, cancellationToken);
-    ContentIndex moveIndex = new(results); // TODO(fpion): should only load published?
+    ContentIndex moveIndex = new(results);
 
     search.ContentTypeId = TechnicalMachines.ContentTypeId;
     results = await _contentService.SearchLocalesAsync(search, cancellationToken);
