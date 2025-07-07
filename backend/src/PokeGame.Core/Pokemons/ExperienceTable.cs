@@ -2,13 +2,13 @@
 
 namespace PokeGame.Core.Pokemons;
 
-public interface IExperienceTable // TODO(fpion): unit tests
+public interface IExperienceTable
 {
   int GetLevel(GrowthRate growthRate, int experience);
   int GetMaximumExperience(GrowthRate growthRate, int level);
 }
 
-public class ExperienceTable : IExperienceTable
+public class ExperienceTable : IExperienceTable // TODO(fpion): unit tests
 {
   private const int MaximumLevel = 100;
 

@@ -38,16 +38,19 @@ public class Pokemon : AggregateRoot
   public AbilitySlot AbilitySlot { get; private set; } // TODO(fpion): can be changed using Ability Patch/Capsule!
   public PokemonNature Nature { get; private set; } // TODO(fpion): can be changed using mints!
 
-  private IndividualValues? _individualValues = null;
-  public IndividualValues IndividualValues => _individualValues ?? throw new InvalidOperationException("The Pokémon has not been initialized.");
-  private EffortValues? _effortValues = null;
-  public EffortValues EffortValues => _effortValues ?? throw new InvalidOperationException("The Pokémon has not been initialized.");
-
   public GrowthRate GrowthRate { get; private set; }
   public int Experience { get; private set; }
   public int Level => ExperienceTable.Instance.GetLevel(GrowthRate, Experience);
   public int MaximumExperience => ExperienceTable.Instance.GetMaximumExperience(GrowthRate, Level);
   public int ToNextLevel => Math.Max(MaximumExperience - Experience, 0);
+
+  private BaseStatistics? _baseStatistics = null;
+  public BaseStatistics BaseStatistics => _baseStatistics ?? throw new InvalidOperationException("The Pokémon has not been initialized.");
+  private IndividualValues? _individualValues = null;
+  public IndividualValues IndividualValues => _individualValues ?? throw new InvalidOperationException("The Pokémon has not been initialized.");
+  private EffortValues? _effortValues = null;
+  public EffortValues EffortValues => _effortValues ?? throw new InvalidOperationException("The Pokémon has not been initialized.");
+  public PokemonStatistics Statistics => new(this);
 
   public int Vitality { get; private set; }
   public int Stamina { get; private set; }
@@ -99,6 +102,7 @@ public class Pokemon : AggregateRoot
     UniqueName uniqueName,
     PokemonType teraType,
     PokemonSize size,
+    BaseStatistics baseStatistics,
     PokemonGender? gender = null,
     AbilitySlot abilitySlot = AbilitySlot.Primary,
     PokemonNature nature = default,
@@ -133,11 +137,17 @@ public class Pokemon : AggregateRoot
       throw new ArgumentOutOfRangeException(nameof(growthRate));
     }
     ArgumentOutOfRangeException.ThrowIfNegative(experience, nameof(experience));
-    ArgumentOutOfRangeException.ThrowIfNegative(vitality, nameof(vitality)); // TODO(fpion): should not go over max. HP
-    ArgumentOutOfRangeException.ThrowIfNegative(stamina, nameof(stamina)); // TODO(fpion): should not go over max. HP
+    ArgumentOutOfRangeException.ThrowIfNegative(vitality, nameof(vitality));
+    ArgumentOutOfRangeException.ThrowIfNegative(stamina, nameof(stamina));
 
     individualValues ??= new();
     effortValues ??= new();
+
+    int level = ExperienceTable.Instance.GetLevel(growthRate, experience);
+    PokemonStatistics statistics = new(baseStatistics, individualValues, effortValues, level, nature);
+    vitality = Math.Min(vitality, statistics.HP);
+    stamina = Math.Min(stamina, statistics.HP);
+
     Raise(new PokemonCreated(
       formId,
       uniqueName,
@@ -146,10 +156,11 @@ public class Pokemon : AggregateRoot
       size,
       abilitySlot,
       nature,
-      individualValues,
-      effortValues,
       growthRate,
       experience,
+      baseStatistics,
+      individualValues,
+      effortValues,
       vitality,
       stamina,
       friendship), actorId);
@@ -166,11 +177,12 @@ public class Pokemon : AggregateRoot
     AbilitySlot = @event.AbilitySlot;
     Nature = @event.Nature;
 
-    _individualValues = @event.IndividualValues;
-    _effortValues = @event.EffortValues;
-
     GrowthRate = @event.GrowthRate;
     Experience = @event.Experience;
+
+    _baseStatistics = @event.BaseStatistics;
+    _individualValues = @event.IndividualValues;
+    _effortValues = @event.EffortValues;
 
     Vitality = @event.Vitality;
     Stamina = @event.Stamina;
@@ -234,8 +246,6 @@ public class Pokemon : AggregateRoot
   public override string ToString() => $"{Nickname?.Value ?? UniqueName.Value} | {base.ToString()}";
 
   // TODO(fpion): Held Item
-  // TODO(fpion): Level / Max. Experience / To Next Level
-  // TODO(fpion): Statistic Calculations
   // TODO(fpion): Moves
   // TODO(fpion): Characteristic / Liked Flavor / Disliked Flavor
   // TODO(fpion): StatusCondition

@@ -39,6 +39,12 @@ internal class PokemonEntity : AggregateEntity
   public AbilitySlot AbilitySlot { get; private set; }
   public PokemonNature Nature { get; private set; }
 
+  public GrowthRate GrowthRate { get; private set; }
+  public int Experience { get; private set; }
+  public int Level { get; private set; }
+  public int MaximumExperience { get; private set; }
+  public int ToNextLevel { get; private set; }
+
   public byte IndividualValueHp { get; private set; }
   public byte IndividualValueAttack { get; private set; }
   public byte IndividualValueDefense { get; private set; }
@@ -52,12 +58,6 @@ internal class PokemonEntity : AggregateEntity
   public byte EffortValueSpecialAttack { get; private set; }
   public byte EffortValueSpecialDefense { get; private set; }
   public byte EffortValueSpeed { get; private set; }
-
-  public GrowthRate GrowthRate { get; private set; }
-  public int Experience { get; private set; }
-  public int Level { get; private set; }
-  public int MaximumExperience { get; private set; }
-  public int ToNextLevel { get; private set; }
 
   public int Vitality { get; private set; }
   public int Stamina { get; private set; }
@@ -114,7 +114,7 @@ internal class PokemonEntity : AggregateEntity
     Experience = @event.Experience;
     Level = ExperienceTable.Instance.GetLevel(GrowthRate, Experience);
     MaximumExperience = ExperienceTable.Instance.GetMaximumExperience(GrowthRate, Level);
-    ToNextLevel = Math.Min(MaximumExperience - Experience, 0);
+    ToNextLevel = Math.Max(MaximumExperience - Experience, 0);
 
     Vitality = @event.Vitality;
     Stamina = @event.Stamina;

@@ -98,12 +98,12 @@ internal class PokemonMapper
       }
     }
 
-    destination.BaseStatistics.HP = source.HPBase;
-    destination.BaseStatistics.Attack = source.AttackBase;
-    destination.BaseStatistics.Defense = source.DefenseBase;
-    destination.BaseStatistics.SpecialAttack = source.SpecialAttackBase;
-    destination.BaseStatistics.SpecialDefense = source.SpecialDefenseBase;
-    destination.BaseStatistics.Speed = source.SpeedBase;
+    destination.BaseStatistics.HP = (byte)source.HPBase;
+    destination.BaseStatistics.Attack = (byte)source.AttackBase;
+    destination.BaseStatistics.Defense = (byte)source.DefenseBase;
+    destination.BaseStatistics.SpecialAttack = (byte)source.SpecialAttackBase;
+    destination.BaseStatistics.SpecialDefense = (byte)source.SpecialDefenseBase;
+    destination.BaseStatistics.Speed = (byte)source.SpeedBase;
 
     destination.Yield.Experience = source.ExperienceYield;
     destination.Yield.HP = source.HPYield;

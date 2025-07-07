@@ -13,10 +13,11 @@ public record PokemonCreated(
   PokemonSize Size,
   AbilitySlot AbilitySlot,
   PokemonNature Nature,
-  IndividualValues IndividualValues,
-  EffortValues EffortValues,
   GrowthRate GrowthRate,
   int Experience,
+  BaseStatistics BaseStatistics,
+  IndividualValues IndividualValues,
+  EffortValues EffortValues,
   int Vitality,
   int Stamina,
   byte Friendship) : DomainEvent;
