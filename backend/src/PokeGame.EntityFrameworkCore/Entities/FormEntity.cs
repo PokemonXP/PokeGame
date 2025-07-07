@@ -60,6 +60,7 @@ internal class FormEntity : AggregateEntity
   public string? Notes { get; private set; }
 
   public List<FormAbilityEntity> Abilities { get; private set; } = [];
+  public List<PokemonEntity> Pokemon { get; private set; } = [];
 
   public FormEntity(VarietyEntity variety, FormPublished published) : base(published.Event)
   {
