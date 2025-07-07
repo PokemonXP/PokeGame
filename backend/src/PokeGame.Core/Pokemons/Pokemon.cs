@@ -35,7 +35,7 @@ public class Pokemon : AggregateRoot
   private PokemonSize? _size = null;
   public PokemonSize Size => _size ?? throw new InvalidOperationException("The Pokémon has not been initialized.");
   public AbilitySlot AbilitySlot { get; private set; } // TODO(fpion): can be changed using Ability Patch/Capsule!
-  public Nature Nature { get; private set; } // TODO(fpion): can be changed using mints!
+  public PokemonNature Nature { get; private set; } // TODO(fpion): can be changed using mints!
 
   private IndividualValues? _individualValues = null;
   public IndividualValues IndividualValues => _individualValues ?? throw new InvalidOperationException("The Pokémon has not been initialized.");
@@ -94,7 +94,7 @@ public class Pokemon : AggregateRoot
     PokemonSize size,
     PokemonGender? gender = null,
     AbilitySlot abilitySlot = AbilitySlot.Primary,
-    Nature nature = default,
+    PokemonNature nature = default,
     IndividualValues? individualValues = null,
     EffortValues? effortValues = null,
     int experience = 0,

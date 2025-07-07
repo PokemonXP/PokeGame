@@ -1,6 +1,6 @@
 ﻿namespace PokeGame.Core.Pokemons;
 
-public enum Nature
+public enum PokemonNature
 {
   Adamant = 0,
   Bashful,

@@ -11,7 +11,7 @@ public record PokemonCreated(
   PokemonType TeraType,
   PokemonSize Size,
   AbilitySlot AbilitySlot,
-  Nature Nature,
+  PokemonNature Nature,
   IndividualValues IndividualValues,
   EffortValues EffortValues,
   int Experience,
