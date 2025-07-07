@@ -1,5 +1,4 @@
 ﻿using PokeGame.Core.Forms;
-using System.Text.Json.Serialization;
 
 namespace PokeGame.Infrastructure.Converters;
 

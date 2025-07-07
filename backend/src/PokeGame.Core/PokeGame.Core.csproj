@@ -18,4 +18,8 @@
     <PackageReference Include="Krakenar.Core" Version="1.0.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Using Include="System.Diagnostics.CodeAnalysis" />
+  </ItemGroup>
+
 </Project>
