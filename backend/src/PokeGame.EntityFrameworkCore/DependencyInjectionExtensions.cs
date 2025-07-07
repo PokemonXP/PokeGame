@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using PokeGame.Core.Abilities;
 using PokeGame.Core.Forms;
 using PokeGame.Core.Moves;
+using PokeGame.Core.Pokemons.Events;
 using PokeGame.Core.Regions;
 using PokeGame.Core.Species;
 using PokeGame.Core.Trainers;
@@ -31,7 +32,11 @@ public static class DependencyInjectionExtensions
   {
     return services
       .AddScoped<IEventHandler<ContentLocalePublished>, PokemonContentEvents>()
-      .AddScoped<IEventHandler<ContentLocaleUnpublished>, PokemonContentEvents>();
+      .AddScoped<IEventHandler<ContentLocaleUnpublished>, PokemonContentEvents>()
+      .AddScoped<IEventHandler<PokemonCreated>, PokemonEvents>()
+      .AddScoped<IEventHandler<PokemonNicknamed>, PokemonEvents>()
+      .AddScoped<IEventHandler<PokemonUniqueNameChanged>, PokemonEvents>()
+      .AddScoped<IEventHandler<PokemonUpdated>, PokemonEvents>();
   }
 
   private static IServiceCollection AddQueriers(this IServiceCollection services)

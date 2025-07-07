@@ -31,6 +31,7 @@ internal class SpeciesEntity : AggregateEntity
   public string? Url { get; private set; }
   public string? Notes { get; private set; }
 
+  public List<PokemonEntity> Pokemon { get; private set; } = [];
   public List<RegionalNumberEntity> RegionalNumbers { get; private set; } = [];
   public List<VarietyEntity> Varieties { get; private set; } = [];
 

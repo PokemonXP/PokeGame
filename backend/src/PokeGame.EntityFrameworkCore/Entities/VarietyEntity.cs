@@ -34,6 +34,7 @@ internal class VarietyEntity : AggregateEntity
   public string? Notes { get; private set; }
 
   public List<FormEntity> Forms { get; private set; } = [];
+  public List<PokemonEntity> Pokemon { get; private set; } = [];
 
   public VarietyEntity(SpeciesEntity species, VarietyPublished published) : base(published.Event)
   {

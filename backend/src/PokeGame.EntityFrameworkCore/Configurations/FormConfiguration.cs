@@ -38,6 +38,6 @@ internal class FormConfiguration : AggregateConfiguration<FormEntity>, IEntityTy
     builder.Property(x => x.AlternativeSpriteShiny).HasMaxLength(Url.MaximumLength);
     builder.Property(x => x.Url).HasMaxLength(Url.MaximumLength);
 
-    builder.HasOne(x => x.Variety).WithMany(x => x.Forms).OnDelete(DeleteBehavior.Cascade);
+    builder.HasOne(x => x.Variety).WithMany(x => x.Forms).OnDelete(DeleteBehavior.Restrict);
   }
 }
