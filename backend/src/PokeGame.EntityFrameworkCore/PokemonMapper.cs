@@ -1,0 +1,66 @@
+﻿using Krakenar.Contracts.Actors;
+using Logitar;
+using Logitar.EventSourcing;
+using PokeGame.Core.Regions.Models;
+using PokeGame.EntityFrameworkCore.Entities;
+using AggregateEntity = Krakenar.EntityFrameworkCore.Relational.Entities.Aggregate;
+using AggregateModel = Krakenar.Contracts.Aggregate;
+
+namespace PokeGame.EntityFrameworkCore;
+
+internal class PokemonMapper
+{
+  private readonly Dictionary<ActorId, Actor> _actors;
+  private readonly Actor _system = new();
+
+  public PokemonMapper()
+  {
+    _actors = [];
+  }
+
+  public PokemonMapper(IEnumerable<KeyValuePair<ActorId, Actor>> actors) : this()
+  {
+    foreach (KeyValuePair<ActorId, Actor> actor in actors)
+    {
+      _actors[actor.Key] = actor.Value;
+    }
+  }
+
+  public RegionModel ToRegion(RegionEntity source)
+  {
+    RegionModel destination = new()
+    {
+      Id = source.Id,
+      UniqueName = source.UniqueName,
+      DisplayName = source.DisplayName,
+      Description = source.Description,
+      Url = source.Url,
+      Notes = source.Notes
+    };
+
+    MapAggregate(source, destination);
+
+    return destination;
+  }
+
+  private void MapAggregate(AggregateEntity source, AggregateModel destination)
+  {
+    destination.Version = source.Version;
+    destination.CreatedBy = FindActor(source.CreatedBy);
+    destination.CreatedOn = source.CreatedOn.AsUniversalTime();
+    destination.UpdatedBy = FindActor(source.UpdatedBy);
+    destination.UpdatedOn = source.UpdatedOn.AsUniversalTime();
+  }
+
+  private Actor FindActor(string? id) => TryFindActor(id) ?? _system;
+  private Actor FindActor(ActorId? id) => TryFindActor(id) ?? _system;
+  private Actor? TryFindActor(string? id) => string.IsNullOrWhiteSpace(id) ? null : TryFindActor(new ActorId(id));
+  private Actor? TryFindActor(ActorId? id)
+  {
+    if (id.HasValue)
+    {
+      return _actors.TryGetValue(id.Value, out Actor? actor) ? actor : null;
+    }
+    return null;
+  }
+}
