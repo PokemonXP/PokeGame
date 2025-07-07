@@ -3,6 +3,7 @@
 internal enum EntityKind
 {
   Ability,
+  Form,
   Move,
   Region,
   Species,

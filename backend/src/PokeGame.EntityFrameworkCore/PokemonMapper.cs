@@ -1,7 +1,9 @@
 ﻿using Krakenar.Contracts.Actors;
 using Logitar;
 using Logitar.EventSourcing;
+using PokeGame.Core;
 using PokeGame.Core.Abilities.Models;
+using PokeGame.Core.Forms.Models;
 using PokeGame.Core.Moves.Models;
 using PokeGame.Core.Regions.Models;
 using PokeGame.Core.Species.Models;
@@ -41,6 +43,79 @@ internal class PokemonMapper
       Url = source.Url,
       Notes = source.Notes
     };
+
+    MapAggregate(source, destination);
+
+    return destination;
+  }
+
+  public FormModel ToForm(FormEntity source)
+  {
+    if (source.Variety is null)
+    {
+      throw new ArgumentException("The variety is required.", nameof(source));
+    }
+
+    FormModel destination = new()
+    {
+      Id = source.Id,
+      Variety = ToVariety(source.Variety),
+      IsDefault = source.IsDefault,
+      UniqueName = source.UniqueName,
+      DisplayName = source.DisplayName,
+      Description = source.Description,
+      IsBattleOnly = source.IsBattleOnly,
+      IsMega = source.IsMega,
+      Height = source.Height,
+      Weight = source.Weight,
+      Url = source.Url,
+      Notes = source.Notes
+    };
+
+    destination.Types.Primary = source.PrimaryType;
+    destination.Types.Secondary = source.SecondaryType;
+
+    foreach (FormAbilityEntity entity in source.Abilities)
+    {
+      if (entity.Ability is null)
+      {
+        throw new ArgumentException("The ability is required.", nameof(source));
+      }
+      AbilityModel ability = ToAbility(entity.Ability);
+
+      switch (entity.Slot)
+      {
+        case AbilitySlot.Primary:
+          destination.Abilities.Primary = ability;
+          break;
+        case AbilitySlot.Secondary:
+          destination.Abilities.Secondary = ability;
+          break;
+        case AbilitySlot.Hidden:
+          destination.Abilities.Hidden = ability;
+          break;
+      }
+    }
+
+    destination.BaseStatistics.HP = source.HPBase;
+    destination.BaseStatistics.Attack = source.AttackBase;
+    destination.BaseStatistics.Defense = source.DefenseBase;
+    destination.BaseStatistics.SpecialAttack = source.SpecialAttackBase;
+    destination.BaseStatistics.SpecialDefense = source.SpecialDefenseBase;
+    destination.BaseStatistics.Speed = source.SpeedBase;
+
+    destination.Yield.Experience = source.ExperienceYield;
+    destination.Yield.HP = source.HPYield;
+    destination.Yield.Attack = source.AttackYield;
+    destination.Yield.Defense = source.DefenseYield;
+    destination.Yield.SpecialAttack = source.SpecialAttackYield;
+    destination.Yield.SpecialDefense = source.SpecialDefenseYield;
+    destination.Yield.Speed = source.SpeedYield;
+
+    destination.Sprites.Default = source.DefaultSprite;
+    destination.Sprites.DefaultShiny = source.DefaultSpriteShiny;
+    destination.Sprites.Alternative = source.AlternativeSprite;
+    destination.Sprites.AlternativeShiny = source.AlternativeSpriteShiny;
 
     MapAggregate(source, destination);
 
@@ -140,12 +215,11 @@ internal class PokemonMapper
     {
       throw new ArgumentException("The species is required.", nameof(source));
     }
-    SpeciesModel species = ToSpecies(source.Species);
 
     VarietyModel destination = new()
     {
       Id = source.Id,
-      Species = species,
+      Species = ToSpecies(source.Species),
       IsDefault = source.IsDefault,
       UniqueName = source.UniqueName,
       DisplayName = source.DisplayName,

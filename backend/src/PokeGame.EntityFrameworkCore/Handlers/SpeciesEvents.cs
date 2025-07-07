@@ -54,9 +54,9 @@ internal class SpeciesPublishedHandler : INotificationHandler<SpeciesPublished>
     await _context.SaveChangesAsync(cancellationToken);
   }
 
-  private async Task<IReadOnlyDictionary<RegionEntity, int>> GetRegionalNumbersAsync(ContentLocale invariant, CancellationToken cancellationToken)
+  private async Task<IReadOnlyDictionary<RegionEntity, int>> GetRegionalNumbersAsync(ContentLocale species, CancellationToken cancellationToken)
   {
-    string? fieldValue = invariant.TryGetStringValue(Species.RegionalNumbers);
+    string? fieldValue = species.TryGetStringValue(Species.RegionalNumbers);
     if (string.IsNullOrWhiteSpace(fieldValue))
     {
       return new Dictionary<RegionEntity, int>();

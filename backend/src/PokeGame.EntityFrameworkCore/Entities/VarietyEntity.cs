@@ -33,6 +33,8 @@ internal class VarietyEntity : AggregateEntity
   public string? Url { get; private set; }
   public string? Notes { get; private set; }
 
+  public List<FormEntity> Forms { get; private set; } = [];
+
   public VarietyEntity(SpeciesEntity species, VarietyPublished published) : base(published.Event)
   {
     Id = new ContentId(published.Event.StreamId).EntityId;

@@ -23,6 +23,8 @@ internal class AbilityEntity : AggregateEntity
   public string? Url { get; private set; }
   public string? Notes { get; private set; }
 
+  public List<FormAbilityEntity> Forms { get; private set; } = [];
+
   public AbilityEntity(AbilityPublished published) : base(published.Event)
   {
     Id = new ContentId(published.Event.StreamId).EntityId;
