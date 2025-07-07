@@ -18,8 +18,4 @@
     <PackageReference Include="Krakenar.Core" Version="1.0.1" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Forms\NewFolder\" />
-  </ItemGroup>
-
 </Project>
