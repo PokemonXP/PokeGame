@@ -2,7 +2,7 @@
 
 namespace PokeGame.Core.Pokemons;
 
-public interface IExperienceTable
+public interface IExperienceTable // TODO(fpion): unit tests
 {
   int GetLevel(GrowthRate growthRate, int experience);
   int GetMaximumExperience(GrowthRate growthRate, int level);
