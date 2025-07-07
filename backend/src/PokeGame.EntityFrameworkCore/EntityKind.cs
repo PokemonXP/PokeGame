@@ -7,5 +7,6 @@ internal enum EntityKind
   Move,
   Region,
   Species,
+  Trainer,
   Variety
 }

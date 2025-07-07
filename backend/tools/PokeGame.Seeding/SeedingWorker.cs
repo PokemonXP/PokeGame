@@ -65,19 +65,20 @@ internal class SeedingWorker : BackgroundService
       await ExecuteAsync(new SeedFieldTypesTask(), cancellationToken);
       await ExecuteAsync(new SeedContentTypesTask(fieldDefinitions: true), cancellationToken);
 
-      await ExecuteAsync(new SeedRegionsTask(defaults.Locale), cancellationToken);
-      await ExecuteAsync(new SeedAbilitiesTask(defaults.Locale), cancellationToken);
-      await ExecuteAsync(new SeedMovesTask(defaults.Locale), cancellationToken);
-      await ExecuteAsync(new SeedSpeciesTask(defaults.Locale), cancellationToken);
-      await ExecuteAsync(new SeedVarietiesTask(defaults.Locale), cancellationToken);
-      await ExecuteAsync(new SeedFormsTask(defaults.Locale), cancellationToken);
+      //await ExecuteAsync(new SeedRegionsTask(defaults.Locale), cancellationToken);
+      //await ExecuteAsync(new SeedAbilitiesTask(defaults.Locale), cancellationToken);
+      //await ExecuteAsync(new SeedMovesTask(defaults.Locale), cancellationToken);
+      //await ExecuteAsync(new SeedSpeciesTask(defaults.Locale), cancellationToken);
+      //await ExecuteAsync(new SeedVarietiesTask(defaults.Locale), cancellationToken);
+      //await ExecuteAsync(new SeedFormsTask(defaults.Locale), cancellationToken);
+      await ExecuteAsync(new SeedTrainersTask(defaults.Locale), cancellationToken);
 
-      await ExecuteAsync(new SeedBattleItemsTask(defaults.Locale), cancellationToken);
-      await ExecuteAsync(new SeedBerriesTask(defaults.Locale), cancellationToken);
-      await ExecuteAsync(new SeedMedicinesTask(defaults.Locale), cancellationToken);
-      await ExecuteAsync(new SeedPokeBallsTask(defaults.Locale), cancellationToken);
-      await ExecuteAsync(new SeedTechnicalMachinesTask(defaults.Locale), cancellationToken);
-      await ExecuteAsync(new SeedItemsTask(defaults.Locale), cancellationToken);
+      //await ExecuteAsync(new SeedBattleItemsTask(defaults.Locale), cancellationToken);
+      //await ExecuteAsync(new SeedBerriesTask(defaults.Locale), cancellationToken);
+      //await ExecuteAsync(new SeedMedicinesTask(defaults.Locale), cancellationToken);
+      //await ExecuteAsync(new SeedPokeBallsTask(defaults.Locale), cancellationToken);
+      //await ExecuteAsync(new SeedTechnicalMachinesTask(defaults.Locale), cancellationToken);
+      //await ExecuteAsync(new SeedItemsTask(defaults.Locale), cancellationToken);
     }
     catch (Exception exception)
     {
