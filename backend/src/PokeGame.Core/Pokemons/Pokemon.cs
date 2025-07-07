@@ -1,0 +1,216 @@
+﻿using Krakenar.Core;
+using Logitar.EventSourcing;
+using PokeGame.Core.Forms;
+using PokeGame.Core.Pokemons.Events;
+
+namespace PokeGame.Core.Pokemons;
+
+public class Pokemon : AggregateRoot
+{
+  private PokemonUpdated _updated = new();
+  private bool HasUpdates => _updated.Gender is not null || _updated.Url is not null || _updated.Notes is not null;
+
+  public new PokemonId Id => new(base.Id);
+
+  public FormId FormId { get; private set; } // TODO(fpion): can be changed!
+
+  private UniqueName? _uniqueName = null;
+  public UniqueName UniqueName => _uniqueName ?? throw new InvalidOperationException("The Pokémon has not been initialized.");
+  public DisplayName? Nickname { get; private set; }
+  private PokemonGender? _gender = null;
+  public PokemonGender? Gender
+  {
+    get => _gender;
+    set
+    {
+      if (_gender != value)
+      {
+        _gender = value;
+        _updated.Gender = new Change<PokemonGender?>(value);
+      }
+    }
+  }
+
+  public PokemonType TeraType { get; private set; } // TODO(fpion): can be changed using shards!
+  private PokemonSize? _size = null;
+  public PokemonSize Size => _size ?? throw new InvalidOperationException("The Pokémon has not been initialized.");
+  public AbilitySlot AbilitySlot { get; private set; } // TODO(fpion): can be changed using Ability Patch/Capsule!
+  public Nature Nature { get; private set; } // TODO(fpion): can be changed using mints!
+
+  private IndividualValues? _individualValues = null;
+  public IndividualValues IndividualValues => _individualValues ?? throw new InvalidOperationException("The Pokémon has not been initialized.");
+  private EffortValues? _effortValues = null;
+  public EffortValues EffortValues => _effortValues ?? throw new InvalidOperationException("The Pokémon has not been initialized.");
+
+  public int Experience { get; private set; }
+  public int Vitality { get; private set; }
+  public int Stamina { get; private set; }
+  public byte Friendship { get; private set; }
+
+  private Url? _sprite = null;
+  public Url? Sprite
+  {
+    get => _sprite;
+    set
+    {
+      if (_sprite != value)
+      {
+        _sprite = value;
+        _updated.Sprite = new Change<Url>(value);
+      }
+    }
+  }
+  private Url? _url = null;
+  public Url? Url
+  {
+    get => _url;
+    set
+    {
+      if (_url != value)
+      {
+        _url = value;
+        _updated.Url = new Change<Url>(value);
+      }
+    }
+  }
+  private Description? _notes = null;
+  public Description? Notes
+  {
+    get => _notes;
+    set
+    {
+      if (_notes != value)
+      {
+        _notes = value;
+        _updated.Notes = new Change<Description>(value);
+      }
+    }
+  }
+
+  public Pokemon(
+    FormId formId,
+    UniqueName uniqueName,
+    PokemonType teraType,
+    PokemonSize size,
+    PokemonGender? gender = null,
+    AbilitySlot abilitySlot = AbilitySlot.Primary,
+    Nature nature = default,
+    IndividualValues? individualValues = null,
+    EffortValues? effortValues = null,
+    int experience = 0,
+    int vitality = 0,
+    int stamina = 0,
+    byte friendship = 0,
+    ActorId? actorId = null,
+    PokemonId? pokemonId = null) : base((pokemonId ?? PokemonId.NewId()).StreamId)
+  {
+    if (!Enum.IsDefined(teraType))
+    {
+      throw new ArgumentOutOfRangeException(nameof(teraType));
+    }
+    if (gender.HasValue && !Enum.IsDefined(gender.Value))
+    {
+      throw new ArgumentOutOfRangeException(nameof(gender));
+    }
+    if (!Enum.IsDefined(abilitySlot))
+    {
+      throw new ArgumentOutOfRangeException(nameof(abilitySlot));
+    }
+    if (!Enum.IsDefined(nature))
+    {
+      throw new ArgumentOutOfRangeException(nameof(nature));
+    }
+    ArgumentOutOfRangeException.ThrowIfNegative(experience, nameof(experience));
+    ArgumentOutOfRangeException.ThrowIfNegative(vitality, nameof(vitality)); // TODO(fpion): should not go over max. HP
+    ArgumentOutOfRangeException.ThrowIfNegative(stamina, nameof(stamina)); // TODO(fpion): should not go over max. HP
+
+    individualValues ??= new();
+    effortValues ??= new();
+    Raise(new PokemonCreated(formId, uniqueName, gender, teraType, size, abilitySlot, nature, individualValues, effortValues, experience, vitality, stamina, friendship), actorId);
+  }
+  protected virtual void Handle(PokemonCreated @event)
+  {
+    FormId = @event.FormId;
+
+    _uniqueName = @event.UniqueName;
+    _gender = @event.Gender;
+
+    TeraType = @event.TeraType;
+    _size = @event.Size;
+    AbilitySlot = @event.AbilitySlot;
+    Nature = @event.Nature;
+
+    _individualValues = @event.IndividualValues;
+    _effortValues = @event.EffortValues;
+
+    Experience = @event.Experience;
+    Vitality = @event.Vitality;
+    Stamina = @event.Stamina;
+
+    Friendship = @event.Friendship;
+  }
+
+  public void SetNickname(DisplayName? nickname, ActorId? actorId = null)
+  {
+    if (Nickname != nickname)
+    {
+      Raise(new PokemonNicknamed(nickname), actorId);
+    }
+  }
+  protected virtual void Handle(PokemonNicknamed @event)
+  {
+    Nickname = @event.Nickname;
+  }
+
+  public void SetUniqueName(UniqueName uniqueName, ActorId? actorId = null)
+  {
+    if (_uniqueName != uniqueName)
+    {
+      Raise(new PokemonUniqueNameChanged(uniqueName), actorId);
+    }
+  }
+  protected virtual void Handle(PokemonUniqueNameChanged @event)
+  {
+    _uniqueName = @event.UniqueName;
+  }
+
+  public void Update(ActorId? actorId = null)
+  {
+    if (HasUpdates)
+    {
+      Raise(_updated, actorId, DateTime.Now);
+      _updated = new();
+    }
+  }
+  protected virtual void Handle(PokemonUpdated @event)
+  {
+    if (@event.Gender is not null)
+    {
+      _gender = @event.Gender.Value;
+    }
+
+    if (@event.Sprite is not null)
+    {
+      _sprite = @event.Sprite.Value;
+    }
+    if (@event.Url is not null)
+    {
+      _url = @event.Url.Value;
+    }
+    if (@event.Notes is not null)
+    {
+      _notes = @event.Notes.Value;
+    }
+  }
+
+  public override string ToString() => $"{Nickname?.Value ?? UniqueName.Value} | {base.ToString()}";
+
+  // TODO(fpion): Held Item
+  // TODO(fpion): Level / Max. Experience / To Next Level
+  // TODO(fpion): Statistic Calculations
+  // TODO(fpion): Moves
+  // TODO(fpion): Characteristic / Liked Flavor / Disliked Flavor
+  // TODO(fpion): StatusCondition
+  // TODO(fpion): OriginalTrainer / PokéBall / Met(Level + Location + Date + TextOverride)
+  // TODO(fpion): CurrentTrainer
+}
