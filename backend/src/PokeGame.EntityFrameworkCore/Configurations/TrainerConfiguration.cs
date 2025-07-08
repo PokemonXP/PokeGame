@@ -31,8 +31,8 @@ internal class TrainerConfiguration : AggregateConfiguration<TrainerEntity>, IEn
     builder.Property(x => x.UniqueNameNormalized).HasMaxLength(UniqueName.MaximumLength);
     builder.Property(x => x.DisplayName).HasMaxLength(DisplayName.MaximumLength);
     builder.Property(x => x.Gender).HasMaxLength(byte.MaxValue).HasConversion(new EnumToStringConverter<TrainerGender>());
-    builder.Property(x => x.License).HasMaxLength(10);
-    builder.Property(x => x.LicenseNormalized).HasMaxLength(10);
+    builder.Property(x => x.License).HasMaxLength(Constants.LicenseMaximumLength);
+    builder.Property(x => x.LicenseNormalized).HasMaxLength(Constants.LicenseMaximumLength);
     builder.Property(x => x.Sprite).HasMaxLength(Url.MaximumLength);
     builder.Property(x => x.Url).HasMaxLength(Url.MaximumLength);
   }

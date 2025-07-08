@@ -109,6 +109,7 @@ public class PokemonNatures : IPokemonNatures
 
 public record PokemonNature
 {
+  public const int MaximumLength = 8;
   private const double DecreaseMultiplier = 0.9;
   private const double IncreaseMultiplier = 1.1;
 
