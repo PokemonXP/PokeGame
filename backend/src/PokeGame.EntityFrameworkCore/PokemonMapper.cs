@@ -148,7 +148,7 @@ internal class PokemonMapper
     }
     if (source.VolatileConditions is not null)
     {
-      destination.VolatileConditions.AddRange(JsonSerializer.Deserialize<string[]>(source.VolatileConditions) ?? []); // TODO(fpion): use custom serializer
+      destination.VolatileConditions.AddRange(PokemonSerializer.Instance.Deserialize<string[]>(source.VolatileConditions) ?? []);
     }
 
     destination.StatisticChanges.Attack = source.AttackChange;
