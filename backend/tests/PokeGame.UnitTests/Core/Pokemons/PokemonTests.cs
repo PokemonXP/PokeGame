@@ -1,6 +1,9 @@
 ﻿using Krakenar.Core;
 using Krakenar.Core.Settings;
+using Logitar.EventSourcing;
 using PokeGame.Core.Forms;
+using PokeGame.Core.Items;
+using PokeGame.Core.Pokemons.Events;
 using PokeGame.Core.Species;
 
 namespace PokeGame.Core.Pokemons;
@@ -79,6 +82,39 @@ public class PokemonTests
       GrowthRate.MediumSlow,
       experience: 7028);
     Assert.Equal(7577, pokemon.MaximumExperience);
+  }
+
+  [Fact(DisplayName = "It should handle held item changes correctly.")]
+  public void Given_HeldItem_When_Change_Then_CorrectChanges()
+  {
+    Pokemon pokemon = new(
+      FormId.NewId(),
+      new UniqueName(new UniqueNameSettings(), "elliotto-briquet"),
+      PokemonType.Fire,
+      new PokemonSize(128, 128),
+      PokemonNatures.Instance.Careful,
+      new BaseStatistics(90, 93, 55, 70, 55, 55));
+    Assert.Null(pokemon.HeldItemId);
+    pokemon.ClearChanges();
+
+    pokemon.RemoveItem();
+    Assert.Null(pokemon.HeldItemId);
+    Assert.False(pokemon.HasChanges);
+
+    ItemId itemId = ItemId.NewId();
+    ActorId actorId = ActorId.NewId();
+    pokemon.HoldItem(itemId, actorId);
+    Assert.Equal(itemId, pokemon.HeldItemId);
+    Assert.Contains(pokemon.Changes, change => change is PokemonItemHeld held && held.ItemId == itemId && held.ActorId == actorId);
+
+    pokemon.ClearChanges();
+    pokemon.HoldItem(itemId, actorId);
+    Assert.Equal(itemId, pokemon.HeldItemId);
+    Assert.False(pokemon.HasChanges);
+
+    pokemon.RemoveItem(actorId);
+    Assert.Null(pokemon.HeldItemId);
+    Assert.Contains(pokemon.Changes, change => change is PokemonItemRemoved removed && removed.ActorId == actorId);
   }
 
   [Fact(DisplayName = "It should not create a Pokémon with more Stamina than its maximum.")]

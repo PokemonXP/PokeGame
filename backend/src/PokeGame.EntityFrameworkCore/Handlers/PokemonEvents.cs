@@ -8,6 +8,8 @@ using PokeGame.EntityFrameworkCore.Entities;
 namespace PokeGame.EntityFrameworkCore.Handlers;
 
 internal class PokemonEvents : IEventHandler<PokemonCreated>,
+  IEventHandler<PokemonItemHeld>,
+  IEventHandler<PokemonItemRemoved>,
   IEventHandler<PokemonNicknamed>,
   IEventHandler<PokemonUniqueNameChanged>,
   IEventHandler<PokemonUpdated>
@@ -41,6 +43,37 @@ internal class PokemonEvents : IEventHandler<PokemonCreated>,
     {
       _logger.LogUnexpectedVersion(@event, pokemon);
     }
+  }
+
+  public async Task HandleAsync(PokemonItemHeld @event, CancellationToken cancellationToken)
+  {
+    PokemonEntity? pokemon = await _context.Pokemon.SingleOrDefaultAsync(x => x.StreamId == @event.StreamId.Value, cancellationToken);
+    if (pokemon is null || pokemon.Version != (@event.Version - 1))
+    {
+      _logger.LogUnexpectedVersion(@event, pokemon);
+      return;
+    }
+
+    ItemEntity item = await _context.Items.SingleOrDefaultAsync(x => x.StreamId == @event.ItemId.Value, cancellationToken)
+      ?? throw new InvalidOperationException($"The item entity 'StreamId={@event.ItemId}' was not found.");
+
+    pokemon.HoldItem(item, @event);
+
+    await _context.SaveChangesAsync(cancellationToken);
+  }
+
+  public async Task HandleAsync(PokemonItemRemoved @event, CancellationToken cancellationToken)
+  {
+    PokemonEntity? pokemon = await _context.Pokemon.SingleOrDefaultAsync(x => x.StreamId == @event.StreamId.Value, cancellationToken);
+    if (pokemon is null || pokemon.Version != (@event.Version - 1))
+    {
+      _logger.LogUnexpectedVersion(@event, pokemon);
+      return;
+    }
+
+    pokemon.RemoveItem(@event);
+
+    await _context.SaveChangesAsync(cancellationToken);
   }
 
   public async Task HandleAsync(PokemonNicknamed @event, CancellationToken cancellationToken)

@@ -54,6 +54,10 @@ internal class PokemonEntity : AggregateEntity
 
   public byte Friendship { get; private set; }
 
+  public ItemEntity? HeldItem { get; private set; }
+  public int? HeldItemId { get; private set; }
+  public Guid? HeldItemUid { get; private set; }
+
   public string? Sprite { get; private set; }
   public string? Url { get; private set; }
   public string? Notes { get; private set; }
@@ -102,6 +106,24 @@ internal class PokemonEntity : AggregateEntity
 
   private PokemonEntity()
   {
+  }
+
+  public void HoldItem(ItemEntity item, PokemonItemHeld @event)
+  {
+    Update(@event);
+
+    HeldItem = item;
+    HeldItemId = item.ItemId;
+    HeldItemUid = item.Id;
+  }
+
+  public void RemoveItem(PokemonItemRemoved @event)
+  {
+    Update(@event);
+
+    HeldItem = null;
+    HeldItemId = null;
+    HeldItemUid = null;
   }
 
   public void SetNickname(PokemonNicknamed @event)

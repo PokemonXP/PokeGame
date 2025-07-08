@@ -14,7 +14,7 @@ public static class DependencyInjectionExtensions
     string? connectionString = EnvironmentHelper.TryGetString("POSTGRESQLCONNSTR_Pokemon", configuration.GetConnectionString("PostgreSQL"));
     if (string.IsNullOrWhiteSpace(connectionString))
     {
-      throw new ArgumentException($"The connection string for the database provider '{DatabaseProvider.EntityFrameworkCorePostgreSQL}' could not be found.", nameof(configuration));
+      throw new ArgumentException($"The connection string for the database provider '{DatabaseProvider.EntityFrameworkCorePostgreSQL}' was not found.", nameof(configuration));
     }
     return services.AddPokeGameEntityFrameworkCorePostgreSQL(connectionString.Trim());
   }

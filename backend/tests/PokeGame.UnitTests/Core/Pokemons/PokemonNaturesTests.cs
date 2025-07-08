@@ -40,7 +40,7 @@ public class PokemonNaturesTests : IAsyncLifetime
   public void Given_NotExists_When_Find_Then_ArgumentException()
   {
     var exception = Assert.Throws<ArgumentException>(() => _natures.Find("   EvIl "));
-    Assert.StartsWith("The nature '   EvIl ' could not be found.", exception.Message);
+    Assert.StartsWith("The nature '   EvIl ' was not found.", exception.Message);
     Assert.Equal("name", exception.ParamName);
   }
 

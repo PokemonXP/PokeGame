@@ -23,6 +23,8 @@ internal static class Pokemons
   public static readonly ColumnId Gender = new(nameof(PokemonEntity.Gender), Table);
   public static readonly ColumnId GrowthRate = new(nameof(PokemonEntity.GrowthRate), Table);
   public static readonly ColumnId Height = new(nameof(PokemonEntity.Height), Table);
+  public static readonly ColumnId HeldItemId = new(nameof(PokemonEntity.HeldItemId), Table);
+  public static readonly ColumnId HeldItemUid = new(nameof(PokemonEntity.HeldItemUid), Table);
   public static readonly ColumnId Id = new(nameof(PokemonEntity.Id), Table);
   public static readonly ColumnId Level = new(nameof(PokemonEntity.Level), Table);
   public static readonly ColumnId MaximumExperience = new(nameof(PokemonEntity.MaximumExperience), Table);
