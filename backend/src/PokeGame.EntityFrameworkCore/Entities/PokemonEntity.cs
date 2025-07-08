@@ -157,21 +157,21 @@ internal class PokemonEntity : AggregateEntity
   {
     if (baseStatistics is null || individualValues is null || effortValues is null)
     {
-      PokemonStatisticsModel model = GetStatistics();
-      baseStatistics ??= new BaseStatistics(
-        model.HP.Base, model.Attack.Base, model.Defense.Base, model.SpecialAttack.Base, model.SpecialDefense.Base, model.Speed.Base);
-      individualValues ??= new IndividualValues(
-        model.HP.IndividualValue, model.Attack.IndividualValue, model.Defense.IndividualValue, model.SpecialAttack.IndividualValue, model.SpecialDefense.IndividualValue, model.Speed.IndividualValue);
-      effortValues ??= new EffortValues(
-        model.HP.EffortValue, model.Attack.EffortValue, model.Defense.EffortValue, model.SpecialAttack.EffortValue, model.SpecialDefense.EffortValue, model.Speed.EffortValue);
+      PokemonStatisticsModel statistics = GetStatistics();
+      baseStatistics ??= new BaseStatistics(statistics.HP.Base, statistics.Attack.Base, statistics.Defense.Base,
+        statistics.SpecialAttack.Base, statistics.SpecialDefense.Base, statistics.Speed.Base);
+      individualValues ??= new IndividualValues(statistics.HP.IndividualValue, statistics.Attack.IndividualValue, statistics.Defense.IndividualValue,
+        statistics.SpecialAttack.IndividualValue, statistics.SpecialDefense.IndividualValue, statistics.Speed.IndividualValue);
+      effortValues ??= new EffortValues(statistics.HP.EffortValue, statistics.Attack.EffortValue, statistics.Defense.EffortValue,
+        statistics.SpecialAttack.EffortValue, statistics.SpecialDefense.EffortValue, statistics.Speed.EffortValue);
     }
 
-    PokemonStatistics statistics = new(baseStatistics, individualValues, effortValues, Level, PokemonNatures.Instance.Find(Nature));
+    PokemonStatistics values = new(baseStatistics, individualValues, effortValues, Level, PokemonNatures.Instance.Find(Nature));
     Statistics = string.Join('|',
       string.Join(',', baseStatistics.HP, baseStatistics.Attack, baseStatistics.Defense, baseStatistics.SpecialAttack, baseStatistics.SpecialDefense, baseStatistics.Speed),
       string.Join(',', individualValues.HP, individualValues.Attack, individualValues.Defense, individualValues.SpecialAttack, individualValues.SpecialDefense, individualValues.Speed),
       string.Join(',', effortValues.HP, effortValues.Attack, effortValues.Defense, effortValues.SpecialAttack, effortValues.SpecialDefense, effortValues.Speed),
-      string.Join(',', statistics.HP, statistics.Attack, statistics.Defense, statistics.SpecialAttack, statistics.SpecialDefense, statistics.Speed));
+      string.Join(',', values.HP, values.Attack, values.Defense, values.SpecialAttack, values.SpecialDefense, values.Speed));
   }
 
   public override string ToString() => $"{Nickname ?? UniqueName}";
