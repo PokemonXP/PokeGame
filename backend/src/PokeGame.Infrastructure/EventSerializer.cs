@@ -14,6 +14,8 @@ internal class EventSerializer : Krakenar.Infrastructure.EventSerializer
     base.RegisterConverters();
 
     SerializerOptions.Converters.Add(new FormIdConverter());
+    SerializerOptions.Converters.Add(new ItemIdConverter());
+    SerializerOptions.Converters.Add(new MoveIdConverter());
     SerializerOptions.Converters.Add(new PokemonCharacteristicConverter());
     SerializerOptions.Converters.Add(new PokemonIdConverter());
     SerializerOptions.Converters.Add(new PokemonNatureConverter());

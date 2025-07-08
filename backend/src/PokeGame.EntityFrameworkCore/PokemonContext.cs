@@ -14,6 +14,7 @@ public class PokemonContext : DbContext
   internal DbSet<AbilityEntity> Abilities => Set<AbilityEntity>();
   internal DbSet<FormAbilityEntity> FormAbilities => Set<FormAbilityEntity>();
   internal DbSet<FormEntity> Forms => Set<FormEntity>();
+  internal DbSet<ItemEntity> Items => Set<ItemEntity>();
   internal DbSet<MoveEntity> Moves => Set<MoveEntity>();
   internal DbSet<PokemonEntity> Pokemon => Set<PokemonEntity>();
   internal DbSet<RegionalNumberEntity> RegionalNumbers => Set<RegionalNumberEntity>();
