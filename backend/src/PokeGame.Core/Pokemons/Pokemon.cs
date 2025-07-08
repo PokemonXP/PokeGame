@@ -278,7 +278,19 @@ public class Pokemon : AggregateRoot
 
   public override string ToString() => $"{Nickname?.Value ?? UniqueName.Value} | {base.ToString()}";
 
-  // TODO(fpion): Moves
   // TODO(fpion): OriginalTrainer / PokéBall / Met(Level + Location + Date + TextOverride)
-  // TODO(fpion): CurrentTrainer
+  // TODO(fpion): CurrentTrainer / PokéBall / Met(Level + Location + Date + TextOverride)
 }
+
+/* TODO(fpion): Moves
+ * Id
+ * CurrentPP
+ * MaximumPP
+ * ReferencePP
+ * Mastered
+ * Position
+ * Relearn
+ * Reorder
+ * LearnedAtLevel
+ * LearnedFromTM
+ */
