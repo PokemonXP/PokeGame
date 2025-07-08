@@ -10,7 +10,7 @@ internal class TechnicalMachinePayload
   public string? DisplayName { get; set; }
   public string? Description { get; set; }
 
-  public int? Price { get; set; }
+  public int Price { get; set; }
 
   public string Move { get; set; } = string.Empty;
 
@@ -27,15 +27,15 @@ internal class TechnicalMachinePayload
   {
     public Map()
     {
-      Map(x => x.Id).Index(0);
+      Map(x => x.Id).Index(0).Default(Guid.Empty);
 
-      Map(x => x.UniqueName).Index(1);
+      Map(x => x.UniqueName).Index(1).Default(string.Empty);
       Map(x => x.DisplayName).Index(2);
       Map(x => x.Description).Index(3);
 
-      Map(x => x.Price).Index(4);
+      Map(x => x.Price).Index(4).Default(0);
 
-      Map(x => x.Move).Index(5);
+      Map(x => x.Move).Index(5).Default(string.Empty);
 
       Map(x => x.Sprite).Index(6);
 

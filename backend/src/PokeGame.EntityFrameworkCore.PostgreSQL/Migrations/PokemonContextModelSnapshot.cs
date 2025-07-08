@@ -330,6 +330,130 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
                     b.ToTable("Forms", "Pokemon");
                 });
 
+            modelBuilder.Entity("PokeGame.EntityFrameworkCore.Entities.ItemEntity", b =>
+                {
+                    b.Property<int>("ItemId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ItemId"));
+
+                    b.Property<string>("BattleItem")
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.Property<string>("Berry")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<string>("DisplayName")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Medicine")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("MoveId")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid?>("MoveUid")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("text");
+
+                    b.Property<string>("PokeBall")
+                        .HasColumnType("text");
+
+                    b.Property<int>("Price")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Sprite")
+                        .HasMaxLength(2048)
+                        .HasColumnType("character varying(2048)");
+
+                    b.Property<string>("StreamId")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<string>("UniqueName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<string>("UniqueNameNormalized")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<DateTime>("UpdatedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Url")
+                        .HasMaxLength(2048)
+                        .HasColumnType("character varying(2048)");
+
+                    b.Property<long>("Version")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("ItemId");
+
+                    b.HasIndex("Category");
+
+                    b.HasIndex("CreatedBy");
+
+                    b.HasIndex("CreatedOn");
+
+                    b.HasIndex("DisplayName");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex("MoveId");
+
+                    b.HasIndex("MoveUid");
+
+                    b.HasIndex("Price");
+
+                    b.HasIndex("StreamId")
+                        .IsUnique();
+
+                    b.HasIndex("UniqueName");
+
+                    b.HasIndex("UniqueNameNormalized")
+                        .IsUnique();
+
+                    b.HasIndex("UpdatedBy");
+
+                    b.HasIndex("UpdatedOn");
+
+                    b.HasIndex("Version");
+
+                    b.ToTable("Items", "Pokemon");
+                });
+
             modelBuilder.Entity("PokeGame.EntityFrameworkCore.Entities.MoveEntity", b =>
                 {
                     b.Property<int>("MoveId")
@@ -1168,6 +1292,16 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
                     b.Navigation("Variety");
                 });
 
+            modelBuilder.Entity("PokeGame.EntityFrameworkCore.Entities.ItemEntity", b =>
+                {
+                    b.HasOne("PokeGame.EntityFrameworkCore.Entities.MoveEntity", "Move")
+                        .WithMany("TechnicalMachines")
+                        .HasForeignKey("MoveId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Move");
+                });
+
             modelBuilder.Entity("PokeGame.EntityFrameworkCore.Entities.PokemonEntity", b =>
                 {
                     b.HasOne("PokeGame.EntityFrameworkCore.Entities.FormEntity", "Form")
@@ -1235,6 +1369,11 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
                     b.Navigation("Abilities");
 
                     b.Navigation("Pokemon");
+                });
+
+            modelBuilder.Entity("PokeGame.EntityFrameworkCore.Entities.MoveEntity", b =>
+                {
+                    b.Navigation("TechnicalMachines");
                 });
 
             modelBuilder.Entity("PokeGame.EntityFrameworkCore.Entities.RegionEntity", b =>

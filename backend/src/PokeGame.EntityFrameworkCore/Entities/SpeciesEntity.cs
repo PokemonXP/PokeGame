@@ -1,8 +1,8 @@
 ﻿using Krakenar.Core.Contents;
 using Krakenar.EntityFrameworkCore.Relational.KrakenarDb;
+using PokeGame.Core;
 using PokeGame.Core.Species;
 using PokeGame.EntityFrameworkCore.Handlers;
-using PokeGame.Infrastructure;
 using PokeGame.Infrastructure.Data;
 using AggregateEntity = Krakenar.EntityFrameworkCore.Relational.Entities.Aggregate;
 
@@ -68,31 +68,17 @@ internal class SpeciesEntity : AggregateEntity
     Update(published.Event);
 
     Number = (int)invariant.FindNumberValue(Species.Number);
-    Category = Enum.Parse<PokemonCategory>(invariant.FindSelectValue(Species.Category).Single().Capitalize());
+    Category = PokemonConverter.Instance.ToCategory(invariant.FindSelectValue(Species.Category).Single());
 
     UniqueName = locale.UniqueName.Value;
     DisplayName = locale.DisplayName?.Value;
 
     BaseFriendship = (int)invariant.FindNumberValue(Species.BaseFriendship);
     CatchRate = (int)invariant.FindNumberValue(Species.CatchRate);
-    GrowthRate = ParseGrowthRate(invariant.FindSelectValue(Species.GrowthRate).Single());
+    GrowthRate = PokemonConverter.Instance.ToGrowthRate(invariant.FindSelectValue(Species.GrowthRate).Single());
 
     Url = locale.TryGetStringValue(Species.Url);
     Notes = locale.TryGetStringValue(Species.Notes);
-  }
-
-  private static GrowthRate ParseGrowthRate(string value)
-  {
-    return value switch
-    {
-      "slow-then-very-fast" => GrowthRate.Erratic,
-      "fast" => GrowthRate.Fast,
-      "fast-then-very-slow" => GrowthRate.Fluctuating,
-      "medium" => GrowthRate.MediumFast,
-      "medium-slow" => GrowthRate.MediumSlow,
-      "slow" => GrowthRate.Slow,
-      _ => throw new ArgumentException($"The growth rate '{value}' is not valid.", nameof(value)),
-    };
   }
 
   public override string ToString() => $"{DisplayName ?? UniqueName} | {base.ToString()}";

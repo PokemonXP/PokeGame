@@ -13,7 +13,7 @@ internal class TechnicalMachineValidator : AbstractValidator<TechnicalMachinePay
     When(x => !string.IsNullOrWhiteSpace(x.DisplayName), () => RuleFor(x => x.DisplayName!).DisplayName());
     When(x => !string.IsNullOrWhiteSpace(x.Description), () => RuleFor(x => x.Description!).Description());
 
-    RuleFor(x => x.Price).GreaterThan(0);
+    RuleFor(x => x.Price).GreaterThanOrEqualTo(0);
 
     RuleFor(x => x.Move).NotEmpty();
 

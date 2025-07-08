@@ -1,9 +1,12 @@
-﻿using Logitar.EventSourcing;
+﻿using Krakenar.Core;
+using Logitar.EventSourcing;
 
 namespace PokeGame.Core.Pokemons;
 
 public readonly struct PokemonId
 {
+  private const string EntityType = "Pokemon";
+
   public StreamId StreamId { get; }
   public string Value => StreamId.Value;
 
@@ -13,7 +16,7 @@ public readonly struct PokemonId
   }
   public PokemonId(Guid value)
   {
-    StreamId = new StreamId(value);
+    StreamId = IdHelper.Construct(EntityType, value);
   }
   public PokemonId(string value)
   {
@@ -21,7 +24,7 @@ public readonly struct PokemonId
   }
 
   public static PokemonId NewId() => new(Guid.NewGuid());
-  public Guid ToGuid() => StreamId.ToGuid();
+  public Guid ToGuid() => IdHelper.Deconstruct(StreamId, EntityType).Item1;
 
   public static bool operator ==(PokemonId left, PokemonId right) => left.Equals(right);
   public static bool operator !=(PokemonId left, PokemonId right) => !left.Equals(right);

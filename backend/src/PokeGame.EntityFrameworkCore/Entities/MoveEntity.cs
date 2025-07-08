@@ -46,6 +46,8 @@ internal class MoveEntity : AggregateEntity
   public string? Url { get; private set; }
   public string? Notes { get; private set; }
 
+  public List<ItemEntity> TechnicalMachines { get; private set; } = [];
+
   public MoveEntity(MovePublished published) : base(published.Event)
   {
     Id = new ContentId(published.Event.StreamId).EntityId;
@@ -82,7 +84,7 @@ internal class MoveEntity : AggregateEntity
     IReadOnlyCollection<string>? volatileConditions = invariant.TryGetSelectValue(Moves.VolatileConditions);
     VolatileConditions = volatileConditions is null || volatileConditions.Count < 1
       ? null
-      : JsonSerializer.Serialize(volatileConditions.Select(value => Enum.Parse<VolatileCondition>(value.Capitalize()).ToString()).Distinct());
+      : JsonSerializer.Serialize(volatileConditions.Select(value => Enum.Parse<VolatileCondition>(value.Capitalize()).ToString()).Distinct()); // TODO(fpion): use custom serializer
 
     AttackChange = (int)invariant.GetNumberValue(Moves.AttackChange);
     DefenseChange = (int)invariant.GetNumberValue(Moves.DefenseChange);

@@ -55,17 +55,35 @@ internal class PokemonContentEvents : IEventHandler<ContentLocalePublished>, IEv
       case EntityKind.Ability:
         await _mediator.Publish(new AbilityPublished(@event, content.PublishedInvariant, locale), cancellationToken);
         break;
+      case EntityKind.BattleItem:
+        await _mediator.Publish(new BattleItemPublished(@event, content.PublishedInvariant, locale), cancellationToken);
+        break;
+      case EntityKind.Berry:
+        await _mediator.Publish(new BerryPublished(@event, content.PublishedInvariant, locale), cancellationToken);
+        break;
       case EntityKind.Form:
         await _mediator.Publish(new FormPublished(@event, content.PublishedInvariant, locale), cancellationToken);
         break;
+      case EntityKind.Item:
+        await _mediator.Publish(new ItemPublished(@event, content.PublishedInvariant, locale), cancellationToken);
+        break;
+      case EntityKind.Medicine:
+        await _mediator.Publish(new MedicinePublished(@event, content.PublishedInvariant, locale), cancellationToken);
+        break;
       case EntityKind.Move:
         await _mediator.Publish(new MovePublished(@event, content.PublishedInvariant, locale), cancellationToken);
+        break;
+      case EntityKind.PokeBall:
+        await _mediator.Publish(new PokeBallPublished(@event, content.PublishedInvariant, locale), cancellationToken);
         break;
       case EntityKind.Region:
         await _mediator.Publish(new RegionPublished(@event, content.PublishedInvariant, locale), cancellationToken);
         break;
       case EntityKind.Species:
         await _mediator.Publish(new SpeciesPublished(@event, content.PublishedInvariant, locale), cancellationToken);
+        break;
+      case EntityKind.TechnicalMachine:
+        await _mediator.Publish(new TechnicalMachinePublished(@event, content.PublishedInvariant, locale), cancellationToken);
         break;
       case EntityKind.Trainer:
         await _mediator.Publish(new TrainerPublished(@event, content.PublishedInvariant, locale), cancellationToken);
@@ -91,17 +109,35 @@ internal class PokemonContentEvents : IEventHandler<ContentLocalePublished>, IEv
       case EntityKind.Ability:
         await _mediator.Publish(new AbilityUnpublished(@event), cancellationToken);
         break;
+      case EntityKind.BattleItem:
+        await _mediator.Publish(new BattleItemUnpublished(@event), cancellationToken);
+        break;
+      case EntityKind.Berry:
+        await _mediator.Publish(new BerryUnpublished(@event), cancellationToken);
+        break;
       case EntityKind.Form:
         await _mediator.Publish(new FormUnpublished(@event), cancellationToken);
         break;
+      case EntityKind.Item:
+        await _mediator.Publish(new ItemUnpublished(@event), cancellationToken);
+        break;
+      case EntityKind.Medicine:
+        await _mediator.Publish(new MedicineUnpublished(@event), cancellationToken);
+        break;
       case EntityKind.Move:
         await _mediator.Publish(new MoveUnpublished(@event), cancellationToken);
+        break;
+      case EntityKind.PokeBall:
+        await _mediator.Publish(new PokeBallUnpublished(@event), cancellationToken);
         break;
       case EntityKind.Region:
         await _mediator.Publish(new RegionUnpublished(@event), cancellationToken);
         break;
       case EntityKind.Species:
         await _mediator.Publish(new SpeciesUnpublished(@event), cancellationToken);
+        break;
+      case EntityKind.TechnicalMachine:
+        await _mediator.Publish(new TechnicalMachineUnpublished(@event), cancellationToken);
         break;
       case EntityKind.Trainer:
         await _mediator.Publish(new TrainerUnpublished(@event), cancellationToken);
