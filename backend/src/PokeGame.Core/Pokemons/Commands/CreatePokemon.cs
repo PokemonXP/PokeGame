@@ -70,7 +70,7 @@ internal class CreatePokemonHandler : ICommandHandler<CreatePokemon, PokemonMode
     PokemonSize size = payload.Size is null ? _randomizer.PokemonSize() : new(payload.Size);
     PokemonGender? gender = payload.Gender ?? (variety.GenderRatio.HasValue ? _randomizer.PokemonGender(variety.GenderRatio.Value) : null);
     AbilitySlot abilitySlot = payload.AbilitySlot ?? _randomizer.AbilitySlot(form.Abilities);
-    PokemonNature nature = payload.Nature ?? _randomizer.PokemonNature();
+    PokemonNature nature = string.IsNullOrWhiteSpace(payload.Nature) ? _randomizer.PokemonNature() : PokemonNatures.Instance.Find(payload.Nature);
     BaseStatistics baseStatistics = new(form.BaseStatistics);
     IndividualValues individualValues = payload.IndividualValues is null ? _randomizer.IndividualValues() : new(payload.IndividualValues);
     EffortValues effortValues = payload.EffortValues is null ? new() : new(payload.EffortValues);
@@ -81,10 +81,10 @@ internal class CreatePokemonHandler : ICommandHandler<CreatePokemon, PokemonMode
       uniqueName,
       teraType,
       size,
+      nature,
       baseStatistics,
       gender,
       abilitySlot,
-      nature,
       individualValues,
       effortValues,
       species.GrowthRate,

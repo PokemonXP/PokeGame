@@ -36,7 +36,8 @@ public class Pokemon : AggregateRoot
   private PokemonSize? _size = null;
   public PokemonSize Size => _size ?? throw new InvalidOperationException("The Pokémon has not been initialized.");
   public AbilitySlot AbilitySlot { get; private set; } // TODO(fpion): can be changed using Ability Patch/Capsule!
-  public PokemonNature Nature { get; private set; } // TODO(fpion): can be changed using mints!
+  private PokemonNature? _nature = null;
+  public PokemonNature Nature => _nature ?? throw new InvalidOperationException("The Pokémon has not been initialized."); // TODO(fpion): can be changed using mints!
 
   public GrowthRate GrowthRate { get; private set; }
   public int Experience { get; private set; }
@@ -101,10 +102,10 @@ public class Pokemon : AggregateRoot
     UniqueName uniqueName,
     PokemonType teraType,
     PokemonSize size,
+    PokemonNature nature,
     BaseStatistics baseStatistics,
     PokemonGender? gender = null,
     AbilitySlot abilitySlot = AbilitySlot.Primary,
-    PokemonNature nature = default,
     IndividualValues? individualValues = null,
     EffortValues? effortValues = null,
     GrowthRate growthRate = default,
@@ -126,10 +127,6 @@ public class Pokemon : AggregateRoot
     if (!Enum.IsDefined(abilitySlot))
     {
       throw new ArgumentOutOfRangeException(nameof(abilitySlot));
-    }
-    if (!Enum.IsDefined(nature))
-    {
-      throw new ArgumentOutOfRangeException(nameof(nature));
     }
     if (!Enum.IsDefined(growthRate))
     {
@@ -173,7 +170,7 @@ public class Pokemon : AggregateRoot
     TeraType = @event.TeraType;
     _size = @event.Size;
     AbilitySlot = @event.AbilitySlot;
-    Nature = @event.Nature;
+    _nature = @event.Nature;
 
     GrowthRate = @event.GrowthRate;
     Experience = @event.Experience;

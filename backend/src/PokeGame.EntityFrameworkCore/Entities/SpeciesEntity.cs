@@ -62,7 +62,7 @@ internal class SpeciesEntity : AggregateEntity
 
   public void Update(SpeciesPublished published)
   {
-    var invariant = published.Invariant;
+    ContentLocale invariant = published.Invariant;
     ContentLocale locale = published.Locale;
 
     Update(published.Event);
