@@ -76,7 +76,7 @@ public class PokemonNatures : IPokemonNatures
   private PokemonNatures()
   {
     _natures["adamant"] = new PokemonNature("Adamant", PokemonStatistic.Attack, PokemonStatistic.SpecialAttack, Flavor.Spicy, Flavor.Dry);
-    _natures["bashful"] = new PokemonNature("Bashful", PokemonStatistic.SpecialAttack);
+    _natures["bashful"] = new PokemonNature("Bashful");
     _natures["bold"] = new PokemonNature("Bold", PokemonStatistic.Defense, PokemonStatistic.Attack, Flavor.Sour, Flavor.Spicy);
     _natures["brave"] = new PokemonNature("Brave", PokemonStatistic.Attack, PokemonStatistic.Speed, Flavor.Spicy, Flavor.Sweet);
     _natures["calm"] = new PokemonNature("Calm", PokemonStatistic.SpecialDefense, PokemonStatistic.Attack, Flavor.Bitter, Flavor.Spicy);
@@ -94,7 +94,7 @@ public class PokemonNatures : IPokemonNatures
     _natures["naive"] = new PokemonNature("Naive", PokemonStatistic.Speed, PokemonStatistic.SpecialDefense, Flavor.Sweet, Flavor.Bitter);
     _natures["naughty"] = new PokemonNature("Naughty", PokemonStatistic.Attack, PokemonStatistic.SpecialDefense, Flavor.Spicy, Flavor.Bitter);
     _natures["quiet"] = new PokemonNature("Quiet", PokemonStatistic.SpecialAttack, PokemonStatistic.Speed, Flavor.Dry, Flavor.Sweet);
-    _natures["quirky"] = new PokemonNature("Quirky", PokemonStatistic.SpecialDefense);
+    _natures["quirky"] = new PokemonNature("Quirky");
     _natures["rash"] = new PokemonNature("Rash", PokemonStatistic.SpecialAttack, PokemonStatistic.SpecialDefense, Flavor.Dry, Flavor.Bitter);
     _natures["relaxed"] = new PokemonNature("Relaxed", PokemonStatistic.Defense, PokemonStatistic.Speed, Flavor.Sour, Flavor.Sweet);
     _natures["sassy"] = new PokemonNature("Sassy", PokemonStatistic.SpecialDefense, PokemonStatistic.Speed, Flavor.Bitter, Flavor.Sweet);

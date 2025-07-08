@@ -18,10 +18,14 @@
 
   <ItemGroup>
     <None Remove="Core\Pokemons\experience.csv" />
+    <None Remove="natures.csv" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="experience.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="natures.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
