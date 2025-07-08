@@ -13,7 +13,7 @@ internal class BattleItemValidator : AbstractValidator<BattleItemPayload>
     When(x => !string.IsNullOrWhiteSpace(x.DisplayName), () => RuleFor(x => x.DisplayName!).DisplayName());
     When(x => !string.IsNullOrWhiteSpace(x.Description), () => RuleFor(x => x.Description!).Description());
 
-    RuleFor(x => x.Price).GreaterThan(0);
+    RuleFor(x => x.Price).GreaterThanOrEqualTo(0);
 
     RuleFor(x => x.StatisticChanges).SetValidator(new StatisticChangesValidator());
     RuleFor(x => x.CriticalChange).InclusiveBetween(0, 4);

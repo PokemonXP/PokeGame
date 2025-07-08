@@ -27,6 +27,10 @@ internal class ItemEntity : AggregateEntity
 
   public string? BattleItem { get; private set; }
 
+  public MoveEntity? Move { get; private set; }
+  public int? MoveId { get; private set; }
+  public Guid? MoveUid { get; private set; }
+
   public string? Sprite { get; private set; }
 
   public string? Url { get; private set; }
@@ -44,9 +48,27 @@ internal class ItemEntity : AggregateEntity
 
     Update(published);
   }
+  public ItemEntity(TechnicalMachinePublished published) : base(published.Event)
+  {
+    Id = new ContentId(published.Event.StreamId).EntityId;
+
+    Update(published);
+  }
 
   private ItemEntity() : base()
   {
+  }
+
+  public void SetMove(MoveEntity move)
+  {
+    if (Category != ItemCategory.TechnicalMachine)
+    {
+      throw new InvalidOperationException($"Cannot set the move of an item belonging to the category '{Category}'.");
+    }
+
+    Move = move;
+    MoveId = move.MoveId;
+    MoveUid = move.Id;
   }
 
   public void Update(BattleItemPublished published)
@@ -99,6 +121,26 @@ internal class ItemEntity : AggregateEntity
 
     Url = locale.TryGetStringValue(Items.Url);
     Notes = locale.TryGetStringValue(Items.Notes);
+  }
+  public void Update(TechnicalMachinePublished published)
+  {
+    ContentLocale invariant = published.Invariant;
+    ContentLocale locale = published.Locale;
+
+    Update(published.Event);
+
+    UniqueName = locale.UniqueName.Value;
+    DisplayName = locale.DisplayName?.Value;
+    Description = locale.Description?.Value;
+
+    Price = (int)invariant.GetNumberValue(TechnicalMachines.Price);
+
+    Category = ItemCategory.TechnicalMachine;
+
+    Sprite = invariant.TryGetStringValue(TechnicalMachines.Sprite);
+
+    Url = locale.TryGetStringValue(TechnicalMachines.Url);
+    Notes = locale.TryGetStringValue(TechnicalMachines.Notes);
   }
   private static ItemCategory ParseCategory(string? value) => value switch
   {

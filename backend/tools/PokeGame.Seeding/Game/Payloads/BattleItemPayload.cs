@@ -10,7 +10,7 @@ internal class BattleItemPayload
   public string? DisplayName { get; set; }
   public string? Description { get; set; }
 
-  public int? Price { get; set; }
+  public int Price { get; set; }
 
   public StatisticChangesPayload StatisticChanges { get; set; } = new();
   public int CriticalChange { get; set; }
@@ -29,13 +29,13 @@ internal class BattleItemPayload
   {
     public Map()
     {
-      Map(x => x.Id).Index(0);
+      Map(x => x.Id).Index(0).Default(Guid.Empty);
 
-      Map(x => x.UniqueName).Index(1);
+      Map(x => x.UniqueName).Index(1).Default(string.Empty);
       Map(x => x.DisplayName).Index(2);
       Map(x => x.Description).Index(3);
 
-      Map(x => x.Price).Index(4);
+      Map(x => x.Price).Index(4).Default(0);
 
       References<StatisticChangesMap>(x => x.StatisticChanges);
       Map(x => x.CriticalChange).Index(12).Default(0);

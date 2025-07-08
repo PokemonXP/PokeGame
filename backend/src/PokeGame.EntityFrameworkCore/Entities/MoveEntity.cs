@@ -46,6 +46,8 @@ internal class MoveEntity : AggregateEntity
   public string? Url { get; private set; }
   public string? Notes { get; private set; }
 
+  public List<ItemEntity> TechnicalMachines { get; private set; } = [];
+
   public MoveEntity(MovePublished published) : base(published.Event)
   {
     Id = new ContentId(published.Event.StreamId).EntityId;
