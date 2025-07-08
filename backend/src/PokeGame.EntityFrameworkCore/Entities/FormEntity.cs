@@ -2,7 +2,6 @@
 using Krakenar.EntityFrameworkCore.Relational.KrakenarDb;
 using PokeGame.Core;
 using PokeGame.EntityFrameworkCore.Handlers;
-using PokeGame.Infrastructure;
 using PokeGame.Infrastructure.Data;
 using AggregateEntity = Krakenar.EntityFrameworkCore.Relational.Entities.Aggregate;
 
@@ -110,9 +109,9 @@ internal class FormEntity : AggregateEntity
     Height = (int)invariant.FindNumberValue(Forms.Height);
     Weight = (int)invariant.FindNumberValue(Forms.Weight);
 
-    PrimaryType = Enum.Parse<PokemonType>(invariant.FindSelectValue(Forms.PrimaryType).Single().Capitalize());
-    string? secondaryType = invariant.TryGetSelectValue(Forms.SecondaryType)?.Single().Capitalize();
-    SecondaryType = secondaryType is null ? null : Enum.Parse<PokemonType>(secondaryType);
+    PrimaryType = PokemonConverter.Instance.ToType(invariant.FindSelectValue(Forms.PrimaryType).Single());
+    string? secondaryType = invariant.TryGetSelectValue(Forms.SecondaryType)?.Single();
+    SecondaryType = secondaryType is null ? null : PokemonConverter.Instance.ToType(secondaryType);
 
     HPBase = (int)invariant.FindNumberValue(Forms.HPBase);
     AttackBase = (int)invariant.FindNumberValue(Forms.AttackBase);
