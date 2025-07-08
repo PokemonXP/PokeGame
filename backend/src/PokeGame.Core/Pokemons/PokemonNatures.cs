@@ -135,7 +135,8 @@ public record PokemonNature : IPokemonNature
     Flavor? favoriteFlavor = null,
     Flavor? dislikedFlavor = null)
   {
-    Name = name;
+    ArgumentException.ThrowIfNullOrWhiteSpace(name, nameof(name));
+    Name = name.Trim();
     IncreasedStatistic = increasedStatistic;
     DecreasedStatistic = decreasedStatistic;
     FavoriteFlavor = favoriteFlavor;

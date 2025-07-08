@@ -8,6 +8,22 @@ namespace PokeGame.Core.Pokemons;
 [Trait(Traits.Category, Categories.Unit)]
 public class PokemonTests
 {
+  [Fact(DisplayName = "It should assign the correct characteristic.")]
+  public void Given_IVsAndSize_When_ctor_Then_CorrectCharacteristic()
+  {
+    Pokemon pokemon = new(
+      FormId.NewId(),
+      new UniqueName(new UniqueNameSettings(), "elliotto-briquet"),
+      PokemonType.Fire,
+      new PokemonSize(128, 128),
+      PokemonNatures.Instance.Careful,
+      new BaseStatistics(90, 93, 55, 70, 55, 55),
+      PokemonGender.Male,
+      AbilitySlot.Primary,
+      new IndividualValues(27, 27, 25, 22, 25, 26));
+    Assert.Equal("Nods off a lot", pokemon.Characteristic.Text);
+  }
+
   [Fact(DisplayName = "It should calculate the correct experience to next level.")]
   public void Given_Experience_When_ToNextLevel_Then_Correct()
   {

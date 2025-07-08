@@ -49,6 +49,8 @@ internal class PokemonEntity : AggregateEntity
   public string Statistics { get; private set; } = string.Empty;
   public int Vitality { get; private set; }
   public int Stamina { get; private set; }
+  public StatusCondition? StatusCondition { get; private set; }
+  public string Characteristic { get; private set; } = string.Empty;
 
   public byte Friendship { get; private set; }
 
@@ -93,6 +95,7 @@ internal class PokemonEntity : AggregateEntity
     SetStatistics(@event.BaseStatistics, @event.IndividualValues, @event.EffortValues);
     Vitality = @event.Vitality;
     Stamina = @event.Stamina;
+    Characteristic = @event.Characteristic.Text;
 
     Friendship = @event.Friendship;
   }

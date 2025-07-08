@@ -30,6 +30,7 @@ internal class PokemonConfiguration : AggregateConfiguration<PokemonEntity>, IEn
     builder.HasIndex(x => x.TeraType);
     builder.HasIndex(x => x.Nature);
     builder.HasIndex(x => x.Level);
+    builder.HasIndex(x => x.StatusCondition);
 
     builder.Property(x => x.UniqueName).HasMaxLength(UniqueName.MaximumLength);
     builder.Property(x => x.UniqueNameNormalized).HasMaxLength(UniqueName.MaximumLength);
@@ -40,6 +41,8 @@ internal class PokemonConfiguration : AggregateConfiguration<PokemonEntity>, IEn
     builder.Property(x => x.Nature).HasMaxLength(PokemonNature.MaximumLength);
     builder.Property(x => x.GrowthRate).HasMaxLength(byte.MaxValue).HasConversion(new EnumToStringConverter<GrowthRate>());
     builder.Property(x => x.Statistics).HasMaxLength(Constants.StatisticsMaximumLength);
+    builder.Property(x => x.StatusCondition).HasMaxLength(byte.MaxValue).HasConversion(new EnumToStringConverter<StatusCondition>());
+    builder.Property(x => x.Characteristic).HasMaxLength(PokemonCharacteristic.MaximumLength);
     builder.Property(x => x.Sprite).HasMaxLength(Url.MaximumLength);
     builder.Property(x => x.Url).HasMaxLength(Url.MaximumLength);
 

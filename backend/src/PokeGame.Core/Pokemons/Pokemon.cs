@@ -57,6 +57,8 @@ public class Pokemon : AggregateRoot
   public int Vitality { get; private set; }
   public int Stamina { get; private set; }
   public StatusCondition? StatusCondition { get; private set; }
+  private PokemonCharacteristic? _characteristic = null;
+  public PokemonCharacteristic Characteristic => _characteristic ?? throw new InvalidOperationException("The Pokémon has not been initialized.");
 
   public byte Friendship { get; private set; }
 
@@ -149,6 +151,7 @@ public class Pokemon : AggregateRoot
     PokemonStatistics statistics = new(baseStatistics, individualValues, effortValues, level, nature);
     vitality = Math.Min(vitality, statistics.HP);
     stamina = Math.Min(stamina, statistics.HP);
+    PokemonCharacteristic characteristic = PokemonCharacteristics.Instance.Find(individualValues, size);
 
     Raise(new PokemonCreated(
       formId,
@@ -165,6 +168,7 @@ public class Pokemon : AggregateRoot
       effortValues,
       vitality,
       stamina,
+      characteristic,
       friendship), actorId);
   }
   protected virtual void Handle(PokemonCreated @event)
@@ -187,6 +191,7 @@ public class Pokemon : AggregateRoot
     _effortValues = @event.EffortValues;
     Vitality = @event.Vitality;
     Stamina = @event.Stamina;
+    _characteristic = @event.Characteristic;
 
     Friendship = @event.Friendship;
   }
