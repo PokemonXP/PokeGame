@@ -97,6 +97,10 @@ public class Pokemon : AggregateRoot
     }
   }
 
+  public Pokemon() : base()
+  {
+  }
+
   public Pokemon(
     FormId formId,
     UniqueName uniqueName,
