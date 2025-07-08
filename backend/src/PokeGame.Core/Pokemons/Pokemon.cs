@@ -13,7 +13,7 @@ public class Pokemon : AggregateRoot
 
   public new PokemonId Id => new(base.Id);
 
-  public FormId FormId { get; private set; } // TODO(fpion): can be changed!
+  public FormId FormId { get; private set; } // TODO(fpion): can be changed (change form / evolve)!
 
   private UniqueName? _uniqueName = null;
   public UniqueName UniqueName => _uniqueName ?? throw new InvalidOperationException("The Pokémon has not been initialized.");
@@ -38,6 +38,8 @@ public class Pokemon : AggregateRoot
   public AbilitySlot AbilitySlot { get; private set; } // TODO(fpion): can be changed using Ability Patch/Capsule!
   private PokemonNature? _nature = null;
   public PokemonNature Nature => _nature ?? throw new InvalidOperationException("The Pokémon has not been initialized."); // TODO(fpion): can be changed using mints!
+  public Flavor? FavoriteFlavor => Nature.FavoriteFlavor;
+  public Flavor? DislikedFlavor => Nature.DislikedFlavor;
 
   public GrowthRate GrowthRate { get; private set; }
   public int Experience { get; private set; }
@@ -54,6 +56,9 @@ public class Pokemon : AggregateRoot
   public PokemonStatistics Statistics => new(this);
   public int Vitality { get; private set; }
   public int Stamina { get; private set; }
+  public StatusCondition? StatusCondition { get; private set; }
+  private PokemonCharacteristic? _characteristic = null;
+  public PokemonCharacteristic Characteristic => _characteristic ?? throw new InvalidOperationException("The Pokémon has not been initialized.");
 
   public byte Friendship { get; private set; }
 
@@ -146,6 +151,7 @@ public class Pokemon : AggregateRoot
     PokemonStatistics statistics = new(baseStatistics, individualValues, effortValues, level, nature);
     vitality = Math.Min(vitality, statistics.HP);
     stamina = Math.Min(stamina, statistics.HP);
+    PokemonCharacteristic characteristic = PokemonCharacteristics.Instance.Find(individualValues, size);
 
     Raise(new PokemonCreated(
       formId,
@@ -162,6 +168,7 @@ public class Pokemon : AggregateRoot
       effortValues,
       vitality,
       stamina,
+      characteristic,
       friendship), actorId);
   }
   protected virtual void Handle(PokemonCreated @event)
@@ -184,6 +191,7 @@ public class Pokemon : AggregateRoot
     _effortValues = @event.EffortValues;
     Vitality = @event.Vitality;
     Stamina = @event.Stamina;
+    _characteristic = @event.Characteristic;
 
     Friendship = @event.Friendship;
   }
@@ -245,8 +253,6 @@ public class Pokemon : AggregateRoot
 
   // TODO(fpion): Held Item
   // TODO(fpion): Moves
-  // TODO(fpion): Characteristic / Liked Flavor / Disliked Flavor
-  // TODO(fpion): StatusCondition
   // TODO(fpion): OriginalTrainer / PokéBall / Met(Level + Location + Date + TextOverride)
   // TODO(fpion): CurrentTrainer
 }

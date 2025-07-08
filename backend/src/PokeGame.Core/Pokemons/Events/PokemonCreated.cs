@@ -20,4 +20,5 @@ public record PokemonCreated(
   EffortValues EffortValues,
   int Vitality,
   int Stamina,
+  PokemonCharacteristic Characteristic,
   byte Friendship) : DomainEvent;

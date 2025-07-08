@@ -15,6 +15,7 @@ internal static class Pokemons
   public static readonly ColumnId Version = new(nameof(PokemonEntity.Version), Table);
 
   public static readonly ColumnId AbilitySlot = new(nameof(PokemonEntity.AbilitySlot), Table);
+  public static readonly ColumnId Characteristic = new(nameof(PokemonEntity.Characteristic), Table);
   public static readonly ColumnId Experience = new(nameof(PokemonEntity.Experience), Table);
   public static readonly ColumnId FormId = new(nameof(PokemonEntity.FormId), Table);
   public static readonly ColumnId FormUid = new(nameof(PokemonEntity.FormUid), Table);
@@ -34,6 +35,7 @@ internal static class Pokemons
   public static readonly ColumnId Sprite = new(nameof(PokemonEntity.Sprite), Table);
   public static readonly ColumnId Stamina = new(nameof(PokemonEntity.Stamina), Table);
   public static readonly ColumnId Statistics = new(nameof(PokemonEntity.Statistics), Table);
+  public static readonly ColumnId StatusCondition = new(nameof(PokemonEntity.StatusCondition), Table);
   public static readonly ColumnId TeraType = new(nameof(PokemonEntity.TeraType), Table);
   public static readonly ColumnId ToNextLevel = new(nameof(PokemonEntity.ToNextLevel), Table);
   public static readonly ColumnId UniqueName = new(nameof(PokemonEntity.UniqueName), Table);
