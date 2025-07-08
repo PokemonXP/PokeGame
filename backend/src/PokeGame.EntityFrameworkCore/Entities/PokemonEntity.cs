@@ -37,7 +37,7 @@ internal class PokemonEntity : AggregateEntity
   public byte Height { get; private set; }
   public byte Weight { get; private set; }
   public AbilitySlot AbilitySlot { get; private set; }
-  public PokemonNature Nature { get; private set; }
+  public string Nature { get; private set; } = string.Empty;
 
   public GrowthRate GrowthRate { get; private set; }
   public int Experience { get; private set; }
@@ -81,7 +81,7 @@ internal class PokemonEntity : AggregateEntity
     Height = @event.Size.Height;
     Weight = @event.Size.Weight;
     AbilitySlot = @event.AbilitySlot;
-    Nature = @event.Nature;
+    Nature = @event.Nature.Name;
 
     GrowthRate = @event.GrowthRate;
     Experience = @event.Experience;

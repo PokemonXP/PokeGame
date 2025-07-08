@@ -56,11 +56,7 @@ internal class Randomizer : IRandomizer
     return value <= ratio ? Pokemons.PokemonGender.Male : Pokemons.PokemonGender.Female;
   }
 
-  public PokemonNature PokemonNature()
-  {
-    PokemonNature[] natures = Enum.GetValues<PokemonNature>();
-    return _random.Pick(natures);
-  }
+  public PokemonNature PokemonNature() => _random.Pick(PokemonNatures.Instance.ToList());
 
   public PokemonSize PokemonSize()
   {

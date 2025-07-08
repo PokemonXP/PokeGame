@@ -42,7 +42,7 @@ internal class CreatePokemonValidator : AbstractValidator<CreatePokemonPayload>
     {
       RuleFor(x => x.AbilitySlot).NotEqual(AbilitySlot.Hidden);
     }
-    RuleFor(x => x.Nature).IsInEnum();
+    When(x => !string.IsNullOrWhiteSpace(x.Nature), () => RuleFor(x => x.Nature!).PokemonNature());
 
     When(x => x.IndividualValues is not null, () => RuleFor(x => x.IndividualValues!).SetValidator(new IndividualValuesValidator()));
     When(x => x.EffortValues is not null, () => RuleFor(x => x.EffortValues!).SetValidator(new EffortValuesValidator()));

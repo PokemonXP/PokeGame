@@ -22,7 +22,7 @@ public class ExperienceTable : IExperienceTable // TODO(fpion): unit tests
     }
   }
 
-  private readonly Dictionary<GrowthRate, int[]> _thresholds = [];
+  private readonly Dictionary<GrowthRate, int[]> _thresholds = new(capacity: 6);
 
   private ExperienceTable()
   {
