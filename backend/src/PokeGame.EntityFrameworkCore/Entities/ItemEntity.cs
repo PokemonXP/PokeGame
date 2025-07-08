@@ -54,14 +54,21 @@ internal class ItemEntity : AggregateEntity
 
     Price = (int)invariant.GetNumberValue(Items.Price);
 
-    string? category = invariant.TryGetSelectValue(Items.Category)?.SingleOrDefault();
-    Category = string.IsNullOrWhiteSpace(category) ? ItemCategory.OtherItem : Enum.Parse<ItemCategory>(category);
+    Category = ParseCategory(invariant.TryGetSelectValue(Items.Category)?.Single());
 
     Sprite = invariant.TryGetStringValue(Items.Sprite);
 
     Url = locale.TryGetStringValue(Items.Url);
     Notes = locale.TryGetStringValue(Items.Notes);
   }
+  private static ItemCategory ParseCategory(string? value) => value switch
+  {
+    "tm-material" => ItemCategory.TechnicalMachineMaterial,
+    "treasure" => ItemCategory.Treasure,
+    "picnic" => ItemCategory.PicnicItem,
+    "key" => ItemCategory.KeyItem,
+    _ => ItemCategory.OtherItem,
+  };
 
   public override string ToString() => $"{DisplayName ?? UniqueName} | {base.ToString()}";
 }
