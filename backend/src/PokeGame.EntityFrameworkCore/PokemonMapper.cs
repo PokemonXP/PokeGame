@@ -5,6 +5,8 @@ using PokeGame.Core;
 using PokeGame.Core.Abilities.Models;
 using PokeGame.Core.Forms.Models;
 using PokeGame.Core.Moves.Models;
+using PokeGame.Core.Pokemons;
+using PokeGame.Core.Pokemons.Models;
 using PokeGame.Core.Regions.Models;
 using PokeGame.Core.Species.Models;
 using PokeGame.Core.Trainers.Models;
@@ -157,6 +159,43 @@ internal class PokemonMapper
     destination.StatisticChanges.Accuracy = source.AccuracyChange;
     destination.StatisticChanges.Evasion = source.EvasionChange;
     destination.StatisticChanges.Critical = source.CriticalChange;
+
+    MapAggregate(source, destination);
+
+    return destination;
+  }
+
+  public PokemonModel ToPokemon(PokemonEntity source)
+  {
+    if (source.Form is null)
+    {
+      throw new ArgumentException("The form is required.", nameof(source));
+    }
+
+    PokemonModel destination = new()
+    {
+      Id = source.Id,
+      Form = ToForm(source.Form),
+      UniqueName = source.UniqueName,
+      Nickname = source.Nickname,
+      Gender = source.Gender,
+      TeraType = source.TeraType,
+      Size = new PokemonSizeModel(source.Height, source.Weight),
+      AbilitySlot = source.AbilitySlot,
+      Nature = new PokemonNatureModel(PokemonNatures.Instance.Find(source.Nature)),
+      GrowthRate = source.GrowthRate,
+      Level = source.Level,
+      Experience = source.Experience,
+      MaximumExperience = source.MaximumExperience,
+      ToNextLevel = source.ToNextLevel,
+      Statistics = source.GetStatistics(),
+      Vitality = source.Vitality,
+      Stamina = source.Stamina,
+      Friendship = source.Friendship,
+      Sprite = source.Sprite,
+      Url = source.Url,
+      Notes = source.Notes
+    };
 
     MapAggregate(source, destination);
 

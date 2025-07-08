@@ -1,5 +1,8 @@
-﻿using Krakenar.Core;
+﻿using Krakenar.Contracts.Actors;
+using Krakenar.Core;
+using Krakenar.Core.Actors;
 using Krakenar.EntityFrameworkCore.Relational.KrakenarDb;
+using Logitar.EventSourcing;
 using Microsoft.EntityFrameworkCore;
 using PokeGame.Core.Pokemons;
 using PokeGame.Core.Pokemons.Models;
@@ -9,10 +12,12 @@ namespace PokeGame.EntityFrameworkCore.Queriers;
 
 internal class PokemonQuerier : IPokemonQuerier
 {
+  private readonly IActorService _actorService;
   private readonly DbSet<PokemonEntity> _pokemon;
 
-  public PokemonQuerier(PokemonContext context)
+  public PokemonQuerier(IActorService actorService, PokemonContext context)
   {
+    _actorService = actorService;
     _pokemon = context.Pokemon;
   }
 
@@ -34,19 +39,28 @@ internal class PokemonQuerier : IPokemonQuerier
   }
   public async Task<PokemonModel?> ReadAsync(PokemonId id, CancellationToken cancellationToken)
   {
-    PokemonEntity? pokemon = await _pokemon.AsNoTracking().SingleOrDefaultAsync(x => x.StreamId == id.Value, cancellationToken);
+    PokemonEntity? pokemon = await _pokemon.AsNoTracking()
+      .Include(x => x.Form).ThenInclude(x => x!.Abilities).ThenInclude(x => x.Ability)
+      .Include(x => x.Form).ThenInclude(x => x!.Variety).ThenInclude(x => x!.Species).ThenInclude(x => x!.RegionalNumbers).ThenInclude(x => x.Region)
+      .SingleOrDefaultAsync(x => x.StreamId == id.Value, cancellationToken);
     return pokemon is null ? null : await MapAsync(pokemon, cancellationToken);
   }
   public async Task<PokemonModel?> ReadAsync(Guid id, CancellationToken cancellationToken)
   {
-    PokemonEntity? pokemon = await _pokemon.AsNoTracking().SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
+    PokemonEntity? pokemon = await _pokemon.AsNoTracking()
+      .Include(x => x.Form).ThenInclude(x => x!.Abilities).ThenInclude(x => x.Ability)
+      .Include(x => x.Form).ThenInclude(x => x!.Variety).ThenInclude(x => x!.Species).ThenInclude(x => x!.RegionalNumbers).ThenInclude(x => x.Region)
+      .SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
     return pokemon is null ? null : await MapAsync(pokemon, cancellationToken);
   }
   public async Task<PokemonModel?> ReadAsync(string uniqueName, CancellationToken cancellationToken)
   {
     string uniqueNameNormalized = Helper.Normalize(uniqueName);
 
-    PokemonEntity? pokemon = await _pokemon.AsNoTracking().SingleOrDefaultAsync(x => x.UniqueNameNormalized == uniqueNameNormalized, cancellationToken);
+    PokemonEntity? pokemon = await _pokemon.AsNoTracking()
+      .Include(x => x.Form).ThenInclude(x => x!.Abilities).ThenInclude(x => x.Ability)
+      .Include(x => x.Form).ThenInclude(x => x!.Variety).ThenInclude(x => x!.Species).ThenInclude(x => x!.RegionalNumbers).ThenInclude(x => x.Region)
+      .SingleOrDefaultAsync(x => x.UniqueNameNormalized == uniqueNameNormalized, cancellationToken);
     return pokemon is null ? null : await MapAsync(pokemon, cancellationToken);
   }
 
@@ -54,8 +68,12 @@ internal class PokemonQuerier : IPokemonQuerier
   {
     return (await MapAsync([pokemon], cancellationToken)).Single();
   }
-  private Task<IReadOnlyCollection<PokemonModel>> MapAsync(IEnumerable<PokemonEntity> pokemon, CancellationToken cancellationToken)
+  private async Task<IReadOnlyCollection<PokemonModel>> MapAsync(IEnumerable<PokemonEntity> pokemon, CancellationToken cancellationToken)
   {
-    throw new NotImplementedException(); // TODO(fpion): implement
+    IEnumerable<ActorId> actorIds = pokemon.SelectMany(p => p.GetActorIds());
+    IReadOnlyDictionary<ActorId, Actor> actors = await _actorService.FindAsync(actorIds, cancellationToken);
+    PokemonMapper mapper = new(actors);
+
+    return pokemon.Select(mapper.ToPokemon).ToList().AsReadOnly();
   }
 }
