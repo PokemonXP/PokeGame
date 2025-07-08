@@ -1,4 +1,4 @@
-﻿namespace PokeGame.Infrastructure;
+﻿namespace PokeGame.Core;
 
 public static class StringExtensions
 {

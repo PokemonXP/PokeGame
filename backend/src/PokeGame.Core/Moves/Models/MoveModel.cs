@@ -1,4 +1,5 @@
-﻿using AggregateModel = Krakenar.Contracts.Aggregate;
+﻿using PokeGame.Core.Models;
+using AggregateModel = Krakenar.Contracts.Aggregate;
 
 namespace PokeGame.Core.Moves.Models;
 

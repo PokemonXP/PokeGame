@@ -1,8 +1,8 @@
 ﻿using Krakenar.Core.Contents;
 using Krakenar.EntityFrameworkCore.Relational.KrakenarDb;
+using PokeGame.Core;
 using PokeGame.Core.Trainers;
 using PokeGame.EntityFrameworkCore.Handlers;
-using PokeGame.Infrastructure;
 using PokeGame.Infrastructure.Data;
 using AggregateEntity = Krakenar.EntityFrameworkCore.Relational.Entities.Aggregate;
 
@@ -60,7 +60,7 @@ internal class TrainerEntity : AggregateEntity
     DisplayName = locale.DisplayName?.Value;
     Description = locale.Description?.Value;
 
-    Gender = Enum.Parse<TrainerGender>(invariant.FindSelectValue(Trainers.Gender).Single().Capitalize());
+    Gender = PokemonConverter.Instance.ToTrainerGender(invariant.FindSelectValue(Trainers.Gender).Single());
     License = invariant.FindStringValue(Trainers.License);
     Money = (int)invariant.FindNumberValue(Trainers.Money);
 

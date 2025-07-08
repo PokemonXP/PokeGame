@@ -15,6 +15,7 @@ internal static class Items
   public static readonly ColumnId Version = new(nameof(ItemEntity.Version), Table);
 
   public static readonly ColumnId BattleItem = new(nameof(ItemEntity.BattleItem), Table);
+  public static readonly ColumnId Berry = new(nameof(ItemEntity.Berry), Table);
   public static readonly ColumnId Category = new(nameof(ItemEntity.Category), Table);
   public static readonly ColumnId Description = new(nameof(ItemEntity.Description), Table);
   public static readonly ColumnId DisplayName = new(nameof(ItemEntity.DisplayName), Table);

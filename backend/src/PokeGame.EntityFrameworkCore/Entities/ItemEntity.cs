@@ -4,8 +4,8 @@ using Logitar.EventSourcing;
 using PokeGame.Core;
 using PokeGame.Core.Items;
 using PokeGame.Core.Items.Models;
+using PokeGame.Core.Models;
 using PokeGame.EntityFrameworkCore.Handlers;
-using PokeGame.Infrastructure;
 using PokeGame.Infrastructure.Data;
 using AggregateEntity = Krakenar.EntityFrameworkCore.Relational.Entities.Aggregate;
 
@@ -30,6 +30,7 @@ internal class ItemEntity : AggregateEntity
   public ItemCategory Category { get; private set; }
 
   public string? BattleItem { get; private set; }
+  public string? Berry { get; private set; }
   public string? Medicine { get; private set; }
   public string? PokeBall { get; private set; }
 
@@ -43,6 +44,10 @@ internal class ItemEntity : AggregateEntity
   public string? Notes { get; private set; }
 
   public ItemEntity(BattleItemPublished published) : this(published.Event)
+  {
+    Update(published);
+  }
+  public ItemEntity(BerryPublished published) : this(published.Event)
   {
     Update(published);
   }
@@ -76,8 +81,9 @@ internal class ItemEntity : AggregateEntity
     int[]? values = BattleItem?.Split(',').Select(int.Parse).ToArray();
     return values is null
       ? null
-      : new BattleItemModel(values[0], values[1], values[2], values[3], values[4], values[5], values[6], values[7], values[8]);
+      : new BattleItemModel(new StatisticChangesModel(values[0], values[1], values[2], values[3], values[4], values[5], values[6], values[7]), values[8]);
   }
+  public BerryModel? GetBerry() => Berry is null ? null : JsonSerializer.Deserialize<BerryModel>(Berry); // TODO(fpion): use custom serializer
   public MedicineModel? GetMedicine() => Medicine is null ? null : JsonSerializer.Deserialize<MedicineModel>(Medicine); // TODO(fpion): use custom serializer
   public PokeBallModel? GetPokeBall() => PokeBall is null ? null : JsonSerializer.Deserialize<PokeBallModel>(PokeBall); // TODO(fpion): use custom serializer
 
@@ -109,17 +115,46 @@ internal class ItemEntity : AggregateEntity
       invariant.GetNumberValue(BattleItems.CriticalChange),
       invariant.GetNumberValue(BattleItems.GuardTurns));
   }
+  public void Update(BerryPublished published)
+  {
+    Update(published.Event, published.Invariant, published.Locale, Berries.Price, ItemCategory.Berry, Berries.Sprite, Berries.Url, Berries.Notes);
+
+    ContentLocale invariant = published.Invariant;
+
+    BerryModel berry = new()
+    {
+      Healing = (int)invariant.GetNumberValue(Berries.Healing),
+      IsHealingPercentage = invariant.GetBooleanValue(Berries.IsHealingPercentage),
+      CureConfusion = invariant.GetBooleanValue(Berries.CureConfusion),
+      CureNonVolatileConditions = invariant.GetBooleanValue(Berries.CureNonVolatileConditions),
+      PowerPoints = (int)invariant.GetNumberValue(Berries.PowerPoints),
+      StatisticChanges = new StatisticChangesModel(
+        (int)invariant.GetNumberValue(Berries.AttackChange),
+        (int)invariant.GetNumberValue(Berries.DefenseChange),
+        (int)invariant.GetNumberValue(Berries.SpecialAttackChange),
+        (int)invariant.GetNumberValue(Berries.SpecialDefenseChange),
+        (int)invariant.GetNumberValue(Berries.SpeedChange),
+        (int)invariant.GetNumberValue(Berries.AccuracyChange),
+        (int)invariant.GetNumberValue(Berries.EvasionChange),
+        (int)invariant.GetNumberValue(Berries.CriticalChange)),
+      RaiseFriendship = invariant.GetBooleanValue(Berries.RaiseFriendship)
+    };
+
+    IReadOnlyCollection<string> statusConditions = invariant.GetSelectValue(Berries.StatusCondition);
+    berry.StatusCondition = statusConditions.Count < 1 ? null : Enum.Parse<StatusCondition>(statusConditions.Single().Capitalize());
+
+    IReadOnlyCollection<string> lowerEffortValues = invariant.GetSelectValue(Berries.LowerEffortValues);
+    berry.LowerEffortValues = lowerEffortValues.Count < 1 ? null : PokemonConverter.Instance.ToStatistic(lowerEffortValues.Single());
+
+    Berry = JsonSerializer.Serialize(berry); // TODO(fpion): use custom serializer
+  }
   public void Update(ItemPublished published)
   {
     ContentLocale invariant = published.Invariant;
-    ItemCategory category = invariant.TryGetSelectValue(Items.Category)?.Single() switch
-    {
-      "tm-material" => ItemCategory.TechnicalMachineMaterial,
-      "treasure" => ItemCategory.Treasure,
-      "picnic" => ItemCategory.PicnicItem,
-      "key" => ItemCategory.KeyItem,
-      _ => ItemCategory.OtherItem,
-    };
+
+    IReadOnlyCollection<string> categories = invariant.TryGetSelectValue(Items.Category) ?? [];
+    ItemCategory category = categories.Count < 1 ? ItemCategory.OtherItem : PokemonConverter.Instance.ToItemCategory(categories.Single());
+
     Update(published.Event, published.Invariant, published.Locale, Items.Price, category, Items.Sprite, Items.Url, Items.Notes);
   }
   public void Update(MedicinePublished published)
