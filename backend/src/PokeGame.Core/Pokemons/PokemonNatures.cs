@@ -107,7 +107,16 @@ public class PokemonNatures : IPokemonNatures
   public IReadOnlyCollection<PokemonNature> ToList() => _natures.Values;
 }
 
-public record PokemonNature
+public interface IPokemonNature
+{
+  string Name { get; }
+  PokemonStatistic? IncreasedStatistic { get; }
+  PokemonStatistic? DecreasedStatistic { get; }
+  Flavor? FavoriteFlavor { get; }
+  Flavor? DislikedFlavor { get; }
+}
+
+public record PokemonNature : IPokemonNature
 {
   public const int MaximumLength = 8;
   private const double DecreaseMultiplier = 0.9;
@@ -131,6 +140,10 @@ public record PokemonNature
     DecreasedStatistic = decreasedStatistic;
     FavoriteFlavor = favoriteFlavor;
     DislikedFlavor = dislikedFlavor;
+  }
+
+  public PokemonNature(IPokemonNature nature) : this(nature.Name, nature.IncreasedStatistic, nature.DecreasedStatistic, nature.FavoriteFlavor, nature.DislikedFlavor)
+  {
   }
 
   public double GetMultiplier(PokemonStatistic statistic)

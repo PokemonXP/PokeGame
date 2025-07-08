@@ -41,8 +41,8 @@ internal class PokemonEntity : AggregateEntity
   public string Nature { get; private set; } = string.Empty;
 
   public GrowthRate GrowthRate { get; private set; }
-  public int Experience { get; private set; }
   public int Level { get; private set; }
+  public int Experience { get; private set; }
   public int MaximumExperience { get; private set; }
   public int ToNextLevel { get; private set; }
 
@@ -138,40 +138,40 @@ internal class PokemonEntity : AggregateEntity
     }
   }
 
-  public StatisticsModel GetStatistics()
+  public PokemonStatisticsModel GetStatistics()
   {
     string[] properties = Statistics.Split('|');
     byte[] baseStatistics = properties[0].Split(',').Select(byte.Parse).ToArray();
     byte[] individualValues = properties[1].Split(',').Select(byte.Parse).ToArray();
     byte[] effortValues = properties[2].Split(',').Select(byte.Parse).ToArray();
     int[] values = properties[3].Split(',').Select(int.Parse).ToArray();
-    return new StatisticsModel(
-      new StatisticModel(baseStatistics[0], individualValues[0], effortValues[0], values[0]),
-      new StatisticModel(baseStatistics[1], individualValues[1], effortValues[1], values[1]),
-      new StatisticModel(baseStatistics[2], individualValues[2], effortValues[2], values[2]),
-      new StatisticModel(baseStatistics[3], individualValues[3], effortValues[3], values[3]),
-      new StatisticModel(baseStatistics[4], individualValues[4], effortValues[4], values[4]),
-      new StatisticModel(baseStatistics[5], individualValues[5], effortValues[5], values[5]));
+    return new PokemonStatisticsModel(
+      new PokemonStatisticModel(baseStatistics[0], individualValues[0], effortValues[0], values[0]),
+      new PokemonStatisticModel(baseStatistics[1], individualValues[1], effortValues[1], values[1]),
+      new PokemonStatisticModel(baseStatistics[2], individualValues[2], effortValues[2], values[2]),
+      new PokemonStatisticModel(baseStatistics[3], individualValues[3], effortValues[3], values[3]),
+      new PokemonStatisticModel(baseStatistics[4], individualValues[4], effortValues[4], values[4]),
+      new PokemonStatisticModel(baseStatistics[5], individualValues[5], effortValues[5], values[5]));
   }
   private void SetStatistics(IBaseStatistics? baseStatistics = null, IIndividualValues? individualValues = null, IEffortValues? effortValues = null)
   {
     if (baseStatistics is null || individualValues is null || effortValues is null)
     {
-      StatisticsModel model = GetStatistics();
-      baseStatistics ??= new BaseStatistics(
-        model.HP.Base, model.Attack.Base, model.Defense.Base, model.SpecialAttack.Base, model.SpecialDefense.Base, model.Speed.Base);
-      individualValues ??= new IndividualValues(
-        model.HP.IndividualValue, model.Attack.IndividualValue, model.Defense.IndividualValue, model.SpecialAttack.IndividualValue, model.SpecialDefense.IndividualValue, model.Speed.IndividualValue);
-      effortValues ??= new EffortValues(
-        model.HP.EffortValue, model.Attack.EffortValue, model.Defense.EffortValue, model.SpecialAttack.EffortValue, model.SpecialDefense.EffortValue, model.Speed.EffortValue);
+      PokemonStatisticsModel statistics = GetStatistics();
+      baseStatistics ??= new BaseStatistics(statistics.HP.Base, statistics.Attack.Base, statistics.Defense.Base,
+        statistics.SpecialAttack.Base, statistics.SpecialDefense.Base, statistics.Speed.Base);
+      individualValues ??= new IndividualValues(statistics.HP.IndividualValue, statistics.Attack.IndividualValue, statistics.Defense.IndividualValue,
+        statistics.SpecialAttack.IndividualValue, statistics.SpecialDefense.IndividualValue, statistics.Speed.IndividualValue);
+      effortValues ??= new EffortValues(statistics.HP.EffortValue, statistics.Attack.EffortValue, statistics.Defense.EffortValue,
+        statistics.SpecialAttack.EffortValue, statistics.SpecialDefense.EffortValue, statistics.Speed.EffortValue);
     }
 
-    PokemonStatistics statistics = new(baseStatistics, individualValues, effortValues, Level, PokemonNatures.Instance.Find(Nature));
+    PokemonStatistics values = new(baseStatistics, individualValues, effortValues, Level, PokemonNatures.Instance.Find(Nature));
     Statistics = string.Join('|',
       string.Join(',', baseStatistics.HP, baseStatistics.Attack, baseStatistics.Defense, baseStatistics.SpecialAttack, baseStatistics.SpecialDefense, baseStatistics.Speed),
       string.Join(',', individualValues.HP, individualValues.Attack, individualValues.Defense, individualValues.SpecialAttack, individualValues.SpecialDefense, individualValues.Speed),
       string.Join(',', effortValues.HP, effortValues.Attack, effortValues.Defense, effortValues.SpecialAttack, effortValues.SpecialDefense, effortValues.Speed),
-      string.Join(',', statistics.HP, statistics.Attack, statistics.Defense, statistics.SpecialAttack, statistics.SpecialDefense, statistics.Speed));
+      string.Join(',', values.HP, values.Attack, values.Defense, values.SpecialAttack, values.SpecialDefense, values.Speed));
   }
 
   public override string ToString() => $"{Nickname ?? UniqueName}";
