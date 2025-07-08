@@ -20,6 +20,7 @@ internal static class Items
   public static readonly ColumnId DisplayName = new(nameof(ItemEntity.DisplayName), Table);
   public static readonly ColumnId Id = new(nameof(ItemEntity.Id), Table);
   public static readonly ColumnId ItemId = new(nameof(ItemEntity.ItemId), Table);
+  public static readonly ColumnId Medicine = new(nameof(ItemEntity.Medicine), Table);
   public static readonly ColumnId MoveId = new(nameof(ItemEntity.MoveId), Table);
   public static readonly ColumnId MoveUid = new(nameof(ItemEntity.MoveUid), Table);
   public static readonly ColumnId Notes = new(nameof(ItemEntity.Notes), Table);

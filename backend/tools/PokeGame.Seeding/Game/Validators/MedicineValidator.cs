@@ -13,7 +13,7 @@ internal class MedicineValidator : AbstractValidator<MedicinePayload>
     When(x => !string.IsNullOrWhiteSpace(x.DisplayName), () => RuleFor(x => x.DisplayName!).DisplayName());
     When(x => !string.IsNullOrWhiteSpace(x.Description), () => RuleFor(x => x.Description!).Description());
 
-    RuleFor(x => x.Price).GreaterThan(0);
+    RuleFor(x => x.Price).GreaterThanOrEqualTo(0);
 
     When(x => x.Healing is not null, () => RuleFor(x => x.Healing!).SetValidator(new HealingValidator()));
     When(x => x.Status is not null, () => RuleFor(x => x.Status!).SetValidator(new StatusHealingValidator()));

@@ -84,7 +84,7 @@ internal class MoveEntity : AggregateEntity
     IReadOnlyCollection<string>? volatileConditions = invariant.TryGetSelectValue(Moves.VolatileConditions);
     VolatileConditions = volatileConditions is null || volatileConditions.Count < 1
       ? null
-      : JsonSerializer.Serialize(volatileConditions.Select(value => Enum.Parse<VolatileCondition>(value.Capitalize()).ToString()).Distinct());
+      : JsonSerializer.Serialize(volatileConditions.Select(value => Enum.Parse<VolatileCondition>(value.Capitalize()).ToString()).Distinct()); // TODO(fpion): use custom serializer
 
     AttackChange = (int)invariant.GetNumberValue(Moves.AttackChange);
     DefenseChange = (int)invariant.GetNumberValue(Moves.DefenseChange);
