@@ -28,6 +28,7 @@ internal class ItemConfiguration : AggregateConfiguration<ItemEntity>, IEntityTy
     builder.Property(x => x.UniqueNameNormalized).HasMaxLength(UniqueName.MaximumLength);
     builder.Property(x => x.DisplayName).HasMaxLength(DisplayName.MaximumLength);
     builder.Property(x => x.Category).HasMaxLength(byte.MaxValue).HasConversion(new EnumToStringConverter<ItemCategory>());
+    builder.Property(x => x.BattleItem).HasMaxLength(Constants.BattleItemMaximumLength);
     builder.Property(x => x.Sprite).HasMaxLength(Url.MaximumLength);
     builder.Property(x => x.Url).HasMaxLength(Url.MaximumLength);
   }

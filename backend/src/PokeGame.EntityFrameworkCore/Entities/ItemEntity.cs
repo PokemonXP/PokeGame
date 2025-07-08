@@ -25,11 +25,19 @@ internal class ItemEntity : AggregateEntity
 
   public ItemCategory Category { get; private set; }
 
+  public string? BattleItem { get; private set; }
+
   public string? Sprite { get; private set; }
 
   public string? Url { get; private set; }
   public string? Notes { get; private set; }
 
+  public ItemEntity(BattleItemPublished published) : base(published.Event)
+  {
+    Id = new ContentId(published.Event.StreamId).EntityId;
+
+    Update(published);
+  }
   public ItemEntity(ItemPublished published) : base(published.Event)
   {
     Id = new ContentId(published.Event.StreamId).EntityId;
@@ -41,6 +49,37 @@ internal class ItemEntity : AggregateEntity
   {
   }
 
+  public void Update(BattleItemPublished published)
+  {
+    ContentLocale invariant = published.Invariant;
+    ContentLocale locale = published.Locale;
+
+    Update(published.Event);
+
+    UniqueName = locale.UniqueName.Value;
+    DisplayName = locale.DisplayName?.Value;
+    Description = locale.Description?.Value;
+
+    Price = (int)invariant.GetNumberValue(BattleItems.Price);
+
+    Category = ItemCategory.BattleItem;
+
+    BattleItem = string.Join(',',
+      invariant.GetNumberValue(BattleItems.AttackChange),
+      invariant.GetNumberValue(BattleItems.DefenseChange),
+      invariant.GetNumberValue(BattleItems.SpecialAttackChange),
+      invariant.GetNumberValue(BattleItems.SpecialDefenseChange),
+      invariant.GetNumberValue(BattleItems.SpeedChange),
+      invariant.GetNumberValue(BattleItems.AccuracyChange),
+      invariant.GetNumberValue(BattleItems.EvasionChange),
+      invariant.GetNumberValue(BattleItems.CriticalChange),
+      invariant.GetNumberValue(BattleItems.GuardTurns));
+
+    Sprite = invariant.TryGetStringValue(BattleItems.Sprite);
+
+    Url = locale.TryGetStringValue(BattleItems.Url);
+    Notes = locale.TryGetStringValue(BattleItems.Notes);
+  }
   public void Update(ItemPublished published)
   {
     ContentLocale invariant = published.Invariant;
