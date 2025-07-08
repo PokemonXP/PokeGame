@@ -8,7 +8,7 @@ public interface IExperienceTable
   int GetMaximumExperience(GrowthRate growthRate, int level);
 }
 
-public class ExperienceTable : IExperienceTable // TODO(fpion): unit tests
+public class ExperienceTable : IExperienceTable
 {
   private const int MaximumLevel = 100;
 
@@ -77,7 +77,7 @@ public class ExperienceTable : IExperienceTable // TODO(fpion): unit tests
     double cube = Math.Pow(level, 3);
     if (level < 15)
     {
-      experience = (cube * Math.Floor((level + 1) / 3.0) + 24.0) / 50.0;
+      experience = cube * (Math.Floor((level + 1) / 3.0) + 24.0) / 50.0;
     }
     else if (level < 36)
     {
@@ -125,11 +125,11 @@ public class ExperienceTable : IExperienceTable // TODO(fpion): unit tests
     {
       throw new ArgumentException($"The growth rate '{growthRate}' is not valid.", nameof(growthRate));
     }
-    if (level < 1 || level > 100)
+    if (level < 1 || level > MaximumLevel)
     {
       throw new ArgumentOutOfRangeException(nameof(level));
     }
 
-    return thresholds[Math.Min(level + 1, 100)];
+    return thresholds[Math.Min(level, MaximumLevel - 1)];
   }
 }
