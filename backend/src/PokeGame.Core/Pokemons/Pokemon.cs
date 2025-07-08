@@ -1,6 +1,7 @@
 ﻿using Krakenar.Core;
 using Logitar.EventSourcing;
 using PokeGame.Core.Forms;
+using PokeGame.Core.Items;
 using PokeGame.Core.Pokemons.Events;
 using PokeGame.Core.Species;
 
@@ -61,6 +62,8 @@ public class Pokemon : AggregateRoot
   public PokemonCharacteristic Characteristic => _characteristic ?? throw new InvalidOperationException("The Pokémon has not been initialized.");
 
   public byte Friendship { get; private set; }
+
+  public ItemId? HeldItemId { get; private set; }
 
   private Url? _sprite = null;
   public Url? Sprite
@@ -196,6 +199,30 @@ public class Pokemon : AggregateRoot
     Friendship = @event.Friendship;
   }
 
+  public void HoldItem(ItemId itemId, ActorId? actorId = null)
+  {
+    if (HeldItemId != itemId)
+    {
+      Raise(new PokemonItemHeld(itemId), actorId);
+    }
+  }
+  protected virtual void Handle(PokemonItemHeld @event)
+  {
+    HeldItemId = @event.ItemId;
+  }
+
+  public void RemoveItem(ActorId? actorId = null)
+  {
+    if (HeldItemId.HasValue)
+    {
+      Raise(new PokemonItemRemoved(), actorId);
+    }
+  }
+  protected virtual void Handle(PokemonItemRemoved _)
+  {
+    HeldItemId = null;
+  }
+
   public void SetNickname(DisplayName? nickname, ActorId? actorId = null)
   {
     if (Nickname != nickname)
@@ -251,7 +278,6 @@ public class Pokemon : AggregateRoot
 
   public override string ToString() => $"{Nickname?.Value ?? UniqueName.Value} | {base.ToString()}";
 
-  // TODO(fpion): Held Item
   // TODO(fpion): Moves
   // TODO(fpion): OriginalTrainer / PokéBall / Met(Level + Location + Date + TextOverride)
   // TODO(fpion): CurrentTrainer

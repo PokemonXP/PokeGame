@@ -4,6 +4,7 @@ using Logitar.EventSourcing;
 using PokeGame.Core;
 using PokeGame.Core.Abilities.Models;
 using PokeGame.Core.Forms.Models;
+using PokeGame.Core.Items.Models;
 using PokeGame.Core.Moves.Models;
 using PokeGame.Core.Pokemons;
 using PokeGame.Core.Pokemons.Models;
@@ -125,6 +126,40 @@ internal class PokemonMapper
     return destination;
   }
 
+  public ItemModel ToItem(ItemEntity source)
+  {
+    if (source.MoveId.HasValue && source.Move is null)
+    {
+      throw new ArgumentException("The move is required.", nameof(source));
+    }
+
+    ItemModel destination = new()
+    {
+      Id = source.Id,
+      UniqueName = source.UniqueName,
+      DisplayName = source.DisplayName,
+      Description = source.Description,
+      Price = source.Price,
+      Category = source.Category,
+      BattleItem = source.GetBattleItem(),
+      Berry = source.GetBerry(),
+      Medicine = source.GetMedicine(),
+      PokeBall = source.GetPokeBall(),
+      Sprite = source.Sprite,
+      Url = source.Url,
+      Notes = source.Notes,
+    };
+
+    if (source.Move is not null)
+    {
+      destination.TechnicalMachine = new TechnicalMachineModel(ToMove(source.Move));
+    }
+
+    MapAggregate(source, destination);
+
+    return destination;
+  }
+
   public MoveModel ToMove(MoveEntity source)
   {
     MoveModel destination = new()
@@ -171,6 +206,10 @@ internal class PokemonMapper
     {
       throw new ArgumentException("The form is required.", nameof(source));
     }
+    if (source.HeldItemId.HasValue && source.HeldItem is null)
+    {
+      throw new ArgumentException("The held item is required.", nameof(source));
+    }
 
     PokemonModel destination = new()
     {
@@ -191,11 +230,17 @@ internal class PokemonMapper
       Statistics = source.GetStatistics(),
       Vitality = source.Vitality,
       Stamina = source.Stamina,
+      StatusCondition = source.StatusCondition,
       Friendship = source.Friendship,
       Sprite = source.Sprite,
       Url = source.Url,
       Notes = source.Notes
     };
+
+    if (source.HeldItem is not null)
+    {
+      destination.HeldItem = ToItem(source.HeldItem);
+    }
 
     MapAggregate(source, destination);
 

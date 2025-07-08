@@ -6,7 +6,7 @@ namespace PokeGame.Core.Forms;
 
 public class FormNotFoundException : NotFoundException
 {
-  private const string ErrorMessage = "The specified Pokémon form could not be found.";
+  private const string ErrorMessage = "The specified Pokémon form was not found.";
 
   public string Form
   {

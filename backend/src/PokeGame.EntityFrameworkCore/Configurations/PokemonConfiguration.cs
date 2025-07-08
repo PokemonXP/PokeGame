@@ -31,6 +31,7 @@ internal class PokemonConfiguration : AggregateConfiguration<PokemonEntity>, IEn
     builder.HasIndex(x => x.Nature);
     builder.HasIndex(x => x.Level);
     builder.HasIndex(x => x.StatusCondition);
+    builder.HasIndex(x => x.HeldItemUid);
 
     builder.Property(x => x.UniqueName).HasMaxLength(UniqueName.MaximumLength);
     builder.Property(x => x.UniqueNameNormalized).HasMaxLength(UniqueName.MaximumLength);
@@ -49,5 +50,6 @@ internal class PokemonConfiguration : AggregateConfiguration<PokemonEntity>, IEn
     builder.HasOne(x => x.Species).WithMany(x => x.Pokemon).OnDelete(DeleteBehavior.Restrict);
     builder.HasOne(x => x.Variety).WithMany(x => x.Pokemon).OnDelete(DeleteBehavior.Restrict);
     builder.HasOne(x => x.Form).WithMany(x => x.Pokemon).OnDelete(DeleteBehavior.Restrict);
+    builder.HasOne(x => x.HeldItem).WithMany(x => x.Pokemon).OnDelete(DeleteBehavior.Restrict);
   }
 }

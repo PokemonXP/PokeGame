@@ -102,7 +102,7 @@ public class PokemonNatures : IPokemonNatures
     _natures["timid"] = new PokemonNature("Timid", PokemonStatistic.Speed, PokemonStatistic.Attack, Flavor.Sweet, Flavor.Spicy);
   }
 
-  public PokemonNature Find(string name) => Get(name) ?? throw new ArgumentException($"The nature '{name}' could not be found.", nameof(name));
+  public PokemonNature Find(string name) => Get(name) ?? throw new ArgumentException($"The nature '{name}' was not found.", nameof(name));
   public PokemonNature? Get(string name) => _natures.TryGetValue(name.Trim().ToLowerInvariant(), out PokemonNature? nature) ? nature : null;
   public IReadOnlyCollection<PokemonNature> ToList() => _natures.Values;
 }
