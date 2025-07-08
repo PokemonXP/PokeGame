@@ -39,6 +39,7 @@ internal class PokemonConfiguration : AggregateConfiguration<PokemonEntity>, IEn
     builder.Property(x => x.AbilitySlot).HasMaxLength(byte.MaxValue).HasConversion(new EnumToStringConverter<AbilitySlot>());
     builder.Property(x => x.Nature).HasMaxLength(PokemonNature.MaximumLength);
     builder.Property(x => x.GrowthRate).HasMaxLength(byte.MaxValue).HasConversion(new EnumToStringConverter<GrowthRate>());
+    builder.Property(x => x.Statistics).HasMaxLength(Constants.StatisticsMaximumLength);
     builder.Property(x => x.Sprite).HasMaxLength(Url.MaximumLength);
     builder.Property(x => x.Url).HasMaxLength(Url.MaximumLength);
 

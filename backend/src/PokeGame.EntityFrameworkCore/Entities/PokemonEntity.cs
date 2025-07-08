@@ -2,6 +2,7 @@
 using PokeGame.Core;
 using PokeGame.Core.Pokemons;
 using PokeGame.Core.Pokemons.Events;
+using PokeGame.Core.Pokemons.Models;
 using PokeGame.Core.Species;
 using AggregateEntity = Krakenar.EntityFrameworkCore.Relational.Entities.Aggregate;
 
@@ -45,7 +46,7 @@ internal class PokemonEntity : AggregateEntity
   public int MaximumExperience { get; private set; }
   public int ToNextLevel { get; private set; }
 
-  public string? Statistics { get; private set; }
+  public string Statistics { get; private set; } = string.Empty;
   public int Vitality { get; private set; }
   public int Stamina { get; private set; }
 
@@ -89,7 +90,7 @@ internal class PokemonEntity : AggregateEntity
     MaximumExperience = ExperienceTable.Instance.GetMaximumExperience(GrowthRate, Level);
     ToNextLevel = Math.Max(MaximumExperience - Experience, 0);
 
-    Statistics = null; // TODO(fpion): implement
+    SetStatistics(@event.BaseStatistics, @event.IndividualValues, @event.EffortValues);
     Vitality = @event.Vitality;
     Stamina = @event.Stamina;
 
@@ -135,6 +136,42 @@ internal class PokemonEntity : AggregateEntity
     {
       Notes = @event.Notes.Value?.Value;
     }
+  }
+
+  public StatisticsModel GetStatistics()
+  {
+    string[] properties = Statistics.Split('|');
+    byte[] baseStatistics = properties[0].Split(',').Select(byte.Parse).ToArray();
+    byte[] individualValues = properties[1].Split(',').Select(byte.Parse).ToArray();
+    byte[] effortValues = properties[2].Split(',').Select(byte.Parse).ToArray();
+    int[] values = properties[3].Split(',').Select(int.Parse).ToArray();
+    return new StatisticsModel(
+      new StatisticModel(baseStatistics[0], individualValues[0], effortValues[0], values[0]),
+      new StatisticModel(baseStatistics[1], individualValues[1], effortValues[1], values[1]),
+      new StatisticModel(baseStatistics[2], individualValues[2], effortValues[2], values[2]),
+      new StatisticModel(baseStatistics[3], individualValues[3], effortValues[3], values[3]),
+      new StatisticModel(baseStatistics[4], individualValues[4], effortValues[4], values[4]),
+      new StatisticModel(baseStatistics[5], individualValues[5], effortValues[5], values[5]));
+  }
+  private void SetStatistics(IBaseStatistics? baseStatistics = null, IIndividualValues? individualValues = null, IEffortValues? effortValues = null)
+  {
+    if (baseStatistics is null || individualValues is null || effortValues is null)
+    {
+      StatisticsModel model = GetStatistics();
+      baseStatistics ??= new BaseStatistics(
+        model.HP.Base, model.Attack.Base, model.Defense.Base, model.SpecialAttack.Base, model.SpecialDefense.Base, model.Speed.Base);
+      individualValues ??= new IndividualValues(
+        model.HP.IndividualValue, model.Attack.IndividualValue, model.Defense.IndividualValue, model.SpecialAttack.IndividualValue, model.SpecialDefense.IndividualValue, model.Speed.IndividualValue);
+      effortValues ??= new EffortValues(
+        model.HP.EffortValue, model.Attack.EffortValue, model.Defense.EffortValue, model.SpecialAttack.EffortValue, model.SpecialDefense.EffortValue, model.Speed.EffortValue);
+    }
+
+    PokemonStatistics statistics = new(baseStatistics, individualValues, effortValues, Level, PokemonNatures.Instance.Find(Nature));
+    Statistics = string.Join('|',
+      string.Join(',', baseStatistics.HP, baseStatistics.Attack, baseStatistics.Defense, baseStatistics.SpecialAttack, baseStatistics.SpecialDefense, baseStatistics.Speed),
+      string.Join(',', individualValues.HP, individualValues.Attack, individualValues.Defense, individualValues.SpecialAttack, individualValues.SpecialDefense, individualValues.Speed),
+      string.Join(',', effortValues.HP, effortValues.Attack, effortValues.Defense, effortValues.SpecialAttack, effortValues.SpecialDefense, effortValues.Speed),
+      string.Join(',', statistics.HP, statistics.Attack, statistics.Defense, statistics.SpecialAttack, statistics.SpecialDefense, statistics.Speed));
   }
 
   public override string ToString() => $"{Nickname ?? UniqueName}";
