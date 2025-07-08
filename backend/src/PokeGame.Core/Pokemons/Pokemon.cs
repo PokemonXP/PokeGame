@@ -61,8 +61,9 @@ public class Pokemon : AggregateRoot
   private PokemonCharacteristic? _characteristic = null;
   public PokemonCharacteristic Characteristic => _characteristic ?? throw new InvalidOperationException("The Pokémon has not been initialized.");
 
-  public ItemId? HeldItemId { get; private set; }
   public byte Friendship { get; private set; }
+
+  public ItemId? HeldItemId { get; private set; }
 
   private Url? _sprite = null;
   public Url? Sprite

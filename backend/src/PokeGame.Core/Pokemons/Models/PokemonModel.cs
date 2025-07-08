@@ -26,8 +26,11 @@ public class PokemonModel : AggregateModel
   public PokemonStatisticsModel Statistics { get; set; } = new();
   public int Vitality { get; set; }
   public int Stamina { get; set; }
+  public StatusCondition? StatusCondition { get; set; }
 
   public byte Friendship { get; set; }
+
+  // TODO(fpion): HeldItem
 
   public string? Sprite { get; set; }
   public string? Url { get; set; }

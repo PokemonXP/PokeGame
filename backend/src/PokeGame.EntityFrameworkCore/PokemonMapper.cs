@@ -191,6 +191,7 @@ internal class PokemonMapper
       Statistics = source.GetStatistics(),
       Vitality = source.Vitality,
       Stamina = source.Stamina,
+      StatusCondition = source.StatusCondition,
       Friendship = source.Friendship,
       Sprite = source.Sprite,
       Url = source.Url,
