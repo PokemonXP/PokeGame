@@ -83,9 +83,9 @@ internal class ItemEntity : AggregateEntity
       ? null
       : new BattleItemModel(new StatisticChangesModel(values[0], values[1], values[2], values[3], values[4], values[5], values[6], values[7]), values[8]);
   }
-  public BerryModel? GetBerry() => Berry is null ? null : JsonSerializer.Deserialize<BerryModel>(Berry); // TODO(fpion): use custom serializer
-  public MedicineModel? GetMedicine() => Medicine is null ? null : JsonSerializer.Deserialize<MedicineModel>(Medicine); // TODO(fpion): use custom serializer
-  public PokeBallModel? GetPokeBall() => PokeBall is null ? null : JsonSerializer.Deserialize<PokeBallModel>(PokeBall); // TODO(fpion): use custom serializer
+  public BerryModel? GetBerry() => Berry is null ? null : PokemonSerializer.Instance.Deserialize<BerryModel>(Berry);
+  public MedicineModel? GetMedicine() => Medicine is null ? null : PokemonSerializer.Instance.Deserialize<MedicineModel>(Medicine);
+  public PokeBallModel? GetPokeBall() => PokeBall is null ? null : PokemonSerializer.Instance.Deserialize<PokeBallModel>(PokeBall);
 
   public void SetMove(MoveEntity move)
   {
@@ -146,7 +146,7 @@ internal class ItemEntity : AggregateEntity
     IReadOnlyCollection<string> lowerEffortValues = invariant.GetSelectValue(Berries.LowerEffortValues);
     berry.LowerEffortValues = lowerEffortValues.Count < 1 ? null : PokemonConverter.Instance.ToStatistic(lowerEffortValues.Single());
 
-    Berry = JsonSerializer.Serialize(berry); // TODO(fpion): use custom serializer
+    Berry = PokemonSerializer.Instance.Serialize(berry);
   }
   public void Update(ItemPublished published)
   {
@@ -195,7 +195,7 @@ internal class ItemEntity : AggregateEntity
         invariant.GetBooleanValue(Medicines.AllMoves));
     }
 
-    Medicine = JsonSerializer.Serialize(medicine); // TODO(fpion): use custom serializer
+    Medicine = PokemonSerializer.Instance.Serialize(medicine);
   }
   public void Update(PokeBallPublished published)
   {
@@ -207,7 +207,7 @@ internal class ItemEntity : AggregateEntity
       invariant.GetBooleanValue(PokeBalls.Heal),
       (int)invariant.GetNumberValue(PokeBalls.BaseFriendship),
       (int)invariant.GetNumberValue(PokeBalls.FriendshipMultiplier));
-    PokeBall = JsonSerializer.Serialize(pokeBall); // TODO(fpion): use custom serializer
+    PokeBall = PokemonSerializer.Instance.Serialize(pokeBall);
   }
   public void Update(TechnicalMachinePublished published)
   {
