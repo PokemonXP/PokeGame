@@ -42,6 +42,7 @@ internal class PokemonQuerier : IPokemonQuerier
     PokemonEntity? pokemon = await _pokemon.AsNoTracking()
       .Include(x => x.Form).ThenInclude(x => x!.Abilities).ThenInclude(x => x.Ability)
       .Include(x => x.Form).ThenInclude(x => x!.Variety).ThenInclude(x => x!.Species).ThenInclude(x => x!.RegionalNumbers).ThenInclude(x => x.Region)
+      .Include(x => x.HeldItem).ThenInclude(x => x!.Move)
       .SingleOrDefaultAsync(x => x.StreamId == id.Value, cancellationToken);
     return pokemon is null ? null : await MapAsync(pokemon, cancellationToken);
   }
@@ -50,6 +51,7 @@ internal class PokemonQuerier : IPokemonQuerier
     PokemonEntity? pokemon = await _pokemon.AsNoTracking()
       .Include(x => x.Form).ThenInclude(x => x!.Abilities).ThenInclude(x => x.Ability)
       .Include(x => x.Form).ThenInclude(x => x!.Variety).ThenInclude(x => x!.Species).ThenInclude(x => x!.RegionalNumbers).ThenInclude(x => x.Region)
+      .Include(x => x.HeldItem).ThenInclude(x => x!.Move)
       .SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
     return pokemon is null ? null : await MapAsync(pokemon, cancellationToken);
   }
@@ -60,6 +62,7 @@ internal class PokemonQuerier : IPokemonQuerier
     PokemonEntity? pokemon = await _pokemon.AsNoTracking()
       .Include(x => x.Form).ThenInclude(x => x!.Abilities).ThenInclude(x => x.Ability)
       .Include(x => x.Form).ThenInclude(x => x!.Variety).ThenInclude(x => x!.Species).ThenInclude(x => x!.RegionalNumbers).ThenInclude(x => x.Region)
+      .Include(x => x.HeldItem).ThenInclude(x => x!.Move)
       .SingleOrDefaultAsync(x => x.UniqueNameNormalized == uniqueNameNormalized, cancellationToken);
     return pokemon is null ? null : await MapAsync(pokemon, cancellationToken);
   }

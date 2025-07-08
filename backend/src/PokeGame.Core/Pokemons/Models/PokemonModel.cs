@@ -1,4 +1,5 @@
 ﻿using PokeGame.Core.Forms.Models;
+using PokeGame.Core.Items.Models;
 using PokeGame.Core.Species;
 using AggregateModel = Krakenar.Contracts.Aggregate;
 
@@ -30,7 +31,7 @@ public class PokemonModel : AggregateModel
 
   public byte Friendship { get; set; }
 
-  // TODO(fpion): HeldItem
+  public ItemModel? HeldItem { get; set; }
 
   public string? Sprite { get; set; }
   public string? Url { get; set; }
