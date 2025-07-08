@@ -15,7 +15,7 @@ internal class EffortValuesValidator : AbstractValidator<IEffortValues>
 
   private static bool BeValidEffortValues(IEffortValues effortValues)
   {
-    int sum = effortValues.HP + effortValues.Attack + effortValues.Defense + effortValues.SpecialAttack + effortValues.SpecialDefense + effortValues.SpecialDefense;
+    int sum = effortValues.HP + effortValues.Attack + effortValues.Defense + effortValues.SpecialAttack + effortValues.SpecialDefense + effortValues.Speed;
     return sum <= Limit;
   }
 }

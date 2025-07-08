@@ -1,6 +1,6 @@
 ﻿namespace PokeGame.Core.Pokemons;
 
-public record PokemonStatistics // TODO(fpion): unit tests
+public record PokemonStatistics
 {
   public int HP { get; }
   public int Attack { get; }
@@ -25,7 +25,7 @@ public record PokemonStatistics // TODO(fpion): unit tests
 
   private static int CalculateHP(int @base, byte individualValue, byte effortValue, int level)
   {
-    return (int)Math.Floor(2.0 * @base + individualValue + Math.Floor(effortValue / 4.0) / 100.0) + level + 10;
+    return (int)Math.Floor((2.0 * @base + individualValue + Math.Floor(effortValue / 4.0)) * level / 100.0) + level + 10;
   }
   private static int CalculateOther(int @base, byte individualValue, byte effortValue, int level, double nature)
   {
