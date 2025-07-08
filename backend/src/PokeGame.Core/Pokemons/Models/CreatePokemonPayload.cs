@@ -27,6 +27,8 @@ public record CreatePokemonPayload
 
   // TODO(fpion): HeldItemId
 
+  // TODO(fpion): Moves
+
   public string? Sprite { get; set; }
   public string? Url { get; set; }
   public string? Notes { get; set; }

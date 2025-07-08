@@ -2,6 +2,7 @@
 using Logitar.EventSourcing;
 using PokeGame.Core.Forms;
 using PokeGame.Core.Items;
+using PokeGame.Core.Moves;
 using PokeGame.Core.Pokemons.Events;
 using PokeGame.Core.Species;
 
@@ -9,6 +10,8 @@ namespace PokeGame.Core.Pokemons;
 
 public class Pokemon : AggregateRoot
 {
+  public const int MoveLimit = 4;
+
   private PokemonUpdated _updated = new();
   private bool HasUpdates => _updated.Gender is not null || _updated.Url is not null || _updated.Notes is not null;
 
@@ -64,6 +67,11 @@ public class Pokemon : AggregateRoot
   public byte Friendship { get; private set; }
 
   public ItemId? HeldItemId { get; private set; }
+
+  private readonly Dictionary<MoveId, PokemonMove> _allMoves = [];
+  public IReadOnlyDictionary<MoveId, PokemonMove> AllMoves => _allMoves.AsReadOnly();
+  private readonly List<PokemonMove> _moves = new(capacity: MoveLimit);
+  public IReadOnlyCollection<PokemonMove> Moves => _moves.AsReadOnly();
 
   private Url? _sprite = null;
   public Url? Sprite
@@ -211,6 +219,43 @@ public class Pokemon : AggregateRoot
     HeldItemId = @event.ItemId;
   }
 
+  public bool LearnMove(MoveId moveId, PowerPoints powerPoints, ActorId? actorId = null) => LearnMove(moveId, powerPoints, position: null, actorId);
+  public bool LearnMove(MoveId moveId, PowerPoints powerPoints, int? position, ActorId? actorId = null)
+  {
+    if (position < 0 || position > 3)
+    {
+      throw new ArgumentOutOfRangeException(nameof(position));
+    }
+    if (position is null && _moves.Count == MoveLimit)
+    {
+      throw new ArgumentNullException(nameof(position));
+    }
+    if (_allMoves.ContainsKey(moveId))
+    {
+      return false;
+    }
+
+    position = _moves.Count < MoveLimit ? null : position;
+    Raise(new PokemonMoveLearned(moveId, powerPoints, position, TechnicalMachine: false), actorId);
+
+    return true;
+  }
+  protected virtual void Handle(PokemonMoveLearned @event)
+  {
+    PokemonMove move = new(
+      @event.MoveId, @event.PowerPoints.Value, @event.PowerPoints.Value, @event.PowerPoints, IsMastered: false, Level, @event.TechnicalMachine);
+    _allMoves[move.MoveId] = move;
+
+    if (@event.Position.HasValue)
+    {
+      _moves[@event.Position.Value] = move;
+    }
+    else
+    {
+      _moves.Add(move);
+    }
+  }
+
   public void RemoveItem(ActorId? actorId = null)
   {
     if (HeldItemId.HasValue)
@@ -283,14 +328,10 @@ public class Pokemon : AggregateRoot
 }
 
 /* TODO(fpion): Moves
- * Id
- * CurrentPP
- * MaximumPP
- * ReferencePP
+ * CurrentPP (restore/use)
+ * MaximumPP (upgrade)
  * Mastered
- * Position
+ * Position/Reorder
  * Relearn
- * Reorder
- * LearnedAtLevel
- * LearnedFromTM
+ * LearnFromTM
  */

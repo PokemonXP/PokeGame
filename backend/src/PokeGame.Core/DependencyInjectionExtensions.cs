@@ -14,8 +14,7 @@ public static class DependencyInjectionExtensions
       .AddCommands()
       .AddCoreServices()
       .AddKrakenarCore()
-      .AddManagers()
-      .AddSingleton<IRandomizer, Randomizer>();
+      .AddManagers();
   }
 
   private static IServiceCollection AddCommands(this IServiceCollection services)

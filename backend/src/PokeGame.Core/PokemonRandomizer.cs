@@ -3,7 +3,7 @@ using PokeGame.Core.Pokemons;
 
 namespace PokeGame.Core;
 
-internal interface IRandomizer
+public interface IPokemonRandomizer
 {
   AbilitySlot AbilitySlot(AbilitiesModel abilities);
   IndividualValues IndividualValues();
@@ -12,13 +12,22 @@ internal interface IRandomizer
   PokemonSize PokemonSize();
 }
 
-internal class Randomizer : IRandomizer
+public class PokemonRandomizer : IPokemonRandomizer
 {
-  private readonly Random _random;
-
-  public Randomizer()
+  private static IPokemonRandomizer? _instance = null;
+  public static IPokemonRandomizer Instance
   {
-    _random = new Random();
+    get
+    {
+      _instance ??= new PokemonRandomizer();
+      return _instance;
+    }
+  }
+
+  private readonly Random _random = new();
+
+  private PokemonRandomizer()
+  {
   }
 
   public AbilitySlot AbilitySlot(AbilitiesModel abilities)
