@@ -1,6 +1,8 @@
 ﻿using Krakenar.Core.Contents;
 using Krakenar.EntityFrameworkCore.Relational.KrakenarDb;
+using Logitar.EventSourcing;
 using PokeGame.Core.Items;
+using PokeGame.Core.Items.Models;
 using PokeGame.EntityFrameworkCore.Handlers;
 using PokeGame.Infrastructure.Data;
 using AggregateEntity = Krakenar.EntityFrameworkCore.Relational.Entities.Aggregate;
@@ -26,6 +28,7 @@ internal class ItemEntity : AggregateEntity
   public ItemCategory Category { get; private set; }
 
   public string? BattleItem { get; private set; }
+  public string? PokeBall { get; private set; }
 
   public MoveEntity? Move { get; private set; }
   public int? MoveId { get; private set; }
@@ -48,6 +51,12 @@ internal class ItemEntity : AggregateEntity
 
     Update(published);
   }
+  public ItemEntity(PokeBallPublished published) : base(published.Event)
+  {
+    Id = new ContentId(published.Event.StreamId).EntityId;
+
+    Update(published);
+  }
   public ItemEntity(TechnicalMachinePublished published) : base(published.Event)
   {
     Id = new ContentId(published.Event.StreamId).EntityId;
@@ -58,6 +67,15 @@ internal class ItemEntity : AggregateEntity
   private ItemEntity() : base()
   {
   }
+
+  public BattleItemModel? GetBattleItem()
+  {
+    int[]? values = BattleItem?.Split(',').Select(int.Parse).ToArray();
+    return values is null
+      ? null
+      : new BattleItemModel(values[0], values[1], values[2], values[3], values[4], values[5], values[6], values[7], values[8]);
+  }
+  public PokeBallModel? GetPokeBall() => PokeBall is null ? null : JsonSerializer.Deserialize<PokeBallModel>(PokeBall);
 
   public void SetMove(MoveEntity move)
   {
@@ -73,19 +91,9 @@ internal class ItemEntity : AggregateEntity
 
   public void Update(BattleItemPublished published)
   {
+    Update(published.Event, published.Invariant, published.Locale, BattleItems.Price, ItemCategory.BattleItem, BattleItems.Sprite, BattleItems.Url, BattleItems.Notes);
+
     ContentLocale invariant = published.Invariant;
-    ContentLocale locale = published.Locale;
-
-    Update(published.Event);
-
-    UniqueName = locale.UniqueName.Value;
-    DisplayName = locale.DisplayName?.Value;
-    Description = locale.Description?.Value;
-
-    Price = (int)invariant.GetNumberValue(BattleItems.Price);
-
-    Category = ItemCategory.BattleItem;
-
     BattleItem = string.Join(',',
       invariant.GetNumberValue(BattleItems.AttackChange),
       invariant.GetNumberValue(BattleItems.DefenseChange),
@@ -96,60 +104,54 @@ internal class ItemEntity : AggregateEntity
       invariant.GetNumberValue(BattleItems.EvasionChange),
       invariant.GetNumberValue(BattleItems.CriticalChange),
       invariant.GetNumberValue(BattleItems.GuardTurns));
-
-    Sprite = invariant.TryGetStringValue(BattleItems.Sprite);
-
-    Url = locale.TryGetStringValue(BattleItems.Url);
-    Notes = locale.TryGetStringValue(BattleItems.Notes);
   }
   public void Update(ItemPublished published)
   {
     ContentLocale invariant = published.Invariant;
-    ContentLocale locale = published.Locale;
+    ItemCategory category = invariant.TryGetSelectValue(Items.Category)?.Single() switch
+    {
+      "tm-material" => ItemCategory.TechnicalMachineMaterial,
+      "treasure" => ItemCategory.Treasure,
+      "picnic" => ItemCategory.PicnicItem,
+      "key" => ItemCategory.KeyItem,
+      _ => ItemCategory.OtherItem,
+    };
+    Update(published.Event, published.Invariant, published.Locale, Items.Price, category, Items.Sprite, Items.Url, Items.Notes);
+  }
+  public void Update(PokeBallPublished published)
+  {
+    Update(published.Event, published.Invariant, published.Locale, PokeBalls.Price, ItemCategory.PokeBall, PokeBalls.Sprite, PokeBalls.Url, PokeBalls.Notes);
 
-    Update(published.Event);
-
-    UniqueName = locale.UniqueName.Value;
-    DisplayName = locale.DisplayName?.Value;
-    Description = locale.Description?.Value;
-
-    Price = (int)invariant.GetNumberValue(Items.Price);
-
-    Category = ParseCategory(invariant.TryGetSelectValue(Items.Category)?.Single());
-
-    Sprite = invariant.TryGetStringValue(Items.Sprite);
-
-    Url = locale.TryGetStringValue(Items.Url);
-    Notes = locale.TryGetStringValue(Items.Notes);
+    ContentLocale invariant = published.Invariant;
+    PokeBallModel pokeBall = new(
+      invariant.GetNumberValue(PokeBalls.CatchMultiplier),
+      invariant.GetBooleanValue(PokeBalls.Heal),
+      (int)invariant.GetNumberValue(PokeBalls.BaseFriendship),
+      (int)invariant.GetNumberValue(PokeBalls.FriendshipMultiplier));
+    PokeBall = JsonSerializer.Serialize(pokeBall);
   }
   public void Update(TechnicalMachinePublished published)
   {
-    ContentLocale invariant = published.Invariant;
-    ContentLocale locale = published.Locale;
-
-    Update(published.Event);
+    Update(published.Event, published.Invariant, published.Locale, TechnicalMachines.Price,
+      ItemCategory.TechnicalMachine, TechnicalMachines.Sprite, TechnicalMachines.Url, TechnicalMachines.Notes);
+  }
+  private void Update(DomainEvent @event, ContentLocale invariant, ContentLocale locale, Guid price, ItemCategory category, Guid sprite, Guid url, Guid notes)
+  {
+    Update(@event);
 
     UniqueName = locale.UniqueName.Value;
     DisplayName = locale.DisplayName?.Value;
     Description = locale.Description?.Value;
 
-    Price = (int)invariant.GetNumberValue(TechnicalMachines.Price);
+    Price = (int)invariant.GetNumberValue(price);
 
-    Category = ItemCategory.TechnicalMachine;
+    Category = category;
 
-    Sprite = invariant.TryGetStringValue(TechnicalMachines.Sprite);
+    Sprite = invariant.TryGetStringValue(sprite);
 
-    Url = locale.TryGetStringValue(TechnicalMachines.Url);
-    Notes = locale.TryGetStringValue(TechnicalMachines.Notes);
+    Url = locale.TryGetStringValue(url);
+    Notes = locale.TryGetStringValue(notes);
   }
-  private static ItemCategory ParseCategory(string? value) => value switch
-  {
-    "tm-material" => ItemCategory.TechnicalMachineMaterial,
-    "treasure" => ItemCategory.Treasure,
-    "picnic" => ItemCategory.PicnicItem,
-    "key" => ItemCategory.KeyItem,
-    _ => ItemCategory.OtherItem,
-  };
 
   public override string ToString() => $"{DisplayName ?? UniqueName} | {base.ToString()}";
 }

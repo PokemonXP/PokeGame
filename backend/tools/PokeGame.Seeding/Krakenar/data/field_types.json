@@ -496,7 +496,7 @@
     "DisplayName": "Friendship Multiplier",
     "Description": null,
     "Number": {
-      "MinimumValue": 1,
+      "MinimumValue": 0,
       "MaximumValue": 2,
       "Step": 1.0
     }

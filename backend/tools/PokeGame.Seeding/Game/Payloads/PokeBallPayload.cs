@@ -10,12 +10,12 @@ internal class PokeBallPayload
   public string? DisplayName { get; set; }
   public string? Description { get; set; }
 
-  public int? Price { get; set; }
+  public int Price { get; set; }
 
   public double CatchMultiplier { get; set; }
   public bool Heal { get; set; }
-  public int? BaseFriendship { get; set; }
-  public int? FriendshipMultiplier { get; set; }
+  public int BaseFriendship { get; set; }
+  public int FriendshipMultiplier { get; set; }
 
   public string? Sprite { get; set; }
 
@@ -30,18 +30,18 @@ internal class PokeBallPayload
   {
     public Map()
     {
-      Map(x => x.Id).Index(0);
+      Map(x => x.Id).Index(0).Default(Guid.Empty);
 
-      Map(x => x.UniqueName).Index(1);
+      Map(x => x.UniqueName).Index(1).Default(string.Empty);
       Map(x => x.DisplayName).Index(2);
       Map(x => x.Description).Index(3);
 
-      Map(x => x.Price).Index(4);
+      Map(x => x.Price).Index(4).Default(0);
 
-      Map(x => x.CatchMultiplier).Index(5);
+      Map(x => x.CatchMultiplier).Index(5).Default(0.0);
       Map(x => x.Heal).Index(6).Default(false);
-      Map(x => x.BaseFriendship).Index(7);
-      Map(x => x.FriendshipMultiplier).Index(8);
+      Map(x => x.BaseFriendship).Index(7).Default(0);
+      Map(x => x.FriendshipMultiplier).Index(8).Default(0);
 
       Map(x => x.Sprite).Index(9);
 

@@ -13,11 +13,11 @@ internal class PokeBallValidator : AbstractValidator<PokeBallPayload>
     When(x => !string.IsNullOrWhiteSpace(x.DisplayName), () => RuleFor(x => x.DisplayName!).DisplayName());
     When(x => !string.IsNullOrWhiteSpace(x.Description), () => RuleFor(x => x.Description!).Description());
 
-    RuleFor(x => x.Price).GreaterThan(0);
+    RuleFor(x => x.Price).GreaterThanOrEqualTo(0);
 
-    RuleFor(x => x.CatchMultiplier).GreaterThan(0);
-    RuleFor(x => x.BaseFriendship).GreaterThan(0);
-    RuleFor(x => x.FriendshipMultiplier).GreaterThan(0);
+    RuleFor(x => x.CatchMultiplier).GreaterThanOrEqualTo(0.0);
+    RuleFor(x => x.BaseFriendship).GreaterThanOrEqualTo(0);
+    RuleFor(x => x.FriendshipMultiplier).GreaterThanOrEqualTo(0);
 
     When(x => !string.IsNullOrWhiteSpace(x.Sprite), () => RuleFor(x => x.Sprite!).Url());
 
