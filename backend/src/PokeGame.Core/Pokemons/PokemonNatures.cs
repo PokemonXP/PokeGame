@@ -2,31 +2,31 @@
 
 public interface IPokemonNatures
 {
-  PokemonNature Adamant => Find(nameof(Adamant));
-  PokemonNature Bashful => Find(nameof(Adamant));
-  PokemonNature Bold => Find(nameof(Adamant));
-  PokemonNature Brave => Find(nameof(Adamant));
-  PokemonNature Calm => Find(nameof(Adamant));
-  PokemonNature Careful => Find(nameof(Adamant));
-  PokemonNature Docile => Find(nameof(Adamant));
-  PokemonNature Gentle => Find(nameof(Adamant));
-  PokemonNature Hardy => Find(nameof(Adamant));
-  PokemonNature Hasty => Find(nameof(Adamant));
-  PokemonNature Impish => Find(nameof(Adamant));
-  PokemonNature Jolly => Find(nameof(Adamant));
-  PokemonNature Lax => Find(nameof(Adamant));
-  PokemonNature Lonely => Find(nameof(Adamant));
-  PokemonNature Mild => Find(nameof(Adamant));
-  PokemonNature Modest => Find(nameof(Adamant));
-  PokemonNature Naive => Find(nameof(Adamant));
-  PokemonNature Naughty => Find(nameof(Adamant));
-  PokemonNature Quiet => Find(nameof(Adamant));
-  PokemonNature Quirky => Find(nameof(Adamant));
-  PokemonNature Rash => Find(nameof(Adamant));
-  PokemonNature Relaxed => Find(nameof(Adamant));
-  PokemonNature Sassy => Find(nameof(Adamant));
-  PokemonNature Serious => Find(nameof(Adamant));
-  PokemonNature Timid => Find(nameof(Adamant));
+  PokemonNature Adamant { get; }
+  PokemonNature Bashful { get; }
+  PokemonNature Bold { get; }
+  PokemonNature Brave { get; }
+  PokemonNature Calm { get; }
+  PokemonNature Careful { get; }
+  PokemonNature Docile { get; }
+  PokemonNature Gentle { get; }
+  PokemonNature Hardy { get; }
+  PokemonNature Hasty { get; }
+  PokemonNature Impish { get; }
+  PokemonNature Jolly { get; }
+  PokemonNature Lax { get; }
+  PokemonNature Lonely { get; }
+  PokemonNature Mild { get; }
+  PokemonNature Modest { get; }
+  PokemonNature Naive { get; }
+  PokemonNature Naughty { get; }
+  PokemonNature Quiet { get; }
+  PokemonNature Quirky { get; }
+  PokemonNature Rash { get; }
+  PokemonNature Relaxed { get; }
+  PokemonNature Sassy { get; }
+  PokemonNature Serious { get; }
+  PokemonNature Timid { get; }
 
   PokemonNature Find(string name);
   PokemonNature? Get(string name);
