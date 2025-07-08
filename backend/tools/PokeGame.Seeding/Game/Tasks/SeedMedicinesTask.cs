@@ -148,7 +148,7 @@ internal class SeedMedicinesTaskHandler : INotificationHandler<SeedMedicinesTask
 
     if (status.Condition.HasValue)
     {
-      string statusCondition = SeedingSerializer.Serialize<StatusCondition[]>([status.Condition.Value]).ToLowerInvariant();
+      string statusCondition = SeedingSerializer.Serialize<string[]>([PokemonConverter.Instance.FromStatusCondition(status.Condition.Value)]);
       fieldValues.Add(Medicines.StatusCondition, statusCondition);
     }
     fieldValues.Add(Medicines.AllConditions, status.All);

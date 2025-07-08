@@ -58,9 +58,11 @@ internal class SeedBerriesTaskHandler : INotificationHandler<SeedBerriesTask>
       }
 
       string statusCondition = berry.StatusCondition.HasValue
-        ? SeedingSerializer.Serialize<StatusCondition[]>([berry.StatusCondition.Value]).ToLowerInvariant()
+        ? SeedingSerializer.Serialize<string[]>([PokemonConverter.Instance.FromStatusCondition(berry.StatusCondition.Value)])
         : string.Empty;
-      string lowerEffortValues = FormatPokemonStatistic(berry.LowerEffortValues);
+      string lowerEffortValues = berry.LowerEffortValues.HasValue
+        ? SeedingSerializer.Serialize<string[]>([PokemonConverter.Instance.FromStatistic(berry.LowerEffortValues.Value)])
+        : string.Empty;
 
       Content content;
       if (existingIds.Contains(berry.Id))
@@ -143,39 +145,5 @@ internal class SeedBerriesTaskHandler : INotificationHandler<SeedBerriesTask>
     fieldValues.Add(Berries.SpeedChange, changes.Speed);
     fieldValues.Add(Berries.AccuracyChange, changes.Accuracy);
     fieldValues.Add(Berries.EvasionChange, changes.Evasion);
-  }
-
-  private static string FormatPokemonStatistic(PokemonStatistic? statistic)
-  {
-    if (!statistic.HasValue)
-    {
-      return string.Empty;
-    }
-
-    List<string> values = new(capacity: 1);
-    switch (statistic.Value)
-    {
-      case PokemonStatistic.Attack:
-        values.Add("attack");
-        break;
-      case PokemonStatistic.Defense:
-        values.Add("defense");
-        break;
-      case PokemonStatistic.HP:
-        values.Add("hp");
-        break;
-      case PokemonStatistic.SpecialAttack:
-        values.Add("special-attack");
-        break;
-      case PokemonStatistic.SpecialDefense:
-        values.Add("special-defense");
-        break;
-      case PokemonStatistic.Speed:
-        values.Add("speed");
-        break;
-      default:
-        throw new NotSupportedException($"The Pokémon statistic '{statistic}' is not supported.");
-    }
-    return SeedingSerializer.Serialize(values);
   }
 }

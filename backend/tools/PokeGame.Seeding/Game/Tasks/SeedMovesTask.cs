@@ -58,9 +58,11 @@ internal class SeedMovesTaskHandler : INotificationHandler<SeedMovesTask>
         continue;
       }
 
-      string type = SeedingSerializer.Serialize<PokemonType[]>([move.Type]).ToLowerInvariant();
-      string category = SeedingSerializer.Serialize<MoveCategory[]>([move.Category]).ToLowerInvariant();
-      string inflictedCondition = move.InflictedStatus is null ? string.Empty : SeedingSerializer.Serialize<StatusCondition[]>([move.InflictedStatus.Condition]).ToLowerInvariant();
+      string type = SeedingSerializer.Serialize<string[]>([PokemonConverter.Instance.FromType(move.Type)]);
+      string category = SeedingSerializer.Serialize<string[]>([PokemonConverter.Instance.FromMoveCategory(move.Category)]);
+      string inflictedCondition = move.InflictedStatus is null
+        ? string.Empty
+        : SeedingSerializer.Serialize<string[]>([PokemonConverter.Instance.FromStatusCondition(move.InflictedStatus.Condition)]);
       string statusChance = move.InflictedStatus is null ? string.Empty : move.InflictedStatus.Chance.ToString();
       string volatileConditions = SerializeVolatileConditions(move.VolatileConditions);
 
@@ -148,6 +150,7 @@ internal class SeedMovesTaskHandler : INotificationHandler<SeedMovesTask>
       return string.Empty;
     }
 
-    return SeedingSerializer.Serialize(volatileConditions.Split('|').Distinct().Select(Enum.Parse<VolatileCondition>)).ToLowerInvariant();
+    IEnumerable<VolatileCondition> values = volatileConditions.Split('|').Distinct().Select(Enum.Parse<VolatileCondition>);
+    return SeedingSerializer.Serialize(values.Select(PokemonConverter.Instance.FromVolatileCondition));
   }
 }

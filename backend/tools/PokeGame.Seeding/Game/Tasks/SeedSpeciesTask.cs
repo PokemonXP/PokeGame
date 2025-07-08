@@ -3,7 +3,7 @@ using Krakenar.Contracts.Contents;
 using Krakenar.Contracts.Search;
 using Krakenar.Core;
 using MediatR;
-using PokeGame.Core.Species;
+using PokeGame.Core;
 using PokeGame.Infrastructure.Data;
 using PokeGame.Seeding.Game.Payloads;
 using PokeGame.Seeding.Game.Validators;
@@ -56,8 +56,8 @@ internal class SeedSpeciesTaskHandler : INotificationHandler<SeedSpeciesTask>
         continue;
       }
 
-      string category = SeedingSerializer.Serialize<PokemonCategory[]>([species.Category]).ToLowerInvariant();
-      string growthRate = FormatGrowthRate(species.GrowthRate);
+      string category = SeedingSerializer.Serialize<string[]>([PokemonConverter.Instance.FromCategory(species.Category)]);
+      string growthRate = SeedingSerializer.Serialize<string[]>([PokemonConverter.Instance.FromGrowthRate(species.GrowthRate)]);
       string regionalNumbers = FormatRegionalNumbers(species.RegionalNumbers);
 
       Content content;
@@ -113,21 +113,6 @@ internal class SeedSpeciesTaskHandler : INotificationHandler<SeedSpeciesTask>
       await _contentService.PublishAsync(content.Id, task.Language, cancellationToken);
       _logger.LogInformation("The species content 'Id={ContentId}' was published.", content.Id);
     }
-  }
-
-  private static string FormatGrowthRate(GrowthRate growthRate)
-  {
-    string value = growthRate switch
-    {
-      GrowthRate.Erratic => "slow-then-very-fast",
-      GrowthRate.Fast => "fast",
-      GrowthRate.Fluctuating => "fast-then-very-slow",
-      GrowthRate.MediumFast => "medium",
-      GrowthRate.MediumSlow => "medium-slow",
-      GrowthRate.Slow => "slow",
-      _ => throw new ArgumentException($"The growth rate '{growthRate}' is not valid.", nameof(growthRate)),
-    };
-    return SeedingSerializer.Serialize<string[]>([value]);
   }
 
   private static string FormatRegionalNumbers(IEnumerable<RegionalNumberPayload> payloads)

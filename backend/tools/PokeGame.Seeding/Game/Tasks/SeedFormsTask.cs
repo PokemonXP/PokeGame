@@ -223,11 +223,11 @@ internal class SeedFormsTaskHandler : INotificationHandler<SeedFormsTask>
 
   private static void AddTypeFieldValues(List<FieldValuePayload> fieldValues, TypesPayload types)
   {
-    fieldValues.Add(Forms.PrimaryType, SeedingSerializer.Serialize<PokemonType[]>([types.Primary]).ToLowerInvariant());
+    fieldValues.Add(Forms.PrimaryType, SeedingSerializer.Serialize<string[]>([PokemonConverter.Instance.FromType(types.Primary)]));
 
     if (types.Secondary.HasValue)
     {
-      fieldValues.Add(Forms.SecondaryType, SeedingSerializer.Serialize<PokemonType[]>([types.Secondary.Value]).ToLowerInvariant());
+      fieldValues.Add(Forms.SecondaryType, SeedingSerializer.Serialize<string[]>([PokemonConverter.Instance.FromType(types.Secondary.Value)]));
     }
   }
 

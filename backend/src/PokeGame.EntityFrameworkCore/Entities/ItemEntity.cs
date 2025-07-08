@@ -141,7 +141,7 @@ internal class ItemEntity : AggregateEntity
     };
 
     IReadOnlyCollection<string> statusConditions = invariant.GetSelectValue(Berries.StatusCondition);
-    berry.StatusCondition = statusConditions.Count < 1 ? null : Enum.Parse<StatusCondition>(statusConditions.Single().Capitalize());
+    berry.StatusCondition = statusConditions.Count < 1 ? null : PokemonConverter.Instance.ToStatusCondition(statusConditions.Single());
 
     IReadOnlyCollection<string> lowerEffortValues = invariant.GetSelectValue(Berries.LowerEffortValues);
     berry.LowerEffortValues = lowerEffortValues.Count < 1 ? null : PokemonConverter.Instance.ToStatistic(lowerEffortValues.Single());
@@ -182,7 +182,7 @@ internal class ItemEntity : AggregateEntity
     if (statusConditions.Count > 0 || allConditions)
     {
       medicine.Status = new StatusHealingModel(
-        condition: statusConditions.Count < 1 ? null : Enum.Parse<StatusCondition>(statusConditions.Single().Capitalize()),
+        condition: statusConditions.Count < 1 ? null : PokemonConverter.Instance.ToStatusCondition(statusConditions.Single()),
         allConditions);
     }
 

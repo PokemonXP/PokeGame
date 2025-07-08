@@ -3,7 +3,7 @@ using Krakenar.Contracts.Contents;
 using Krakenar.Contracts.Search;
 using Krakenar.Core;
 using MediatR;
-using PokeGame.Core.Items;
+using PokeGame.Core;
 using PokeGame.Infrastructure.Data;
 using PokeGame.Seeding.Game.Payloads;
 using PokeGame.Seeding.Game.Validators;
@@ -56,7 +56,9 @@ internal class SeedItemsTaskHandler : INotificationHandler<SeedItemsTask>
         continue;
       }
 
-      string category = FormatCategory(item.Category);
+      string category = item.Category.HasValue
+        ? SeedingSerializer.Serialize<string[]>([PokemonConverter.Instance.FromItemCategory(item.Category.Value)])
+        : string.Empty;
 
       Content content;
       if (existingIds.Contains(item.Id))
@@ -108,33 +110,5 @@ internal class SeedItemsTaskHandler : INotificationHandler<SeedItemsTask>
       await _contentService.PublishAsync(content.Id, task.Language, cancellationToken);
       _logger.LogInformation("The item content 'Id={ContentId}' was published.", content.Id);
     }
-  }
-
-  private static string FormatCategory(ItemCategory? category)
-  {
-    if (!category.HasValue)
-    {
-      return string.Empty;
-    }
-
-    List<string> values = new(capacity: 1);
-    switch (category.Value)
-    {
-      case ItemCategory.KeyItem:
-        values.Add("key");
-        break;
-      case ItemCategory.PicnicItem:
-        values.Add("picnic");
-        break;
-      case ItemCategory.TechnicalMachineMaterial:
-        values.Add("tm-material");
-        break;
-      case ItemCategory.Treasure:
-        values.Add("treasure");
-        break;
-      default:
-        throw new NotSupportedException($"The item category '{category}' is not supported.");
-    }
-    return SeedingSerializer.Serialize(values);
   }
 }

@@ -3,7 +3,7 @@ using Krakenar.Contracts.Contents;
 using Krakenar.Contracts.Search;
 using Krakenar.Core;
 using MediatR;
-using PokeGame.Core.Trainers;
+using PokeGame.Core;
 using PokeGame.Infrastructure.Data;
 using PokeGame.Seeding.Game.Payloads;
 using PokeGame.Seeding.Game.Validators;
@@ -56,7 +56,7 @@ internal class SeedTrainersTaskHandler : INotificationHandler<SeedTrainersTask>
         continue;
       }
 
-      string gender = SeedingSerializer.Serialize<TrainerGender[]>([trainer.Gender]).ToLowerInvariant();
+      string gender = SeedingSerializer.Serialize<string[]>([PokemonConverter.Instance.FromTrainerGender(trainer.Gender)]);
 
       Content content;
       if (existingIds.Contains(trainer.Id))
