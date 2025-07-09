@@ -212,6 +212,22 @@ public class Pokemon : AggregateRoot
     Friendship = @event.Friendship;
   }
 
+  public bool Catch(TrainerId trainerId, ItemId pokeBallId, GameLocation location, DateTime? caughtOn = null, Description? description = null, ActorId? actorId = null)
+  {
+    if (Ownership is not null)
+    {
+      return false;
+    }
+
+    Raise(new PokemonCaught(trainerId, pokeBallId, Level, location, description), actorId, caughtOn);
+    return true;
+  }
+  protected virtual void Handle(PokemonCaught @event)
+  {
+    OriginalTrainerId = @event.TrainerId;
+    Ownership = new PokemonOwnership(OwnershipKind.Caught, @event.TrainerId, @event.PokeBallId, @event.Level, @event.Location, @event.OccurredOn, @event.Description);
+  }
+
   public void HoldItem(ItemId itemId, ActorId? actorId = null)
   {
     if (HeldItemId != itemId)
@@ -284,7 +300,7 @@ public class Pokemon : AggregateRoot
       OriginalTrainerId = @event.TrainerId;
     }
 
-    Ownership = new PokemonOwnership(@event.TrainerId, @event.PokeBallId, @event.Level, @event.Location, @event.OccurredOn, @event.Description);
+    Ownership = new PokemonOwnership(OwnershipKind.Received, @event.TrainerId, @event.PokeBallId, @event.Level, @event.Location, @event.OccurredOn, @event.Description);
   }
 
   public bool RelearnMove(MoveId moveId, int position, ActorId? actorId = null)
@@ -460,7 +476,6 @@ public class Pokemon : AggregateRoot
 
 /* TODO(fpion): Ownership
  * Traded
- * Caught
  * Bought
  * Hatched
  * Revived (fossil)

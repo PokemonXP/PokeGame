@@ -37,6 +37,7 @@ public static class DependencyInjectionExtensions
     return services
       .AddScoped<IEventHandler<ContentLocalePublished>, PokemonContentEvents>()
       .AddScoped<IEventHandler<ContentLocaleUnpublished>, PokemonContentEvents>()
+      .AddScoped<IEventHandler<PokemonCaught>, PokemonEvents>()
       .AddScoped<IEventHandler<PokemonCreated>, PokemonEvents>()
       .AddScoped<IEventHandler<PokemonItemHeld>, PokemonEvents>()
       .AddScoped<IEventHandler<PokemonItemRemoved>, PokemonEvents>()

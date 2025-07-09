@@ -1,7 +1,6 @@
 ﻿using Krakenar.Contracts;
 using Krakenar.Core;
 using Logitar;
-using System.Text;
 
 namespace PokeGame.Core.Moves;
 
