@@ -28,6 +28,7 @@ public class PokemonModel : AggregateModel
   public int Vitality { get; set; }
   public int Stamina { get; set; }
   public StatusCondition? StatusCondition { get; set; }
+  public string Characteristic { get; set; } = string.Empty;
 
   public byte Friendship { get; set; }
 
