@@ -21,16 +21,12 @@ public record CreatePokemonPayload
   public EffortValuesModel? EffortValues { get; set; }
   public int Vitality { get; set; }
   public int Stamina { get; set; }
-  // TODO(fpion): StatusCondition
 
   public byte? Friendship { get; set; }
 
-  // TODO(fpion): HeldItemId
+  public string? HeldItem { get; set; }
 
   // TODO(fpion): Moves
-
-  // TODO(fpion): OriginalTrainer
-  // TODO(fpion): Ownership
 
   public string? Sprite { get; set; }
   public string? Url { get; set; }

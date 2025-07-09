@@ -5,6 +5,7 @@ using Krakenar.Infrastructure.Commands;
 using Microsoft.Extensions.DependencyInjection;
 using PokeGame.Core.Abilities;
 using PokeGame.Core.Forms;
+using PokeGame.Core.Items;
 using PokeGame.Core.Moves;
 using PokeGame.Core.Pokemons;
 using PokeGame.Core.Pokemons.Events;
@@ -52,6 +53,7 @@ public static class DependencyInjectionExtensions
     return services
       .AddScoped<IAbilityQuerier, AbilityQuerier>()
       .AddScoped<IFormQuerier, FormQuerier>()
+      .AddScoped<IItemQuerier, ItemQuerier>()
       .AddScoped<IMoveQuerier, MoveQuerier>()
       .AddScoped<IPokemonQuerier, PokemonQuerier>()
       .AddScoped<IRegionQuerier, RegionQuerier>()

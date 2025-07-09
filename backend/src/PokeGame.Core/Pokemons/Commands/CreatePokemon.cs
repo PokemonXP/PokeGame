@@ -4,6 +4,8 @@ using Krakenar.Core;
 using Logitar.EventSourcing;
 using PokeGame.Core.Forms;
 using PokeGame.Core.Forms.Models;
+using PokeGame.Core.Items;
+using PokeGame.Core.Items.Models;
 using PokeGame.Core.Pokemons.Models;
 using PokeGame.Core.Pokemons.Validators;
 using PokeGame.Core.Species.Models;
@@ -20,6 +22,7 @@ internal record CreatePokemon(CreatePokemonPayload Payload) : ICommand<PokemonMo
 internal class CreatePokemonHandler : ICommandHandler<CreatePokemon, PokemonModel>
 {
   private readonly IApplicationContext _applicationContext;
+  private readonly IItemManager _itemManager;
   private readonly IPokemonManager _pokemonManager;
   private readonly IPokemonQuerier _pokemonQuerier;
   private readonly IPokemonRepository _pokemonRepository;
@@ -27,11 +30,13 @@ internal class CreatePokemonHandler : ICommandHandler<CreatePokemon, PokemonMode
 
   public CreatePokemonHandler(
     IApplicationContext applicationContext,
+    IItemManager itemManager,
     IPokemonManager pokemonManager,
     IPokemonQuerier pokemonQuerier,
     IPokemonRepository pokemonRepository)
   {
     _applicationContext = applicationContext;
+    _itemManager = itemManager;
     _pokemonManager = pokemonManager;
     _pokemonQuerier = pokemonQuerier;
     _pokemonRepository = pokemonRepository;
@@ -102,6 +107,13 @@ internal class CreatePokemonHandler : ICommandHandler<CreatePokemon, PokemonMode
     if (nickname is not null)
     {
       pokemon.SetNickname(nickname, actorId);
+    }
+
+    if (!string.IsNullOrWhiteSpace(payload.HeldItem))
+    {
+      ItemModel item = await _itemManager.FindAsync(payload.HeldItem, nameof(payload.HeldItem), cancellationToken);
+      ItemId itemId = new(item.Id);
+      pokemon.HoldItem(itemId, actorId);
     }
 
     await _pokemonManager.SaveAsync(pokemon, cancellationToken);
