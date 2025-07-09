@@ -31,8 +31,7 @@ internal class PokemonManager : IPokemonManager
     {
       form = await _formQuerier.ReadAsync(id, cancellationToken);
     }
-    return form ?? await _formQuerier.ReadAsync(idOrUniqueName, cancellationToken)
-      ?? throw new FormNotFoundException(idOrUniqueName, propertyName);
+    return form ?? await _formQuerier.ReadAsync(idOrUniqueName, cancellationToken) ?? throw new FormNotFoundException(idOrUniqueName, propertyName);
   }
 
   public async Task SaveAsync(Pokemon pokemon, CancellationToken cancellationToken)

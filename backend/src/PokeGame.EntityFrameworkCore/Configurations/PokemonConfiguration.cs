@@ -47,6 +47,7 @@ internal class PokemonConfiguration : AggregateConfiguration<PokemonEntity>, IEn
     builder.Property(x => x.Statistics).HasMaxLength(Constants.StatisticsMaximumLength);
     builder.Property(x => x.StatusCondition).HasMaxLength(byte.MaxValue).HasConversion(new EnumToStringConverter<StatusCondition>());
     builder.Property(x => x.Characteristic).HasMaxLength(PokemonCharacteristic.MaximumLength);
+    builder.Property(x => x.OwnershipKind).HasMaxLength(byte.MaxValue).HasConversion(new EnumToStringConverter<OwnershipKind>());
     builder.Property(x => x.MetLocation).HasMaxLength(GameLocation.MaximumLength);
     builder.Property(x => x.Sprite).HasMaxLength(Url.MaximumLength);
     builder.Property(x => x.Url).HasMaxLength(Url.MaximumLength);

@@ -4,6 +4,7 @@ public record PokemonSizeModel : IPokemonSize
 {
   public byte Height { get; set; }
   public byte Weight { get; set; }
+  public PokemonSizeCategory Category => PokemonSize.Categorize(this);
 
   public PokemonSizeModel()
   {

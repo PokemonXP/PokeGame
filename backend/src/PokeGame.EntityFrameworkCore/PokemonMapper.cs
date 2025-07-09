@@ -222,6 +222,7 @@ internal class PokemonMapper
       Size = new PokemonSizeModel(source.Height, source.Weight),
       AbilitySlot = source.AbilitySlot,
       Nature = new PokemonNatureModel(PokemonNatures.Instance.Find(source.Nature)),
+      Characteristic = source.Characteristic,
       GrowthRate = source.GrowthRate,
       Level = source.Level,
       Experience = source.Experience,

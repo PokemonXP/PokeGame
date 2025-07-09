@@ -5,6 +5,7 @@ using Krakenar.Infrastructure.Commands;
 using Microsoft.Extensions.DependencyInjection;
 using PokeGame.Core.Abilities;
 using PokeGame.Core.Forms;
+using PokeGame.Core.Items;
 using PokeGame.Core.Moves;
 using PokeGame.Core.Pokemons;
 using PokeGame.Core.Pokemons.Events;
@@ -36,13 +37,18 @@ public static class DependencyInjectionExtensions
     return services
       .AddScoped<IEventHandler<ContentLocalePublished>, PokemonContentEvents>()
       .AddScoped<IEventHandler<ContentLocaleUnpublished>, PokemonContentEvents>()
+      .AddScoped<IEventHandler<PokemonCaught>, PokemonEvents>()
       .AddScoped<IEventHandler<PokemonCreated>, PokemonEvents>()
       .AddScoped<IEventHandler<PokemonItemHeld>, PokemonEvents>()
       .AddScoped<IEventHandler<PokemonItemRemoved>, PokemonEvents>()
       .AddScoped<IEventHandler<PokemonMoveLearned>, PokemonEvents>()
+      .AddScoped<IEventHandler<PokemonMoveRelearned>, PokemonEvents>()
+      .AddScoped<IEventHandler<PokemonMoveMastered>, PokemonEvents>()
+      .AddScoped<IEventHandler<PokemonMovesSwitched>, PokemonEvents>()
       .AddScoped<IEventHandler<PokemonNicknamed>, PokemonEvents>()
       .AddScoped<IEventHandler<PokemonReceived>, PokemonEvents>()
       .AddScoped<IEventHandler<PokemonReleased>, PokemonEvents>()
+      .AddScoped<IEventHandler<PokemonTechnicalMachineUsed>, PokemonEvents>()
       .AddScoped<IEventHandler<PokemonUniqueNameChanged>, PokemonEvents>()
       .AddScoped<IEventHandler<PokemonUpdated>, PokemonEvents>();
   }
@@ -52,6 +58,7 @@ public static class DependencyInjectionExtensions
     return services
       .AddScoped<IAbilityQuerier, AbilityQuerier>()
       .AddScoped<IFormQuerier, FormQuerier>()
+      .AddScoped<IItemQuerier, ItemQuerier>()
       .AddScoped<IMoveQuerier, MoveQuerier>()
       .AddScoped<IPokemonQuerier, PokemonQuerier>()
       .AddScoped<IRegionQuerier, RegionQuerier>()

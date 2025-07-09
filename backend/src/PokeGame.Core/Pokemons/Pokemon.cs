@@ -14,7 +14,7 @@ public class Pokemon : AggregateRoot
   public const int MoveLimit = 4;
 
   private PokemonUpdated _updated = new();
-  private bool HasUpdates => _updated.Gender is not null || _updated.Url is not null || _updated.Notes is not null;
+  private bool HasUpdates => _updated.Gender is not null || _updated.Sprite is not null || _updated.Url is not null || _updated.Notes is not null;
 
   public new PokemonId Id => new(base.Id);
 
@@ -71,8 +71,8 @@ public class Pokemon : AggregateRoot
 
   private readonly Dictionary<MoveId, PokemonMove> _allMoves = [];
   public IReadOnlyDictionary<MoveId, PokemonMove> AllMoves => _allMoves.AsReadOnly();
-  private readonly List<PokemonMove> _moves = new(capacity: MoveLimit);
-  public IReadOnlyCollection<PokemonMove> Moves => _moves.AsReadOnly();
+  private readonly List<MoveId> _moves = new(capacity: MoveLimit);
+  public IReadOnlyCollection<PokemonMove> Moves => _moves.Select(id => _allMoves[id]).ToList().AsReadOnly();
 
   public TrainerId? OriginalTrainerId { get; private set; }
   public PokemonOwnership? Ownership { get; private set; }
@@ -212,6 +212,22 @@ public class Pokemon : AggregateRoot
     Friendship = @event.Friendship;
   }
 
+  public bool Catch(TrainerId trainerId, ItemId pokeBallId, GameLocation location, DateTime? caughtOn = null, Description? description = null, ActorId? actorId = null)
+  {
+    if (Ownership is not null)
+    {
+      return false;
+    }
+
+    Raise(new PokemonCaught(trainerId, pokeBallId, Level, location, description), actorId, caughtOn);
+    return true;
+  }
+  protected virtual void Handle(PokemonCaught @event)
+  {
+    OriginalTrainerId = @event.TrainerId;
+    Ownership = new PokemonOwnership(OwnershipKind.Caught, @event.TrainerId, @event.PokeBallId, @event.Level, @event.Location, @event.OccurredOn, @event.Description);
+  }
+
   public void HoldItem(ItemId itemId, ActorId? actorId = null)
   {
     if (HeldItemId != itemId)
@@ -227,7 +243,7 @@ public class Pokemon : AggregateRoot
   public bool LearnMove(MoveId moveId, PowerPoints powerPoints, ActorId? actorId = null) => LearnMove(moveId, powerPoints, position: null, actorId);
   public bool LearnMove(MoveId moveId, PowerPoints powerPoints, int? position, ActorId? actorId = null)
   {
-    if (position < 0 || position > 3)
+    if (position < 0 || position >= MoveLimit)
     {
       throw new ArgumentOutOfRangeException(nameof(position));
     }
@@ -241,24 +257,32 @@ public class Pokemon : AggregateRoot
     }
 
     position = _moves.Count < MoveLimit ? null : position;
-    Raise(new PokemonMoveLearned(moveId, powerPoints, position, TechnicalMachine: false), actorId);
+    Raise(new PokemonMoveLearned(moveId, powerPoints, position), actorId);
 
     return true;
   }
   protected virtual void Handle(PokemonMoveLearned @event)
   {
-    PokemonMove move = new(
-      @event.MoveId, @event.PowerPoints.Value, @event.PowerPoints.Value, @event.PowerPoints, IsMastered: false, Level, @event.TechnicalMachine);
-    _allMoves[move.MoveId] = move;
+    PokemonMove move = new(@event.MoveId, @event.PowerPoints.Value, @event.PowerPoints.Value, @event.PowerPoints, IsMastered: false, Level, TechnicalMachine: false);
+    SetMove(move, @event.Position);
+  }
 
-    if (@event.Position.HasValue)
+  public bool MasterMove(MoveId moveId, ActorId? actorId = null)
+  {
+    if (!_allMoves.TryGetValue(moveId, out PokemonMove? move))
     {
-      _moves[@event.Position.Value] = move;
+      return false;
     }
-    else
+    else if (!move.IsMastered)
     {
-      _moves.Add(move);
+      Raise(new PokemonMoveMastered(moveId), actorId);
     }
+
+    return true;
+  }
+  protected virtual void Handle(PokemonMoveMastered @event)
+  {
+    _allMoves[@event.MoveId] = _allMoves[@event.MoveId].Master();
   }
 
   public void Receive(TrainerId trainerId, ItemId pokeBallId, GameLocation location, DateTime? receivedOn = null, Description? description = null, ActorId? actorId = null)
@@ -276,7 +300,26 @@ public class Pokemon : AggregateRoot
       OriginalTrainerId = @event.TrainerId;
     }
 
-    Ownership = new PokemonOwnership(@event.TrainerId, @event.PokeBallId, @event.Level, @event.Location, @event.OccurredOn, @event.Description);
+    Ownership = new PokemonOwnership(OwnershipKind.Received, @event.TrainerId, @event.PokeBallId, @event.Level, @event.Location, @event.OccurredOn, @event.Description);
+  }
+
+  public bool RelearnMove(MoveId moveId, int position, ActorId? actorId = null)
+  {
+    if (position < 0 || position >= MoveLimit)
+    {
+      throw new ArgumentOutOfRangeException(nameof(position));
+    }
+    else if (!_allMoves.ContainsKey(moveId) || _moves.Contains(moveId))
+    {
+      return false;
+    }
+
+    Raise(new PokemonMoveRelearned(moveId, position), actorId);
+    return true;
+  }
+  protected virtual void Handle(PokemonMoveRelearned @event)
+  {
+    _moves[@event.Position] = @event.MoveId;
   }
 
   public void Release(ActorId? actorId = null)
@@ -328,6 +371,31 @@ public class Pokemon : AggregateRoot
     _uniqueName = @event.UniqueName;
   }
 
+  public void SwitchMoves(int source, int destination, ActorId? actorId = null)
+  {
+    if (source < 0 || source >= MoveLimit)
+    {
+      throw new ArgumentOutOfRangeException(nameof(source));
+    }
+    if (destination < 0 || destination >= MoveLimit)
+    {
+      throw new ArgumentOutOfRangeException(nameof(destination));
+    }
+
+    if (source != destination && source < _moves.Count && destination < _moves.Count)
+    {
+      Raise(new PokemonMovesSwitched(source, destination), actorId);
+    }
+  }
+  protected virtual void Handle(PokemonMovesSwitched @event)
+  {
+    MoveId source = _moves[@event.Source];
+    MoveId destination = _moves[@event.Destination];
+
+    _moves[@event.Source] = destination;
+    _moves[@event.Destination] = source;
+  }
+
   public void Update(ActorId? actorId = null)
   {
     if (HasUpdates)
@@ -357,21 +425,57 @@ public class Pokemon : AggregateRoot
     }
   }
 
+  public bool UseTechnicalMachine(MoveId moveId, PowerPoints powerPoints, ActorId? actorId = null) => UseTechnicalMachine(moveId, powerPoints, position: null, actorId);
+  public bool UseTechnicalMachine(MoveId moveId, PowerPoints powerPoints, int? position, ActorId? actorId = null)
+  {
+    if (position < 0 || position >= MoveLimit)
+    {
+      throw new ArgumentOutOfRangeException(nameof(position));
+    }
+    if (position is null && _moves.Count == MoveLimit)
+    {
+      throw new ArgumentNullException(nameof(position));
+    }
+    if (_allMoves.ContainsKey(moveId))
+    {
+      return false;
+    }
+
+    position = _moves.Count < MoveLimit ? null : position;
+    Raise(new PokemonTechnicalMachineUsed(moveId, powerPoints, position), actorId);
+
+    return true;
+  }
+  protected virtual void Handle(PokemonTechnicalMachineUsed @event)
+  {
+    PokemonMove move = new(@event.MoveId, @event.PowerPoints.Value, @event.PowerPoints.Value, @event.PowerPoints, IsMastered: false, Level, TechnicalMachine: true);
+    SetMove(move, @event.Position);
+  }
+
+  private void SetMove(PokemonMove move, int? position)
+  {
+    _allMoves[move.MoveId] = move;
+
+    if (position.HasValue)
+    {
+      _moves[position.Value] = move.MoveId;
+    }
+    else
+    {
+      _moves.Add(move.MoveId);
+    }
+  }
+
   public override string ToString() => $"{Nickname?.Value ?? UniqueName.Value} | {base.ToString()}";
 }
 
 /* TODO(fpion): Moves
  * CurrentPP (restore/use)
  * MaximumPP (upgrade)
- * Mastered
- * Position/Reorder
- * Relearn
- * LearnFromTM
  */
 
 /* TODO(fpion): Ownership
  * Traded
- * Caught
  * Bought
  * Hatched
  * Revived (fossil)

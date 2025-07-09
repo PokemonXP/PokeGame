@@ -39,6 +39,7 @@ internal static class Pokemons
   public static readonly ColumnId Notes = new(nameof(PokemonEntity.Notes), Table);
   public static readonly ColumnId OriginalTrainerId = new(nameof(PokemonEntity.OriginalTrainerId), Table);
   public static readonly ColumnId OriginalTrainerUid = new(nameof(PokemonEntity.OriginalTrainerUid), Table);
+  public static readonly ColumnId OwnershipKind = new(nameof(PokemonEntity.OwnershipKind), Table);
   public static readonly ColumnId PokeBallId = new(nameof(PokemonEntity.PokeBallId), Table);
   public static readonly ColumnId PokeBallUid = new(nameof(PokemonEntity.PokeBallUid), Table);
   public static readonly ColumnId PokemonId = new(nameof(PokemonEntity.PokemonId), Table);

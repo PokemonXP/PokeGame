@@ -7,13 +7,18 @@ using PokeGame.EntityFrameworkCore.Entities;
 
 namespace PokeGame.EntityFrameworkCore.Handlers;
 
-internal class PokemonEvents : IEventHandler<PokemonCreated>,
+internal class PokemonEvents : IEventHandler<PokemonCaught>,
+  IEventHandler<PokemonCreated>,
   IEventHandler<PokemonItemHeld>,
   IEventHandler<PokemonItemRemoved>,
   IEventHandler<PokemonMoveLearned>,
+  IEventHandler<PokemonMoveMastered>,
+  IEventHandler<PokemonMoveRelearned>,
+  IEventHandler<PokemonMovesSwitched>,
   IEventHandler<PokemonNicknamed>,
   IEventHandler<PokemonReceived>,
   IEventHandler<PokemonReleased>,
+  IEventHandler<PokemonTechnicalMachineUsed>,
   IEventHandler<PokemonUniqueNameChanged>,
   IEventHandler<PokemonUpdated>
 {
@@ -24,6 +29,25 @@ internal class PokemonEvents : IEventHandler<PokemonCreated>,
   {
     _context = context;
     _logger = logger;
+  }
+
+  public async Task HandleAsync(PokemonCaught @event, CancellationToken cancellationToken)
+  {
+    PokemonEntity? pokemon = await _context.Pokemon.SingleOrDefaultAsync(x => x.StreamId == @event.StreamId.Value, cancellationToken);
+    if (pokemon is null || pokemon.Version != (@event.Version - 1))
+    {
+      _logger.LogUnexpectedVersion(@event, pokemon);
+      return;
+    }
+
+    TrainerEntity trainer = await _context.Trainers.SingleOrDefaultAsync(x => x.StreamId == @event.TrainerId.Value, cancellationToken)
+      ?? throw new InvalidOperationException($"The trainer entity 'StreamId={@event.TrainerId}' was not found.");
+    ItemEntity pokeBall = await _context.Items.SingleOrDefaultAsync(x => x.StreamId == @event.PokeBallId.Value, cancellationToken)
+      ?? throw new InvalidOperationException($"The item entity 'StreamId={@event.PokeBallId}' was not found.");
+
+    pokemon.Catch(trainer, pokeBall, @event);
+
+    await _context.SaveChangesAsync(cancellationToken);
   }
 
   public async Task HandleAsync(PokemonCreated @event, CancellationToken cancellationToken)
@@ -93,6 +117,48 @@ internal class PokemonEvents : IEventHandler<PokemonCreated>,
     await _context.SaveChangesAsync(cancellationToken);
   }
 
+  public async Task HandleAsync(PokemonMoveMastered @event, CancellationToken cancellationToken)
+  {
+    PokemonEntity? pokemon = await _context.Pokemon.SingleOrDefaultAsync(x => x.StreamId == @event.StreamId.Value, cancellationToken);
+    if (pokemon is null || pokemon.Version != (@event.Version - 1))
+    {
+      _logger.LogUnexpectedVersion(@event, pokemon);
+      return;
+    }
+
+    // TODO(fpion): event handler
+
+    await _context.SaveChangesAsync(cancellationToken);
+  }
+
+  public async Task HandleAsync(PokemonMoveRelearned @event, CancellationToken cancellationToken)
+  {
+    PokemonEntity? pokemon = await _context.Pokemon.SingleOrDefaultAsync(x => x.StreamId == @event.StreamId.Value, cancellationToken);
+    if (pokemon is null || pokemon.Version != (@event.Version - 1))
+    {
+      _logger.LogUnexpectedVersion(@event, pokemon);
+      return;
+    }
+
+    // TODO(fpion): event handler
+
+    await _context.SaveChangesAsync(cancellationToken);
+  }
+
+  public async Task HandleAsync(PokemonMovesSwitched @event, CancellationToken cancellationToken)
+  {
+    PokemonEntity? pokemon = await _context.Pokemon.SingleOrDefaultAsync(x => x.StreamId == @event.StreamId.Value, cancellationToken);
+    if (pokemon is null || pokemon.Version != (@event.Version - 1))
+    {
+      _logger.LogUnexpectedVersion(@event, pokemon);
+      return;
+    }
+
+    // TODO(fpion): event handler
+
+    await _context.SaveChangesAsync(cancellationToken);
+  }
+
   public async Task HandleAsync(PokemonNicknamed @event, CancellationToken cancellationToken)
   {
     PokemonEntity? pokemon = await _context.Pokemon.SingleOrDefaultAsync(x => x.StreamId == @event.StreamId.Value, cancellationToken);
@@ -136,6 +202,20 @@ internal class PokemonEvents : IEventHandler<PokemonCreated>,
     }
 
     pokemon.Release(@event);
+
+    await _context.SaveChangesAsync(cancellationToken);
+  }
+
+  public async Task HandleAsync(PokemonTechnicalMachineUsed @event, CancellationToken cancellationToken)
+  {
+    PokemonEntity? pokemon = await _context.Pokemon.SingleOrDefaultAsync(x => x.StreamId == @event.StreamId.Value, cancellationToken);
+    if (pokemon is null || pokemon.Version != (@event.Version - 1))
+    {
+      _logger.LogUnexpectedVersion(@event, pokemon);
+      return;
+    }
+
+    // TODO(fpion): event handler
 
     await _context.SaveChangesAsync(cancellationToken);
   }

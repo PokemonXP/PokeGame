@@ -5,9 +5,9 @@ using PokeGame.Core.Trainers;
 
 namespace PokeGame.Core.Pokemons.Events;
 
-public record PokemonReceived(TrainerId TrainerId, ItemId PokeBallId, int Level, GameLocation Location, Description? Description)
+public record PokemonCaught(TrainerId TrainerId, ItemId PokeBallId, int Level, GameLocation Location, Description? Description)
   : DomainEvent, IOwnershipEvent
 {
   [JsonIgnore]
-  public OwnershipKind Kind { get; } = OwnershipKind.Received;
+  public OwnershipKind Kind { get; } = OwnershipKind.Caught;
 }
