@@ -1,6 +1,7 @@
 ﻿using Krakenar.Core;
 using Microsoft.Extensions.DependencyInjection;
 using PokeGame.Core.Items;
+using PokeGame.Core.Moves;
 using PokeGame.Core.Pokemons;
 using PokeGame.Core.Pokemons.Commands;
 using PokeGame.Core.Pokemons.Models;
@@ -32,6 +33,7 @@ public static class DependencyInjectionExtensions
   {
     return services
       .AddTransient<IItemManager, ItemManager>()
+      .AddTransient<IMoveManager, MoveManager>()
       .AddTransient<IPokemonManager, PokemonManager>();
   }
 }

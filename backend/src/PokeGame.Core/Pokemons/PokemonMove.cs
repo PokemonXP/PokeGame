@@ -9,4 +9,7 @@ public record PokemonMove(
   PowerPoints ReferencePowerPoints,
   bool IsMastered,
   int Level,
-  bool TechnicalMachine);
+  bool TechnicalMachine)
+{
+  public PokemonMove Master() => new(MoveId, CurrentPowerPoints, MaximumPowerPoints, ReferencePowerPoints, IsMastered: true, Level, TechnicalMachine);
+};
