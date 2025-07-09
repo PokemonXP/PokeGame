@@ -97,6 +97,13 @@ internal class CreatePokemonHandler : ICommandHandler<CreatePokemon, PokemonMode
       Url = Url.TryCreate(payload.Url),
       Notes = Description.TryCreate(payload.Notes)
     };
+
+    DisplayName? nickname = DisplayName.TryCreate(payload.Nickname);
+    if (nickname is not null)
+    {
+      pokemon.SetNickname(nickname, actorId);
+    }
+
     await _pokemonManager.SaveAsync(pokemon, cancellationToken);
 
     return await _pokemonQuerier.ReadAsync(pokemon, cancellationToken);

@@ -16,6 +16,7 @@ internal class CreatePokemonValidator : AbstractValidator<CreatePokemonPayload>
     RuleFor(x => x.Form).NotEmpty();
 
     RuleFor(x => x.UniqueName).UniqueName(uniqueNameSettings);
+    When(x => !string.IsNullOrWhiteSpace(x.Nickname), () => RuleFor(x => x.Nickname!).DisplayName());
     switch (variety.GenderRatio)
     {
       case null:

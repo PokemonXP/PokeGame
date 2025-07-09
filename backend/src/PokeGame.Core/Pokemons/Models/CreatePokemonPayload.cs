@@ -7,7 +7,7 @@ public record CreatePokemonPayload
   public string Form { get; set; } = string.Empty;
 
   public string UniqueName { get; set; } = string.Empty;
-  // TODO(fpion): Nickname
+  public string? Nickname { get; set; }
   public PokemonGender? Gender { get; set; }
 
   public PokemonType? TeraType { get; set; }
