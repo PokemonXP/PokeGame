@@ -241,23 +241,14 @@ public class Pokemon : AggregateRoot
     }
 
     position = _moves.Count < MoveLimit ? null : position;
-    Raise(new PokemonMoveLearned(moveId, powerPoints, position, TechnicalMachine: false), actorId);
+    Raise(new PokemonMoveLearned(moveId, powerPoints, position), actorId);
 
     return true;
   }
   protected virtual void Handle(PokemonMoveLearned @event)
   {
-    PokemonMove move = new(@event.MoveId, @event.PowerPoints.Value, @event.PowerPoints.Value, @event.PowerPoints, IsMastered: false, Level, @event.TechnicalMachine);
-    _allMoves[move.MoveId] = move;
-
-    if (@event.Position.HasValue)
-    {
-      _moves[@event.Position.Value] = move.MoveId;
-    }
-    else
-    {
-      _moves.Add(move.MoveId);
-    }
+    PokemonMove move = new(@event.MoveId, @event.PowerPoints.Value, @event.PowerPoints.Value, @event.PowerPoints, IsMastered: false, Level, TechnicalMachine: false);
+    SetMove(move, @event.Position);
   }
 
   public bool MasterMove(MoveId moveId, ActorId? actorId = null)
@@ -418,13 +409,53 @@ public class Pokemon : AggregateRoot
     }
   }
 
+  public bool UseTechnicalMachine(MoveId moveId, PowerPoints powerPoints, ActorId? actorId = null) => UseTechnicalMachine(moveId, powerPoints, position: null, actorId);
+  public bool UseTechnicalMachine(MoveId moveId, PowerPoints powerPoints, int? position, ActorId? actorId = null)
+  {
+    if (position < 0 || position >= MoveLimit)
+    {
+      throw new ArgumentOutOfRangeException(nameof(position));
+    }
+    if (position is null && _moves.Count == MoveLimit)
+    {
+      throw new ArgumentNullException(nameof(position));
+    }
+    if (_allMoves.ContainsKey(moveId))
+    {
+      return false;
+    }
+
+    position = _moves.Count < MoveLimit ? null : position;
+    Raise(new PokemonTechnicalMachineUsed(moveId, powerPoints, position), actorId);
+
+    return true;
+  }
+  protected virtual void Handle(PokemonTechnicalMachineUsed @event)
+  {
+    PokemonMove move = new(@event.MoveId, @event.PowerPoints.Value, @event.PowerPoints.Value, @event.PowerPoints, IsMastered: false, Level, TechnicalMachine: true);
+    SetMove(move, @event.Position);
+  }
+
+  private void SetMove(PokemonMove move, int? position)
+  {
+    _allMoves[move.MoveId] = move;
+
+    if (position.HasValue)
+    {
+      _moves[position.Value] = move.MoveId;
+    }
+    else
+    {
+      _moves.Add(move.MoveId);
+    }
+  }
+
   public override string ToString() => $"{Nickname?.Value ?? UniqueName.Value} | {base.ToString()}";
 }
 
 /* TODO(fpion): Moves
  * CurrentPP (restore/use)
  * MaximumPP (upgrade)
- * LearnFromTM
  */
 
 /* TODO(fpion): Ownership

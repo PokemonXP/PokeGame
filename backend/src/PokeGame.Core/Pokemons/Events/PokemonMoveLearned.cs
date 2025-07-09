@@ -3,4 +3,4 @@ using PokeGame.Core.Moves;
 
 namespace PokeGame.Core.Pokemons.Events;
 
-public record PokemonMoveLearned(MoveId MoveId, PowerPoints PowerPoints, int? Position, bool TechnicalMachine) : DomainEvent;
+public record PokemonMoveLearned(MoveId MoveId, PowerPoints PowerPoints, int? Position) : DomainEvent;

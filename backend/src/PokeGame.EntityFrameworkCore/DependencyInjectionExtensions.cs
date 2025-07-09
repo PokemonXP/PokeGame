@@ -47,6 +47,7 @@ public static class DependencyInjectionExtensions
       .AddScoped<IEventHandler<PokemonNicknamed>, PokemonEvents>()
       .AddScoped<IEventHandler<PokemonReceived>, PokemonEvents>()
       .AddScoped<IEventHandler<PokemonReleased>, PokemonEvents>()
+      .AddScoped<IEventHandler<PokemonTechnicalMachineUsed>, PokemonEvents>()
       .AddScoped<IEventHandler<PokemonUniqueNameChanged>, PokemonEvents>()
       .AddScoped<IEventHandler<PokemonUpdated>, PokemonEvents>();
   }

@@ -17,6 +17,7 @@ internal class PokemonEvents : IEventHandler<PokemonCreated>,
   IEventHandler<PokemonNicknamed>,
   IEventHandler<PokemonReceived>,
   IEventHandler<PokemonReleased>,
+  IEventHandler<PokemonTechnicalMachineUsed>,
   IEventHandler<PokemonUniqueNameChanged>,
   IEventHandler<PokemonUpdated>
 {
@@ -181,6 +182,20 @@ internal class PokemonEvents : IEventHandler<PokemonCreated>,
     }
 
     pokemon.Release(@event);
+
+    await _context.SaveChangesAsync(cancellationToken);
+  }
+
+  public async Task HandleAsync(PokemonTechnicalMachineUsed @event, CancellationToken cancellationToken)
+  {
+    PokemonEntity? pokemon = await _context.Pokemon.SingleOrDefaultAsync(x => x.StreamId == @event.StreamId.Value, cancellationToken);
+    if (pokemon is null || pokemon.Version != (@event.Version - 1))
+    {
+      _logger.LogUnexpectedVersion(@event, pokemon);
+      return;
+    }
+
+    // TODO(fpion): event handler
 
     await _context.SaveChangesAsync(cancellationToken);
   }
