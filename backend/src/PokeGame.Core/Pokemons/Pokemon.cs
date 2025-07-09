@@ -364,6 +364,31 @@ public class Pokemon : AggregateRoot
     _uniqueName = @event.UniqueName;
   }
 
+  public void SwitchMoves(int source, int destination, ActorId? actorId = null)
+  {
+    if (source < 0 || source >= MoveLimit)
+    {
+      throw new ArgumentOutOfRangeException(nameof(source));
+    }
+    if (destination < 0 || destination >= MoveLimit)
+    {
+      throw new ArgumentOutOfRangeException(nameof(destination));
+    }
+
+    if (source != destination && source < _moves.Count && destination < _moves.Count)
+    {
+      Raise(new PokemonMovesSwitched(source, destination), actorId);
+    }
+  }
+  protected virtual void Handle(PokemonMovesSwitched @event)
+  {
+    MoveId source = _moves[@event.Source];
+    MoveId destination = _moves[@event.Destination];
+
+    _moves[@event.Source] = destination;
+    _moves[@event.Destination] = source;
+  }
+
   public void Update(ActorId? actorId = null)
   {
     if (HasUpdates)
@@ -399,7 +424,6 @@ public class Pokemon : AggregateRoot
 /* TODO(fpion): Moves
  * CurrentPP (restore/use)
  * MaximumPP (upgrade)
- * Position/Reorder
  * LearnFromTM
  */
 

@@ -13,6 +13,7 @@ internal class PokemonEvents : IEventHandler<PokemonCreated>,
   IEventHandler<PokemonMoveLearned>,
   IEventHandler<PokemonMoveMastered>,
   IEventHandler<PokemonMoveRelearned>,
+  IEventHandler<PokemonMovesSwitched>,
   IEventHandler<PokemonNicknamed>,
   IEventHandler<PokemonReceived>,
   IEventHandler<PokemonReleased>,
@@ -110,6 +111,20 @@ internal class PokemonEvents : IEventHandler<PokemonCreated>,
   }
 
   public async Task HandleAsync(PokemonMoveRelearned @event, CancellationToken cancellationToken)
+  {
+    PokemonEntity? pokemon = await _context.Pokemon.SingleOrDefaultAsync(x => x.StreamId == @event.StreamId.Value, cancellationToken);
+    if (pokemon is null || pokemon.Version != (@event.Version - 1))
+    {
+      _logger.LogUnexpectedVersion(@event, pokemon);
+      return;
+    }
+
+    // TODO(fpion): event handler
+
+    await _context.SaveChangesAsync(cancellationToken);
+  }
+
+  public async Task HandleAsync(PokemonMovesSwitched @event, CancellationToken cancellationToken)
   {
     PokemonEntity? pokemon = await _context.Pokemon.SingleOrDefaultAsync(x => x.StreamId == @event.StreamId.Value, cancellationToken);
     if (pokemon is null || pokemon.Version != (@event.Version - 1))

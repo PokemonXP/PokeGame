@@ -437,7 +437,7 @@ public class PokemonTests
   [Theory(DisplayName = "LearnMove: it should throw ArgumentOutOfRangeException when the position is out of bounds.")]
   [InlineData(-1)]
   [InlineData(4)]
-  public void Given_PositionOutOfBounds_When_LearnMove_Then_ArgumentOutOfRangeException(int position)
+  public void Given_PositionOutOfBounds_When_LearnMove_Then_ArgumentOutOfRangeException(int source)
   {
     Pokemon pokemon = new(
       FormId.NewId(),
@@ -457,7 +457,7 @@ public class PokemonTests
       friendship: 70);
     MoveId moveId = MoveId.NewId();
     PowerPoints powerPoints = new(35);
-    var exception = Assert.Throws<ArgumentOutOfRangeException>(() => pokemon.LearnMove(moveId, powerPoints, position));
+    var exception = Assert.Throws<ArgumentOutOfRangeException>(() => pokemon.LearnMove(moveId, powerPoints, source));
     Assert.Equal("position", exception.ParamName);
   }
 
@@ -693,5 +693,75 @@ public class PokemonTests
     _hedwidge.ClearChanges();
     _hedwidge.SetUniqueName(uniqueName, actorId);
     Assert.False(_hedwidge.HasChanges);
+  }
+
+  [Fact(DisplayName = "SwitchMoves: it should exchange two moves position.")]
+  public void Given_Moves_When_SwitchMoves_Then_PositionExchanged()
+  {
+    MoveId tackle = MoveId.NewId();
+    MoveId growl = MoveId.NewId();
+    MoveId leafage = MoveId.NewId();
+
+    _hedwidge.LearnMove(tackle, new PowerPoints(35));
+    _hedwidge.LearnMove(growl, new PowerPoints(40));
+    _hedwidge.LearnMove(leafage, new PowerPoints(40));
+
+    ActorId actorId = ActorId.NewId();
+    _hedwidge.SwitchMoves(1, 2, actorId);
+    Assert.Equal(tackle, _hedwidge.Moves.ElementAt(0).MoveId);
+    Assert.Equal(leafage, _hedwidge.Moves.ElementAt(1).MoveId);
+    Assert.Equal(growl, _hedwidge.Moves.ElementAt(2).MoveId);
+    Assert.Contains(_hedwidge.Changes, change => change is PokemonMovesSwitched switched
+      && switched.ActorId == actorId && switched.Source == 1 && switched.Destination == 2);
+  }
+
+  [Fact(DisplayName = "SwitchMoves: it should not do anything when source and destination moves are the same.")]
+  public void Given_SamePosition_When_SwitchMoves_Then_Nothing()
+  {
+    _hedwidge.ClearChanges();
+    _hedwidge.SwitchMoves(1, 1);
+    Assert.False(_hedwidge.HasChanges);
+  }
+
+  [Fact(DisplayName = "SwitchMoves: it should not do anything when the destination move is empty.")]
+  public void Given_DestinationEmpty_When_SwitchMoves_Then_Nothing()
+  {
+    _hedwidge.LearnMove(MoveId.NewId(), new PowerPoints(35));
+    _hedwidge.ClearChanges();
+
+    _hedwidge.SwitchMoves(source: 0, destination: 3);
+    Assert.False(_hedwidge.HasChanges);
+  }
+
+  [Fact(DisplayName = "SwitchMoves: it should not do anything when the source move is empty.")]
+  public void Given_SourceEmpty_When_SwitchMoves_Then_Nothing()
+  {
+    _hedwidge.LearnMove(MoveId.NewId(), new PowerPoints(35));
+    _hedwidge.ClearChanges();
+
+    _hedwidge.SwitchMoves(source: 2, destination: 0);
+    Assert.False(_hedwidge.HasChanges);
+  }
+
+  [Theory(DisplayName = "SwitchMoves: it should throw ArgumentOutOfRangeException when the destination is out of bounds.")]
+  [InlineData(-1)]
+  [InlineData(4)]
+  public void Given_DestinationOutOfBounds_When_SwitchMoves_Then_ArgumentOutOfRangeException(int destination)
+  {
+    MoveId moveId = MoveId.NewId();
+    PowerPoints powerPoints = new(35);
+    var exception = Assert.Throws<ArgumentOutOfRangeException>(() => _hedwidge.SwitchMoves(source: 0, destination));
+    Assert.Equal("destination", exception.ParamName);
+  }
+
+  [Theory(DisplayName = "SwitchMoves: it should throw ArgumentOutOfRangeException when the source is out of bounds.")]
+  [InlineData(-1)]
+  [InlineData(4)]
+  public void Given_SourceOutOfBounds_When_SwitchMoves_Then_ArgumentOutOfRangeException(int source)
+  {
+    MoveId moveId = MoveId.NewId();
+    PowerPoints powerPoints = new(35);
+    var exception = Assert.Throws<ArgumentOutOfRangeException>(() => _hedwidge.SwitchMoves(source, destination: 0));
+    Assert.Equal("source", exception.ParamName);
   }
 }
