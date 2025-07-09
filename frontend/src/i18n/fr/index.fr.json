@@ -2,8 +2,8 @@
   "actions": {
     "close": "Fermer"
   },
-  "brand": "Krakenar",
-  "copyright": "© Krakenar {version} {year}.",
+  "brand": "PokéGame",
+  "copyright": "© PokéGame {version} {year}.",
   "notFound": {
     "help": "La page demandée n’a pu être trouvée.",
     "lead": "Page introuvable",

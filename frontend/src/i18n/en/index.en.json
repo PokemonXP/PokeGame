@@ -2,8 +2,8 @@
   "actions": {
     "close": "Close"
   },
-  "brand": "Krakenar",
-  "copyright": "© Krakenar {version} {year}.",
+  "brand": "PokéGame",
+  "copyright": "© PokéGame {version} {year}.",
   "notFound": {
     "help": "The requested page could not be found.",
     "lead": "Page Not Found",
