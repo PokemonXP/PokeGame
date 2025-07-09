@@ -6,6 +6,7 @@ using PokeGame.Core.Items;
 using PokeGame.Core.Moves;
 using PokeGame.Core.Pokemons.Events;
 using PokeGame.Core.Species;
+using PokeGame.Core.Trainers;
 
 namespace PokeGame.Core.Pokemons;
 
@@ -13,6 +14,39 @@ namespace PokeGame.Core.Pokemons;
 public class PokemonTests
 {
   private readonly IPokemonRandomizer _randomizer = PokemonRandomizer.Instance;
+
+  [Fact(DisplayName = "HoldItem: it should handle held item changes correctly.")]
+  public void Given_HeldItem_When_Change_Then_CorrectChanges()
+  {
+    Pokemon pokemon = new(
+      FormId.NewId(),
+      new UniqueName(new UniqueNameSettings(), "elliotto-briquet"),
+      PokemonType.Fire,
+      _randomizer.PokemonSize(),
+      PokemonNatures.Instance.Careful,
+      new BaseStatistics(90, 93, 55, 70, 55, 55));
+    Assert.Null(pokemon.HeldItemId);
+    pokemon.ClearChanges();
+
+    pokemon.RemoveItem();
+    Assert.Null(pokemon.HeldItemId);
+    Assert.False(pokemon.HasChanges);
+
+    ItemId itemId = ItemId.NewId();
+    ActorId actorId = ActorId.NewId();
+    pokemon.HoldItem(itemId, actorId);
+    Assert.Equal(itemId, pokemon.HeldItemId);
+    Assert.Contains(pokemon.Changes, change => change is PokemonItemHeld held && held.ItemId == itemId && held.ActorId == actorId);
+
+    pokemon.ClearChanges();
+    pokemon.HoldItem(itemId, actorId);
+    Assert.Equal(itemId, pokemon.HeldItemId);
+    Assert.False(pokemon.HasChanges);
+
+    pokemon.RemoveItem(actorId);
+    Assert.Null(pokemon.HeldItemId);
+    Assert.Contains(pokemon.Changes, change => change is PokemonItemRemoved removed && removed.ActorId == actorId);
+  }
 
   [Fact(DisplayName = "It should assign the correct characteristic.")]
   public void Given_IVsAndSize_When_ctor_Then_CorrectCharacteristic()
@@ -85,39 +119,6 @@ public class PokemonTests
       GrowthRate.MediumSlow,
       experience: 7028);
     Assert.Equal(7577, pokemon.MaximumExperience);
-  }
-
-  [Fact(DisplayName = "It should handle held item changes correctly.")]
-  public void Given_HeldItem_When_Change_Then_CorrectChanges()
-  {
-    Pokemon pokemon = new(
-      FormId.NewId(),
-      new UniqueName(new UniqueNameSettings(), "elliotto-briquet"),
-      PokemonType.Fire,
-      _randomizer.PokemonSize(),
-      PokemonNatures.Instance.Careful,
-      new BaseStatistics(90, 93, 55, 70, 55, 55));
-    Assert.Null(pokemon.HeldItemId);
-    pokemon.ClearChanges();
-
-    pokemon.RemoveItem();
-    Assert.Null(pokemon.HeldItemId);
-    Assert.False(pokemon.HasChanges);
-
-    ItemId itemId = ItemId.NewId();
-    ActorId actorId = ActorId.NewId();
-    pokemon.HoldItem(itemId, actorId);
-    Assert.Equal(itemId, pokemon.HeldItemId);
-    Assert.Contains(pokemon.Changes, change => change is PokemonItemHeld held && held.ItemId == itemId && held.ActorId == actorId);
-
-    pokemon.ClearChanges();
-    pokemon.HoldItem(itemId, actorId);
-    Assert.Equal(itemId, pokemon.HeldItemId);
-    Assert.False(pokemon.HasChanges);
-
-    pokemon.RemoveItem(actorId);
-    Assert.Null(pokemon.HeldItemId);
-    Assert.Contains(pokemon.Changes, change => change is PokemonItemRemoved removed && removed.ActorId == actorId);
   }
 
   [Fact(DisplayName = "It should not create a Pokémon with more Stamina than its maximum.")]
@@ -350,4 +351,185 @@ public class PokemonTests
     var exception = Assert.Throws<ArgumentOutOfRangeException>(() => pokemon.LearnMove(moveId, powerPoints, position));
     Assert.Equal("position", exception.ParamName);
   }
+
+  [Fact(DisplayName = "Receive: a trainer should be able to receive a Pokémon.")]
+  public void Given_Trainer_When_Received_Then_Received()
+  {
+    ActorId actorId = ActorId.NewId();
+
+    Pokemon pokemon = new(
+      FormId.NewId(),
+      new UniqueName(new UniqueNameSettings(), "rowlet"),
+      PokemonType.Grass,
+      _randomizer.PokemonSize(),
+      PokemonNatures.Instance.Gentle,
+      new BaseStatistics(60, 55, 55, 50, 50, 42),
+      PokemonGender.Male,
+      AbilitySlot.Primary,
+      new IndividualValues(24, 31, 21, 25, 22, 23),
+      new EffortValues(),
+      GrowthRate.MediumSlow,
+      experience: 135,
+      vitality: int.MaxValue,
+      stamina: int.MaxValue,
+      friendship: 70);
+
+    Assert.Null(pokemon.OriginalTrainerId);
+    Assert.Null(pokemon.Ownership);
+
+    TrainerId originalTrainerId = TrainerId.NewId();
+    TrainerId currentTrainerId = TrainerId.NewId();
+    ItemId pokeBallId = ItemId.NewId();
+    ItemId greatBallId = ItemId.NewId();
+    GameLocation originalLocation = new("Collège de l’Épervier");
+    GameLocation currentLocation = new("Promenade Rivia");
+    DateTime receivedOn = new(2000, 1, 1);
+    pokemon.Receive(originalTrainerId, pokeBallId, originalLocation, receivedOn, description: null, actorId);
+
+    PokemonOwnership ownership = new(originalTrainerId, pokeBallId, pokemon.Level, originalLocation, receivedOn, Description: null);
+    Assert.Equal(ownership, pokemon.Ownership);
+    Assert.Equal(originalTrainerId, pokemon.OriginalTrainerId);
+    Assert.False(pokemon.IsTraded);
+    Assert.Contains(pokemon.Changes, change => change is PokemonReceived received && received.ActorId == actorId && received.TrainerId == originalTrainerId
+      && received.PokeBallId == pokeBallId && received.Level == pokemon.Level && received.Location == originalLocation && received.OccurredOn == receivedOn
+      && received.Description is null);
+
+    pokemon.ClearChanges();
+    Description? description = new("Gifted by Jean-Guy Bowlpacker at Lv.9, at Promenade Rivia, on 2025 July, 8th.");
+    pokemon.Receive(currentTrainerId, greatBallId, currentLocation, receivedOn: null, description, actorId);
+
+    receivedOn = ((DomainEvent)pokemon.Changes.Single()).OccurredOn;
+    ownership = new(currentTrainerId, pokeBallId, pokemon.Level, currentLocation, receivedOn, description);
+    Assert.Equal(ownership, pokemon.Ownership);
+    Assert.Equal(originalTrainerId, pokemon.OriginalTrainerId);
+    Assert.True(pokemon.IsTraded);
+    Assert.Contains(pokemon.Changes, change => change is PokemonReceived received && received.ActorId == actorId && received.TrainerId == currentTrainerId
+      && received.PokeBallId == pokeBallId && received.Level == pokemon.Level && received.Location == currentLocation && received.Description == description);
+
+    pokemon.ClearChanges();
+    pokemon.Receive(currentTrainerId, greatBallId, currentLocation, receivedOn: null, description, actorId);
+    Assert.Equal(ownership, pokemon.Ownership);
+    Assert.Equal(originalTrainerId, pokemon.OriginalTrainerId);
+    Assert.True(pokemon.IsTraded);
+    Assert.False(pokemon.HasChanges);
+  }
+
+  [Fact(DisplayName = "Release: a trainer should be able to release its Pokémon.")]
+  public void Given_Owner_When_Release_Then_Released()
+  {
+    Pokemon pokemon = new(
+      FormId.NewId(),
+      new UniqueName(new UniqueNameSettings(), "rowlet"),
+      PokemonType.Grass,
+      _randomizer.PokemonSize(),
+      PokemonNatures.Instance.Gentle,
+      new BaseStatistics(60, 55, 55, 50, 50, 42),
+      PokemonGender.Male,
+      AbilitySlot.Primary,
+      new IndividualValues(24, 31, 21, 25, 22, 23),
+      new EffortValues(),
+      GrowthRate.MediumSlow,
+      experience: 135,
+      vitality: int.MaxValue,
+      stamina: int.MaxValue,
+      friendship: 70);
+
+    Assert.Null(pokemon.OriginalTrainerId);
+    Assert.Null(pokemon.Ownership);
+
+    TrainerId trainerId = TrainerId.NewId();
+    ItemId pokeBallId = ItemId.NewId();
+    GameLocation location = new("Collège de l’Épervier");
+    pokemon.Receive(trainerId, pokeBallId, location);
+    pokemon.ClearChanges();
+
+    Assert.NotNull(pokemon.OriginalTrainerId);
+    Assert.NotNull(pokemon.Ownership);
+    Assert.False(pokemon.IsTraded);
+
+    ActorId actorId = ActorId.NewId();
+    pokemon.Release(actorId);
+
+    Assert.Null(pokemon.OriginalTrainerId);
+    Assert.Null(pokemon.Ownership);
+    Assert.False(pokemon.IsTraded);
+
+    Assert.Contains(pokemon.Changes, change => change is PokemonReleased released && released.ActorId == actorId);
+  }
+
+  [Fact(DisplayName = "SetNickname: it should handle nickname changes correctly.")]
+  public void Given_Nickname_When_SetNickname_Then_NicknameChanged()
+  {
+    ActorId actorId = ActorId.NewId();
+
+    Pokemon pokemon = new(
+      FormId.NewId(),
+      new UniqueName(new UniqueNameSettings(), "rowlet"),
+      PokemonType.Grass,
+      _randomizer.PokemonSize(),
+      PokemonNatures.Instance.Gentle,
+      new BaseStatistics(60, 55, 55, 50, 50, 42),
+      PokemonGender.Male,
+      AbilitySlot.Primary,
+      new IndividualValues(24, 31, 21, 25, 22, 23),
+      new EffortValues(),
+      GrowthRate.MediumSlow,
+      experience: 135,
+      vitality: int.MaxValue,
+      stamina: int.MaxValue,
+      friendship: 70);
+    Assert.Null(pokemon.Nickname);
+
+    DisplayName nickname = new("Hedwidge");
+    pokemon.SetNickname(nickname, actorId);
+    Assert.Equal(nickname, pokemon.Nickname);
+    Assert.Contains(pokemon.Changes, change => change is PokemonNicknamed nicknamed && nicknamed.ActorId == actorId && nicknamed.Nickname == nickname);
+    Assert.StartsWith(nickname.Value, pokemon.ToString());
+
+    pokemon.ClearChanges();
+    pokemon.SetNickname(nickname, actorId);
+    Assert.False(pokemon.HasChanges);
+
+    pokemon.SetNickname(nickname: null, actorId);
+    Assert.Null(pokemon.Nickname);
+    Assert.Contains(pokemon.Changes, change => change is PokemonNicknamed nicknamed && nicknamed.ActorId == actorId && nicknamed.Nickname is null);
+  }
+
+  [Fact(DisplayName = "SetUniqueName: it should handle unique name changes correctly.")]
+  public void Given_UniqueName_When_SetUniqueName_Then_UniqueNameChanged()
+  {
+    ActorId actorId = ActorId.NewId();
+
+    Pokemon pokemon = new(
+      FormId.NewId(),
+      new UniqueName(new UniqueNameSettings(), "rowlet"),
+      PokemonType.Grass,
+      _randomizer.PokemonSize(),
+      PokemonNatures.Instance.Gentle,
+      new BaseStatistics(60, 55, 55, 50, 50, 42),
+      PokemonGender.Male,
+      AbilitySlot.Primary,
+      new IndividualValues(24, 31, 21, 25, 22, 23),
+      new EffortValues(),
+      GrowthRate.MediumSlow,
+      experience: 135,
+      vitality: int.MaxValue,
+      stamina: int.MaxValue,
+      friendship: 70);
+
+    UniqueName uniqueName = new(new UniqueNameSettings(), "bowlpacker-rowlet");
+    pokemon.SetUniqueName(uniqueName, actorId);
+    Assert.Equal(uniqueName, pokemon.UniqueName);
+    Assert.Contains(pokemon.Changes, change => change is PokemonUniqueNameChanged changed && changed.ActorId == actorId && changed.UniqueName == uniqueName);
+    Assert.StartsWith(uniqueName.Value, pokemon.ToString());
+
+    pokemon.ClearChanges();
+    pokemon.SetUniqueName(uniqueName, actorId);
+    Assert.False(pokemon.HasChanges);
+  }
+
+  // TODO(fpion): Gender
+  // TODO(fpion): Sprite
+  // TODO(fpion): Url
+  // TODO(fpion): Notes
 }

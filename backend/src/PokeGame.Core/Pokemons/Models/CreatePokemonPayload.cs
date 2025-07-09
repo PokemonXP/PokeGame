@@ -29,6 +29,9 @@ public record CreatePokemonPayload
 
   // TODO(fpion): Moves
 
+  // TODO(fpion): OriginalTrainer
+  // TODO(fpion): Ownership
+
   public string? Sprite { get; set; }
   public string? Url { get; set; }
   public string? Notes { get; set; }

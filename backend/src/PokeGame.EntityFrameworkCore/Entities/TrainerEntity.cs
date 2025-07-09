@@ -38,6 +38,9 @@ internal class TrainerEntity : AggregateEntity
   public string? Url { get; private set; }
   public string? Notes { get; private set; }
 
+  public List<PokemonEntity> CurrentPokemon { get; private set; } = [];
+  public List<PokemonEntity> OriginalPokemon { get; private set; } = [];
+
   public TrainerEntity(TrainerPublished published) : base(published.Event)
   {
     Id = new ContentId(published.Event.StreamId).EntityId;

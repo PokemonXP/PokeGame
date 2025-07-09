@@ -43,7 +43,8 @@ internal class ItemEntity : AggregateEntity
   public string? Url { get; private set; }
   public string? Notes { get; private set; }
 
-  public List<PokemonEntity> Pokemon { get; private set; } = [];
+  public List<PokemonEntity> ContainedPokemon { get; private set; } = [];
+  public List<PokemonEntity> HoldingPokemon { get; private set; } = [];
 
   public ItemEntity(BattleItemPublished published) : this(published.Event)
   {
