@@ -1,6 +1,9 @@
 {
   "signIn": {
-    "title": "Connexion"
+    "password": "Mot de passe",
+    "submit": "Se connecter",
+    "title": "Connexion",
+    "username": "Nom d’utilisateur"
   },
   "signOut": "Déconnexion"
 }
