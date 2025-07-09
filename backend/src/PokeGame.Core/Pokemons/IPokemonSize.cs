@@ -4,5 +4,5 @@ public interface IPokemonSize
 {
   byte Height { get; }
   byte Weight { get; }
-  // TODO(fpion): Category
+  PokemonSizeCategory Category { get; }
 }

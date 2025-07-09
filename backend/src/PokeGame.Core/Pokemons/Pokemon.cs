@@ -14,7 +14,7 @@ public class Pokemon : AggregateRoot
   public const int MoveLimit = 4;
 
   private PokemonUpdated _updated = new();
-  private bool HasUpdates => _updated.Gender is not null || _updated.Url is not null || _updated.Notes is not null;
+  private bool HasUpdates => _updated.Gender is not null || _updated.Sprite is not null || _updated.Url is not null || _updated.Notes is not null;
 
   public new PokemonId Id => new(base.Id);
 
