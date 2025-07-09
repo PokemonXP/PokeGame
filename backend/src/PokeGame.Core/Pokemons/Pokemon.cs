@@ -5,6 +5,7 @@ using PokeGame.Core.Items;
 using PokeGame.Core.Moves;
 using PokeGame.Core.Pokemons.Events;
 using PokeGame.Core.Species;
+using PokeGame.Core.Trainers;
 
 namespace PokeGame.Core.Pokemons;
 
@@ -72,6 +73,10 @@ public class Pokemon : AggregateRoot
   public IReadOnlyDictionary<MoveId, PokemonMove> AllMoves => _allMoves.AsReadOnly();
   private readonly List<PokemonMove> _moves = new(capacity: MoveLimit);
   public IReadOnlyCollection<PokemonMove> Moves => _moves.AsReadOnly();
+
+  public TrainerId? OriginalTrainerId { get; private set; }
+  public PokemonOwnership? Ownership { get; private set; }
+  public bool IsTraded => OriginalTrainerId.HasValue && OriginalTrainerId.Value != Ownership?.TrainerId;
 
   private Url? _sprite = null;
   public Url? Sprite
@@ -256,6 +261,37 @@ public class Pokemon : AggregateRoot
     }
   }
 
+  public void Receive(TrainerId trainerId, ItemId pokeBallId, GameLocation location, DateTime? receivedOn = null, Description? description = null, ActorId? actorId = null)
+  {
+    if (Ownership?.TrainerId != trainerId)
+    {
+      pokeBallId = Ownership?.PokeBallId ?? pokeBallId;
+      Raise(new PokemonReceived(trainerId, pokeBallId, Level, location, description), actorId, receivedOn);
+    }
+  }
+  protected virtual void Handle(PokemonReceived @event)
+  {
+    if (!OriginalTrainerId.HasValue)
+    {
+      OriginalTrainerId = @event.TrainerId;
+    }
+
+    Ownership = new PokemonOwnership(@event.TrainerId, @event.PokeBallId, @event.Level, @event.Location, @event.OccurredOn, @event.Description);
+  }
+
+  public void Release(ActorId? actorId = null)
+  {
+    if (OriginalTrainerId.HasValue || Ownership is not null)
+    {
+      Raise(new PokemonReleased(), actorId);
+    }
+  }
+  protected virtual void Handle(PokemonReleased _)
+  {
+    OriginalTrainerId = null;
+    Ownership = null;
+  }
+
   public void RemoveItem(ActorId? actorId = null)
   {
     if (HeldItemId.HasValue)
@@ -322,9 +358,6 @@ public class Pokemon : AggregateRoot
   }
 
   public override string ToString() => $"{Nickname?.Value ?? UniqueName.Value} | {base.ToString()}";
-
-  // TODO(fpion): OriginalTrainer / PokéBall / Met(Level + Location + Date + TextOverride)
-  // TODO(fpion): CurrentTrainer / PokéBall / Met(Level + Location + Date + TextOverride)
 }
 
 /* TODO(fpion): Moves
@@ -334,4 +367,13 @@ public class Pokemon : AggregateRoot
  * Position/Reorder
  * Relearn
  * LearnFromTM
+ */
+
+/* TODO(fpion): Ownership
+ * Traded
+ * Caught
+ * Bought
+ * Hatched
+ * Revived (fossil)
+ * Purified
  */

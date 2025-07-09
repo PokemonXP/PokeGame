@@ -12,6 +12,8 @@ internal class PokemonEvents : IEventHandler<PokemonCreated>,
   IEventHandler<PokemonItemRemoved>,
   IEventHandler<PokemonMoveLearned>,
   IEventHandler<PokemonNicknamed>,
+  IEventHandler<PokemonReceived>,
+  IEventHandler<PokemonReleased>,
   IEventHandler<PokemonUniqueNameChanged>,
   IEventHandler<PokemonUpdated>
 {
@@ -101,6 +103,39 @@ internal class PokemonEvents : IEventHandler<PokemonCreated>,
     }
 
     pokemon.SetNickname(@event);
+
+    await _context.SaveChangesAsync(cancellationToken);
+  }
+
+  public async Task HandleAsync(PokemonReceived @event, CancellationToken cancellationToken)
+  {
+    PokemonEntity? pokemon = await _context.Pokemon.SingleOrDefaultAsync(x => x.StreamId == @event.StreamId.Value, cancellationToken);
+    if (pokemon is null || pokemon.Version != (@event.Version - 1))
+    {
+      _logger.LogUnexpectedVersion(@event, pokemon);
+      return;
+    }
+
+    TrainerEntity trainer = await _context.Trainers.SingleOrDefaultAsync(x => x.StreamId == @event.TrainerId.Value, cancellationToken)
+      ?? throw new InvalidOperationException($"The trainer entity 'StreamId={@event.TrainerId}' was not found.");
+    ItemEntity pokeBall = await _context.Items.SingleOrDefaultAsync(x => x.StreamId == @event.PokeBallId.Value, cancellationToken)
+      ?? throw new InvalidOperationException($"The item entity 'StreamId={@event.PokeBallId}' was not found.");
+
+    pokemon.Receive(trainer, pokeBall, @event);
+
+    await _context.SaveChangesAsync(cancellationToken);
+  }
+
+  public async Task HandleAsync(PokemonReleased @event, CancellationToken cancellationToken)
+  {
+    PokemonEntity? pokemon = await _context.Pokemon.SingleOrDefaultAsync(x => x.StreamId == @event.StreamId.Value, cancellationToken);
+    if (pokemon is null || pokemon.Version != (@event.Version - 1))
+    {
+      _logger.LogUnexpectedVersion(@event, pokemon);
+      return;
+    }
+
+    pokemon.Release(@event);
 
     await _context.SaveChangesAsync(cancellationToken);
   }

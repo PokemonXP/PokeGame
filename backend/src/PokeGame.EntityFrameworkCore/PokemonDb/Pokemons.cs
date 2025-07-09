@@ -16,6 +16,8 @@ internal static class Pokemons
 
   public static readonly ColumnId AbilitySlot = new(nameof(PokemonEntity.AbilitySlot), Table);
   public static readonly ColumnId Characteristic = new(nameof(PokemonEntity.Characteristic), Table);
+  public static readonly ColumnId CurrentTrainerId = new(nameof(PokemonEntity.CurrentTrainerId), Table);
+  public static readonly ColumnId CurrentTrainerUid = new(nameof(PokemonEntity.CurrentTrainerUid), Table);
   public static readonly ColumnId Experience = new(nameof(PokemonEntity.Experience), Table);
   public static readonly ColumnId FormId = new(nameof(PokemonEntity.FormId), Table);
   public static readonly ColumnId FormUid = new(nameof(PokemonEntity.FormUid), Table);
@@ -28,9 +30,17 @@ internal static class Pokemons
   public static readonly ColumnId Id = new(nameof(PokemonEntity.Id), Table);
   public static readonly ColumnId Level = new(nameof(PokemonEntity.Level), Table);
   public static readonly ColumnId MaximumExperience = new(nameof(PokemonEntity.MaximumExperience), Table);
+  public static readonly ColumnId MetAtLevel = new(nameof(PokemonEntity.MetAtLevel), Table);
+  public static readonly ColumnId MetDescription = new(nameof(PokemonEntity.MetDescription), Table);
+  public static readonly ColumnId MetLocation = new(nameof(PokemonEntity.MetLocation), Table);
+  public static readonly ColumnId MetOn = new(nameof(PokemonEntity.MetOn), Table);
   public static readonly ColumnId Nature = new(nameof(PokemonEntity.Nature), Table);
   public static readonly ColumnId Nickname = new(nameof(PokemonEntity.Nickname), Table);
   public static readonly ColumnId Notes = new(nameof(PokemonEntity.Notes), Table);
+  public static readonly ColumnId OriginalTrainerId = new(nameof(PokemonEntity.OriginalTrainerId), Table);
+  public static readonly ColumnId OriginalTrainerUid = new(nameof(PokemonEntity.OriginalTrainerUid), Table);
+  public static readonly ColumnId PokeBallId = new(nameof(PokemonEntity.PokeBallId), Table);
+  public static readonly ColumnId PokeBallUid = new(nameof(PokemonEntity.PokeBallUid), Table);
   public static readonly ColumnId PokemonId = new(nameof(PokemonEntity.PokemonId), Table);
   public static readonly ColumnId SpeciesId = new(nameof(PokemonEntity.SpeciesId), Table);
   public static readonly ColumnId SpeciesUid = new(nameof(PokemonEntity.SpeciesUid), Table);

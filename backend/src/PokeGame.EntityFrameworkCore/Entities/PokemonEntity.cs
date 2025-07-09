@@ -1,4 +1,5 @@
 ﻿using Krakenar.EntityFrameworkCore.Relational.KrakenarDb;
+using Logitar;
 using PokeGame.Core;
 using PokeGame.Core.Pokemons;
 using PokeGame.Core.Pokemons.Events;
@@ -58,6 +59,23 @@ internal class PokemonEntity : AggregateEntity
   public int? HeldItemId { get; private set; }
   public Guid? HeldItemUid { get; private set; }
 
+  public TrainerEntity? OriginalTrainer { get; private set; }
+  public int? OriginalTrainerId { get; private set; }
+  public Guid? OriginalTrainerUid { get; private set; }
+
+  public TrainerEntity? CurrentTrainer { get; private set; }
+  public int? CurrentTrainerId { get; private set; }
+  public Guid? CurrentTrainerUid { get; private set; }
+
+  public ItemEntity? PokeBall { get; private set; }
+  public int? PokeBallId { get; private set; }
+  public Guid? PokeBallUid { get; private set; }
+
+  public int? MetAtLevel { get; private set; }
+  public string? MetLocation { get; private set; }
+  public DateTime? MetOn { get; private set; }
+  public string? MetDescription { get; private set; }
+
   public string? Sprite { get; private set; }
   public string? Url { get; private set; }
   public string? Notes { get; private set; }
@@ -115,6 +133,53 @@ internal class PokemonEntity : AggregateEntity
     HeldItem = item;
     HeldItemId = item.ItemId;
     HeldItemUid = item.Id;
+  }
+
+  public void Receive(TrainerEntity trainer, ItemEntity pokeBall, PokemonReceived @event)
+  {
+    Update(@event);
+
+    if (!OriginalTrainerId.HasValue)
+    {
+      OriginalTrainer = trainer;
+      OriginalTrainerId = trainer.TrainerId;
+      OriginalTrainerUid = trainer.Id;
+    }
+
+    CurrentTrainer = trainer;
+    CurrentTrainerId = trainer.TrainerId;
+    CurrentTrainerUid = trainer.Id;
+
+    PokeBall = pokeBall;
+    PokeBallId = pokeBall.ItemId;
+    PokeBallUid = pokeBall.Id;
+
+    MetAtLevel = @event.Level;
+    MetLocation = @event.Location.Value;
+    MetOn = @event.OccurredOn.AsUniversalTime();
+    MetDescription = @event.Description?.Value;
+  }
+
+  public void Release(PokemonReleased @event)
+  {
+    Update(@event);
+
+    OriginalTrainer = null;
+    OriginalTrainerId = null;
+    OriginalTrainerUid = null;
+
+    CurrentTrainer = null;
+    CurrentTrainerId = null;
+    CurrentTrainerUid = null;
+
+    PokeBall = null;
+    PokeBallId = null;
+    PokeBallUid = null;
+
+    MetAtLevel = null;
+    MetLocation = null;
+    MetOn = null;
+    MetDescription = null;
   }
 
   public void RemoveItem(PokemonItemRemoved @event)

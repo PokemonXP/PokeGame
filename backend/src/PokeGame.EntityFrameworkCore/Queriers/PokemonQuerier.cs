@@ -39,31 +39,22 @@ internal class PokemonQuerier : IPokemonQuerier
   }
   public async Task<PokemonModel?> ReadAsync(PokemonId id, CancellationToken cancellationToken)
   {
-    PokemonEntity? pokemon = await _pokemon.AsNoTracking()
-      .Include(x => x.Form).ThenInclude(x => x!.Abilities).ThenInclude(x => x.Ability)
-      .Include(x => x.Form).ThenInclude(x => x!.Variety).ThenInclude(x => x!.Species).ThenInclude(x => x!.RegionalNumbers).ThenInclude(x => x.Region)
-      .Include(x => x.HeldItem).ThenInclude(x => x!.Move)
-      .SingleOrDefaultAsync(x => x.StreamId == id.Value, cancellationToken);
+    // TODO(fpion): include relationships
+    PokemonEntity? pokemon = await _pokemon.AsNoTracking().SingleOrDefaultAsync(x => x.StreamId == id.Value, cancellationToken);
     return pokemon is null ? null : await MapAsync(pokemon, cancellationToken);
   }
   public async Task<PokemonModel?> ReadAsync(Guid id, CancellationToken cancellationToken)
   {
-    PokemonEntity? pokemon = await _pokemon.AsNoTracking()
-      .Include(x => x.Form).ThenInclude(x => x!.Abilities).ThenInclude(x => x.Ability)
-      .Include(x => x.Form).ThenInclude(x => x!.Variety).ThenInclude(x => x!.Species).ThenInclude(x => x!.RegionalNumbers).ThenInclude(x => x.Region)
-      .Include(x => x.HeldItem).ThenInclude(x => x!.Move)
-      .SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
+    // TODO(fpion): include relationships
+    PokemonEntity? pokemon = await _pokemon.AsNoTracking().SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
     return pokemon is null ? null : await MapAsync(pokemon, cancellationToken);
   }
   public async Task<PokemonModel?> ReadAsync(string uniqueName, CancellationToken cancellationToken)
   {
     string uniqueNameNormalized = Helper.Normalize(uniqueName);
 
-    PokemonEntity? pokemon = await _pokemon.AsNoTracking()
-      .Include(x => x.Form).ThenInclude(x => x!.Abilities).ThenInclude(x => x.Ability)
-      .Include(x => x.Form).ThenInclude(x => x!.Variety).ThenInclude(x => x!.Species).ThenInclude(x => x!.RegionalNumbers).ThenInclude(x => x.Region)
-      .Include(x => x.HeldItem).ThenInclude(x => x!.Move)
-      .SingleOrDefaultAsync(x => x.UniqueNameNormalized == uniqueNameNormalized, cancellationToken);
+    // TODO(fpion): include relationships
+    PokemonEntity? pokemon = await _pokemon.AsNoTracking().SingleOrDefaultAsync(x => x.UniqueNameNormalized == uniqueNameNormalized, cancellationToken);
     return pokemon is null ? null : await MapAsync(pokemon, cancellationToken);
   }
 

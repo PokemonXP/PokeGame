@@ -32,6 +32,9 @@ internal class PokemonConfiguration : AggregateConfiguration<PokemonEntity>, IEn
     builder.HasIndex(x => x.Level);
     builder.HasIndex(x => x.StatusCondition);
     builder.HasIndex(x => x.HeldItemUid);
+    builder.HasIndex(x => x.OriginalTrainerUid);
+    builder.HasIndex(x => x.CurrentTrainerUid);
+    builder.HasIndex(x => x.PokeBallUid);
 
     builder.Property(x => x.UniqueName).HasMaxLength(UniqueName.MaximumLength);
     builder.Property(x => x.UniqueNameNormalized).HasMaxLength(UniqueName.MaximumLength);
@@ -44,12 +47,24 @@ internal class PokemonConfiguration : AggregateConfiguration<PokemonEntity>, IEn
     builder.Property(x => x.Statistics).HasMaxLength(Constants.StatisticsMaximumLength);
     builder.Property(x => x.StatusCondition).HasMaxLength(byte.MaxValue).HasConversion(new EnumToStringConverter<StatusCondition>());
     builder.Property(x => x.Characteristic).HasMaxLength(PokemonCharacteristic.MaximumLength);
+    builder.Property(x => x.MetLocation).HasMaxLength(GameLocation.MaximumLength);
     builder.Property(x => x.Sprite).HasMaxLength(Url.MaximumLength);
     builder.Property(x => x.Url).HasMaxLength(Url.MaximumLength);
 
     builder.HasOne(x => x.Species).WithMany(x => x.Pokemon).OnDelete(DeleteBehavior.Restrict);
     builder.HasOne(x => x.Variety).WithMany(x => x.Pokemon).OnDelete(DeleteBehavior.Restrict);
     builder.HasOne(x => x.Form).WithMany(x => x.Pokemon).OnDelete(DeleteBehavior.Restrict);
-    builder.HasOne(x => x.HeldItem).WithMany(x => x.Pokemon).OnDelete(DeleteBehavior.Restrict);
+    builder.HasOne(x => x.HeldItem).WithMany(x => x.HoldingPokemon)
+      .HasForeignKey(x => x.HeldItemId).HasPrincipalKey(x => x.ItemId)
+      .OnDelete(DeleteBehavior.Restrict);
+    builder.HasOne(x => x.OriginalTrainer).WithMany(x => x.OriginalPokemon)
+      .HasForeignKey(x => x.OriginalTrainerId).HasPrincipalKey(x => x.TrainerId)
+      .OnDelete(DeleteBehavior.Restrict);
+    builder.HasOne(x => x.CurrentTrainer).WithMany(x => x.CurrentPokemon)
+      .HasForeignKey(x => x.CurrentTrainerId).HasPrincipalKey(x => x.TrainerId)
+      .OnDelete(DeleteBehavior.Restrict);
+    builder.HasOne(x => x.PokeBall).WithMany(x => x.ContainedPokemon)
+      .HasForeignKey(x => x.PokeBallId).HasPrincipalKey(x => x.ItemId)
+      .OnDelete(DeleteBehavior.Restrict);
   }
 }
