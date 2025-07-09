@@ -33,6 +33,8 @@ public class PokemonModel : AggregateModel
 
   public ItemModel? HeldItem { get; set; }
 
+  // TODO(fpion): Moves
+
   public string? Sprite { get; set; }
   public string? Url { get; set; }
   public string? Notes { get; set; }

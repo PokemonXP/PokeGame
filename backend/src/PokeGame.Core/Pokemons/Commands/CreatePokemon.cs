@@ -23,20 +23,18 @@ internal class CreatePokemonHandler : ICommandHandler<CreatePokemon, PokemonMode
   private readonly IPokemonManager _pokemonManager;
   private readonly IPokemonQuerier _pokemonQuerier;
   private readonly IPokemonRepository _pokemonRepository;
-  private readonly IRandomizer _randomizer;
+  private readonly IPokemonRandomizer _randomizer = PokemonRandomizer.Instance;
 
   public CreatePokemonHandler(
     IApplicationContext applicationContext,
     IPokemonManager pokemonManager,
     IPokemonQuerier pokemonQuerier,
-    IPokemonRepository pokemonRepository,
-    IRandomizer randomizer)
+    IPokemonRepository pokemonRepository)
   {
     _applicationContext = applicationContext;
     _pokemonManager = pokemonManager;
     _pokemonQuerier = pokemonQuerier;
     _pokemonRepository = pokemonRepository;
-    _randomizer = randomizer;
   }
 
   public async Task<PokemonModel> HandleAsync(CreatePokemon command, CancellationToken cancellationToken)

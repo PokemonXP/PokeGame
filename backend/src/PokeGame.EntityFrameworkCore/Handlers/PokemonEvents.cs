@@ -10,6 +10,7 @@ namespace PokeGame.EntityFrameworkCore.Handlers;
 internal class PokemonEvents : IEventHandler<PokemonCreated>,
   IEventHandler<PokemonItemHeld>,
   IEventHandler<PokemonItemRemoved>,
+  IEventHandler<PokemonMoveLearned>,
   IEventHandler<PokemonNicknamed>,
   IEventHandler<PokemonUniqueNameChanged>,
   IEventHandler<PokemonUpdated>
@@ -72,6 +73,20 @@ internal class PokemonEvents : IEventHandler<PokemonCreated>,
     }
 
     pokemon.RemoveItem(@event);
+
+    await _context.SaveChangesAsync(cancellationToken);
+  }
+
+  public async Task HandleAsync(PokemonMoveLearned @event, CancellationToken cancellationToken)
+  {
+    PokemonEntity? pokemon = await _context.Pokemon.SingleOrDefaultAsync(x => x.StreamId == @event.StreamId.Value, cancellationToken);
+    if (pokemon is null || pokemon.Version != (@event.Version - 1))
+    {
+      _logger.LogUnexpectedVersion(@event, pokemon);
+      return;
+    }
+
+    // TODO(fpion): event handler
 
     await _context.SaveChangesAsync(cancellationToken);
   }
