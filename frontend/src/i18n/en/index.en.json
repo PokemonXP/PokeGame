@@ -1,0 +1,23 @@
+{
+  "actions": {
+    "close": "Close"
+  },
+  "brand": "PokéGame",
+  "copyright": "© PokéGame {version} {year}.",
+  "notFound": {
+    "help": "The requested page could not be found.",
+    "lead": "Page Not Found",
+    "link": "Go to Home"
+  },
+  "toasts": {
+    "error": {
+      "message": "An unexpected error occurred. Please try again later or contact our support team.",
+      "title": "Error!"
+    },
+    "success": "Success!",
+    "warning": {
+      "signedOut": "You have been signed-out, please try sign-in to your account again.",
+      "title": "Warning!"
+    }
+  }
+}

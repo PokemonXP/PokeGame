@@ -1,5 +1,5 @@
 <template>
   <main class="container">
-    <h1>HomeView</h1>
+    <h1>ProfileView</h1>
   </main>
 </template>
