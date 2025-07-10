@@ -53,7 +53,7 @@ public class PokemonMovesTests
     Assert.True(_hedwidge.LearnMove(moveId, powerPoints, position, actorId));
 
     Assert.Contains(_hedwidge.Changes, change => change is PokemonMoveLearned learned && learned.ActorId == actorId
-      && learned.PowerPoints == powerPoints && learned.Position == null);
+      && learned.PowerPoints == powerPoints && learned.Position is null);
 
     PokemonMove move = new(moveId, powerPoints.Value, powerPoints.Value, powerPoints, IsMastered: false, _hedwidge.Level, TechnicalMachine: false);
     Assert.Equal(move, _hedwidge.AllMoves[move.MoveId]);
@@ -293,7 +293,7 @@ public class PokemonMovesTests
     Assert.True(_hedwidge.UseTechnicalMachine(moveId, powerPoints, position, actorId));
 
     Assert.Contains(_hedwidge.Changes, change => change is PokemonTechnicalMachineUsed learned && learned.ActorId == actorId
-      && learned.PowerPoints == powerPoints && learned.Position == null);
+      && learned.PowerPoints == powerPoints && learned.Position is null);
 
     PokemonMove move = new(moveId, powerPoints.Value, powerPoints.Value, powerPoints, IsMastered: false, _hedwidge.Level, TechnicalMachine: true);
     Assert.Equal(move, _hedwidge.AllMoves[move.MoveId]);

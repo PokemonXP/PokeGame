@@ -22,14 +22,14 @@ internal class Startup : StartupBase
   {
     base.ConfigureServices(services);
 
-    ApiSettings apiSettings = ApiSettings.Initialize(_configuration);
-    services.AddSingleton(apiSettings);
-
     services.AddControllers().AddJsonOptions(options =>
     {
       options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
       options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
     });
+
+    services.AddSingleton(CorsSettings.Initialize(_configuration));
+    services.AddCors();
 
     AuthenticationSettings authenticationSettings = AuthenticationSettings.Initialize(_configuration);
     services.AddSingleton(authenticationSettings);
@@ -57,9 +57,11 @@ internal class Startup : StartupBase
     services.AddDistributedMemoryCache();
 
     services.AddSingleton(ErrorSettings.Initialize(_configuration));
-    //services.AddExceptionHandler<ExceptionHandler>(); // TODO(fpion): ExceptionHandler
+    services.AddExceptionHandler<ExceptionHandler>();
     services.AddProblemDetails();
 
+    ApiSettings apiSettings = ApiSettings.Initialize(_configuration);
+    services.AddSingleton(apiSettings);
     if (apiSettings.EnableSwagger)
     {
       services.AddPokeGameApiSwagger(apiSettings);
@@ -103,6 +105,8 @@ internal class Startup : StartupBase
     }
 
     application.UseHttpsRedirection();
+    application.UseCors();
+    application.UseExceptionHandler();
     application.UseSession();
     application.UseMiddleware<RenewSession>();
     application.UseAuthentication();
