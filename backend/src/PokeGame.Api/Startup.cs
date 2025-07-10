@@ -32,6 +32,7 @@ internal class Startup : StartupBase
 
     AuthenticationSettings authenticationSettings = AuthenticationSettings.Initialize(_configuration);
     services.AddSingleton(authenticationSettings);
+    services.AddSingleton(GoogleSettings.Initialize(_configuration));
     string[] authenticationSchemes = GetAuthenticationSchemes(authenticationSettings);
     AuthenticationBuilder authenticationBuilder = services.AddAuthentication()
       .AddScheme<ApiKeyAuthenticationOptions, ApiKeyAuthenticationHandler>(Schemes.ApiKey, options => { })
