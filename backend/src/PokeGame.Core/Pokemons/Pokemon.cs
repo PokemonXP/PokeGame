@@ -18,7 +18,7 @@ public class Pokemon : AggregateRoot
 
   public new PokemonId Id => new(base.Id);
 
-  public FormId FormId { get; private set; } // TODO(fpion): can be changed (change form / evolve)!
+  public FormId FormId { get; private set; }
 
   private UniqueName? _uniqueName = null;
   public UniqueName UniqueName => _uniqueName ?? throw new InvalidOperationException("The Pokémon has not been initialized.");
@@ -37,12 +37,12 @@ public class Pokemon : AggregateRoot
     }
   }
 
-  public PokemonType TeraType { get; private set; } // TODO(fpion): can be changed using shards!
+  public PokemonType TeraType { get; private set; }
   private PokemonSize? _size = null;
   public PokemonSize Size => _size ?? throw new InvalidOperationException("The Pokémon has not been initialized.");
-  public AbilitySlot AbilitySlot { get; private set; } // TODO(fpion): can be changed using Ability Patch/Capsule!
+  public AbilitySlot AbilitySlot { get; private set; }
   private PokemonNature? _nature = null;
-  public PokemonNature Nature => _nature ?? throw new InvalidOperationException("The Pokémon has not been initialized."); // TODO(fpion): can be changed using mints!
+  public PokemonNature Nature => _nature ?? throw new InvalidOperationException("The Pokémon has not been initialized.");
   public Flavor? FavoriteFlavor => Nature.FavoriteFlavor;
   public Flavor? DislikedFlavor => Nature.DislikedFlavor;
 
@@ -468,16 +468,3 @@ public class Pokemon : AggregateRoot
 
   public override string ToString() => $"{Nickname?.Value ?? UniqueName.Value} | {base.ToString()}";
 }
-
-/* TODO(fpion): Moves
- * CurrentPP (restore/use)
- * MaximumPP (upgrade)
- */
-
-/* TODO(fpion): Ownership
- * Traded
- * Bought
- * Hatched
- * Revived (fossil)
- * Purified
- */
