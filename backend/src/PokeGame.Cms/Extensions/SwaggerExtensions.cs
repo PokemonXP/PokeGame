@@ -8,7 +8,7 @@ namespace PokeGame.Cms.Extensions;
 
 internal static class SwaggerExtensions
 {
-  public static IServiceCollection AddPokeGameSwagger(this IServiceCollection services, AdminSettings settings)
+  public static IServiceCollection AddKrakenarSwagger(this IServiceCollection services, AdminSettings settings)
   {
     services.AddEndpointsApiExplorer();
     services.AddSwaggerGen(config =>
@@ -32,11 +32,11 @@ internal static class SwaggerExtensions
           Name = "Francis Pion",
           Url = new Uri("https://www.francispion.ca/", UriKind.Absolute)
         },
-        Description = "Experimenting a Pokémon Tabletop Role-Playing Game.",
+        Description = "Krakenar is a tool suite aiming at handling non-business software requirements, allowing developers to focus on real, domain business requirements.",
         License = new OpenApiLicense
         {
           Name = "Use under MIT",
-          Url = new Uri("https://github.com/PokemonXP/PokeGame/blob/main/LICENSE", UriKind.Absolute)
+          Url = new Uri("https://github.com/Krakenar/Krakenar/blob/main/LICENSE", UriKind.Absolute)
         },
         Title = settings.Title,
         Version = $"v{settings.Version}"
@@ -47,7 +47,7 @@ internal static class SwaggerExtensions
     return services;
   }
 
-  public static void UsePokeGameSwagger(this IApplicationBuilder builder, AdminSettings settings)
+  public static void UseKrakenarSwagger(this IApplicationBuilder builder, AdminSettings settings)
   {
     builder.UseSwagger();
     builder.UseSwaggerUI(config => config.SwaggerEndpoint(
