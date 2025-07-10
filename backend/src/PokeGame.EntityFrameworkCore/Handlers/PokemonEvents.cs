@@ -105,58 +105,84 @@ internal class PokemonEvents : IEventHandler<PokemonCaught>,
 
   public async Task HandleAsync(PokemonMoveLearned @event, CancellationToken cancellationToken)
   {
-    PokemonEntity? pokemon = await _context.Pokemon.SingleOrDefaultAsync(x => x.StreamId == @event.StreamId.Value, cancellationToken);
+    PokemonEntity? pokemon = await _context.Pokemon
+      .Include(x => x.Moves).ThenInclude(x => x.Move)
+      .SingleOrDefaultAsync(x => x.StreamId == @event.StreamId.Value, cancellationToken);
     if (pokemon is null || pokemon.Version != (@event.Version - 1))
     {
       _logger.LogUnexpectedVersion(@event, pokemon);
       return;
     }
 
-    // TODO(fpion): event handler
+    MoveEntity move = await _context.Moves.SingleOrDefaultAsync(x => x.StreamId == @event.MoveId.Value, cancellationToken)
+      ?? throw new InvalidOperationException($"The move entity 'StreamId={@event.MoveId}' was not found.");
+
+    pokemon.LearnMove(move, @event);
 
     await _context.SaveChangesAsync(cancellationToken);
   }
 
   public async Task HandleAsync(PokemonMoveMastered @event, CancellationToken cancellationToken)
   {
-    PokemonEntity? pokemon = await _context.Pokemon.SingleOrDefaultAsync(x => x.StreamId == @event.StreamId.Value, cancellationToken);
+    PokemonEntity? pokemon = await _context.Pokemon
+      .Include(x => x.Moves).ThenInclude(x => x.Move)
+      .SingleOrDefaultAsync(x => x.StreamId == @event.StreamId.Value, cancellationToken);
     if (pokemon is null || pokemon.Version != (@event.Version - 1))
     {
       _logger.LogUnexpectedVersion(@event, pokemon);
       return;
     }
 
-    // TODO(fpion): event handler
-
-    await _context.SaveChangesAsync(cancellationToken);
+    if (pokemon.MasterMove(@event))
+    {
+      await _context.SaveChangesAsync(cancellationToken);
+    }
+    else
+    {
+      _logger.LogError("The move (StreamId={MoveId}) was not found on Pokémon (StreamId={PokemonId}).", @event.MoveId, pokemon.StreamId);
+    }
   }
 
   public async Task HandleAsync(PokemonMoveRelearned @event, CancellationToken cancellationToken)
   {
-    PokemonEntity? pokemon = await _context.Pokemon.SingleOrDefaultAsync(x => x.StreamId == @event.StreamId.Value, cancellationToken);
+    PokemonEntity? pokemon = await _context.Pokemon
+      .Include(x => x.Moves).ThenInclude(x => x.Move)
+      .SingleOrDefaultAsync(x => x.StreamId == @event.StreamId.Value, cancellationToken);
     if (pokemon is null || pokemon.Version != (@event.Version - 1))
     {
       _logger.LogUnexpectedVersion(@event, pokemon);
       return;
     }
 
-    // TODO(fpion): event handler
-
-    await _context.SaveChangesAsync(cancellationToken);
+    if (pokemon.RelearnMove(@event))
+    {
+      await _context.SaveChangesAsync(cancellationToken);
+    }
+    else
+    {
+      _logger.LogError("The move (StreamId={MoveId}) was not found on Pokémon (StreamId={PokemonId}).", @event.MoveId, pokemon.StreamId);
+    }
   }
 
   public async Task HandleAsync(PokemonMovesSwitched @event, CancellationToken cancellationToken)
   {
-    PokemonEntity? pokemon = await _context.Pokemon.SingleOrDefaultAsync(x => x.StreamId == @event.StreamId.Value, cancellationToken);
+    PokemonEntity? pokemon = await _context.Pokemon
+      .Include(x => x.Moves).ThenInclude(x => x.Move)
+      .SingleOrDefaultAsync(x => x.StreamId == @event.StreamId.Value, cancellationToken);
     if (pokemon is null || pokemon.Version != (@event.Version - 1))
     {
       _logger.LogUnexpectedVersion(@event, pokemon);
       return;
     }
 
-    // TODO(fpion): event handler
-
-    await _context.SaveChangesAsync(cancellationToken);
+    if (pokemon.SwitchMoves(@event))
+    {
+      await _context.SaveChangesAsync(cancellationToken);
+    }
+    else
+    {
+      _logger.LogError("The moves at positions {Source} and {Destination} were not exchanged for Pokémon (StreamId={PokemonId}).", @event.Source, @event.Destination, pokemon.StreamId);
+    }
   }
 
   public async Task HandleAsync(PokemonNicknamed @event, CancellationToken cancellationToken)
@@ -208,14 +234,19 @@ internal class PokemonEvents : IEventHandler<PokemonCaught>,
 
   public async Task HandleAsync(PokemonTechnicalMachineUsed @event, CancellationToken cancellationToken)
   {
-    PokemonEntity? pokemon = await _context.Pokemon.SingleOrDefaultAsync(x => x.StreamId == @event.StreamId.Value, cancellationToken);
+    PokemonEntity? pokemon = await _context.Pokemon
+      .Include(x => x.Moves).ThenInclude(x => x.Move)
+      .SingleOrDefaultAsync(x => x.StreamId == @event.StreamId.Value, cancellationToken);
     if (pokemon is null || pokemon.Version != (@event.Version - 1))
     {
       _logger.LogUnexpectedVersion(@event, pokemon);
       return;
     }
 
-    // TODO(fpion): event handler
+    MoveEntity move = await _context.Moves.SingleOrDefaultAsync(x => x.StreamId == @event.MoveId.Value, cancellationToken)
+      ?? throw new InvalidOperationException($"The move entity 'StreamId={@event.MoveId}' was not found.");
+
+    pokemon.UseTechnicalMachine(move, @event);
 
     await _context.SaveChangesAsync(cancellationToken);
   }
