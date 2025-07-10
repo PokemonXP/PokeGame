@@ -13,21 +13,3 @@ public record PokemonMoveModel
   public int Level { get; set; }
   public bool TechnicalMachine { get; set; }
 }
-
-public record PowerPointsModel
-{
-  public int Current { get; set; }
-  public int Maximum { get; set; }
-  public int Reference { get; set; }
-
-  public PowerPointsModel()
-  {
-  }
-
-  public PowerPointsModel(int current, int maximum, int reference)
-  {
-    Current = current;
-    Maximum = maximum;
-    Reference = reference;
-  }
-}
