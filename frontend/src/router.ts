@@ -11,7 +11,6 @@ const router = createRouter({
       name: "Home",
       path: "/",
       component: HomeView,
-      meta: { isPublic: true },
     },
     // Account
     {
@@ -30,6 +29,25 @@ const router = createRouter({
       path: "/sign-out",
       component: () => import("./views/account/SignOutView.vue"),
     },
+    // Admin
+    {
+      path: "/admin",
+      children: [
+        {
+          name: "Admin",
+          path: "",
+          component: () => import("./views/AdminView.vue"),
+          meta: { isAdmin: true },
+        },
+        // Pokémon
+        {
+          name: "CreatePokemon",
+          path: "pokemon/create",
+          component: () => import("./views/pokemon/CreatePokemon.vue"),
+          meta: { isAdmin: true },
+        },
+      ],
+    },
     // NotFound
     {
       name: "NotFound",
@@ -47,6 +65,9 @@ router.beforeEach(async (to) => {
   const account = useAccountStore();
   if (!to.meta.isPublic && !account.currentUser) {
     return { name: "SignIn", query: { redirect: to.fullPath } };
+  }
+  if (to.meta.isAdmin && !account.currentUser?.isAdmin) {
+    return { name: "Home" };
   }
 });
 

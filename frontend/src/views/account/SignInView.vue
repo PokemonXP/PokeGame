@@ -73,7 +73,14 @@ async function submit(): Promise<void> {
       <UsernameInput v-model="username" />
       <PasswordInput ref="passwordRef" v-model="password" />
       <div class="mb-3">
-        <TarButton :disabled="isLoading" icon="fas fa-arrow-right-to-bracket" :loading="isLoading" :text="t('users.signIn.submit')" type="submit" />
+        <TarButton
+          :disabled="isLoading"
+          icon="fas fa-arrow-right-to-bracket"
+          :loading="isLoading"
+          :status="t('loading')"
+          :text="t('users.signIn.submit')"
+          type="submit"
+        />
       </div>
       <hr />
       <div>

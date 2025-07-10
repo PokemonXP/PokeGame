@@ -5,7 +5,7 @@ import { useI18n } from "vue-i18n";
 import type { CurrentUser, GoogleSignInPayload } from "@/types/account";
 import { signInGoogle } from "@/api/account";
 
-const client_id: string = import.meta.env.VITE_APP_GOOGLE_CLIENT_ID;
+const client_id: string = import.meta.env.VITE_APP_GOOGLE_CLIENT_ID ?? "";
 const { locale } = useI18n();
 
 const googleButton = ref<HTMLElement | null>(null);

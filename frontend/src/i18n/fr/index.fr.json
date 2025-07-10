@@ -1,9 +1,12 @@
 {
   "actions": {
-    "close": "Fermer"
+    "close": "Fermer",
+    "create": "Créer"
   },
+  "admin": "Administration",
   "brand": "PokéGame",
   "copyright": "© PokéGame {version} {year}.",
+  "loading": "Chargement…",
   "notFound": {
     "help": "La page demandée n’a pu être trouvée.",
     "lead": "Page introuvable",

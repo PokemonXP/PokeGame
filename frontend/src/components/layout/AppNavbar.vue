@@ -22,6 +22,7 @@ const i18n = useI18nStore();
 const isSwaggerEnabled: boolean = parseBoolean(import.meta.env.VITE_APP_ENABLE_SWAGGER) ?? false;
 const { availableLocales, locale, t } = useI18n();
 
+const isAdmin = computed<boolean>(() => account.currentUser?.isAdmin ?? false);
 const otherLocales = computed<Locale[]>(() => {
   const otherLocales = new Set<string>(availableLocales.filter((item) => item !== locale.value));
   return orderBy(
@@ -65,9 +66,15 @@ watchEffect(() => {
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <ul v-if="swaggerUrl || isAdmin" class="navbar-nav me-auto mb-2 mb-lg-0">
           <li v-if="swaggerUrl" class="nav-item">
             <a class="nav-link" :href="swaggerUrl" target="_blank"><font-awesome-icon icon="fas fa-vial" /> Swagger</a>
+          </li>
+          <li v-if="isAdmin" class="nav-item">
+            <RouterLink class="nav-link" :to="{ name: 'Admin' }">
+              <font-awesome-icon icon="fas fa-user-tie" />
+              {{ t("admin") }}
+            </RouterLink>
           </li>
         </ul>
         <ul class="navbar-nav mb-2 mb-lg-0">
