@@ -38,7 +38,7 @@ internal class Startup : StartupBase
       ?? throw new InvalidOperationException($"The {nameof(AdminSettings)} service has not been regiseterd.");
     if (adminSettings.EnableSwagger)
     {
-      services.AddPokeGameSwagger(adminSettings);
+      services.AddKrakenarSwagger(adminSettings);
     }
 
     IHealthChecksBuilder healthChecks = services.AddHealthChecks();
@@ -67,7 +67,7 @@ internal class Startup : StartupBase
     AdminSettings adminSettings = application.Services.GetRequiredService<AdminSettings>();
     if (adminSettings.EnableSwagger)
     {
-      application.UsePokeGameSwagger(adminSettings);
+      application.UseKrakenarSwagger(adminSettings);
     }
 
     application.UseHttpsRedirection();

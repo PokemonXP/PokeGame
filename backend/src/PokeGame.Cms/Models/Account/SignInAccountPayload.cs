@@ -1,4 +1,6 @@
-﻿namespace PokeGame.Cms.Models.Account;
+﻿using FluentValidation;
+
+namespace PokeGame.Cms.Models.Account;
 
 public record SignInAccountPayload
 {
@@ -13,5 +15,14 @@ public record SignInAccountPayload
   {
     Username = username;
     Password = password;
+  }
+}
+
+internal class SignInAccountValidator : AbstractValidator<SignInAccountPayload>
+{
+  public SignInAccountValidator()
+  {
+    RuleFor(x => x.Username).NotEmpty();
+    RuleFor(x => x.Password).NotEmpty();
   }
 }

@@ -1,5 +1,9 @@
 {
   "signIn": {
+    "invalidCredentials": {
+      "help": "Please check you provided the correct email username and password.",
+      "lead": "Sign in failed!"
+    },
     "password": "Password",
     "submit": "Sign in",
     "title": "Sign In",

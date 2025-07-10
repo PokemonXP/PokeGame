@@ -61,6 +61,7 @@ internal class SeedingWorker : BackgroundService
       _applicationContext.ActorId = new ActorId(new UserId(user.Id).Value);
 
       await ExecuteAsync(new SeedRealmsTask(), cancellationToken);
+      await ExecuteAsync(new SeedRolesTask(), cancellationToken);
       await ExecuteAsync(new SeedContentTypesTask(), cancellationToken);
       await ExecuteAsync(new SeedFieldTypesTask(), cancellationToken);
       await ExecuteAsync(new SeedContentTypesTask(fieldDefinitions: true), cancellationToken);

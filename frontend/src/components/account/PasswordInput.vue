@@ -22,6 +22,7 @@ const props = withDefaults(
   },
 );
 
+const inputRef = ref<InstanceType<typeof TarInput> | null>(null);
 const touched = ref<boolean>(false);
 
 const status = computed<InputStatus | undefined>(() => (touched.value ? (props.modelValue?.length ? "valid" : "invalid") : undefined));
@@ -34,6 +35,11 @@ function onModelValueUpdate(value: string): void {
   touched.value = true;
   emit("update:model-value", value);
 }
+
+function focus(): void {
+  inputRef.value?.focus();
+}
+defineExpose({ focus });
 </script>
 
 <template>
@@ -44,6 +50,7 @@ function onModelValueUpdate(value: string): void {
     :label="label ? t(label) : undefined"
     :model-value="modelValue"
     :placeholder="placeholder || label ? t(placeholder ?? label) : undefined"
+    ref="inputRef"
     :required="required"
     :status="status"
     :type="type"
