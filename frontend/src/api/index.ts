@@ -47,7 +47,7 @@ export async function get<TResult>(url: string): Promise<ApiResult<TResult>> {
 }
 
 export async function getVersion(): Promise<ApiVersion> {
-  return (await get<ApiVersion>("/api")).data;
+  return (await get<ApiVersion>("/")).data;
 }
 
 export async function patch<TData, TResult>(url: string, data?: TData): Promise<ApiResult<TResult>> {

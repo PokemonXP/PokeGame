@@ -1,0 +1,9 @@
+﻿[
+  {
+    "Id": "65283e4b-333a-493c-9d50-c602b97cbf35",
+    "UniqueName": "admin",
+    "DisplayName": "Administrator",
+    "Description": "This is the administration role.",
+    "CustomAttributes": []
+  }
+]

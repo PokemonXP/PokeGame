@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
+using System.Text.Json.Serialization;
 
-namespace PokeGame.Cms.Models.Account;
+namespace PokeGame.Api.Models.Account;
 
 public record GetTokenPayload
 {
@@ -8,7 +9,7 @@ public record GetTokenPayload
   public string? RefreshToken { get; set; }
 
   [JsonPropertyName("credentials")]
-  public SignInAccountPayload? Credentials { get; set; }
+  public SignInPayload? Credentials { get; set; }
 
   public GetTokenPayload()
   {
@@ -19,7 +20,7 @@ public record GetTokenPayload
     RefreshToken = refreshToken;
   }
 
-  public GetTokenPayload(SignInAccountPayload credentials)
+  public GetTokenPayload(SignInPayload credentials)
   {
     Credentials = credentials;
   }
