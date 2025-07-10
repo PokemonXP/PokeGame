@@ -1,6 +1,7 @@
 ﻿using Krakenar.Contracts.Search;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PokeGame.Api.Constants;
 using PokeGame.Api.Models.Move;
 using PokeGame.Core.Moves;
 using PokeGame.Core.Moves.Models;
@@ -8,7 +9,7 @@ using PokeGame.Core.Moves.Models;
 namespace PokeGame.Api.Controllers;
 
 [ApiController]
-[Authorize] // TODO(fpion): admin
+[Authorize(Policy = Policies.IsAdmin)]
 [Route("api/moves")]
 public class MoveController : ControllerBase
 {

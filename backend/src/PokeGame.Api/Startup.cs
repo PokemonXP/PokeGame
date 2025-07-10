@@ -6,6 +6,8 @@ using Logitar.EventSourcing.EntityFrameworkCore.Relational;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using PokeGame.Api.Authentication;
+using PokeGame.Api.Authorization;
+using PokeGame.Api.Constants;
 using PokeGame.Api.Extensions;
 using PokeGame.Api.Settings;
 using PokeGame.Core;
@@ -53,7 +55,12 @@ internal class Startup : StartupBase
     services.AddTransient<IOpenAuthenticationService, OpenAuthenticationService>();
 
     services.AddAuthorizationBuilder()
-      .SetDefaultPolicy(new AuthorizationPolicyBuilder(authenticationSchemes).RequireAuthenticatedUser().Build());
+      .SetDefaultPolicy(new AuthorizationPolicyBuilder(authenticationSchemes).RequireAuthenticatedUser().Build())
+      .AddPolicy(Policies.IsAdmin, new AuthorizationPolicyBuilder(authenticationSchemes)
+        .RequireAuthenticatedUser()
+        .AddRequirements(new PokeGameAdminRequirement())
+        .Build());
+    services.AddSingleton<IAuthorizationHandler, PokeGameAdminHandler>();
 
     CookiesSettings cookiesSettings = CookiesSettings.Initialize(_configuration);
     services.AddSingleton(cookiesSettings);
