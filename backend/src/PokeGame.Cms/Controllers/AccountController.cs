@@ -82,6 +82,8 @@ public class AccountController : ControllerBase
   [HttpPost("api/sign/in")]
   public async Task<ActionResult<CurrentUser>> SignInAsync([FromBody] SignInAccountPayload input, CancellationToken cancellationToken)
   {
+    new SignInAccountValidator().ValidateAndThrow(input);
+
     try
     {
       SignInSessionPayload payload = new(input.Username, input.Password, isPersistent: true, HttpContext.GetSessionCustomAttributes());

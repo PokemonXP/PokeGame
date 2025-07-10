@@ -33,6 +33,10 @@ internal class GetTokenValidator : AbstractValidator<GetTokenPayload>
     When(x => !string.IsNullOrWhiteSpace(x.RefreshToken), () => RuleFor(x => x.Credentials).Null());
 
     When(x => x.Credentials is null, () => RuleFor(x => x.RefreshToken).NotEmpty());
-    When(x => x.Credentials is not null, () => RuleFor(x => x.RefreshToken).Empty());
+    When(x => x.Credentials is not null, () =>
+    {
+      RuleFor(x => x.RefreshToken).Empty();
+      RuleFor(x => x.Credentials!).SetValidator(new SignInAccountValidator());
+    });
   }
 }
