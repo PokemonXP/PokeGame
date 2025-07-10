@@ -10,7 +10,6 @@ using PokeGame.Api.Authentication;
 using PokeGame.Api.Extensions;
 using PokeGame.Api.Models.Account;
 using PokeGame.Api.Settings;
-using System.Text.Json;
 
 namespace PokeGame.Api.Controllers;
 

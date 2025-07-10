@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Authorization;
 using PokeGame.Api.Authentication;
 using PokeGame.Api.Extensions;
 using PokeGame.Api.Settings;
-using System.Text.Json.Serialization;
 
 namespace PokeGame.Api;
 

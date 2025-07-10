@@ -1,6 +1,4 @@
-﻿using System.Text.Json.Serialization;
-
-namespace PokeGame.Api.Models.Account;
+﻿namespace PokeGame.Api.Models.Account;
 
 public record TokenResponse
 {

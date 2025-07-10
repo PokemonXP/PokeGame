@@ -6,7 +6,6 @@ using Krakenar.Contracts.Users;
 using Microsoft.Extensions.Primitives;
 using PokeGame.Api.Constants;
 using PokeGame.Api.Settings;
-using System.Text.Json;
 
 namespace PokeGame.Api.Extensions;
 

@@ -3,7 +3,6 @@ using Krakenar.Contracts.Roles;
 using Krakenar.Contracts.Sessions;
 using Krakenar.Contracts.Users;
 using Logitar.Security.Claims;
-using System.Security.Claims;
 
 namespace PokeGame.Api.Extensions;
 

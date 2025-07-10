@@ -5,8 +5,6 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
 using PokeGame.Api.Extensions;
-using System.Security.Claims;
-using System.Text.Encodings.Web;
 
 namespace PokeGame.Api.Authentication;
 
