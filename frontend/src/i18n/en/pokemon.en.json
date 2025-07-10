@@ -1,0 +1,9 @@
+{
+  "create": "Create Pokémon",
+  "nickname": {
+    "label": "Nickname"
+  },
+  "uniqueName": {
+    "label": "Unique Name"
+  }
+}
