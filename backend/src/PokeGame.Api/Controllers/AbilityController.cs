@@ -1,12 +1,14 @@
 ﻿using Krakenar.Contracts.Search;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using PokeGame.Cms.Models.Ability;
+using PokeGame.Api.Models.Ability;
 using PokeGame.Core.Abilities;
 using PokeGame.Core.Abilities.Models;
 
-namespace PokeGame.Cms.Controllers;
+namespace PokeGame.Api.Controllers;
 
 [ApiController]
+[Authorize] // TODO(fpion): admin
 [Route("api/abilities")]
 public class AbilityController : ControllerBase
 {

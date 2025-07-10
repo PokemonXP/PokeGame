@@ -1,12 +1,14 @@
 ﻿using Krakenar.Contracts.Search;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using PokeGame.Cms.Models.Trainer;
+using PokeGame.Api.Models.Trainer;
 using PokeGame.Core.Trainers;
 using PokeGame.Core.Trainers.Models;
 
-namespace PokeGame.Cms.Controllers;
+namespace PokeGame.Api.Controllers;
 
 [ApiController]
+[Authorize] // TODO(fpion): admin
 [Route("api/trainers")]
 public class TrainerController : ControllerBase
 {

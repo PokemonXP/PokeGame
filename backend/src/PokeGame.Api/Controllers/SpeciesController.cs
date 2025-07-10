@@ -1,12 +1,14 @@
 ﻿using Krakenar.Contracts.Search;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using PokeGame.Cms.Models.Species;
+using PokeGame.Api.Models.Species;
 using PokeGame.Core.Species;
 using PokeGame.Core.Species.Models;
 
-namespace PokeGame.Cms.Controllers;
+namespace PokeGame.Api.Controllers;
 
 [ApiController]
+[Authorize] // TODO(fpion): admin
 [Route("api/species")]
 public class SpeciesController : ControllerBase
 {

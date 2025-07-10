@@ -1,12 +1,14 @@
 ﻿using Krakenar.Contracts.Search;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using PokeGame.Cms.Models.Variety;
+using PokeGame.Api.Models.Variety;
 using PokeGame.Core.Varieties;
 using PokeGame.Core.Varieties.Models;
 
-namespace PokeGame.Cms.Controllers;
+namespace PokeGame.Api.Controllers;
 
 [ApiController]
+[Authorize] // TODO(fpion): admin
 [Route("api/varieties")]
 public class VarietyController : ControllerBase
 {

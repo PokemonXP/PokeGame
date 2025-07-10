@@ -1,12 +1,14 @@
 ﻿using Krakenar.Contracts.Search;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using PokeGame.Cms.Models.Region;
+using PokeGame.Api.Models.Region;
 using PokeGame.Core.Regions;
 using PokeGame.Core.Regions.Models;
 
-namespace PokeGame.Cms.Controllers;
+namespace PokeGame.Api.Controllers;
 
 [ApiController]
+[Authorize] // TODO(fpion): admin
 [Route("api/regions")]
 public class RegionController : ControllerBase
 {

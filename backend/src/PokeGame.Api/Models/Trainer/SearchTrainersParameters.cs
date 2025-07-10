@@ -1,10 +1,9 @@
 ﻿using Krakenar.Contracts.Search;
-using Krakenar.Web.Models.Search;
 using Microsoft.AspNetCore.Mvc;
 using PokeGame.Core.Trainers;
 using PokeGame.Core.Trainers.Models;
 
-namespace PokeGame.Cms.Models.Trainer;
+namespace PokeGame.Api.Models.Trainer;
 
 public record SearchTrainersParameters : SearchParameters
 {

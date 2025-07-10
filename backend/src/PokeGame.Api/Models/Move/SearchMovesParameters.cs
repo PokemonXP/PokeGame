@@ -1,11 +1,10 @@
 ﻿using Krakenar.Contracts.Search;
-using Krakenar.Web.Models.Search;
 using Microsoft.AspNetCore.Mvc;
 using PokeGame.Core;
 using PokeGame.Core.Moves;
 using PokeGame.Core.Moves.Models;
 
-namespace PokeGame.Cms.Models.Move;
+namespace PokeGame.Api.Models.Move;
 
 public record SearchMovesParameters : SearchParameters
 {

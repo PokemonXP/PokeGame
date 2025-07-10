@@ -1,8 +1,7 @@
 ﻿using Krakenar.Contracts.Search;
-using Krakenar.Web.Models.Search;
 using PokeGame.Core.Regions.Models;
 
-namespace PokeGame.Cms.Models.Region;
+namespace PokeGame.Api.Models.Region;
 
 public record SearchRegionsParameters : SearchParameters
 {

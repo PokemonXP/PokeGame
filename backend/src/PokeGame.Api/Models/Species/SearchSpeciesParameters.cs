@@ -1,10 +1,9 @@
 ﻿using Krakenar.Contracts.Search;
-using Krakenar.Web.Models.Search;
 using Microsoft.AspNetCore.Mvc;
 using PokeGame.Core.Species;
 using PokeGame.Core.Species.Models;
 
-namespace PokeGame.Cms.Models.Species;
+namespace PokeGame.Api.Models.Species;
 
 public record SearchSpeciesParameters : SearchParameters
 {

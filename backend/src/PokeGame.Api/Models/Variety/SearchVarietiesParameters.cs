@@ -1,8 +1,7 @@
 ﻿using Krakenar.Contracts.Search;
-using Krakenar.Web.Models.Search;
 using PokeGame.Core.Varieties.Models;
 
-namespace PokeGame.Cms.Models.Variety;
+namespace PokeGame.Api.Models.Variety;
 
 public record SearchVarietiesParameters : SearchParameters
 {

@@ -1,8 +1,7 @@
 ﻿using Krakenar.Contracts.Search;
-using Krakenar.Web.Models.Search;
 using PokeGame.Core.Abilities.Models;
 
-namespace PokeGame.Cms.Models.Ability;
+namespace PokeGame.Api.Models.Ability;
 
 public record SearchAbilitiesParameters : SearchParameters
 {
