@@ -1,10 +1,18 @@
 ﻿using Krakenar.Client;
 using Krakenar.Contracts.Constants;
+using Krakenar.Core;
+using Krakenar.Infrastructure;
+using Logitar.EventSourcing.EntityFrameworkCore.Relational;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using PokeGame.Api.Authentication;
 using PokeGame.Api.Extensions;
 using PokeGame.Api.Settings;
+using PokeGame.Core;
+using PokeGame.EntityFrameworkCore;
+using PokeGame.EntityFrameworkCore.PostgreSQL;
+using PokeGame.Infrastructure;
+using PokeGame.MongoDB;
 
 namespace PokeGame.Api;
 
@@ -69,6 +77,25 @@ internal class Startup : StartupBase
 
     services.AddApplicationInsightsTelemetry();
     IHealthChecksBuilder healthChecks = services.AddHealthChecks();
+
+    services.AddPokeGameCore();
+    services.AddPokeGameInfrastructure();
+
+    DatabaseSettings databaseSettings = DatabaseSettings.Initialize(_configuration);
+    services.AddSingleton(databaseSettings);
+    services.AddPokeGameEntityFrameworkCore();
+    switch (databaseSettings.Provider)
+    {
+      case DatabaseProvider.EntityFrameworkCorePostgreSQL:
+        services.AddPokeGameEntityFrameworkCorePostgreSQL(_configuration);
+        healthChecks.AddDbContextCheck<EventContext>();
+        healthChecks.AddDbContextCheck<PokemonContext>();
+        break;
+      default:
+        throw new DatabaseProviderNotSupportedException(databaseSettings.Provider);
+    }
+    services.AddPokeGameMongoDB(_configuration);
+    services.AddSingleton<IApplicationContext, HttpApplicationContext>();
 
     services.AddKrakenarClient(_configuration);
   }

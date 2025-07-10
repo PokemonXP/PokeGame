@@ -1,8 +1,12 @@
-﻿namespace PokeGame.Api;
+﻿using Krakenar.Core;
+using Krakenar.Infrastructure.Commands;
+using PokeGame.Api.Settings;
+
+namespace PokeGame.Api;
 
 internal static class Program
 {
-  internal static void Main(string[] args)
+  internal static async Task Main(string[] args)
   {
     WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
     IConfiguration configuration = builder.Configuration;
@@ -13,6 +17,16 @@ internal static class Program
     WebApplication application = builder.Build();
 
     startup.Configure(application);
+
+    using IServiceScope scope = application.Services.CreateScope();
+
+    DatabaseSettings database = application.Services.GetRequiredService<DatabaseSettings>();
+    if (database.ApplyMigrations)
+    {
+      MigrateDatabase migrateDatabase = new();
+      ICommandHandler<MigrateDatabase> migrationHandler = scope.ServiceProvider.GetRequiredService<ICommandHandler<MigrateDatabase>>();
+      await migrationHandler.HandleAsync(migrateDatabase);
+    }
 
     application.Run();
   }
