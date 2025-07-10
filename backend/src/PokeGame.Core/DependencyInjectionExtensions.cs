@@ -5,6 +5,7 @@ using PokeGame.Core.Moves;
 using PokeGame.Core.Pokemons;
 using PokeGame.Core.Pokemons.Commands;
 using PokeGame.Core.Pokemons.Models;
+using PokeGame.Core.Pokemons.Queries;
 
 namespace PokeGame.Core;
 
@@ -16,7 +17,8 @@ public static class DependencyInjectionExtensions
       .AddCommands()
       .AddCoreServices()
       .AddKrakenarCore()
-      .AddManagers();
+      .AddManagers()
+      .AddQueries();
   }
 
   private static IServiceCollection AddCommands(this IServiceCollection services)
@@ -35,5 +37,10 @@ public static class DependencyInjectionExtensions
       .AddTransient<IItemManager, ItemManager>()
       .AddTransient<IMoveManager, MoveManager>()
       .AddTransient<IPokemonManager, PokemonManager>();
+  }
+
+  private static IServiceCollection AddQueries(this IServiceCollection services)
+  {
+    return services.AddTransient<IQueryHandler<ReadPokemon, PokemonModel?>, ReadPokemonHandler>();
   }
 }

@@ -13,11 +13,13 @@ namespace PokeGame.EntityFrameworkCore.Queriers;
 internal class PokemonQuerier : IPokemonQuerier
 {
   private readonly IActorService _actorService;
+  private readonly DbSet<FormEntity> _forms;
   private readonly DbSet<PokemonEntity> _pokemon;
 
   public PokemonQuerier(IActorService actorService, PokemonContext context)
   {
     _actorService = actorService;
+    _forms = context.Forms;
     _pokemon = context.Pokemon;
   }
 
@@ -39,23 +41,69 @@ internal class PokemonQuerier : IPokemonQuerier
   }
   public async Task<PokemonModel?> ReadAsync(PokemonId id, CancellationToken cancellationToken)
   {
-    // TODO(fpion): include relationships
-    PokemonEntity? pokemon = await _pokemon.AsNoTracking().SingleOrDefaultAsync(x => x.StreamId == id.Value, cancellationToken);
-    return pokemon is null ? null : await MapAsync(pokemon, cancellationToken);
+    PokemonEntity? pokemon = await _pokemon.AsNoTracking()
+      .Include(x => x.CurrentTrainer)
+      .Include(x => x.HeldItem).ThenInclude(x => x!.Move)
+      .Include(x => x.Moves).ThenInclude(x => x.Move)
+      .Include(x => x.OriginalTrainer)
+      .Include(x => x.PokeBall)
+      .SingleOrDefaultAsync(x => x.StreamId == id.Value, cancellationToken);
+    if (pokemon is null)
+    {
+      return null;
+    }
+
+    await FillAsync(pokemon, cancellationToken);
+
+    return await MapAsync(pokemon, cancellationToken);
   }
   public async Task<PokemonModel?> ReadAsync(Guid id, CancellationToken cancellationToken)
   {
-    // TODO(fpion): include relationships
-    PokemonEntity? pokemon = await _pokemon.AsNoTracking().SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
-    return pokemon is null ? null : await MapAsync(pokemon, cancellationToken);
+    PokemonEntity? pokemon = await _pokemon.AsNoTracking()
+      .Include(x => x.CurrentTrainer)
+      .Include(x => x.HeldItem).ThenInclude(x => x!.Move)
+      .Include(x => x.Moves).ThenInclude(x => x.Move)
+      .Include(x => x.OriginalTrainer)
+      .Include(x => x.PokeBall)
+      .SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
+    if (pokemon is null)
+    {
+      return null;
+    }
+
+    await FillAsync(pokemon, cancellationToken);
+
+    return await MapAsync(pokemon, cancellationToken);
   }
   public async Task<PokemonModel?> ReadAsync(string uniqueName, CancellationToken cancellationToken)
   {
     string uniqueNameNormalized = Helper.Normalize(uniqueName);
 
-    // TODO(fpion): include relationships
-    PokemonEntity? pokemon = await _pokemon.AsNoTracking().SingleOrDefaultAsync(x => x.UniqueNameNormalized == uniqueNameNormalized, cancellationToken);
-    return pokemon is null ? null : await MapAsync(pokemon, cancellationToken);
+    PokemonEntity? pokemon = await _pokemon.AsNoTracking()
+      .Include(x => x.CurrentTrainer)
+      .Include(x => x.HeldItem).ThenInclude(x => x!.Move)
+      .Include(x => x.Moves).ThenInclude(x => x.Move)
+      .Include(x => x.OriginalTrainer)
+      .Include(x => x.PokeBall)
+      .SingleOrDefaultAsync(x => x.UniqueNameNormalized == uniqueNameNormalized, cancellationToken);
+    if (pokemon is null)
+    {
+      return null;
+    }
+
+    await FillAsync(pokemon, cancellationToken);
+
+    return await MapAsync(pokemon, cancellationToken);
+  }
+
+  private async Task FillAsync(PokemonEntity pokemon, CancellationToken cancellationToken)
+  {
+    FormEntity form = await _forms.AsNoTracking()
+      .Include(x => x.Abilities).ThenInclude(x => x.Ability)
+      .Include(x => x.Variety).ThenInclude(x => x!.Species).ThenInclude(x => x!.RegionalNumbers).ThenInclude(x => x.Region)
+      .SingleOrDefaultAsync(x => x.FormId == pokemon.FormId, cancellationToken)
+      ?? throw new InvalidOperationException($"The Pokémon form entity 'FormId={pokemon.FormId}' was not found.");
+    pokemon.Form = form;
   }
 
   private async Task<PokemonModel> MapAsync(PokemonEntity pokemon, CancellationToken cancellationToken)

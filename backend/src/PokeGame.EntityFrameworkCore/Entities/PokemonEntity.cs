@@ -22,7 +22,7 @@ internal class PokemonEntity : AggregateEntity
   public int VarietyId { get; private set; }
   public Guid VarietyUid { get; private set; }
 
-  public FormEntity? Form { get; private set; }
+  public FormEntity? Form { get; set; }
   public int FormId { get; private set; }
   public Guid FormUid { get; private set; }
 
@@ -80,6 +80,8 @@ internal class PokemonEntity : AggregateEntity
   public string? Sprite { get; private set; }
   public string? Url { get; private set; }
   public string? Notes { get; private set; }
+
+  public List<PokemonMoveEntity> Moves { get; private set; } = [];
 
   public PokemonEntity(FormEntity form, PokemonCreated @event) : base(@event)
   {
@@ -146,6 +148,28 @@ internal class PokemonEntity : AggregateEntity
     HeldItemUid = item.Id;
   }
 
+  public void LearnMove(MoveEntity move, PokemonMoveLearned @event)
+  {
+    Update(@event);
+
+    RemoveMove(@event.Position);
+    Moves.Add(new PokemonMoveEntity(this, move, @event));
+  }
+
+  public bool MasterMove(PokemonMoveMastered @event)
+  {
+    Update(@event);
+
+    PokemonMoveEntity? move = Moves.SingleOrDefault(move => move.MoveUid == @event.MoveId.ToGuid());
+    if (move is null)
+    {
+      return false;
+    }
+
+    move.Master(@event);
+    return true;
+  }
+
   public void Receive(TrainerEntity trainer, ItemEntity pokeBall, PokemonReceived @event)
   {
     Update(@event);
@@ -158,6 +182,22 @@ internal class PokemonEntity : AggregateEntity
     SetCurrentTrainer(trainer);
     SetPokeBall(pokeBall);
     SetOwnership(@event);
+  }
+
+  public bool RelearnMove(PokemonMoveRelearned @event)
+  {
+    Update(@event);
+
+    RemoveMove(@event.Position);
+
+    PokemonMoveEntity? move = Moves.SingleOrDefault(move => move.MoveUid == @event.MoveId.ToGuid());
+    if (move is null)
+    {
+      return false;
+    }
+
+    move.Relearn(@event);
+    return true;
   }
 
   public void Release(PokemonReleased @event)
@@ -198,6 +238,33 @@ internal class PokemonEntity : AggregateEntity
     UniqueName = @event.UniqueName.Value;
   }
 
+  public bool SwitchMoves(PokemonMovesSwitched @event)
+  {
+    Update(@event);
+
+    PokemonMoveEntity? source = null;
+    PokemonMoveEntity? destination = null;
+    foreach (PokemonMoveEntity move in Moves)
+    {
+      if (move.Position == @event.Source)
+      {
+        source = move;
+      }
+      else if (move.Position == @event.Destination)
+      {
+        destination = move;
+      }
+    }
+
+    if (source is null || destination is null)
+    {
+      return false;
+    }
+
+    source.Switch(destination);
+    return true;
+  }
+
   public void Update(PokemonUpdated @event)
   {
     base.Update(@event);
@@ -218,6 +285,23 @@ internal class PokemonEntity : AggregateEntity
     if (@event.Notes is not null)
     {
       Notes = @event.Notes.Value?.Value;
+    }
+  }
+
+  public void UseTechnicalMachine(MoveEntity move, PokemonTechnicalMachineUsed @event)
+  {
+    Update(@event);
+
+    RemoveMove(@event.Position);
+    Moves.Add(new PokemonMoveEntity(this, move, @event));
+  }
+
+  private void RemoveMove(int? position)
+  {
+    if (position.HasValue)
+    {
+      PokemonMoveEntity? pokemonMove = Moves.SingleOrDefault(move => move.Position == position.Value);
+      pokemonMove?.Remove();
     }
   }
 

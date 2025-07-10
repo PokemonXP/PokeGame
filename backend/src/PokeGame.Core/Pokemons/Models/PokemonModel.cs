@@ -1,6 +1,7 @@
 ﻿using PokeGame.Core.Forms.Models;
 using PokeGame.Core.Items.Models;
 using PokeGame.Core.Species;
+using PokeGame.Core.Trainers.Models;
 using AggregateModel = Krakenar.Contracts.Aggregate;
 
 namespace PokeGame.Core.Pokemons.Models;
@@ -34,10 +35,10 @@ public class PokemonModel : AggregateModel
 
   public ItemModel? HeldItem { get; set; }
 
-  // TODO(fpion): Moves
+  public List<PokemonMoveModel> Moves { get; set; } = [];
 
-  // TODO(fpion): OriginalTrainer
-  // TODO(fpion): Ownership
+  public TrainerModel? OriginalTrainer { get; set; }
+  public PokemonOwnershipModel? Ownership { get; set; }
 
   public string? Sprite { get; set; }
   public string? Url { get; set; }

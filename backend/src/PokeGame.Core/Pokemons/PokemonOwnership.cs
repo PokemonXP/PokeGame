@@ -10,5 +10,5 @@ public record PokemonOwnership(
   ItemId PokeBallId,
   int Level,
   GameLocation Location,
-  DateTime StartedOn,
+  DateTime MetOn,
   Description? Description);

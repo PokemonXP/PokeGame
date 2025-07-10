@@ -222,7 +222,6 @@ internal class PokemonMapper
       Size = new PokemonSizeModel(source.Height, source.Weight),
       AbilitySlot = source.AbilitySlot,
       Nature = new PokemonNatureModel(PokemonNatures.Instance.Find(source.Nature)),
-      Characteristic = source.Characteristic,
       GrowthRate = source.GrowthRate,
       Level = source.Level,
       Experience = source.Experience,
@@ -232,6 +231,7 @@ internal class PokemonMapper
       Vitality = source.Vitality,
       Stamina = source.Stamina,
       StatusCondition = source.StatusCondition,
+      Characteristic = source.Characteristic,
       Friendship = source.Friendship,
       Sprite = source.Sprite,
       Url = source.Url,
@@ -241,6 +241,42 @@ internal class PokemonMapper
     if (source.HeldItem is not null)
     {
       destination.HeldItem = ToItem(source.HeldItem);
+    }
+    if (source.OriginalTrainer is not null)
+    {
+      destination.OriginalTrainer = ToTrainer(source.OriginalTrainer);
+    }
+    if (source.OwnershipKind.HasValue && source.CurrentTrainer is not null && source.PokeBall is not null
+      && source.MetAtLevel.HasValue && source.MetLocation is not null && source.MetOn.HasValue)
+    {
+      destination.Ownership = new PokemonOwnershipModel
+      {
+        Kind = source.OwnershipKind.Value,
+        Trainer = ToTrainer(source.CurrentTrainer),
+        PokeBall = ToItem(source.PokeBall),
+        Level = source.MetAtLevel.Value,
+        Location = source.MetLocation,
+        MetOn = source.MetOn.Value.AsUniversalTime(),
+        Description = source.MetDescription
+      };
+    }
+
+    foreach (PokemonMoveEntity entity in source.Moves)
+    {
+      if (entity.Move is null)
+      {
+        throw new ArgumentException("The moves are required.", nameof(source));
+      }
+      PokemonMoveModel move = new()
+      {
+        Move = ToMove(entity.Move),
+        Position = entity.Position,
+        PowerPoints = new PowerPointsModel(entity.CurrentPowerPoints, entity.MaximumPowerPoints, entity.ReferencePowerPoints),
+        IsMastered = entity.IsMastered,
+        Level = entity.Level,
+        TechnicalMachine = entity.TechnicalMachine
+      };
+      destination.Moves.Add(move);
     }
 
     MapAggregate(source, destination);
