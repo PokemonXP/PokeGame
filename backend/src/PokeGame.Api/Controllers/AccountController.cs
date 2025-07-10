@@ -1,8 +1,8 @@
 ﻿using FluentValidation;
+using Krakenar.Client;
 using Krakenar.Contracts;
 using Krakenar.Contracts.Sessions;
 using Krakenar.Contracts.Users;
-using Krakenar.Core;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
@@ -62,7 +62,7 @@ public class AccountController : ControllerBase
       TokenResponse response = await _openAuthenticationService.GetTokenResponseAsync(session, cancellationToken);
       return Ok(response);
     }
-    catch (InvalidCredentialsException exception) // TODO(fpion): probably won't work.
+    catch (KrakenarClientException exception)
     {
       if (_errorSettings.ExposeDetail)
       {
@@ -108,7 +108,7 @@ public class AccountController : ControllerBase
       CurrentUser currentUser = new(session);
       return Ok(currentUser);
     }
-    catch (InvalidCredentialsException exception) // TODO(fpion): probably won't work.
+    catch (KrakenarClientException exception)
     {
       if (_errorSettings.ExposeDetail)
       {
