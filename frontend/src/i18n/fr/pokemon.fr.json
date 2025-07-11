@@ -70,9 +70,17 @@
     "title": "Metadata"
   },
   "nature": {
+    "flavor": {
+      "disliked": "Disliked Flavor",
+      "favorite": "Favorite Flavor"
+    },
     "select": {
       "label": "Nature",
       "placeholder": "Select a nature"
+    },
+    "statistic": {
+      "decreased": "Decreased Statistic",
+      "increased": "Increased Statistic"
     }
   },
   "nickname": {
