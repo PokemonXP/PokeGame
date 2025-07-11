@@ -10,7 +10,7 @@ namespace PokeGame.Api.Controllers;
 
 [ApiController]
 [Authorize(Policy = Policies.IsAdmin)]
-[Route("api/regions")]
+[Route("regions")]
 public class RegionController : ControllerBase
 {
   private readonly IRegionQuerier _regionQuerier;

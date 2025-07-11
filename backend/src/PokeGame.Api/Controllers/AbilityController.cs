@@ -10,7 +10,7 @@ namespace PokeGame.Api.Controllers;
 
 [ApiController]
 [Authorize(Policy = Policies.IsAdmin)]
-[Route("api/abilities")]
+[Route("abilities")]
 public class AbilityController : ControllerBase
 {
   private readonly IAbilityQuerier _abilityQuerier;

@@ -10,7 +10,7 @@ namespace PokeGame.Api.Controllers;
 
 [ApiController]
 [Authorize(Policy = Policies.IsAdmin)]
-[Route("api/forms")]
+[Route("forms")]
 public class FormController : ControllerBase
 {
   private readonly IFormQuerier _formQuerier;
@@ -34,7 +34,7 @@ public class FormController : ControllerBase
     return form is null ? NotFound() : Ok(form);
   }
 
-  [HttpGet("/api/varieties/{varietyId}/forms")]
+  [HttpGet("/varieties/{varietyId}/forms")]
   public async Task<ActionResult<SearchResults<FormModel>>> SearchAsync(Guid varietyId, [FromQuery] SearchFormsParameters parameters, CancellationToken cancellationToken)
   {
     SearchFormsPayload payload = parameters.ToPayload();

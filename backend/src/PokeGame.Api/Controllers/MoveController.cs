@@ -10,7 +10,7 @@ namespace PokeGame.Api.Controllers;
 
 [ApiController]
 [Authorize(Policy = Policies.IsAdmin)]
-[Route("api/moves")]
+[Route("moves")]
 public class MoveController : ControllerBase
 {
   private readonly IMoveQuerier _moveQuerier;

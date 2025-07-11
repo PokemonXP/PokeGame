@@ -10,7 +10,7 @@ namespace PokeGame.Api.Controllers;
 
 [ApiController]
 [Authorize(Policy = Policies.IsAdmin)]
-[Route("api/varieties")]
+[Route("varieties")]
 public class VarietyController : ControllerBase
 {
   private readonly IVarietyQuerier _varietyQuerier;
@@ -34,7 +34,7 @@ public class VarietyController : ControllerBase
     return variety is null ? NotFound() : Ok(variety);
   }
 
-  [HttpGet("/api/species/{speciesId}/varieties")]
+  [HttpGet("/species/{speciesId}/varieties")]
   public async Task<ActionResult<SearchResults<VarietyModel>>> SearchAsync(Guid speciesId, [FromQuery] SearchVarietiesParameters parameters, CancellationToken cancellationToken)
   {
     SearchVarietiesPayload payload = parameters.ToPayload();

@@ -10,7 +10,7 @@ namespace PokeGame.Api.Controllers;
 
 [ApiController]
 [Authorize(Policy = Policies.IsAdmin)]
-[Route("api/species")]
+[Route("species")]
 public class SpeciesController : ControllerBase
 {
   private readonly ISpeciesQuerier _speciesQuerier;

@@ -10,7 +10,7 @@ namespace PokeGame.Api.Controllers;
 
 [ApiController]
 [Authorize(Policy = Policies.IsAdmin)]
-[Route("api/trainers")]
+[Route("trainers")]
 public class TrainerController : ControllerBase
 {
   private readonly ITrainerQuerier _trainerQuerier;
