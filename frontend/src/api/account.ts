@@ -1,7 +1,12 @@
 import { urlUtils } from "logitar-js";
 
-import type { CurrentUser, GoogleSignInPayload, SignInPayload } from "@/types/account";
-import { post } from ".";
+import type { CurrentUser, GoogleSignInPayload, SignInPayload, UserProfile } from "@/types/account";
+import { get, post } from ".";
+
+export async function getProfile(): Promise<UserProfile> {
+  const url: string = new urlUtils.UrlBuilder({ path: "/profile" }).buildRelative();
+  return (await get<UserProfile>(url)).data;
+}
 
 export async function signIn(payload: SignInPayload): Promise<CurrentUser> {
   const url: string = new urlUtils.UrlBuilder({ path: "/sign/in" }).buildRelative();

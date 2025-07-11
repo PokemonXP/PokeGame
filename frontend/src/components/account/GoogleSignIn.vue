@@ -31,7 +31,6 @@ function render(locale: string): void {
   if (!window.google || !googleButton.value) {
     return;
   }
-  console.log(locale);
   window.google.accounts.id.initialize({ client_id, callback, locale });
   window.google.accounts.id.renderButton(googleButton.value, { theme: "outline", size: "large" });
   window.google.accounts.id.prompt();

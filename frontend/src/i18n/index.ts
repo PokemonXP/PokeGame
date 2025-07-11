@@ -47,6 +47,14 @@ export default createI18n<[MessageSchema], "en" | "fr">({
         style: "decimal",
         minimumFractionDigits: 2,
       },
+      integer: {
+        style: "decimal",
+        maximumFractionDigits: 0,
+      },
+      integer_percent: {
+        style: "percent",
+        maximumFractionDigits: 0,
+      },
       percent: {
         style: "percent",
         minimumFractionDigits: 3,
@@ -62,6 +70,14 @@ export default createI18n<[MessageSchema], "en" | "fr">({
       decimal: {
         style: "decimal",
         minimumFractionDigits: 2,
+      },
+      integer: {
+        style: "decimal",
+        maximumFractionDigits: 0,
+      },
+      integer_percent: {
+        style: "percent",
+        maximumFractionDigits: 0,
       },
       percent: {
         style: "percent",

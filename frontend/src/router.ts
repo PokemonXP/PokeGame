@@ -37,16 +37,15 @@ const router = createRouter({
           name: "Admin",
           path: "",
           component: () => import("./views/AdminView.vue"),
-          meta: { isAdmin: true },
         },
         // Pokémon
         {
           name: "CreatePokemon",
           path: "pokemon/create",
           component: () => import("./views/pokemon/CreatePokemon.vue"),
-          meta: { isAdmin: true },
         },
       ],
+      meta: { isAdmin: true },
     },
     // NotFound
     {
