@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { SelectOption } from "logitar-vue3-ui";
+import { arrayUtils } from "logitar-js";
 import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 
@@ -10,6 +11,7 @@ import { formatVariety } from "@/helpers/format";
 import { searchVarieties } from "@/api/pokemon/varieties";
 import type { SearchVarietiesPayload } from "@/types/pokemon/varieties";
 
+const { orderBy } = arrayUtils;
 const { t } = useI18n();
 
 const props = withDefaults(
@@ -39,10 +41,13 @@ const isDefault = computed<boolean>(() => {
   return false;
 });
 const options = computed<SelectOption[]>(() =>
-  varieties.value.map((variety) => ({
-    text: formatVariety(variety),
-    value: variety.id,
-  })),
+  orderBy(
+    varieties.value.map((variety) => ({
+      text: formatVariety(variety),
+      value: variety.id,
+    })),
+    "text",
+  ),
 );
 
 const emit = defineEmits<{

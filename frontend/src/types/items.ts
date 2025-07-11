@@ -82,7 +82,7 @@ export type PowerPointRestore = {
 
 export type SearchItemsPayload = SearchPayload & {
   category?: ItemCategory;
-  sort: ItemSortOption;
+  sort: ItemSortOption[];
 };
 
 export type StatusHealing = {

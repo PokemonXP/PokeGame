@@ -15,6 +15,7 @@ import FriendshipInput from "@/components/pokemon/FriendshipInput.vue";
 import GenderSelect from "@/components/pokemon/GenderSelect.vue";
 import GrowthRateSelect from "@/components/pokemon/GrowthRateSelect.vue";
 import IndividualValuesEdit from "@/components/pokemon/IndividualValuesEdit.vue";
+import ItemSelect from "@/components/items/ItemSelect.vue";
 import LevelInput from "@/components/pokemon/LevelInput.vue";
 import NatureSelect from "@/components/pokemon/NatureSelect.vue";
 import NatureTable from "@/components/pokemon/NatureTable.vue";
@@ -291,18 +292,14 @@ watch(
           <StaminaInput class="col" :max="statistics.hp.value" v-model="stamina" />
           <FriendshipInput class="col" v-model="friendship" />
         </div>
-
         <h2 class="h3">{{ t("pokemon.nature.select.label") }}</h2>
         <NatureSelect :model-value="nature?.name" @selected="nature = $event" />
         <NatureTable v-if="nature" :nature="nature" />
-
-        <!-- TODO(fpion): HeldItem -->
-
+        <h2 class="h3">{{ t("pokemon.item.held") }}</h2>
+        <ItemSelect id="held-item" :model-value="heldItem?.id" @selected="heldItem = $event" />
         <h2 class="h3">{{ t("pokemon.ability.title") }}</h2>
         <AbilitySlotSelect :abilities="form.abilities" v-model="abilitySlot" />
-
         <!-- TODO(fpion): Moves -->
-
         <h2 class="h3">{{ t("pokemon.metadata.title") }}</h2>
         <div class="row">
           <UrlInput class="col" v-model="url" />
