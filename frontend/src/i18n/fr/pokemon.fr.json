@@ -8,6 +8,7 @@
     "title": "Ability"
   },
   "create": "Create Pokémon",
+  "created": "The Pokémon has been created.",
   "experience": {
     "label": "Experience",
     "maximum": "Maximum Experience",
