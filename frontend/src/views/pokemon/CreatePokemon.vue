@@ -10,6 +10,7 @@ import EffortValuesEdit from "@/components/pokemon/EffortValuesEdit.vue";
 import ExperienceInput from "@/components/pokemon/ExperienceInput.vue";
 import ExperienceTableModal from "@/components/pokemon/ExperienceTableModal.vue";
 import FormSelect from "@/components/pokemon/FormSelect.vue";
+import FriendshipInput from "@/components/pokemon/FriendshipInput.vue";
 import GenderSelect from "@/components/pokemon/GenderSelect.vue";
 import GrowthRateSelect from "@/components/pokemon/GrowthRateSelect.vue";
 import IndividualValuesEdit from "@/components/pokemon/IndividualValuesEdit.vue";
@@ -86,6 +87,14 @@ const isGenderDisabled = computed<boolean>(
 const isGenderRequired = computed<boolean>(() => Boolean(variety.value && typeof variety.value.genderRatio === "number"));
 const maximumExperience = computed<number>(() => getMaximumExperience(growthRate.value, Math.min(Math.max(level.value, LEVEL_MINIMUM), LEVEL_MAXIMUM)));
 const minimumExperience = computed<number>(() => (level.value <= 1 ? 0 : getMaximumExperience(growthRate.value, Math.min(level.value - 1, LEVEL_MAXIMUM))));
+const spriteAlt = computed<string>(() => `${nickname.value || uniqueName.value}'s Sprite`);
+const spriteUrl = computed<string>(() => {
+  let spriteUrl: string | undefined = sprite.value.trim();
+  if (!spriteUrl) {
+    spriteUrl = form.value?.sprites.alternative && gender.value === "Female" ? form.value.sprites.alternative : form.value?.sprites.default;
+  }
+  return spriteUrl ?? "";
+});
 
 const { isValid, validate } = useForm();
 async function submit(): Promise<void> {
@@ -135,6 +144,7 @@ function onSpeciesSelected(selectedSpecies: Species | undefined): void {
 
     if (selectedSpecies) {
       uniqueName.value = selectedSpecies.uniqueName;
+      friendship.value = selectedSpecies.baseFriendship;
     }
   }
 }
@@ -243,14 +253,15 @@ function onExperienceUpdate(value: number): void {
         <EffortValuesEdit v-model="effortValues" />
         <h3 class="h5">{{ t("pokemon.statistic.total") }}</h3>
         <!-- TODO(fpion): Total Statistics -->
-        <!-- TODO(fpion): Vitality -->
-        <!-- TODO(fpion): Stamina -->
+        <div class="row">
+          <!-- TODO(fpion): Vitality -->
+          <!-- TODO(fpion): Stamina -->
+          <FriendshipInput class="col" v-model="friendship" />
+        </div>
 
         <h2 class="h3">{{ t("pokemon.nature.select.label") }}</h2>
         <NatureSelect :model-value="nature?.name" @selected="nature = $event" />
         <NatureTable v-if="nature" :nature="nature" />
-
-        <!-- TODO(fpion): Friendship -->
 
         <!-- TODO(fpion): HeldItem -->
 
@@ -259,11 +270,17 @@ function onExperienceUpdate(value: number): void {
 
         <!-- TODO(fpion): Moves -->
 
-        <!-- TODO(fpion): Sprite -->
-
         <h2 class="h3">{{ t("pokemon.metadata.title") }}</h2>
-        <UrlInput v-model="url" />
-        <NotesTextarea v-model="notes" />
+        <div class="row">
+          <UrlInput class="col" v-model="url" />
+          <UrlInput class="col" id="sprite" label="pokemon.sprite.label" v-model="sprite" />
+        </div>
+        <div class="row">
+          <NotesTextarea class="col" v-model="notes" />
+          <div class="col text-center">
+            <img :src="spriteUrl" :alt="spriteAlt" class="img-fluid mx-auto d-block" />
+          </div>
+        </div>
         <div class="mb-3">
           <TarButton
             :disabled="isLoading"

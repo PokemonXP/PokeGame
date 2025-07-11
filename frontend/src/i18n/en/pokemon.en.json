@@ -36,6 +36,9 @@
       "placeholder": "Select a Pokémon form"
     }
   },
+  "friendship": {
+    "label": "Friendship"
+  },
   "gender": {
     "select": {
       "label": "Gender",
@@ -116,6 +119,9 @@
       "label": "Species",
       "placeholder": "Select a Pokémon species"
     }
+  },
+  "sprite": {
+    "label": "Sprite"
   },
   "statistic": {
     "base": "Base Values",
