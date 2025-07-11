@@ -1,5 +1,6 @@
 import type { Aggregate } from "./aggregate";
-import type { Move, PokemonStatistic, StatisticChanges, StatusCondition } from "./pokemon";
+import type { PokemonStatistic, StatisticChanges, StatusCondition } from "./pokemon";
+import type { Move } from "./pokemon/moves";
 import type { SearchPayload, SortOption } from "./search";
 
 export type BattleItem = {

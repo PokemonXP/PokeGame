@@ -1,5 +1,6 @@
 import type { Aggregate } from "../aggregate";
 import type { Item } from "../items";
+import type { Move } from "./moves";
 
 export const EFFORT_VALUE_MAXIMUM: number = 255;
 export const EFFORT_VALUE_MINIMUM: number = 0;
@@ -122,29 +123,6 @@ export type IndividualValues = {
   specialDefense: number;
   speed: number;
 };
-
-export type InflictedStatus = {
-  condition: StatusCondition;
-  chance: number;
-};
-
-export type Move = Aggregate & {
-  type: PokemonType;
-  category: MoveCategory;
-  uniqueName: string;
-  displayName?: string | null;
-  description?: string | null;
-  accuracy: number;
-  power: number;
-  powerPoints: number;
-  status?: InflictedStatus | null;
-  volatileConditions: string[];
-  statisticChanges: StatisticChanges;
-  url?: string | null;
-  notes?: string | null;
-};
-
-export type MoveCategory = "Status" | "Physical" | "Special";
 
 export type OwnershipKind = "Caught" | "Received";
 
