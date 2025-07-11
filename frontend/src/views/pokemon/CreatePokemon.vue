@@ -38,7 +38,6 @@ import type {
   Form,
   GrowthRate,
   IndividualValues,
-  Item,
   Move,
   Pokemon,
   PokemonGender,
@@ -50,6 +49,7 @@ import type {
   Variety,
 } from "@/types/pokemon";
 import type { Breadcrumb } from "@/types/components";
+import type { Item } from "@/types/items";
 import { LEVEL_MAXIMUM, LEVEL_MINIMUM } from "@/types/pokemon";
 import { calculateStatistics, getLevel, getMaximumExperience } from "@/helpers/pokemon";
 import { createPokemon } from "@/api/pokemon";

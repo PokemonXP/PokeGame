@@ -7,7 +7,8 @@ import FormSelect from "@/components/forms/FormSelect.vue";
 import type { SearchResults } from "@/types/search";
 import type { Species } from "@/types/pokemon";
 import { formatSpecies } from "@/helpers/format";
-import { searchSpecies } from "@/api/species";
+import { searchSpecies } from "@/api/pokemon/species";
+import type { SearchSpeciesPayload } from "@/types/pokemon/species";
 
 const { t } = useI18n();
 
@@ -51,7 +52,14 @@ function onModelValueUpdate(id: string): void {
 
 onMounted(async () => {
   try {
-    const results: SearchResults<Species> = await searchSpecies();
+    const payload: SearchSpeciesPayload = {
+      ids: [],
+      search: { terms: [], operator: "And" },
+      sort: [],
+      limit: 0,
+      skip: 0,
+    };
+    const results: SearchResults<Species> = await searchSpecies(payload);
     species.value = [...results.items];
   } catch (e: unknown) {
     emit("error", e);

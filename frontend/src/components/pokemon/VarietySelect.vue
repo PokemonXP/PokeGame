@@ -7,7 +7,8 @@ import FormSelect from "@/components/forms/FormSelect.vue";
 import type { SearchResults } from "@/types/search";
 import type { Species, Variety } from "@/types/pokemon";
 import { formatVariety } from "@/helpers/format";
-import { searchVarieties } from "@/api/varieties";
+import { searchVarieties } from "@/api/pokemon/varieties";
+import type { SearchVarietiesPayload } from "@/types/pokemon/varieties";
 
 const { t } = useI18n();
 
@@ -62,7 +63,14 @@ watch(
   async (species) => {
     if (species) {
       try {
-        const results: SearchResults<Variety> = await searchVarieties(species.id);
+        const payload: SearchVarietiesPayload = {
+          ids: [],
+          search: { terms: [], operator: "And" },
+          sort: [],
+          limit: 0,
+          skip: 0,
+        };
+        const results: SearchResults<Variety> = await searchVarieties(species.id, payload);
         varieties.value = [...results.items];
 
         const defaultVariety: Variety | undefined = varieties.value.find(({ isDefault }) => isDefault);
