@@ -123,6 +123,9 @@
   "sprite": {
     "label": "Sprite"
   },
+  "stamina": {
+    "label": "Stamina"
+  },
   "statistic": {
     "base": "Base Values",
     "effort": {
@@ -197,5 +200,8 @@
       "label": "Variety",
       "placeholder": "Select a Pokémon variety"
     }
+  },
+  "vitality": {
+    "label": "Vitality"
   }
 }

@@ -1,5 +1,14 @@
-import { LEVEL_MAXIMUM, LEVEL_MINIMUM } from "@/types/pokemon";
-import type { GrowthRate } from "@/types/pokemon";
+import { EFFORT_VALUE_MAXIMUM, EFFORT_VALUE_MINIMUM, INDIVIDUAL_VALUE_MAXIMUM, INDIVIDUAL_VALUE_MINIMUM, LEVEL_MAXIMUM, LEVEL_MINIMUM } from "@/types/pokemon";
+import type {
+  BaseStatistics,
+  EffortValues,
+  GrowthRate,
+  IndividualValues,
+  PokemonNature,
+  PokemonStatistic,
+  PokemonStatistics,
+  StatisticValues,
+} from "@/types/pokemon";
 
 function calculateErratic(level: number): number {
   let experience: number = 0;
@@ -62,6 +71,79 @@ const _thresholds = new Map<GrowthRate, number[]>([
   ["MediumSlow", mediumSlow],
   ["Slow", slow],
 ]);
+
+function calculateHP(base: number, individual: number, effort: number, level: number): StatisticValues {
+  if (individual < INDIVIDUAL_VALUE_MINIMUM || individual > INDIVIDUAL_VALUE_MAXIMUM) {
+    individual = 0;
+  }
+  if (effort < EFFORT_VALUE_MINIMUM || effort > EFFORT_VALUE_MAXIMUM) {
+    effort = 0;
+  }
+  if (level < LEVEL_MINIMUM) {
+    level = 1;
+  }
+  if (level > LEVEL_MAXIMUM) {
+    level = 100;
+  }
+  const value: number = Math.floor(((2 * base + individual + Math.floor(effort / 4)) * level) / 100) + level + 10;
+  return {
+    base,
+    individualValue: individual,
+    effortValue: effort,
+    value,
+  };
+}
+function calculateStatistic(base: number, individual: number, effort: number, level: number, nature: number): StatisticValues {
+  if (individual < INDIVIDUAL_VALUE_MINIMUM || individual > INDIVIDUAL_VALUE_MAXIMUM) {
+    individual = 0;
+  }
+  if (effort < EFFORT_VALUE_MINIMUM || effort > EFFORT_VALUE_MAXIMUM) {
+    effort = 0;
+  }
+  if (level < LEVEL_MINIMUM) {
+    level = 1;
+  }
+  if (level > LEVEL_MAXIMUM) {
+    level = 100;
+  }
+  const value: number = Math.floor((Math.floor(((2 * base + individual + Math.floor(effort / 4)) * level) / 100) + 5) * nature);
+  return {
+    base,
+    individualValue: individual,
+    effortValue: effort,
+    value,
+  };
+}
+function getNatureMultiplier(statistic: PokemonStatistic, nature: PokemonNature): number {
+  if (statistic === nature.increasedStatistic && statistic !== nature.decreasedStatistic) {
+    return 1.1;
+  } else if (statistic === nature.decreasedStatistic) {
+    return 0.9;
+  }
+  return 1;
+}
+export function calculateStatistics(
+  base: BaseStatistics,
+  individual: IndividualValues,
+  effort: EffortValues,
+  level: number,
+  nature: PokemonNature,
+): PokemonStatistics {
+  return {
+    hp: calculateHP(base.hp, individual.hp, effort.hp, level),
+    attack: calculateStatistic(base.attack, individual.attack, effort.attack, level, getNatureMultiplier("Attack", nature)),
+    defense: calculateStatistic(base.defense, individual.defense, effort.defense, level, getNatureMultiplier("Defense", nature)),
+    specialAttack: calculateStatistic(base.specialAttack, individual.specialAttack, effort.specialAttack, level, getNatureMultiplier("SpecialAttack", nature)),
+    specialDefense: calculateStatistic(
+      base.specialDefense,
+      individual.specialDefense,
+      effort.specialDefense,
+      level,
+      getNatureMultiplier("SpecialDefense", nature),
+    ),
+    speed: calculateStatistic(base.speed, individual.speed, effort.speed, level, getNatureMultiplier("Speed", nature)),
+  };
+}
 
 export function getLevel(growthRate: GrowthRate, experience: number): number {
   const thresholds: number[] | undefined = _thresholds.get(growthRate);

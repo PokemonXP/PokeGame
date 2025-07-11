@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { TarButton } from "logitar-vue3-ui";
-import { computed, inject, ref } from "vue";
+import { computed, inject, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 
 import AbilitySlotSelect from "@/components/pokemon/AbilitySlotSelect.vue";
 import AdminBreadcrumb from "@/components/admin/AdminBreadcrumb.vue";
-import BaseStatistics from "@/components/pokemon/BaseStatistics.vue";
+import BaseStatisticsView from "@/components/pokemon/BaseStatisticsView.vue";
 import EffortValuesEdit from "@/components/pokemon/EffortValuesEdit.vue";
 import ExperienceInput from "@/components/pokemon/ExperienceInput.vue";
 import ExperienceTableModal from "@/components/pokemon/ExperienceTableModal.vue";
@@ -23,12 +23,16 @@ import NotesTextarea from "@/components/pokemon/NotesTextarea.vue";
 import ProgressTable from "@/components/pokemon/ProgressTable.vue";
 import SizeEdit from "@/components/pokemon/SizeEdit.vue";
 import SpeciesSelect from "@/components/pokemon/SpeciesSelect.vue";
+import StaminaInput from "@/components/pokemon/StaminaInput.vue";
+import TotalStatisticsView from "@/components/pokemon/TotalStatisticsView.vue";
 import TypeSelect from "@/components/pokemon/TypeSelect.vue";
 import UniqueNameInput from "@/components/pokemon/UniqueNameInput.vue";
 import UrlInput from "@/components/pokemon/UrlInput.vue";
 import VarietySelect from "@/components/pokemon/VarietySelect.vue";
+import VitalityInput from "@/components/pokemon/VitalityInput.vue";
 import type {
   AbilitySlot,
+  BaseStatistics,
   CreatePokemonPayload,
   EffortValues,
   Form,
@@ -40,14 +44,15 @@ import type {
   PokemonGender,
   PokemonNature,
   PokemonSizePayload,
+  PokemonStatistics,
   PokemonType,
   Species,
   Variety,
 } from "@/types/pokemon";
 import type { Breadcrumb } from "@/types/components";
 import { LEVEL_MAXIMUM, LEVEL_MINIMUM } from "@/types/pokemon";
+import { calculateStatistics, getLevel, getMaximumExperience } from "@/helpers/pokemon";
 import { createPokemon } from "@/api/pokemon";
-import { getLevel, getMaximumExperience } from "@/helpers/pokemon";
 import { handleErrorKey } from "@/inject";
 import { roll } from "@/helpers/random";
 import { useForm } from "@/forms";
@@ -82,6 +87,9 @@ const url = ref<string>("");
 const variety = ref<Variety>();
 const vitality = ref<number>(0);
 
+const baseStatistics = computed<BaseStatistics>(
+  () => form.value?.baseStatistics ?? { hp: 0, attack: 0, defense: 0, specialAttack: 0, specialDefense: 0, speed: 0 },
+);
 const breadcrumb = computed<Breadcrumb>(() => ({
   to: { name: "PokemonList" },
   text: t("pokemon.title"),
@@ -101,6 +109,15 @@ const spriteUrl = computed<string>(() => {
   }
   return spriteUrl ?? "";
 });
+const statistics = computed<PokemonStatistics>(() =>
+  calculateStatistics(
+    baseStatistics.value,
+    individualValues.value,
+    effortValues.value,
+    level.value,
+    nature.value ?? { name: "", increasedStatistic: "HP", decreasedStatistic: "HP", favoriteFlavor: "Bitter", dislikedFlavor: "Bitter" },
+  ),
+);
 
 const { isValid, validate } = useForm();
 async function submit(): Promise<void> {
@@ -199,6 +216,15 @@ function onExperienceUpdate(value: number): void {
   experience.value = value;
   level.value = getLevel(growthRate.value, Math.max(experience.value, 0));
 }
+
+watch(
+  statistics,
+  (statistics) => {
+    vitality.value = statistics.hp.value;
+    stamina.value = statistics.hp.value;
+  },
+  { deep: true, immediate: true },
+);
 </script>
 
 <template>
@@ -253,16 +279,16 @@ function onExperienceUpdate(value: number): void {
         <ProgressTable :experience="experience" :growth-rate="growthRate" />
         <h2 class="h3">{{ t("pokemon.statistic.title") }}</h2>
         <h3 class="h5">{{ t("pokemon.statistic.base") }}</h3>
-        <BaseStatistics :statistics="form.baseStatistics" />
+        <BaseStatisticsView :statistics="baseStatistics" />
         <h3 class="h5">{{ t("pokemon.statistic.individual.title") }}</h3>
         <IndividualValuesEdit v-model="individualValues" />
         <h3 class="h5">{{ t("pokemon.statistic.effort.title") }}</h3>
         <EffortValuesEdit v-model="effortValues" />
         <h3 class="h5">{{ t("pokemon.statistic.total") }}</h3>
-        <!-- TODO(fpion): Total Statistics -->
+        <TotalStatisticsView :statistics="statistics" />
         <div class="row">
-          <!-- TODO(fpion): Vitality -->
-          <!-- TODO(fpion): Stamina -->
+          <VitalityInput class="col" :max="statistics.hp.value" v-model="vitality" />
+          <StaminaInput class="col" :max="statistics.hp.value" v-model="stamina" />
           <FriendshipInput class="col" v-model="friendship" />
         </div>
 
