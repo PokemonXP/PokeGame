@@ -5,6 +5,7 @@ import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 
 import AbilitySlotSelect from "@/components/pokemon/AbilitySlotSelect.vue";
+import AdminBreadcrumb from "@/components/admin/AdminBreadcrumb.vue";
 import BaseStatistics from "@/components/pokemon/BaseStatistics.vue";
 import EffortValuesEdit from "@/components/pokemon/EffortValuesEdit.vue";
 import ExperienceInput from "@/components/pokemon/ExperienceInput.vue";
@@ -43,6 +44,7 @@ import type {
   Species,
   Variety,
 } from "@/types/pokemon";
+import type { Breadcrumb } from "@/types/components";
 import { LEVEL_MAXIMUM, LEVEL_MINIMUM } from "@/types/pokemon";
 import { createPokemon } from "@/api/pokemon";
 import { getLevel, getMaximumExperience } from "@/helpers/pokemon";
@@ -80,6 +82,10 @@ const url = ref<string>("");
 const variety = ref<Variety>();
 const vitality = ref<number>(0);
 
+const breadcrumb = computed<Breadcrumb>(() => ({
+  to: { name: "PokemonList" },
+  text: t("pokemon.title"),
+}));
 const growthRate = computed<GrowthRate>(() => species.value?.growthRate ?? "MediumSlow");
 const isGenderDisabled = computed<boolean>(
   () => !variety.value || typeof variety.value.genderRatio !== "number" || variety.value.genderRatio === 0 || variety.value.genderRatio === 8,
@@ -198,6 +204,7 @@ function onExperienceUpdate(value: number): void {
 <template>
   <main class="container">
     <h1>{{ t("pokemon.create") }}</h1>
+    <AdminBreadcrumb :current="t('pokemon.create')" :parent="breadcrumb" />
     <form @submit.prevent="submit">
       <h2 class="h3">{{ t("pokemon.identification.title") }}</h2>
       <div class="row">
