@@ -42,8 +42,10 @@ internal class SpeciesPayload
       Map(x => x.CatchRate).Index(6).Default(0);
       Map(x => x.GrowthRate).Index(7).Default(default(GrowthRate));
 
-      Map(x => x.RegionalNumbers).Convert(args => (args.Row.GetField(8)?.Split('|') ?? [])
-        .Select(value =>
+      Map(x => x.RegionalNumbers).Convert(args =>
+      {
+        string? values = args.Row.GetField(8);
+        return string.IsNullOrWhiteSpace(values) ? [] : values.Split('|').Select(value =>
         {
           string[] values = value.Split(':');
           RegionalNumberPayload regionalNumber = new();
@@ -56,8 +58,8 @@ internal class SpeciesPayload
             }
           }
           return regionalNumber;
-        }).ToList()
-      );
+        }).ToList();
+      });
 
       Map(x => x.Url).Index(9);
       Map(x => x.Notes).Index(10);
