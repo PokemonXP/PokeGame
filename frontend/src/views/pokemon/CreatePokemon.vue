@@ -13,6 +13,7 @@ import GrowthRateSelect from "@/components/pokemon/GrowthRateSelect.vue";
 import IndividualValuesEdit from "@/components/pokemon/IndividualValuesEdit.vue";
 import LevelInput from "@/components/pokemon/LevelInput.vue";
 import NicknameInput from "@/components/pokemon/NicknameInput.vue";
+import SizeEdit from "@/components/pokemon/SizeEdit.vue";
 import SpeciesSelect from "@/components/pokemon/SpeciesSelect.vue";
 import TypeSelect from "@/components/pokemon/TypeSelect.vue";
 import UniqueNameInput from "@/components/pokemon/UniqueNameInput.vue";
@@ -25,6 +26,7 @@ import type {
   IndividualValues,
   Pokemon,
   PokemonGender,
+  PokemonSizePayload,
   PokemonType,
   Species,
   Variety,
@@ -47,6 +49,7 @@ const individualValues = ref<IndividualValues>({ hp: 0, attack: 0, defense: 0, s
 const isLoading = ref<boolean>(false);
 const level = ref<number>(1);
 const nickname = ref<string>("");
+const size = ref<PokemonSizePayload>({ height: 0, weight: 0 });
 const species = ref<Species>();
 const teraType = ref<PokemonType>();
 const uniqueName = ref<string>("");
@@ -74,7 +77,7 @@ async function submit(): Promise<void> {
           nickname: nickname.value,
           gender: gender.value,
           teraType: teraType.value,
-          size: { height: 0, weight: 0 }, // TODO(fpion): implement
+          size: size.value,
           abilitySlot: "Primary", // TODO(fpion): implement
           nature: "Adamant",
           experience: experience.value,
@@ -174,6 +177,8 @@ function onExperienceUpdate(value: number): void {
           <NicknameInput class="col" v-model="nickname" />
           <GenderSelect class="col" :disabled="isGenderDisabled" :required="isGenderRequired" v-model="gender" />
         </div>
+        <h2 class="h3">{{ t("pokemon.size.title") }}</h2>
+        <SizeEdit v-model="size" />
         <h2 class="h3">{{ t("pokemon.type.types") }}</h2>
         <div class="row">
           <TypeSelect class="col" disabled id="primary-type" label="pokemon.type.primary" :model-value="form.types.primary" />

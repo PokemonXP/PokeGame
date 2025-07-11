@@ -54,6 +54,25 @@
   "progress": {
     "title": "Progress"
   },
+  "size": {
+    "category": {
+      "label": "Category",
+      "options": {
+        "ExtraLarge": "Extra Large",
+        "ExtraSmall": "Extra Small",
+        "Large": "Large",
+        "Medium": "Medium",
+        "Small": "Small"
+      }
+    },
+    "height": {
+      "scalar": "Height Scalar"
+    },
+    "title": "Size",
+    "weight": {
+      "scalar": "Weight Scalar"
+    }
+  },
   "species": {
     "select": {
       "label": "Species",
