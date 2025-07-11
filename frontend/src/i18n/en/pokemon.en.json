@@ -1,9 +1,11 @@
 {
   "ability": {
-    "select": {
-      "label": "Ability",
-      "placeholder": "Select an ability"
-    }
+    "slots": {
+      "Hidden": "Hidden",
+      "Primary": "Primary",
+      "Secondary": "Secondary"
+    },
+    "title": "Ability"
   },
   "create": "Create Pokémon",
   "experience": {

@@ -3,7 +3,7 @@ import { TarButton } from "logitar-vue3-ui";
 import { computed, inject, ref } from "vue";
 import { useI18n } from "vue-i18n";
 
-import AbilitySelect from "@/components/pokemon/AbilitySelect.vue";
+import AbilitySlotSelect from "@/components/pokemon/AbilitySlotSelect.vue";
 import BaseStatistics from "@/components/pokemon/BaseStatistics.vue";
 import EffortValuesEdit from "@/components/pokemon/EffortValuesEdit.vue";
 import ExperienceInput from "@/components/pokemon/ExperienceInput.vue";
@@ -180,7 +180,6 @@ function onExperienceUpdate(value: number): void {
           <NicknameInput class="col" v-model="nickname" />
           <GenderSelect class="col" :disabled="isGenderDisabled" :required="isGenderRequired" v-model="gender" />
         </div>
-        <AbilitySelect :abilities="form.abilities" v-model="abilitySlot" />
         <h2 class="h3">{{ t("pokemon.type.types") }}</h2>
         <div class="row">
           <TypeSelect class="col" disabled id="primary-type" label="pokemon.type.primary" :model-value="form.types.primary" />
@@ -248,6 +247,9 @@ function onExperienceUpdate(value: number): void {
         <!-- TODO(fpion): Friendship -->
 
         <!-- TODO(fpion): HeldItem -->
+
+        <h2 class="h3">{{ t("pokemon.ability.title") }}</h2>
+        <AbilitySlotSelect :abilities="form.abilities" v-model="abilitySlot" />
 
         <!-- TODO(fpion): Moves -->
 
