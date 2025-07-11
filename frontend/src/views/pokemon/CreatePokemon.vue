@@ -161,11 +161,10 @@ function onFormSelected(selectedForm: Form | undefined): void {
         <h3 class="h5">{{ t("pokemon.statistic.effort.title") }}</h3>
         <EffortValuesEdit v-model="effortValues" />
         <h3 class="h5">{{ t("pokemon.statistic.total") }}</h3>
+        <!-- TODO(fpion): Total Statistics -->
         <!-- TODO(fpion): AbilitySlot -->
         <!-- TODO(fpion): Nature -->
         <!-- TODO(fpion): Experience -->
-        <!-- TODO(fpion): IndividualValues -->
-        <!-- TODO(fpion): EffortValues -->
         <!-- TODO(fpion): Vitality -->
         <!-- TODO(fpion): Stamina -->
         <!-- TODO(fpion): Friendship -->
