@@ -46,6 +46,7 @@ const { t } = useI18n();
         <a :href="`${cmsBaseUrl}/admin/contents?type=${ContentTypes.Forms}`" target="_blank" class="tile">
           <font-awesome-icon icon="fas fa-masks-theater" class="icon" /> Forms
         </a>
+        <RouterLink :to="{ name: 'PokemonList' }" class="tile"><font-awesome-icon icon="fas fa-dog" class="icon" /> Pokémon</RouterLink>
       </div>
     </div>
     <h3 class="text-center">Items</h3>
