@@ -30,6 +30,23 @@ export type BaseStatistics = {
   speed: number;
 };
 
+export type BattleItem = {
+  statisticChanges: StatisticChanges;
+  guardTurns: number;
+};
+
+export type Berry = {
+  healing: number;
+  isHealingPercentage: boolean;
+  statusCondition?: StatusCondition | null;
+  cureConfusion: boolean;
+  cureNonVolatileConditions: boolean;
+  powerPoints: number;
+  statisticChanges: StatisticChanges;
+  lowerEffortValues?: PokemonStatistic | null;
+  raiseFriendship: number;
+};
+
 export type CreatePokemonPayload = {
   id?: string;
   form: string;
@@ -113,6 +130,12 @@ export type FormYield = {
 
 export type GrowthRate = "Erratic" | "Slow" | "MediumSlow" | "MediumFast" | "Fast" | "Fluctuating";
 
+export type Healing = {
+  value: number;
+  isPercentage: boolean;
+  revive: boolean;
+};
+
 export type IndividualValues = {
   hp: number;
   attack: number;
@@ -128,7 +151,38 @@ export type InflictedStatus = {
 };
 
 export type Item = Aggregate & {
-  // TODO(fpion): implement
+  uniqueName: string;
+  displayName?: string | null;
+  description?: string | null;
+  price: number;
+  category: ItemCategory;
+  battleItem?: BattleItem | null;
+  berry?: Berry | null;
+  medicine?: Medicine | null;
+  pokeBall?: PokeBall | null;
+  technicalMachine?: TechnicalMachine | null;
+  sprite?: string | null;
+  url?: string | null;
+  notes?: string | null;
+};
+
+export type ItemCategory =
+  | "BattleItem"
+  | "Berry"
+  | "KeyItem"
+  | "Medicine"
+  | "OtherItem"
+  | "PicnicItem"
+  | "PokeBall"
+  | "TechnicalMachine"
+  | "TechnicalMachineMaterial"
+  | "Treasure";
+
+export type Medicine = {
+  isHerbal: boolean;
+  healing?: Healing;
+  status?: StatusHealing;
+  powerPoints?: PowerPointRestore;
 };
 
 export type Move = Aggregate & {
@@ -149,6 +203,15 @@ export type Move = Aggregate & {
 
 export type MoveCategory = "Status" | "Physical" | "Special";
 
+export type PokeBall = {
+  catchMultiplier: number;
+  heal: boolean;
+  baseFriendship: number;
+  friendshipMultiplier: number;
+};
+
+export type OwnershipKind = "Caught" | "Received";
+
 export type Pokemon = Aggregate & {
   form: Form;
   uniqueName: string;
@@ -163,24 +226,33 @@ export type Pokemon = Aggregate & {
   experience: number;
   maximumExperience: number;
   toNextLevel: number;
-  // PokemonStatisticsModel Statistics { get; set; } = new();
+  statistics: PokemonStatistics;
   vitality: number;
   stamina: number;
   statusCondition?: StatusCondition | null;
   characteristic?: string | null;
   friendship: number;
   heldItem?: Item | null;
-  // List<PokemonMoveModel> Moves { get; set; } = [];
-  // TrainerModel? OriginalTrainer { get; set; }
-  // PokemonOwnershipModel? Ownership { get; set; }
+  moves: PokemonMove[];
+  originalTrainer?: Trainer | null;
+  ownership?: PokemonOwnership | null;
   sprite?: string | null;
   urlUtils?: string | null;
   notes?: string | null;
-}; // TODO(fpion): complete
+};
 
 export type PokemonCategory = "Standard" | "Baby" | "Legendary" | "Mythical";
 
 export type PokemonGender = "Female" | "Male";
+
+export type PokemonMove = {
+  move: Move;
+  position?: number | null;
+  powerPoints: PowerPoints;
+  isMastered: boolean;
+  level: number;
+  technicalMachine: boolean;
+};
 
 export type PokemonNature = {
   name: string;
@@ -188,6 +260,16 @@ export type PokemonNature = {
   decreasedStatistic?: PokemonStatistic | null;
   favoriteFlavor?: Flavor | null;
   dislikedFlavor?: Flavor | null;
+};
+
+export type PokemonOwnership = {
+  kind: OwnershipKind;
+  trainer: Trainer;
+  pokeBall: Item;
+  level: number;
+  location: string;
+  metOn: string;
+  description?: string | null;
 };
 
 export type PokemonSize = {
@@ -204,6 +286,15 @@ export type PokemonSizePayload = {
 };
 
 export type PokemonStatistic = "HP" | "Attack" | "Defense" | "SpecialAttack" | "SpecialDefense" | "Speed";
+
+export type PokemonStatistics = {
+  hp: StatisticValues;
+  attack: StatisticValues;
+  defense: StatisticValues;
+  specialAttack: StatisticValues;
+  specialDefense: StatisticValues;
+  speed: StatisticValues;
+};
 
 export type PokemonType =
   | "Normal"
@@ -224,6 +315,18 @@ export type PokemonType =
   | "Rock"
   | "Steel"
   | "Water";
+
+export type PowerPointRestore = {
+  value: number;
+  isPercentage: boolean;
+  allMoves: boolean;
+};
+
+export type PowerPoints = {
+  current: number;
+  maximum: number;
+  reference: number;
+};
 
 export type Region = Aggregate & {
   uniqueName: string;
@@ -264,7 +367,38 @@ export type StatisticChanges = {
   critical: number;
 };
 
+export type StatisticValues = {
+  base: number;
+  individualValue: number;
+  effortValue: number;
+  value: number;
+};
+
 export type StatusCondition = "Burn" | "Freeze" | "Paralysis" | "Poison" | "Sleep";
+
+export type StatusHealing = {
+  condition?: StatusCondition | null;
+  all: boolean;
+};
+
+export type TechnicalMachine = {
+  move: Move;
+};
+
+export type Trainer = {
+  uniqueName: string;
+  displayName?: string | null;
+  description?: string | null;
+  gender: TrainerGender;
+  license: string;
+  money: number;
+  userId?: string | null;
+  sprite?: string | null;
+  url?: string | null;
+  notes?: string | null;
+};
+
+export type TrainerGender = "Female" | "Male";
 
 export type Variety = Aggregate & {
   species: Species;

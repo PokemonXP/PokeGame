@@ -14,8 +14,11 @@ import GenderSelect from "@/components/pokemon/GenderSelect.vue";
 import GrowthRateSelect from "@/components/pokemon/GrowthRateSelect.vue";
 import IndividualValuesEdit from "@/components/pokemon/IndividualValuesEdit.vue";
 import LevelInput from "@/components/pokemon/LevelInput.vue";
+import NatureSelect from "@/components/pokemon/NatureSelect.vue";
+import NatureTable from "@/components/pokemon/NatureTable.vue";
 import NicknameInput from "@/components/pokemon/NicknameInput.vue";
 import NotesTextarea from "@/components/pokemon/NotesTextarea.vue";
+import ProgressTable from "@/components/pokemon/ProgressTable.vue";
 import SizeEdit from "@/components/pokemon/SizeEdit.vue";
 import SpeciesSelect from "@/components/pokemon/SpeciesSelect.vue";
 import TypeSelect from "@/components/pokemon/TypeSelect.vue";
@@ -50,7 +53,7 @@ import { useToastStore } from "@/stores/toast";
 const handleError = inject(handleErrorKey) as (e: unknown) => void;
 const router = useRouter();
 const toasts = useToastStore();
-const { n, t } = useI18n();
+const { t } = useI18n();
 
 const abilitySlot = ref<AbilitySlot>("Primary");
 const effortValues = ref<EffortValues>({ hp: 0, attack: 0, defense: 0, specialAttack: 0, specialDefense: 0, speed: 0 });
@@ -76,7 +79,6 @@ const url = ref<string>("");
 const variety = ref<Variety>();
 const vitality = ref<number>(0);
 
-const experiencePercentage = computed<number>(() => (experience.value - minimumExperience.value) / (maximumExperience.value - minimumExperience.value));
 const growthRate = computed<GrowthRate>(() => species.value?.growthRate ?? "MediumSlow");
 const isGenderDisabled = computed<boolean>(
   () => !variety.value || typeof variety.value.genderRatio !== "number" || variety.value.genderRatio === 0 || variety.value.genderRatio === 8,
@@ -179,7 +181,7 @@ function onLevelUpdate(value: number): void {
 }
 function onExperienceUpdate(value: number): void {
   experience.value = value;
-  level.value = getLevel(growthRate.value, experience.value);
+  level.value = getLevel(growthRate.value, Math.max(experience.value, 0));
 }
 </script>
 
@@ -231,24 +233,7 @@ function onExperienceUpdate(value: number): void {
           <ExperienceInput class="col" :model-value="experience" @update:model-value="onExperienceUpdate" />
         </div>
         <ExperienceTableModal :growth-rate="growthRate" />
-        <table class="table table-striped">
-          <thead>
-            <tr>
-              <th scope="col">{{ t("pokemon.experience.minimum") }}</th>
-              <th scope="col">{{ t("pokemon.experience.maximum") }}</th>
-              <th scope="col">{{ t("pokemon.experience.next") }}</th>
-              <th scope="col">{{ t("pokemon.experience.percentage") }}</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>{{ minimumExperience }}</td>
-              <td>{{ maximumExperience }}</td>
-              <td>{{ maximumExperience - experience }}</td>
-              <td>{{ n(experiencePercentage, "integer_percent") }}</td>
-            </tr>
-          </tbody>
-        </table>
+        <ProgressTable :experience="experience" :growth-rate="growthRate" />
         <h2 class="h3">{{ t("pokemon.statistic.title") }}</h2>
         <h3 class="h5">{{ t("pokemon.statistic.base") }}</h3>
         <BaseStatistics :statistics="form.baseStatistics" />
@@ -261,7 +246,9 @@ function onExperienceUpdate(value: number): void {
         <!-- TODO(fpion): Vitality -->
         <!-- TODO(fpion): Stamina -->
 
-        <!-- TODO(fpion): Nature -->
+        <h2 class="h3">{{ t("pokemon.nature.select.label") }}</h2>
+        <NatureSelect :model-value="nature?.name" @selected="nature = $event" />
+        <NatureTable v-if="nature" :nature="nature" />
 
         <!-- TODO(fpion): Friendship -->
 

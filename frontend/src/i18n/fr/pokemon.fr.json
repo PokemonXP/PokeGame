@@ -20,6 +20,15 @@
       "title": "Experience Table"
     }
   },
+  "flavor": {
+    "options": {
+      "Bitter": "Bitter",
+      "Dry": "Dry",
+      "Sour": "Sour",
+      "Spicy": "Spicy",
+      "Sweet": "Sweet"
+    }
+  },
   "form": {
     "select": {
       "default": "Default",
@@ -59,6 +68,12 @@
   },
   "metadata": {
     "title": "Metadata"
+  },
+  "nature": {
+    "select": {
+      "label": "Nature",
+      "placeholder": "Select a nature"
+    }
   },
   "nickname": {
     "label": "Nickname"
