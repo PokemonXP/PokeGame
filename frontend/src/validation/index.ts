@@ -2,6 +2,7 @@ import { Validator, rules, type RuleExecutionResult } from "logitar-validation";
 
 const validator = new Validator({ treatWarningsAsErrors: true });
 
+validator.setRule("allowedCharacters", rules.allowedCharacters);
 validator.setRule("maximumLength", rules.maximumLength);
 validator.setRule("maximumValue", rules.maximumValue);
 validator.setRule("minimumLength", rules.minimumLength);
