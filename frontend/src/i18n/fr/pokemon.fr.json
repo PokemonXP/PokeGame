@@ -1,9 +1,1 @@
-{
-  "create": "Créer un Pokémon",
-  "nickname": {
-    "label": "Surnom"
-  },
-  "uniqueName": {
-    "label": "Nom unique"
-  }
-}
+{}

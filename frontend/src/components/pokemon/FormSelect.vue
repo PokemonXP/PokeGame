@@ -96,7 +96,6 @@ watch(
         <font-awesome-icon class="me-1" icon="fas fa-check" />
         {{ t("pokemon.form.select.default") }}
       </span>
-      <slot name="append"></slot>
     </template>
   </FormSelect>
 </template>

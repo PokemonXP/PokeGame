@@ -8,6 +8,9 @@ export const INDIVIDUAL_VALUE_MAXIMUM: number = 31;
 export const INDIVIDUAL_VALUE_MINIMUM: number = 0;
 export const INDIVIDUAL_VALUE_LIMIT: number = 6 * INDIVIDUAL_VALUE_MAXIMUM;
 
+export const LEVEL_MAXIMUM: number = 100;
+export const LEVEL_MINIMUM: number = 1;
+
 export type Ability = Aggregate & {
   uniqueName: string;
   displayName?: string | null;

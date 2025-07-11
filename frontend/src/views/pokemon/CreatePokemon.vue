@@ -5,38 +5,61 @@ import { useI18n } from "vue-i18n";
 
 import BaseStatistics from "@/components/pokemon/BaseStatistics.vue";
 import EffortValuesEdit from "@/components/pokemon/EffortValuesEdit.vue";
+import ExperienceInput from "@/components/pokemon/ExperienceInput.vue";
+import ExperienceTableModal from "@/components/pokemon/ExperienceTableModal.vue";
 import FormSelect from "@/components/pokemon/FormSelect.vue";
 import GenderSelect from "@/components/pokemon/GenderSelect.vue";
+import GrowthRateSelect from "@/components/pokemon/GrowthRateSelect.vue";
 import IndividualValuesEdit from "@/components/pokemon/IndividualValuesEdit.vue";
+import LevelInput from "@/components/pokemon/LevelInput.vue";
 import NicknameInput from "@/components/pokemon/NicknameInput.vue";
 import SpeciesSelect from "@/components/pokemon/SpeciesSelect.vue";
 import TypeSelect from "@/components/pokemon/TypeSelect.vue";
 import UniqueNameInput from "@/components/pokemon/UniqueNameInput.vue";
 import VarietySelect from "@/components/pokemon/VarietySelect.vue";
-import type { CreatePokemonPayload, EffortValues, Form, IndividualValues, Pokemon, PokemonGender, PokemonType, Species, Variety } from "@/types/pokemon";
+import type {
+  CreatePokemonPayload,
+  EffortValues,
+  Form,
+  GrowthRate,
+  IndividualValues,
+  Pokemon,
+  PokemonGender,
+  PokemonType,
+  Species,
+  Variety,
+} from "@/types/pokemon";
+import { LEVEL_MAXIMUM, LEVEL_MINIMUM } from "@/types/pokemon";
 import { createPokemon } from "@/api/pokemon";
+import { getLevel, getMaximumExperience } from "@/helpers/pokemon";
 import { handleErrorKey } from "@/inject";
 import { roll } from "@/helpers/random";
 import { useForm } from "@/forms";
 
 const handleError = inject(handleErrorKey) as (e: unknown) => void;
-const { t } = useI18n();
+const { n, t } = useI18n();
 
+const experience = ref<number>(0);
 const form = ref<Form>();
 const gender = ref<PokemonGender>();
 const effortValues = ref<EffortValues>({ hp: 0, attack: 0, defense: 0, specialAttack: 0, specialDefense: 0, speed: 0 });
 const individualValues = ref<IndividualValues>({ hp: 0, attack: 0, defense: 0, specialAttack: 0, specialDefense: 0, speed: 0 });
 const isLoading = ref<boolean>(false);
+const level = ref<number>(1);
 const nickname = ref<string>("");
 const species = ref<Species>();
 const teraType = ref<PokemonType>();
 const uniqueName = ref<string>("");
 const variety = ref<Variety>();
 
+const experiencePercentage = computed<number>(() => (experience.value - minimumExperience.value) / (maximumExperience.value - minimumExperience.value));
+const growthRate = computed<GrowthRate>(() => species.value?.growthRate ?? "MediumSlow");
 const isGenderDisabled = computed<boolean>(
   () => !variety.value || typeof variety.value.genderRatio !== "number" || variety.value.genderRatio === 0 || variety.value.genderRatio === 8,
 );
 const isGenderRequired = computed<boolean>(() => Boolean(variety.value && typeof variety.value.genderRatio === "number"));
+const maximumExperience = computed<number>(() => getMaximumExperience(growthRate.value, Math.min(Math.max(level.value, LEVEL_MINIMUM), LEVEL_MAXIMUM)));
+const minimumExperience = computed<number>(() => (level.value <= 1 ? 0 : getMaximumExperience(growthRate.value, Math.min(level.value - 1, LEVEL_MAXIMUM))));
 
 const { isValid, validate } = useForm();
 async function submit(): Promise<void> {
@@ -54,7 +77,7 @@ async function submit(): Promise<void> {
           size: { height: 0, weight: 0 }, // TODO(fpion): implement
           abilitySlot: "Primary", // TODO(fpion): implement
           nature: "Adamant",
-          experience: 0, // TODO(fpion): implement
+          experience: experience.value,
           individualValues: individualValues.value,
           effortValues: effortValues.value,
           vitality: 0, // TODO(fpion): implement
@@ -122,6 +145,17 @@ function onFormSelected(selectedForm: Form | undefined): void {
     }
   }
 }
+
+function onLevelUpdate(value: number): void {
+  level.value = value;
+  if (experience.value < minimumExperience.value || experience.value >= maximumExperience.value) {
+    experience.value = minimumExperience.value;
+  }
+}
+function onExperienceUpdate(value: number): void {
+  experience.value = value;
+  level.value = getLevel(growthRate.value, experience.value);
+}
 </script>
 
 <template>
@@ -153,6 +187,41 @@ function onFormSelected(selectedForm: Form | undefined): void {
           />
           <TypeSelect class="col" id="tera-type" label="pokemon.type.tera" required v-model="teraType" />
         </div>
+        <h2 class="h3">{{ t("pokemon.progress.title") }}</h2>
+        <div class="row">
+          <GrowthRateSelect class="col" :model-value="growthRate">
+            <template #append>
+              <TarButton
+                icon="fas fa-table"
+                :text="t('pokemon.experience.table.open')"
+                variant="info"
+                data-bs-toggle="modal"
+                data-bs-target="#experience-table"
+              />
+            </template>
+          </GrowthRateSelect>
+          <LevelInput class="col" :model-value="level" @update:model-value="onLevelUpdate" />
+          <ExperienceInput class="col" :model-value="experience" @update:model-value="onExperienceUpdate" />
+        </div>
+        <ExperienceTableModal :growth-rate="growthRate" />
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th scope="col">{{ t("pokemon.experience.minimum") }}</th>
+              <th scope="col">{{ t("pokemon.experience.maximum") }}</th>
+              <th scope="col">{{ t("pokemon.experience.next") }}</th>
+              <th scope="col">{{ t("pokemon.experience.percentage") }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>{{ minimumExperience }}</td>
+              <td>{{ maximumExperience }}</td>
+              <td>{{ maximumExperience - experience }}</td>
+              <td>{{ n(experiencePercentage, "integer_percent") }}</td>
+            </tr>
+          </tbody>
+        </table>
         <h2 class="h3">{{ t("pokemon.statistic.title") }}</h2>
         <h3 class="h5">{{ t("pokemon.statistic.base") }}</h3>
         <BaseStatistics :statistics="form.baseStatistics" />
@@ -164,7 +233,6 @@ function onFormSelected(selectedForm: Form | undefined): void {
         <!-- TODO(fpion): Total Statistics -->
         <!-- TODO(fpion): AbilitySlot -->
         <!-- TODO(fpion): Nature -->
-        <!-- TODO(fpion): Experience -->
         <!-- TODO(fpion): Vitality -->
         <!-- TODO(fpion): Stamina -->
         <!-- TODO(fpion): Friendship -->

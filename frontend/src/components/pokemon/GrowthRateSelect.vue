@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import type { SelectOption } from "logitar-vue3-ui";
 import { arrayUtils } from "logitar-js";
+import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 
 import FormSelect from "@/components/forms/FormSelect.vue";
-import { computed } from "vue";
 
 const { orderBy } = arrayUtils;
 const { rt, t, tm } = useI18n();
 
-const props = withDefaults(
+withDefaults(
   defineProps<{
     disabled?: boolean | string;
     id?: string;
@@ -19,24 +19,16 @@ const props = withDefaults(
     required?: boolean | string;
   }>(),
   {
-    id: "gender",
-    label: "pokemon.gender.select.label",
-    placeholder: "pokemon.gender.select.placeholder",
+    disabled: true,
+    id: "growth-rate",
+    label: "pokemon.growthRate.select.label",
+    placeholder: "pokemon.growthRate.select.placeholder",
   },
 );
 
-const icon = computed<string>(() => {
-  switch (props.modelValue) {
-    case "Female":
-      return "fas fa-venus";
-    case "Male":
-      return "fas fa-mars";
-  }
-  return "fas fa-question";
-});
 const options = computed<SelectOption[]>(() =>
   orderBy(
-    Object.entries(tm(rt("pokemon.gender.select.options"))).map(([value, text]) => ({ text, value }) as SelectOption),
+    Object.entries(tm(rt("pokemon.growthRate.select.options"))).map(([value, text]) => ({ text, value }) as SelectOption),
     "text",
   ),
 );
@@ -63,9 +55,7 @@ function onModelValueUpdate(value: string) {
     @update:model-value="onModelValueUpdate"
   >
     <template #append>
-      <span class="input-group-text">
-        <font-awesome-icon :icon="icon" />
-      </span>
+      <slot name="append"></slot>
     </template>
   </FormSelect>
 </template>

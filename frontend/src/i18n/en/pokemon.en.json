@@ -1,5 +1,16 @@
 {
   "create": "Create Pokémon",
+  "experience": {
+    "label": "Experience",
+    "maximum": "Maximum Experience",
+    "minimum": "Minimum Experience",
+    "next": "To Next Level",
+    "percentage": "Percentage",
+    "table": {
+      "open": "Table",
+      "title": "Experience Table"
+    }
+  },
   "form": {
     "select": {
       "default": "Default",
@@ -17,11 +28,31 @@
       "placeholder": "Unknown"
     }
   },
+  "growthRate": {
+    "select": {
+      "label": "Growth Rate",
+      "options": {
+        "Erratic": "Erratic",
+        "Fast": "Fast",
+        "Fluctuating": "Fluctuating",
+        "MediumFast": "Medium Fast",
+        "MediumSlow": "Medium Slow",
+        "Slow": "Slow"
+      },
+      "placeholder": "Select a growth rate"
+    }
+  },
   "identification": {
     "title": "Identification"
   },
+  "level": {
+    "label": "Level"
+  },
   "nickname": {
     "label": "Nickname"
+  },
+  "progress": {
+    "title": "Progress"
   },
   "species": {
     "select": {
