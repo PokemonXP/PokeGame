@@ -3,6 +3,7 @@ import { TarButton } from "logitar-vue3-ui";
 import { computed, inject, ref } from "vue";
 import { useI18n } from "vue-i18n";
 
+import AbilitySelect from "@/components/pokemon/AbilitySelect.vue";
 import BaseStatistics from "@/components/pokemon/BaseStatistics.vue";
 import EffortValuesEdit from "@/components/pokemon/EffortValuesEdit.vue";
 import ExperienceInput from "@/components/pokemon/ExperienceInput.vue";
@@ -19,6 +20,7 @@ import TypeSelect from "@/components/pokemon/TypeSelect.vue";
 import UniqueNameInput from "@/components/pokemon/UniqueNameInput.vue";
 import VarietySelect from "@/components/pokemon/VarietySelect.vue";
 import type {
+  AbilitySlot,
   CreatePokemonPayload,
   EffortValues,
   Form,
@@ -41,6 +43,7 @@ import { useForm } from "@/forms";
 const handleError = inject(handleErrorKey) as (e: unknown) => void;
 const { n, t } = useI18n();
 
+const abilitySlot = ref<AbilitySlot>("Primary");
 const experience = ref<number>(0);
 const form = ref<Form>();
 const gender = ref<PokemonGender>();
@@ -78,7 +81,7 @@ async function submit(): Promise<void> {
           gender: gender.value,
           teraType: teraType.value,
           size: size.value,
-          abilitySlot: "Primary", // TODO(fpion): implement
+          abilitySlot: abilitySlot.value,
           nature: "Adamant",
           experience: experience.value,
           individualValues: individualValues.value,
@@ -177,8 +180,7 @@ function onExperienceUpdate(value: number): void {
           <NicknameInput class="col" v-model="nickname" />
           <GenderSelect class="col" :disabled="isGenderDisabled" :required="isGenderRequired" v-model="gender" />
         </div>
-        <h2 class="h3">{{ t("pokemon.size.title") }}</h2>
-        <SizeEdit v-model="size" />
+        <AbilitySelect :abilities="form.abilities" v-model="abilitySlot" />
         <h2 class="h3">{{ t("pokemon.type.types") }}</h2>
         <div class="row">
           <TypeSelect class="col" disabled id="primary-type" label="pokemon.type.primary" :model-value="form.types.primary" />
@@ -192,6 +194,8 @@ function onExperienceUpdate(value: number): void {
           />
           <TypeSelect class="col" id="tera-type" label="pokemon.type.tera" required v-model="teraType" />
         </div>
+        <h2 class="h3">{{ t("pokemon.size.title") }}</h2>
+        <SizeEdit v-model="size" />
         <h2 class="h3">{{ t("pokemon.progress.title") }}</h2>
         <div class="row">
           <GrowthRateSelect class="col" :model-value="growthRate">
@@ -236,14 +240,19 @@ function onExperienceUpdate(value: number): void {
         <EffortValuesEdit v-model="effortValues" />
         <h3 class="h5">{{ t("pokemon.statistic.total") }}</h3>
         <!-- TODO(fpion): Total Statistics -->
-        <!-- TODO(fpion): AbilitySlot -->
-        <!-- TODO(fpion): Nature -->
         <!-- TODO(fpion): Vitality -->
         <!-- TODO(fpion): Stamina -->
+
+        <!-- TODO(fpion): Nature -->
+
         <!-- TODO(fpion): Friendship -->
+
         <!-- TODO(fpion): HeldItem -->
+
         <!-- TODO(fpion): Moves -->
+
         <!-- TODO(fpion): Sprite -->
+
         <!-- TODO(fpion): Url -->
         <!-- TODO(fpion): Notes -->
         <div class="mb-3">

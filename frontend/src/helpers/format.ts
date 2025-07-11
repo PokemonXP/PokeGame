@@ -1,4 +1,8 @@
-import type { Form, Species, Variety } from "@/types/pokemon";
+import type { Ability, Form, Species, Variety } from "@/types/pokemon";
+
+export function formatAbility(ability: Ability): string {
+  return ability.displayName ? `${ability.displayName} (${ability.uniqueName})` : ability.uniqueName;
+}
 
 export function formatForm(form: Form): string {
   return form.displayName ? `${form.displayName} (${form.uniqueName})` : form.uniqueName;

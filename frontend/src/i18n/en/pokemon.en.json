@@ -1,4 +1,10 @@
 {
+  "ability": {
+    "select": {
+      "label": "Ability",
+      "placeholder": "Select an ability"
+    }
+  },
   "create": "Create Pokémon",
   "experience": {
     "label": "Experience",
