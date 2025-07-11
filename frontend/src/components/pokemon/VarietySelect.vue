@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { SelectOption } from "logitar-vue3-ui";
+import { arrayUtils } from "logitar-js";
 import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 
@@ -7,8 +8,10 @@ import FormSelect from "@/components/forms/FormSelect.vue";
 import type { SearchResults } from "@/types/search";
 import type { Species, Variety } from "@/types/pokemon";
 import { formatVariety } from "@/helpers/format";
-import { searchVarieties } from "@/api/varieties";
+import { searchVarieties } from "@/api/pokemon/varieties";
+import type { SearchVarietiesPayload } from "@/types/pokemon/varieties";
 
+const { orderBy } = arrayUtils;
 const { t } = useI18n();
 
 const props = withDefaults(
@@ -38,10 +41,13 @@ const isDefault = computed<boolean>(() => {
   return false;
 });
 const options = computed<SelectOption[]>(() =>
-  varieties.value.map((variety) => ({
-    text: formatVariety(variety),
-    value: variety.id,
-  })),
+  orderBy(
+    varieties.value.map((variety) => ({
+      text: formatVariety(variety),
+      value: variety.id,
+    })),
+    "text",
+  ),
 );
 
 const emit = defineEmits<{
@@ -62,7 +68,14 @@ watch(
   async (species) => {
     if (species) {
       try {
-        const results: SearchResults<Variety> = await searchVarieties(species.id);
+        const payload: SearchVarietiesPayload = {
+          ids: [],
+          search: { terms: [], operator: "And" },
+          sort: [],
+          limit: 0,
+          skip: 0,
+        };
+        const results: SearchResults<Variety> = await searchVarieties(species.id, payload);
         varieties.value = [...results.items];
 
         const defaultVariety: Variety | undefined = varieties.value.find(({ isDefault }) => isDefault);

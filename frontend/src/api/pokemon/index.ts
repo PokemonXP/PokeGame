@@ -1,7 +1,7 @@
 import { urlUtils } from "logitar-js";
 
 import type { CreatePokemonPayload, Pokemon } from "@/types/pokemon";
-import { get, post } from ".";
+import { get, post } from "..";
 
 export async function createPokemon(payload: CreatePokemonPayload): Promise<Pokemon> {
   const url: string = new urlUtils.UrlBuilder({ path: "/pokemon" }).buildRelative();

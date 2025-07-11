@@ -5,11 +5,10 @@ import { computed, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 
 import FormSelect from "@/components/forms/FormSelect.vue";
+import type { Item, SearchItemsPayload } from "@/types/items";
 import type { SearchResults } from "@/types/search";
-import type { Species } from "@/types/pokemon";
-import { formatSpecies } from "@/helpers/format";
-import { searchSpecies } from "@/api/pokemon/species";
-import type { SearchSpeciesPayload } from "@/types/pokemon/species";
+import { formatItem } from "@/helpers/format";
+import { searchItems } from "@/api/items";
 
 const { orderBy } = arrayUtils;
 const { t } = useI18n();
@@ -20,23 +19,21 @@ withDefaults(
     label?: string;
     modelValue?: string;
     placeholder?: string;
-    required?: boolean | string;
   }>(),
   {
-    id: "species",
-    label: "pokemon.species.select.label",
-    placeholder: "pokemon.species.select.placeholder",
-    required: true,
+    id: "item",
+    label: "pokemon.item.select.label",
+    placeholder: "pokemon.item.select.placeholder",
   },
 );
 
-const species = ref<Species[]>([]);
+const items = ref<Item[]>([]);
 
 const options = computed<SelectOption[]>(() =>
   orderBy(
-    species.value.map((species) => ({
-      text: formatSpecies(species),
-      value: species.id,
+    items.value.map((item) => ({
+      text: formatItem(item),
+      value: item.id,
     })),
     "text",
   ),
@@ -45,27 +42,27 @@ const options = computed<SelectOption[]>(() =>
 const emit = defineEmits<{
   (e: "error", error: unknown): void;
   (e: "model-value:update", id: string): void;
-  (e: "selected", species: Species | undefined): void;
+  (e: "selected", item: Item | undefined): void;
 }>();
 
 function onModelValueUpdate(id: string): void {
   emit("model-value:update", id);
 
-  const selectedSpecies: Species | undefined = species.value.find((species) => species.id === id);
-  emit("selected", selectedSpecies);
+  const selectedItem: Item | undefined = items.value.find((item) => item.id === id);
+  emit("selected", selectedItem);
 }
 
 onMounted(async () => {
   try {
-    const payload: SearchSpeciesPayload = {
+    const payload: SearchItemsPayload = {
       ids: [],
       search: { terms: [], operator: "And" },
       sort: [],
       limit: 0,
       skip: 0,
     };
-    const results: SearchResults<Species> = await searchSpecies(payload);
-    species.value = [...results.items];
+    const results: SearchResults<Item> = await searchItems(payload);
+    items.value = [...results.items];
   } catch (e: unknown) {
     emit("error", e);
   }
@@ -80,7 +77,6 @@ onMounted(async () => {
     :model-value="modelValue"
     :options="options"
     :placeholder="t(placeholder)"
-    :required="required"
     @update:model-value="onModelValueUpdate"
   />
 </template>

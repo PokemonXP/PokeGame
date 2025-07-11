@@ -1,14 +1,17 @@
 <script setup lang="ts">
 import type { SelectOption } from "logitar-vue3-ui";
+import { arrayUtils } from "logitar-js";
 import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 
 import FormSelect from "@/components/forms/FormSelect.vue";
-import type { SearchResults } from "@/types/search";
 import type { Form, Variety } from "@/types/pokemon";
+import type { SearchFormsPayload } from "@/types/pokemon/forms";
+import type { SearchResults } from "@/types/search";
 import { formatForm } from "@/helpers/format";
-import { searchForms } from "@/api/forms";
+import { searchForms } from "@/api/pokemon/forms";
 
+const { orderBy } = arrayUtils;
 const { t } = useI18n();
 
 const props = withDefaults(
@@ -38,10 +41,13 @@ const isDefault = computed<boolean>(() => {
   return false;
 });
 const options = computed<SelectOption[]>(() =>
-  forms.value.map((form) => ({
-    text: formatForm(form),
-    value: form.id,
-  })),
+  orderBy(
+    forms.value.map((form) => ({
+      text: formatForm(form),
+      value: form.id,
+    })),
+    "text",
+  ),
 );
 
 const emit = defineEmits<{
@@ -62,7 +68,14 @@ watch(
   async (variety) => {
     if (variety) {
       try {
-        const results: SearchResults<Form> = await searchForms(variety.id);
+        const payload: SearchFormsPayload = {
+          ids: [],
+          search: { terms: [], operator: "And" },
+          sort: [],
+          limit: 0,
+          skip: 0,
+        };
+        const results: SearchResults<Form> = await searchForms(variety.id, payload);
         forms.value = [...results.items];
 
         const defaultForm: Form | undefined = forms.value.find(({ isDefault }) => isDefault);
