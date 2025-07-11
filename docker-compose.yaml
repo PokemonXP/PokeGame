@@ -38,6 +38,25 @@ services:
       MONGOCONNSTR_Pokemon: mongodb://pokegame:VQf5kLvtyEcb8FR7@pokegame_mongo:27017/
       POSTGRESQLCONNSTR_Pokemon: User ID=postgres;Password=V4zf8BvAy6cX2bjD;Host=pokegame_postgres;Port=5432;Database=pokegame;
     ports:
+      - 8892:8080
+
+  pokegame_api:
+    build:
+      context: ./backend
+      dockerfile: /src/PokeGame.Api/Dockerfile
+    image: pokegame_api
+    container_name: PokeGame_api
+    depends_on:
+      - pokegame_cms
+      - pokegame_mongo
+      - pokegame_postgres
+    restart: unless-stopped
+    environment:
+      ASPNETCORE_Environment: Development
+      KRAKENAR_BASE_URL: http://pokegame_cms:8080
+      MONGOCONNSTR_Pokemon: mongodb://pokegame:VQf5kLvtyEcb8FR7@pokegame_mongo:27017/
+      POSTGRESQLCONNSTR_Pokemon: User ID=postgres;Password=V4zf8BvAy6cX2bjD;Host=pokegame_postgres;Port=5432;Database=pokegame;
+    ports:
       - 8092:8080
 
 volumes:

@@ -1,0 +1,200 @@
+{
+  "ability": {
+    "slots": {
+      "Hidden": "Hidden",
+      "Primary": "Primary",
+      "Secondary": "Secondary"
+    },
+    "title": "Ability"
+  },
+  "create": "Create Pokémon",
+  "created": "The Pokémon has been created.",
+  "experience": {
+    "label": "Experience",
+    "maximum": "Maximum Experience",
+    "minimum": "Minimum Experience",
+    "next": "To Next Level",
+    "percentage": "Percentage",
+    "table": {
+      "open": "Table",
+      "title": "Experience Table"
+    }
+  },
+  "flavor": {
+    "options": {
+      "Bitter": "Bitter",
+      "Dry": "Dry",
+      "Sour": "Sour",
+      "Spicy": "Spicy",
+      "Sweet": "Sweet"
+    }
+  },
+  "form": {
+    "select": {
+      "default": "Default",
+      "label": "Form",
+      "placeholder": "Select a Pokémon form"
+    }
+  },
+  "friendship": {
+    "label": "Friendship"
+  },
+  "gender": {
+    "select": {
+      "label": "Gender",
+      "options": {
+        "Female": "Female",
+        "Male": "Male"
+      },
+      "placeholder": "Unknown"
+    }
+  },
+  "growthRate": {
+    "select": {
+      "label": "Growth Rate",
+      "options": {
+        "Erratic": "Erratic",
+        "Fast": "Fast",
+        "Fluctuating": "Fluctuating",
+        "MediumFast": "Medium Fast",
+        "MediumSlow": "Medium Slow",
+        "Slow": "Slow"
+      },
+      "placeholder": "Select a growth rate"
+    }
+  },
+  "identification": {
+    "title": "Identification"
+  },
+  "level": {
+    "label": "Level"
+  },
+  "metadata": {
+    "title": "Metadata"
+  },
+  "nature": {
+    "flavor": {
+      "disliked": "Disliked Flavor",
+      "favorite": "Favorite Flavor"
+    },
+    "select": {
+      "label": "Nature",
+      "placeholder": "Select a nature"
+    },
+    "statistic": {
+      "decreased": "Decreased Statistic",
+      "increased": "Increased Statistic"
+    }
+  },
+  "nickname": {
+    "label": "Nickname"
+  },
+  "notes": {
+    "label": "Notes"
+  },
+  "progress": {
+    "title": "Progress"
+  },
+  "size": {
+    "category": {
+      "label": "Category",
+      "options": {
+        "ExtraLarge": "Extra Large",
+        "ExtraSmall": "Extra Small",
+        "Large": "Large",
+        "Medium": "Medium",
+        "Small": "Small"
+      }
+    },
+    "height": {
+      "scalar": "Height Scalar"
+    },
+    "title": "Size",
+    "weight": {
+      "scalar": "Weight Scalar"
+    }
+  },
+  "species": {
+    "select": {
+      "label": "Species",
+      "placeholder": "Select a Pokémon species"
+    }
+  },
+  "sprite": {
+    "label": "Sprite"
+  },
+  "statistic": {
+    "base": "Base Values",
+    "effort": {
+      "title": "Effort Values (EVs)",
+      "total": {
+        "invalid": "The total EV ({total}) may not exceed the maximum ({max}).",
+        "valid": "Total: {total} / {max}"
+      }
+    },
+    "individual": {
+      "average": "Average",
+      "mean": "Mean",
+      "percentage": "Percentage",
+      "title": "Individual Values (IVs)",
+      "total": "Total"
+    },
+    "randomize": "Randomize",
+    "select": {
+      "options": {
+        "Attack": "Attack",
+        "Defense": "Defense",
+        "HP": "HP",
+        "SpecialAttack": "Sp. Attack",
+        "SpecialDefense": "Sp. Defense",
+        "Speed": "Speed"
+      }
+    },
+    "title": "Statistics",
+    "total": "Total Values"
+  },
+  "type": {
+    "none": "None",
+    "primary": "Primary",
+    "secondary": "Secondary",
+    "select": {
+      "label": "Type",
+      "options": {
+        "Normal": "Normal",
+        "Bug": "Bug",
+        "Dark": "Dark",
+        "Dragon": "Dragon",
+        "Electric": "Electric",
+        "Fairy": "Fairy",
+        "Fighting": "Fighting",
+        "Fire": "Fire",
+        "Flying": "Flying",
+        "Ghost": "Ghost",
+        "Grass": "Grass",
+        "Ground": "Ground",
+        "Ice": "Ice",
+        "Poison": "Poison",
+        "Psychic": "Psychic",
+        "Rock": "Rock",
+        "Steel": "Steel",
+        "Water": "Water"
+      },
+      "placeholder": "Select a Pokémon type"
+    },
+    "tera": "Tera",
+    "types": "Types"
+  },
+  "uniqueName": {
+    "label": "Unique Name"
+  },
+  "url": {
+    "label": "URL"
+  },
+  "variety": {
+    "select": {
+      "default": "Default",
+      "label": "Variety",
+      "placeholder": "Select a Pokémon variety"
+    }
+  }
+}

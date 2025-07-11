@@ -1,0 +1,177 @@
+﻿[
+  {
+    "name": "Adamant",
+    "increasedStatistic": "Attack",
+    "decreasedStatistic": "SpecialAttack",
+    "favoriteFlavor": "Spicy",
+    "dislikedFlavor": "Dry"
+  },
+  {
+    "name": "Bashful",
+    "increasedStatistic": "SpecialAttack",
+    "decreasedStatistic": "SpecialAttack",
+    "favoriteFlavor": "Dry",
+    "dislikedFlavor": "Dry"
+  },
+  {
+    "name": "Bold",
+    "increasedStatistic": "Defense",
+    "decreasedStatistic": "Attack",
+    "favoriteFlavor": "Sour",
+    "dislikedFlavor": "Spicy"
+  },
+  {
+    "name": "Brave",
+    "increasedStatistic": "Attack",
+    "decreasedStatistic": "Speed",
+    "favoriteFlavor": "Spicy",
+    "dislikedFlavor": "Sweet"
+  },
+  {
+    "name": "Calm",
+    "increasedStatistic": "SpecialDefense",
+    "decreasedStatistic": "Attack",
+    "favoriteFlavor": "Bitter",
+    "dislikedFlavor": "Spicy"
+  },
+  {
+    "name": "Careful",
+    "increasedStatistic": "SpecialDefense",
+    "decreasedStatistic": "SpecialAttack",
+    "favoriteFlavor": "Bitter",
+    "dislikedFlavor": "Dry"
+  },
+  {
+    "name": "Docile",
+    "increasedStatistic": "Defense",
+    "decreasedStatistic": "Defense",
+    "favoriteFlavor": "Sour",
+    "dislikedFlavor": "Sour"
+  },
+  {
+    "name": "Gentle",
+    "increasedStatistic": "SpecialDefense",
+    "decreasedStatistic": "Defense",
+    "favoriteFlavor": "Bitter",
+    "dislikedFlavor": "Sour"
+  },
+  {
+    "name": "Hardy",
+    "increasedStatistic": "Attack",
+    "decreasedStatistic": "Attack",
+    "favoriteFlavor": "Spicy",
+    "dislikedFlavor": "Spicy"
+  },
+  {
+    "name": "Hasty",
+    "increasedStatistic": "Speed",
+    "decreasedStatistic": "Defense",
+    "favoriteFlavor": "Sweet",
+    "dislikedFlavor": "Sour"
+  },
+  {
+    "name": "Impish",
+    "increasedStatistic": "Defense",
+    "decreasedStatistic": "SpecialAttack",
+    "favoriteFlavor": "Sour",
+    "dislikedFlavor": "Dry"
+  },
+  {
+    "name": "Jolly",
+    "increasedStatistic": "Speed",
+    "decreasedStatistic": "SpecialAttack",
+    "favoriteFlavor": "Sweet",
+    "dislikedFlavor": "Dry"
+  },
+  {
+    "name": "Lax",
+    "increasedStatistic": "Defense",
+    "decreasedStatistic": "SpecialDefense",
+    "favoriteFlavor": "Sour",
+    "dislikedFlavor": "Bitter"
+  },
+  {
+    "name": "Lonely",
+    "increasedStatistic": "Attack",
+    "decreasedStatistic": "Defense",
+    "favoriteFlavor": "Spicy",
+    "dislikedFlavor": "Sour"
+  },
+  {
+    "name": "Mild",
+    "increasedStatistic": "SpecialAttack",
+    "decreasedStatistic": "Defense",
+    "favoriteFlavor": "Dry",
+    "dislikedFlavor": "Sour"
+  },
+  {
+    "name": "Modest",
+    "increasedStatistic": "SpecialAttack",
+    "decreasedStatistic": "Attack",
+    "favoriteFlavor": "Dry",
+    "dislikedFlavor": "Spicy"
+  },
+  {
+    "name": "Naive",
+    "increasedStatistic": "Speed",
+    "decreasedStatistic": "SpecialDefense",
+    "favoriteFlavor": "Sweet",
+    "dislikedFlavor": "Bitter"
+  },
+  {
+    "name": "Naughty",
+    "increasedStatistic": "Attack",
+    "decreasedStatistic": "SpecialDefense",
+    "favoriteFlavor": "Spicy",
+    "dislikedFlavor": "Bitter"
+  },
+  {
+    "name": "Quiet",
+    "increasedStatistic": "SpecialAttack",
+    "decreasedStatistic": "Speed",
+    "favoriteFlavor": "Dry",
+    "dislikedFlavor": "Sweet"
+  },
+  {
+    "name": "Quirky",
+    "increasedStatistic": "SpecialDefense",
+    "decreasedStatistic": "SpecialDefense",
+    "favoriteFlavor": "Bitter",
+    "dislikedFlavor": "Bitter"
+  },
+  {
+    "name": "Rash",
+    "increasedStatistic": "SpecialAttack",
+    "decreasedStatistic": "SpecialDefense",
+    "favoriteFlavor": "Dry",
+    "dislikedFlavor": "Bitter"
+  },
+  {
+    "name": "Relaxed",
+    "increasedStatistic": "Defense",
+    "decreasedStatistic": "Speed",
+    "favoriteFlavor": "Sour",
+    "dislikedFlavor": "Sweet"
+  },
+  {
+    "name": "Sassy",
+    "increasedStatistic": "SpecialDefense",
+    "decreasedStatistic": "Speed",
+    "favoriteFlavor": "Bitter",
+    "dislikedFlavor": "Sweet"
+  },
+  {
+    "name": "Serious",
+    "increasedStatistic": "Speed",
+    "decreasedStatistic": "Speed",
+    "favoriteFlavor": "Sweet",
+    "dislikedFlavor": "Sweet"
+  },
+  {
+    "name": "Timid",
+    "increasedStatistic": "Speed",
+    "decreasedStatistic": "Attack",
+    "favoriteFlavor": "Sweet",
+    "dislikedFlavor": "Spicy"
+  }
+]

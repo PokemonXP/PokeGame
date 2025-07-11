@@ -11,7 +11,7 @@ public record CreatePokemonPayload
   public PokemonGender? Gender { get; set; }
 
   public PokemonType? TeraType { get; set; }
-  public PokemonSize? Size { get; set; }
+  public PokemonSizePayload? Size { get; set; }
   public AbilitySlot? AbilitySlot { get; set; }
   public string? Nature { get; set; }
 

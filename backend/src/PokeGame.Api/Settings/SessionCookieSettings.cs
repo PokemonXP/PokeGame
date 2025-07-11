@@ -2,5 +2,5 @@
 
 public record SessionCookieSettings
 {
-  public SameSiteMode SameSite { get; set; } = SameSiteMode.Strict;
+  public SameSiteMode SameSite { get; set; } = SameSiteMode.None;
 }
