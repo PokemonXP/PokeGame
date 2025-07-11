@@ -2,6 +2,7 @@
 import { TarButton } from "logitar-vue3-ui";
 import { computed, inject, ref } from "vue";
 import { useI18n } from "vue-i18n";
+import { useRouter } from "vue-router";
 
 import AbilitySlotSelect from "@/components/pokemon/AbilitySlotSelect.vue";
 import BaseStatistics from "@/components/pokemon/BaseStatistics.vue";
@@ -14,10 +15,12 @@ import GrowthRateSelect from "@/components/pokemon/GrowthRateSelect.vue";
 import IndividualValuesEdit from "@/components/pokemon/IndividualValuesEdit.vue";
 import LevelInput from "@/components/pokemon/LevelInput.vue";
 import NicknameInput from "@/components/pokemon/NicknameInput.vue";
+import NotesTextarea from "@/components/pokemon/NotesTextarea.vue";
 import SizeEdit from "@/components/pokemon/SizeEdit.vue";
 import SpeciesSelect from "@/components/pokemon/SpeciesSelect.vue";
 import TypeSelect from "@/components/pokemon/TypeSelect.vue";
 import UniqueNameInput from "@/components/pokemon/UniqueNameInput.vue";
+import UrlInput from "@/components/pokemon/UrlInput.vue";
 import VarietySelect from "@/components/pokemon/VarietySelect.vue";
 import type {
   AbilitySlot,
@@ -26,8 +29,11 @@ import type {
   Form,
   GrowthRate,
   IndividualValues,
+  Item,
+  Move,
   Pokemon,
   PokemonGender,
+  PokemonNature,
   PokemonSizePayload,
   PokemonType,
   Species,
@@ -39,24 +45,36 @@ import { getLevel, getMaximumExperience } from "@/helpers/pokemon";
 import { handleErrorKey } from "@/inject";
 import { roll } from "@/helpers/random";
 import { useForm } from "@/forms";
+import { useToastStore } from "@/stores/toast";
 
 const handleError = inject(handleErrorKey) as (e: unknown) => void;
+const router = useRouter();
+const toasts = useToastStore();
 const { n, t } = useI18n();
 
 const abilitySlot = ref<AbilitySlot>("Primary");
+const effortValues = ref<EffortValues>({ hp: 0, attack: 0, defense: 0, specialAttack: 0, specialDefense: 0, speed: 0 });
 const experience = ref<number>(0);
 const form = ref<Form>();
+const friendship = ref<number>(0);
 const gender = ref<PokemonGender>();
-const effortValues = ref<EffortValues>({ hp: 0, attack: 0, defense: 0, specialAttack: 0, specialDefense: 0, speed: 0 });
+const heldItem = ref<Item>();
 const individualValues = ref<IndividualValues>({ hp: 0, attack: 0, defense: 0, specialAttack: 0, specialDefense: 0, speed: 0 });
 const isLoading = ref<boolean>(false);
 const level = ref<number>(1);
+const moves = ref<Move[]>([]);
+const nature = ref<PokemonNature>();
 const nickname = ref<string>("");
+const notes = ref<string>("");
 const size = ref<PokemonSizePayload>({ height: 0, weight: 0 });
 const species = ref<Species>();
+const sprite = ref<string>("");
+const stamina = ref<number>(0);
 const teraType = ref<PokemonType>();
 const uniqueName = ref<string>("");
+const url = ref<string>("");
 const variety = ref<Variety>();
+const vitality = ref<number>(0);
 
 const experiencePercentage = computed<number>(() => (experience.value - minimumExperience.value) / (maximumExperience.value - minimumExperience.value));
 const growthRate = computed<GrowthRate>(() => species.value?.growthRate ?? "MediumSlow");
@@ -82,21 +100,22 @@ async function submit(): Promise<void> {
           teraType: teraType.value,
           size: size.value,
           abilitySlot: abilitySlot.value,
-          nature: "Adamant",
+          nature: nature.value?.name,
           experience: experience.value,
           individualValues: individualValues.value,
           effortValues: effortValues.value,
-          vitality: 0, // TODO(fpion): implement
-          stamina: 0, // TODO(fpion): implement
-          friendship: 0, // TODO(fpion): implement
-          heldItem: undefined, // TODO(fpion): implement
-          moves: [], // TODO(fpion): implement
-          sprite: undefined, // TODO(fpion): implement
-          url: undefined, // TODO(fpion): implement
-          notes: undefined, // TODO(fpion): implement
+          vitality: vitality.value,
+          stamina: stamina.value,
+          friendship: friendship.value,
+          heldItem: heldItem.value?.id,
+          moves: moves.value.map(({ id }) => id),
+          sprite: sprite.value,
+          url: url.value,
+          notes: notes.value,
         };
         const pokemon: Pokemon = await createPokemon(payload);
-        console.log(pokemon); // TODO(fpion): redirect
+        toasts.success("pokemon.created");
+        router.push({ name: "PokemonEdit", params: { id: pokemon.id } });
       }
     } catch (e: unknown) {
       handleError(e);
@@ -255,8 +274,9 @@ function onExperienceUpdate(value: number): void {
 
         <!-- TODO(fpion): Sprite -->
 
-        <!-- TODO(fpion): Url -->
-        <!-- TODO(fpion): Notes -->
+        <h2 class="h3">{{ t("pokemon.metadata.title") }}</h2>
+        <UrlInput v-model="url" />
+        <NotesTextarea v-model="notes" />
         <div class="mb-3">
           <TarButton
             :disabled="isLoading"

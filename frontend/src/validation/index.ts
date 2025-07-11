@@ -9,6 +9,7 @@ validator.setRule("minimumLength", rules.minimumLength);
 validator.setRule("minimumValue", rules.minimumValue);
 validator.setRule("pattern", rules.pattern);
 validator.setRule("required", rules.required);
+validator.setRule("url", rules.url);
 
 export default validator;
 

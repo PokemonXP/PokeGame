@@ -8,6 +8,7 @@
     "title": "Ability"
   },
   "create": "Create Pokémon",
+  "created": "The Pokémon has been created.",
   "experience": {
     "label": "Experience",
     "maximum": "Maximum Experience",
@@ -56,8 +57,14 @@
   "level": {
     "label": "Level"
   },
+  "metadata": {
+    "title": "Metadata"
+  },
   "nickname": {
     "label": "Nickname"
+  },
+  "notes": {
+    "label": "Notes"
   },
   "progress": {
     "title": "Progress"
@@ -150,6 +157,9 @@
   },
   "uniqueName": {
     "label": "Unique Name"
+  },
+  "url": {
+    "label": "URL"
   },
   "variety": {
     "select": {

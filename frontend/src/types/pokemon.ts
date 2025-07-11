@@ -48,9 +48,9 @@ export type CreatePokemonPayload = {
   friendship?: number;
   heldItem?: string;
   moves: string[];
-  sprite?: number;
-  url?: number;
-  notes?: number;
+  sprite?: string;
+  url?: string;
+  notes?: string;
 };
 
 export type EffortValues = {
@@ -122,6 +122,33 @@ export type IndividualValues = {
   speed: number;
 };
 
+export type InflictedStatus = {
+  condition: StatusCondition;
+  chance: number;
+};
+
+export type Item = Aggregate & {
+  // TODO(fpion): implement
+};
+
+export type Move = Aggregate & {
+  type: PokemonType;
+  category: MoveCategory;
+  uniqueName: string;
+  displayName?: string | null;
+  description?: string | null;
+  accuracy: number;
+  power: number;
+  powerPoints: number;
+  status?: InflictedStatus | null;
+  volatileConditions: string[];
+  statisticChanges: StatisticChanges;
+  url?: string | null;
+  notes?: string | null;
+};
+
+export type MoveCategory = "Status" | "Physical" | "Special";
+
 export type Pokemon = Aggregate & {
   form: Form;
   uniqueName: string;
@@ -142,7 +169,7 @@ export type Pokemon = Aggregate & {
   statusCondition?: StatusCondition | null;
   characteristic?: string | null;
   friendship: number;
-  // ItemModel? HeldItem { get; set; }
+  heldItem?: Item | null;
   // List<PokemonMoveModel> Moves { get; set; } = [];
   // TrainerModel? OriginalTrainer { get; set; }
   // PokemonOwnershipModel? Ownership { get; set; }
@@ -223,6 +250,18 @@ export type Species = Aggregate & {
   varieties: Variety[];
   url?: string | null;
   notes?: string | null;
+};
+
+export type StatisticChanges = {
+  hp: number;
+  attack: number;
+  defense: number;
+  specialAttack: number;
+  specialDefense: number;
+  speed: number;
+  accuracy: number;
+  evasion: number;
+  critical: number;
 };
 
 export type StatusCondition = "Burn" | "Freeze" | "Paralysis" | "Poison" | "Sleep";

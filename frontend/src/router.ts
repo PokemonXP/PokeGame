@@ -44,6 +44,11 @@ const router = createRouter({
           path: "pokemon/create",
           component: () => import("./views/pokemon/CreatePokemon.vue"),
         },
+        {
+          name: "PokemonEdit",
+          path: "pokemon/:id",
+          component: () => import("./views/pokemon/PokemonEdit.vue"),
+        },
       ],
       meta: { isAdmin: true },
     },
