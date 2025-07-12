@@ -26,3 +26,5 @@ export function roll(input: string): number {
   }
   return total;
 }
+
+// TODO(fpion): unit tests

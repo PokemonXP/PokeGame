@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { useI18n } from "vue-i18n";
 
+import AdminBreadcrumb from "@/components/admin/AdminBreadcrumb.vue";
+
 const cmsBaseUrl: string = import.meta.env.VITE_APP_CMS_BASE_URL ?? "";
 const ContentTypes = {
   Abilities: "748ded48-8f53-4e17-8524-e098a468daf4",
@@ -23,6 +25,7 @@ const { t } = useI18n();
 <template>
   <main class="container">
     <h1 class="text-center">{{ t("admin") }}</h1>
+    <AdminBreadcrumb />
     <div class="d-flex flex-column justify-content-center align-items-center mt-3">
       <div class="grid">
         <a :href="`${cmsBaseUrl}/admin/contents?type=${ContentTypes.Regions}`" target="_blank" class="tile">
@@ -46,7 +49,7 @@ const { t } = useI18n();
         <a :href="`${cmsBaseUrl}/admin/contents?type=${ContentTypes.Forms}`" target="_blank" class="tile">
           <font-awesome-icon icon="fas fa-masks-theater" class="icon" /> Forms
         </a>
-        <RouterLink :to="{ name: 'PokemonList' }" class="tile"><font-awesome-icon icon="fas fa-dog" class="icon" /> Pokémon</RouterLink>
+        <RouterLink :to="{ name: 'PokemonList' }" class="tile"><font-awesome-icon icon="fas fa-dog" class="icon" /> {{ t("pokemon.title") }}</RouterLink>
       </div>
     </div>
     <h3 class="text-center">Items</h3>

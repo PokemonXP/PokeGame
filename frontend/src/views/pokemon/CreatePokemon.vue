@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { TarButton } from "logitar-vue3-ui";
-import { computed, inject, ref } from "vue";
+import { computed, inject, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 
 import AbilitySlotSelect from "@/components/pokemon/AbilitySlotSelect.vue";
-import BaseStatistics from "@/components/pokemon/BaseStatistics.vue";
+import AdminBreadcrumb from "@/components/admin/AdminBreadcrumb.vue";
+import BaseStatisticsView from "@/components/pokemon/BaseStatisticsView.vue";
 import EffortValuesEdit from "@/components/pokemon/EffortValuesEdit.vue";
 import ExperienceInput from "@/components/pokemon/ExperienceInput.vue";
 import ExperienceTableModal from "@/components/pokemon/ExperienceTableModal.vue";
@@ -14,7 +15,10 @@ import FriendshipInput from "@/components/pokemon/FriendshipInput.vue";
 import GenderSelect from "@/components/pokemon/GenderSelect.vue";
 import GrowthRateSelect from "@/components/pokemon/GrowthRateSelect.vue";
 import IndividualValuesEdit from "@/components/pokemon/IndividualValuesEdit.vue";
+import ItemSelect from "@/components/items/ItemSelect.vue";
 import LevelInput from "@/components/pokemon/LevelInput.vue";
+import MoveTable from "@/components/pokemon/MoveTable.vue";
+import MoveSelect from "@/components/moves/MoveSelect.vue";
 import NatureSelect from "@/components/pokemon/NatureSelect.vue";
 import NatureTable from "@/components/pokemon/NatureTable.vue";
 import NicknameInput from "@/components/pokemon/NicknameInput.vue";
@@ -22,30 +26,36 @@ import NotesTextarea from "@/components/pokemon/NotesTextarea.vue";
 import ProgressTable from "@/components/pokemon/ProgressTable.vue";
 import SizeEdit from "@/components/pokemon/SizeEdit.vue";
 import SpeciesSelect from "@/components/pokemon/SpeciesSelect.vue";
+import StaminaInput from "@/components/pokemon/StaminaInput.vue";
+import TotalStatisticsView from "@/components/pokemon/TotalStatisticsView.vue";
 import TypeSelect from "@/components/pokemon/TypeSelect.vue";
 import UniqueNameInput from "@/components/pokemon/UniqueNameInput.vue";
 import UrlInput from "@/components/pokemon/UrlInput.vue";
 import VarietySelect from "@/components/pokemon/VarietySelect.vue";
+import VitalityInput from "@/components/pokemon/VitalityInput.vue";
 import type {
   AbilitySlot,
+  BaseStatistics,
   CreatePokemonPayload,
   EffortValues,
   Form,
   GrowthRate,
   IndividualValues,
-  Item,
-  Move,
   Pokemon,
   PokemonGender,
   PokemonNature,
   PokemonSizePayload,
+  PokemonStatistics,
   PokemonType,
   Species,
   Variety,
 } from "@/types/pokemon";
+import type { Breadcrumb } from "@/types/components";
+import type { Item } from "@/types/items";
+import type { Move } from "@/types/pokemon/moves";
 import { LEVEL_MAXIMUM, LEVEL_MINIMUM } from "@/types/pokemon";
+import { calculateStatistics, getLevel, getMaximumExperience } from "@/helpers/pokemon";
 import { createPokemon } from "@/api/pokemon";
-import { getLevel, getMaximumExperience } from "@/helpers/pokemon";
 import { handleErrorKey } from "@/inject";
 import { roll } from "@/helpers/random";
 import { useForm } from "@/forms";
@@ -66,6 +76,7 @@ const heldItem = ref<Item>();
 const individualValues = ref<IndividualValues>({ hp: 0, attack: 0, defense: 0, specialAttack: 0, specialDefense: 0, speed: 0 });
 const isLoading = ref<boolean>(false);
 const level = ref<number>(1);
+const move = ref<Move>();
 const moves = ref<Move[]>([]);
 const nature = ref<PokemonNature>();
 const nickname = ref<string>("");
@@ -80,6 +91,14 @@ const url = ref<string>("");
 const variety = ref<Variety>();
 const vitality = ref<number>(0);
 
+const baseStatistics = computed<BaseStatistics>(
+  () => form.value?.baseStatistics ?? { hp: 0, attack: 0, defense: 0, specialAttack: 0, specialDefense: 0, speed: 0 },
+);
+const breadcrumb = computed<Breadcrumb>(() => ({
+  to: { name: "PokemonList" },
+  text: t("pokemon.title"),
+}));
+const excludedMoves = computed<string[]>(() => moves.value.map(({ id }) => id));
 const growthRate = computed<GrowthRate>(() => species.value?.growthRate ?? "MediumSlow");
 const isGenderDisabled = computed<boolean>(
   () => !variety.value || typeof variety.value.genderRatio !== "number" || variety.value.genderRatio === 0 || variety.value.genderRatio === 8,
@@ -95,6 +114,15 @@ const spriteUrl = computed<string>(() => {
   }
   return spriteUrl ?? "";
 });
+const statistics = computed<PokemonStatistics>(() =>
+  calculateStatistics(
+    baseStatistics.value,
+    individualValues.value,
+    effortValues.value,
+    level.value,
+    nature.value ?? { name: "", increasedStatistic: "HP", decreasedStatistic: "HP", favoriteFlavor: "Bitter", dislikedFlavor: "Bitter" },
+  ),
+);
 
 const { isValid, validate } = useForm();
 async function submit(): Promise<void> {
@@ -193,11 +221,37 @@ function onExperienceUpdate(value: number): void {
   experience.value = value;
   level.value = getLevel(growthRate.value, Math.max(experience.value, 0));
 }
+
+function addMove(): void {
+  if (move.value) {
+    moves.value.push(move.value);
+    move.value = undefined;
+  }
+}
+function onMoveDown(index: number): void {
+  [moves.value[index], moves.value[index + 1]] = [moves.value[index + 1], moves.value[index]];
+}
+function onMoveRemoved(index: number): void {
+  moves.value.splice(index, 1);
+}
+function onMoveUp(index: number): void {
+  [moves.value[index - 1], moves.value[index]] = [moves.value[index], moves.value[index - 1]];
+}
+
+watch(
+  statistics,
+  (statistics) => {
+    vitality.value = statistics.hp.value;
+    stamina.value = statistics.hp.value;
+  },
+  { deep: true, immediate: true },
+);
 </script>
 
 <template>
   <main class="container">
     <h1>{{ t("pokemon.create") }}</h1>
+    <AdminBreadcrumb :current="t('pokemon.create')" :parent="breadcrumb" />
     <form @submit.prevent="submit">
       <h2 class="h3">{{ t("pokemon.identification.title") }}</h2>
       <div class="row">
@@ -246,30 +300,32 @@ function onExperienceUpdate(value: number): void {
         <ProgressTable :experience="experience" :growth-rate="growthRate" />
         <h2 class="h3">{{ t("pokemon.statistic.title") }}</h2>
         <h3 class="h5">{{ t("pokemon.statistic.base") }}</h3>
-        <BaseStatistics :statistics="form.baseStatistics" />
+        <BaseStatisticsView :statistics="baseStatistics" />
         <h3 class="h5">{{ t("pokemon.statistic.individual.title") }}</h3>
         <IndividualValuesEdit v-model="individualValues" />
         <h3 class="h5">{{ t("pokemon.statistic.effort.title") }}</h3>
         <EffortValuesEdit v-model="effortValues" />
         <h3 class="h5">{{ t("pokemon.statistic.total") }}</h3>
-        <!-- TODO(fpion): Total Statistics -->
+        <TotalStatisticsView :statistics="statistics" />
         <div class="row">
-          <!-- TODO(fpion): Vitality -->
-          <!-- TODO(fpion): Stamina -->
+          <VitalityInput class="col" :max="statistics.hp.value" v-model="vitality" />
+          <StaminaInput class="col" :max="statistics.hp.value" v-model="stamina" />
           <FriendshipInput class="col" v-model="friendship" />
         </div>
-
         <h2 class="h3">{{ t("pokemon.nature.select.label") }}</h2>
         <NatureSelect :model-value="nature?.name" @selected="nature = $event" />
         <NatureTable v-if="nature" :nature="nature" />
-
-        <!-- TODO(fpion): HeldItem -->
-
+        <h2 class="h3">{{ t("pokemon.item.held") }}</h2>
+        <ItemSelect id="held-item" :model-value="heldItem?.id" @selected="heldItem = $event" />
         <h2 class="h3">{{ t("pokemon.ability.title") }}</h2>
         <AbilitySlotSelect :abilities="form.abilities" v-model="abilitySlot" />
-
-        <!-- TODO(fpion): Moves -->
-
+        <h2 class="h3">{{ t("pokemon.move.title") }}</h2>
+        <MoveSelect :exclude="excludedMoves" :model-value="move?.id" @selected="move = $event">
+          <template #append>
+            <TarButton :disabled="!move" icon="fas fa-plus" :text="t('actions.add')" variant="success" @click="addMove" />
+          </template>
+        </MoveSelect>
+        <MoveTable v-if="moves.length" :moves="moves" @down="onMoveDown" @removed="onMoveRemoved" @up="onMoveUp" />
         <h2 class="h3">{{ t("pokemon.metadata.title") }}</h2>
         <div class="row">
           <UrlInput class="col" v-model="url" />

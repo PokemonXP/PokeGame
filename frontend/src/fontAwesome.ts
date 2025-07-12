@@ -3,8 +3,10 @@ import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
 import { library } from "@fortawesome/fontawesome-svg-core";
 import {
+  faArrowDown,
   faArrowRightFromBracket,
   faArrowRightToBracket,
+  faArrowUp,
   faBriefcaseMedical,
   faBullseye,
   faCartShopping,
@@ -34,8 +36,10 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 library.add(
+  faArrowDown,
   faArrowRightFromBracket,
   faArrowRightToBracket,
+  faArrowUp,
   faBriefcaseMedical,
   faBullseye,
   faCartShopping,

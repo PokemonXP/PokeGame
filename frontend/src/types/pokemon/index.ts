@@ -1,4 +1,6 @@
-import type { Aggregate } from "./aggregate";
+import type { Aggregate } from "../aggregate";
+import type { Item } from "../items";
+import type { Move } from "./moves";
 
 export const EFFORT_VALUE_MAXIMUM: number = 255;
 export const EFFORT_VALUE_MINIMUM: number = 0;
@@ -28,23 +30,6 @@ export type BaseStatistics = {
   specialAttack: number;
   specialDefense: number;
   speed: number;
-};
-
-export type BattleItem = {
-  statisticChanges: StatisticChanges;
-  guardTurns: number;
-};
-
-export type Berry = {
-  healing: number;
-  isHealingPercentage: boolean;
-  statusCondition?: StatusCondition | null;
-  cureConfusion: boolean;
-  cureNonVolatileConditions: boolean;
-  powerPoints: number;
-  statisticChanges: StatisticChanges;
-  lowerEffortValues?: PokemonStatistic | null;
-  raiseFriendship: number;
 };
 
 export type CreatePokemonPayload = {
@@ -130,12 +115,6 @@ export type FormYield = {
 
 export type GrowthRate = "Erratic" | "Slow" | "MediumSlow" | "MediumFast" | "Fast" | "Fluctuating";
 
-export type Healing = {
-  value: number;
-  isPercentage: boolean;
-  revive: boolean;
-};
-
 export type IndividualValues = {
   hp: number;
   attack: number;
@@ -143,71 +122,6 @@ export type IndividualValues = {
   specialAttack: number;
   specialDefense: number;
   speed: number;
-};
-
-export type InflictedStatus = {
-  condition: StatusCondition;
-  chance: number;
-};
-
-export type Item = Aggregate & {
-  uniqueName: string;
-  displayName?: string | null;
-  description?: string | null;
-  price: number;
-  category: ItemCategory;
-  battleItem?: BattleItem | null;
-  berry?: Berry | null;
-  medicine?: Medicine | null;
-  pokeBall?: PokeBall | null;
-  technicalMachine?: TechnicalMachine | null;
-  sprite?: string | null;
-  url?: string | null;
-  notes?: string | null;
-};
-
-export type ItemCategory =
-  | "BattleItem"
-  | "Berry"
-  | "KeyItem"
-  | "Medicine"
-  | "OtherItem"
-  | "PicnicItem"
-  | "PokeBall"
-  | "TechnicalMachine"
-  | "TechnicalMachineMaterial"
-  | "Treasure";
-
-export type Medicine = {
-  isHerbal: boolean;
-  healing?: Healing;
-  status?: StatusHealing;
-  powerPoints?: PowerPointRestore;
-};
-
-export type Move = Aggregate & {
-  type: PokemonType;
-  category: MoveCategory;
-  uniqueName: string;
-  displayName?: string | null;
-  description?: string | null;
-  accuracy: number;
-  power: number;
-  powerPoints: number;
-  status?: InflictedStatus | null;
-  volatileConditions: string[];
-  statisticChanges: StatisticChanges;
-  url?: string | null;
-  notes?: string | null;
-};
-
-export type MoveCategory = "Status" | "Physical" | "Special";
-
-export type PokeBall = {
-  catchMultiplier: number;
-  heal: boolean;
-  baseFriendship: number;
-  friendshipMultiplier: number;
 };
 
 export type OwnershipKind = "Caught" | "Received";
@@ -316,12 +230,6 @@ export type PokemonType =
   | "Steel"
   | "Water";
 
-export type PowerPointRestore = {
-  value: number;
-  isPercentage: boolean;
-  allMoves: boolean;
-};
-
 export type PowerPoints = {
   current: number;
   maximum: number;
@@ -375,15 +283,6 @@ export type StatisticValues = {
 };
 
 export type StatusCondition = "Burn" | "Freeze" | "Paralysis" | "Poison" | "Sleep";
-
-export type StatusHealing = {
-  condition?: StatusCondition | null;
-  all: boolean;
-};
-
-export type TechnicalMachine = {
-  move: Move;
-};
 
 export type Trainer = {
   uniqueName: string;

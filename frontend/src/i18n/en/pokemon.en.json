@@ -66,11 +66,38 @@
   "identification": {
     "title": "Identification"
   },
+  "item": {
+    "held": "Held Item",
+    "select": {
+      "label": "Item",
+      "placeholder": "Select an item"
+    }
+  },
   "level": {
     "label": "Level"
   },
   "metadata": {
     "title": "Metadata"
+  },
+  "move": {
+    "accuracy": "Accuracy",
+    "category": {
+      "options": {
+        "Physical": "Physical",
+        "Special": "Special",
+        "Status": "Status"
+      }
+    },
+    "description": "Description",
+    "name": "Name",
+    "power": "Power",
+    "powerPoints": "Power Points",
+    "select": {
+      "label": "Move",
+      "placeholder": "Select a move"
+    },
+    "title": "Moves",
+    "typeAndCategory": "Type & Category"
   },
   "nature": {
     "flavor": {
@@ -123,6 +150,9 @@
   "sprite": {
     "label": "Sprite"
   },
+  "stamina": {
+    "label": "Stamina"
+  },
   "statistic": {
     "base": "Base Values",
     "effort": {
@@ -153,6 +183,7 @@
     "title": "Statistics",
     "total": "Total Values"
   },
+  "title": "Pokémon",
   "type": {
     "none": "None",
     "primary": "Primary",
@@ -196,5 +227,8 @@
       "label": "Variety",
       "placeholder": "Select a Pokémon variety"
     }
+  },
+  "vitality": {
+    "label": "Vitality"
   }
 }
