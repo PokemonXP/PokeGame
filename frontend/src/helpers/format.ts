@@ -25,3 +25,5 @@ export function formatSpecies(species: Species): string {
 export function formatVariety(variety: Variety): string {
   return variety.displayName ? `${variety.displayName} (${variety.uniqueName})` : variety.uniqueName;
 }
+
+// TODO(fpion): unit tests

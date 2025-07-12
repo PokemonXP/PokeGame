@@ -174,3 +174,5 @@ export function getMaximumExperience(growthRate: GrowthRate, level: number): num
 
   return thresholds[Math.min(level, LEVEL_MAXIMUM - 1)];
 }
+
+// TODO(fpion): unit tests
