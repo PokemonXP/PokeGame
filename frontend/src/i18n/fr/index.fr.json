@@ -1,5 +1,6 @@
 {
   "actions": {
+    "add": "Ajouter",
     "close": "Fermer",
     "create": "Créer"
   },

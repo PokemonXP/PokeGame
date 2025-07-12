@@ -17,6 +17,8 @@ import GrowthRateSelect from "@/components/pokemon/GrowthRateSelect.vue";
 import IndividualValuesEdit from "@/components/pokemon/IndividualValuesEdit.vue";
 import ItemSelect from "@/components/items/ItemSelect.vue";
 import LevelInput from "@/components/pokemon/LevelInput.vue";
+import MoveTable from "@/components/pokemon/MoveTable.vue";
+import MoveSelect from "@/components/moves/MoveSelect.vue";
 import NatureSelect from "@/components/pokemon/NatureSelect.vue";
 import NatureTable from "@/components/pokemon/NatureTable.vue";
 import NicknameInput from "@/components/pokemon/NicknameInput.vue";
@@ -74,6 +76,7 @@ const heldItem = ref<Item>();
 const individualValues = ref<IndividualValues>({ hp: 0, attack: 0, defense: 0, specialAttack: 0, specialDefense: 0, speed: 0 });
 const isLoading = ref<boolean>(false);
 const level = ref<number>(1);
+const move = ref<Move>();
 const moves = ref<Move[]>([]);
 const nature = ref<PokemonNature>();
 const nickname = ref<string>("");
@@ -95,6 +98,7 @@ const breadcrumb = computed<Breadcrumb>(() => ({
   to: { name: "PokemonList" },
   text: t("pokemon.title"),
 }));
+const excludedMoves = computed<string[]>(() => moves.value.map(({ id }) => id));
 const growthRate = computed<GrowthRate>(() => species.value?.growthRate ?? "MediumSlow");
 const isGenderDisabled = computed<boolean>(
   () => !variety.value || typeof variety.value.genderRatio !== "number" || variety.value.genderRatio === 0 || variety.value.genderRatio === 8,
@@ -218,6 +222,22 @@ function onExperienceUpdate(value: number): void {
   level.value = getLevel(growthRate.value, Math.max(experience.value, 0));
 }
 
+function addMove(): void {
+  if (move.value) {
+    moves.value.push(move.value);
+    move.value = undefined;
+  }
+}
+function onMoveDown(index: number): void {
+  [moves.value[index], moves.value[index + 1]] = [moves.value[index + 1], moves.value[index]];
+}
+function onMoveRemoved(index: number): void {
+  moves.value.splice(index, 1);
+}
+function onMoveUp(index: number): void {
+  [moves.value[index - 1], moves.value[index]] = [moves.value[index], moves.value[index - 1]];
+}
+
 watch(
   statistics,
   (statistics) => {
@@ -299,7 +319,13 @@ watch(
         <ItemSelect id="held-item" :model-value="heldItem?.id" @selected="heldItem = $event" />
         <h2 class="h3">{{ t("pokemon.ability.title") }}</h2>
         <AbilitySlotSelect :abilities="form.abilities" v-model="abilitySlot" />
-        <!-- TODO(fpion): Moves -->
+        <h2 class="h3">{{ t("pokemon.move.title") }}</h2>
+        <MoveSelect :exclude="excludedMoves" :model-value="move?.id" @selected="move = $event">
+          <template #append>
+            <TarButton :disabled="!move" icon="fas fa-plus" :text="t('actions.add')" variant="success" @click="addMove" />
+          </template>
+        </MoveSelect>
+        <MoveTable v-if="moves.length" :moves="moves" @down="onMoveDown" @removed="onMoveRemoved" @up="onMoveUp" />
         <h2 class="h3">{{ t("pokemon.metadata.title") }}</h2>
         <div class="row">
           <UrlInput class="col" v-model="url" />

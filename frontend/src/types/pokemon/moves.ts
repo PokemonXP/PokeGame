@@ -1,5 +1,6 @@
 import type { PokemonType, StatisticChanges, StatusCondition } from ".";
 import type { Aggregate } from "../aggregate";
+import type { SearchPayload, SortOption } from "../search";
 
 export type InflictedStatus = {
   condition: StatusCondition;
@@ -23,3 +24,16 @@ export type Move = Aggregate & {
 };
 
 export type MoveCategory = "Status" | "Physical" | "Special";
+
+export type MoveSort = "Accuracy" | "CreatedOn" | "DisplayName" | "Power" | "PowerPoints" | "UniqueName" | "UpdatedOn";
+
+export type MoveSortOption = SortOption & {
+  field: MoveSort;
+};
+
+export type SearchMovesPayload = SearchPayload & {
+  type?: PokemonType;
+  category?: MoveCategory;
+  statusCondition?: StatusCondition;
+  sort: MoveSortOption[];
+};

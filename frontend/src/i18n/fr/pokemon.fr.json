@@ -79,6 +79,26 @@
   "metadata": {
     "title": "Metadata"
   },
+  "move": {
+    "accuracy": "Accuracy",
+    "category": {
+      "options": {
+        "Physical": "Physical",
+        "Special": "Special",
+        "Status": "Status"
+      }
+    },
+    "description": "Description",
+    "name": "Name",
+    "power": "Power",
+    "powerPoints": "Power Points",
+    "select": {
+      "label": "Move",
+      "placeholder": "Select a move"
+    },
+    "title": "Moves",
+    "typeAndCategory": "Type & Category"
+  },
   "nature": {
     "flavor": {
       "disliked": "Disliked Flavor",
