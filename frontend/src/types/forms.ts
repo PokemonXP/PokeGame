@@ -10,7 +10,7 @@ export type Field = {
   value: Ref<string, string>;
   bindField: ((id: string, options: FieldActions, initialValue?: string) => FieldEvents) | undefined;
   focus: () => void;
-  handleChange: (e: Event, shouldValidate: boolean) => void;
+  handleChange: (e: Event, skipValidation?: boolean) => void;
   reinitialize: () => void;
   reset: () => void;
   unbindField: ((id: string) => void) | undefined;
