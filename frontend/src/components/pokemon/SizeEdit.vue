@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { TarButton, TarInput } from "logitar-vue3-ui";
+import { TarInput } from "logitar-vue3-ui";
 import { computed, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 
@@ -40,15 +40,6 @@ function onWeightChange(weight: number): void {
   emit("update:model-value", size);
 }
 
-function randomizeHeight(): void {
-  const height: number = randomInteger(0, 255);
-  onHeightChange(height);
-}
-function randomizeWeight(): void {
-  const height: number = randomInteger(0, 255);
-  onWeightChange(height);
-}
-
 onMounted(() => {
   const size: PokemonSizePayload = {
     height: randomInteger(0, 255),
@@ -60,16 +51,8 @@ onMounted(() => {
 
 <template>
   <div class="row">
-    <HeightInput class="col" :model-value="modelValue.height" @update:model-value="onHeightChange">
-      <template #append>
-        <TarButton icon="fas fa-dice" @click="randomizeHeight" />
-      </template>
-    </HeightInput>
-    <WeightInput class="col" :model-value="modelValue.weight" @update:model-value="onWeightChange">
-      <template #append>
-        <TarButton icon="fas fa-dice" @click="randomizeWeight" />
-      </template>
-    </WeightInput>
+    <HeightInput class="col" :model-value="modelValue.height" @update:model-value="onHeightChange" />
+    <WeightInput class="col" :model-value="modelValue.weight" @update:model-value="onWeightChange" />
     <TarInput
       class="col"
       disabled
