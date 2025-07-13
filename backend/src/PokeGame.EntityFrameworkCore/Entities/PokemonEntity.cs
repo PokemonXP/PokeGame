@@ -160,7 +160,7 @@ internal class PokemonEntity : AggregateEntity
   {
     Update(@event);
 
-    PokemonMoveEntity? move = Moves.SingleOrDefault(move => move.MoveUid == @event.MoveId.ToGuid());
+    PokemonMoveEntity? move = Moves.SingleOrDefault(move => move.MoveUid == @event.MoveId.EntityId);
     if (move is null)
     {
       return false;
@@ -190,7 +190,7 @@ internal class PokemonEntity : AggregateEntity
 
     RemoveMove(@event.Position);
 
-    PokemonMoveEntity? move = Moves.SingleOrDefault(move => move.MoveUid == @event.MoveId.ToGuid());
+    PokemonMoveEntity? move = Moves.SingleOrDefault(move => move.MoveUid == @event.MoveId.EntityId);
     if (move is null)
     {
       return false;
