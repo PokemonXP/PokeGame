@@ -45,12 +45,12 @@ const options = computed<SelectOption[]>(() =>
 
 const emit = defineEmits<{
   (e: "error", error: unknown): void;
-  (e: "model-value:update", id: string): void;
   (e: "selected", move: Move | undefined): void;
+  (e: "update:model-value", id: string): void;
 }>();
 
 function onModelValueUpdate(id: string): void {
-  emit("model-value:update", id);
+  emit("update:model-value", id);
 
   const selectedMove: Move | undefined = moves.value.find((move) => move.id === id);
   emit("selected", selectedMove);

@@ -41,14 +41,9 @@ const options = computed<SelectOption[]>(() =>
   ),
 );
 
-const emit = defineEmits<{
-  (e: "model-value:update", value: string): void;
+defineEmits<{
+  (e: "update:model-value", value: string): void;
 }>();
-
-function onModelValueUpdate(value: string) {
-  console.log(value);
-  emit("model-value:update", value);
-} // TODO(fpion): not working when assigning a value
 </script>
 
 <template>
@@ -60,7 +55,7 @@ function onModelValueUpdate(value: string) {
     :options="options"
     :placeholder="t(placeholder)"
     :required="required"
-    @update:model-value="onModelValueUpdate"
+    @update:model-value="$emit('update:model-value', $event)"
   >
     <template #append>
       <span class="input-group-text">
