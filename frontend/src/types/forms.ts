@@ -9,6 +9,7 @@ export type Field = {
   isValid: ComputedRef<boolean | undefined>;
   value: Ref<string, string>;
   bindField: ((id: string, options: FieldActions, initialValue?: string) => FieldEvents) | undefined;
+  change: (value: string, skipValidation?: boolean) => void;
   focus: () => void;
   handleChange: (e: Event, skipValidation?: boolean) => void;
   reinitialize: () => void;
