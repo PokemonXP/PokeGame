@@ -38,8 +38,8 @@ const options = computed<SelectOption[]>(() =>
 );
 
 const emit = defineEmits<{
-  (e: "update:model-value", value: string): void;
   (e: "selected", value: PokemonNature | undefined): void;
+  (e: "update:model-value", value: string): void;
 }>();
 
 function onModelValueUpdate(name: string) {
@@ -47,7 +47,7 @@ function onModelValueUpdate(name: string) {
 
   const nature = natures.find((nature) => nature.name === name) as PokemonNature | undefined;
   emit("selected", nature);
-} // TODO(fpion): not working when assigning a value
+}
 function randomize(): void {
   const index: number = Math.floor(Math.random() * natures.length);
   const nature = natures[index] as PokemonNature | undefined;
