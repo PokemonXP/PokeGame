@@ -31,6 +31,7 @@ const props = withDefaults(
   },
 );
 
+const selectRef = ref<InstanceType<typeof FormSelect> | null>(null);
 const varieties = ref<Variety[]>([]);
 
 const isDefault = computed<boolean>(() => {
@@ -79,8 +80,7 @@ watch(
         varieties.value = [...results.items];
 
         const defaultVariety: Variety | undefined = varieties.value.find(({ isDefault }) => isDefault);
-        emit("model-value:update", defaultVariety?.id ?? "");
-        emit("selected", defaultVariety);
+        selectRef.value?.change(defaultVariety?.id ?? "");
       } catch (e: unknown) {
         emit("error", e);
       }
@@ -98,6 +98,7 @@ watch(
     :id="id"
     :label="label ? t(label) : undefined"
     :model-value="modelValue"
+    ref="selectRef"
     :options="options"
     :placeholder="placeholder ? t(placeholder) : undefined"
     :required="required"

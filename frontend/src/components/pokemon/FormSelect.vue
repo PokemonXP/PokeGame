@@ -32,6 +32,7 @@ const props = withDefaults(
 );
 
 const forms = ref<Form[]>([]);
+const selectRef = ref<InstanceType<typeof FormSelect> | null>(null);
 
 const isDefault = computed<boolean>(() => {
   if (props.modelValue) {
@@ -79,8 +80,7 @@ watch(
         forms.value = [...results.items];
 
         const defaultForm: Form | undefined = forms.value.find(({ isDefault }) => isDefault);
-        emit("model-value:update", defaultForm?.id ?? "");
-        emit("selected", defaultForm);
+        selectRef.value?.change(defaultForm?.id ?? "");
       } catch (e: unknown) {
         emit("error", e);
       }
@@ -100,6 +100,7 @@ watch(
     :model-value="modelValue"
     :options="options"
     :placeholder="t(placeholder)"
+    ref="selectRef"
     :required="required"
     @update:model-value="onModelValueUpdate"
   >
