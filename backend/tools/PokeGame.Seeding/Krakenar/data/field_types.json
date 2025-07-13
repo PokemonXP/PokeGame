@@ -198,12 +198,20 @@
       "IsMultiple": true,
       "Options": [
         {
+          "Text": "BadlyPoisoned",
+          "Value": "badly-poisoned"
+        },
+        {
           "Text": "Confusion",
           "Value": "confusion"
         },
         {
           "Text": "Flinch",
           "Value": "flinch"
+        },
+        {
+          "Text": "Infatuated",
+          "Value": "infatuated"
         }
       ]
     }

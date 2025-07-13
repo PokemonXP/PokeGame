@@ -2,5 +2,8 @@
 
 public enum VolatileCondition
 {
-  Flinch
+  BadlyPoisoned,
+  Confusion,
+  Flinch,
+  Infatuated
 }

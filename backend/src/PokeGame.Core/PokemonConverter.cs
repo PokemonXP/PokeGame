@@ -117,6 +117,14 @@ public class PokemonConverter : IPokemonConverter
   public string FromType(PokemonType type) => type.ToString().ToLowerInvariant();
   public PokemonType ToType(string value) => Enum.Parse<PokemonType>(value.Capitalize());
 
-  public string FromVolatileCondition(VolatileCondition condition) => condition.ToString().ToLowerInvariant();
-  public VolatileCondition ToVolatileCondition(string value) => Enum.Parse<VolatileCondition>(value.Capitalize());
+  public string FromVolatileCondition(VolatileCondition condition) => condition switch
+  {
+    VolatileCondition.BadlyPoisoned => "badly-poisoned",
+    _ => condition.ToString().ToLowerInvariant(),
+  };
+  public VolatileCondition ToVolatileCondition(string value) => value switch
+  {
+    "badly-poisoned" => VolatileCondition.BadlyPoisoned,
+    _ => Enum.Parse<VolatileCondition>(value.Capitalize()),
+  };
 }
