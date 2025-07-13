@@ -15,7 +15,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Krakenar.Infrastructure" Version="1.0.1" />
+    <PackageReference Include="Krakenar.Infrastructure" Version="1.1.0" />
   </ItemGroup>
 
   <ItemGroup>
