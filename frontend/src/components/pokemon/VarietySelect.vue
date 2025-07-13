@@ -79,9 +79,8 @@ watch(
         varieties.value = [...results.items];
 
         const defaultVariety: Variety | undefined = varieties.value.find(({ isDefault }) => isDefault);
-        if (defaultVariety) {
-          emit("selected", defaultVariety);
-        }
+        emit("model-value:update", defaultVariety?.id ?? "");
+        emit("selected", defaultVariety);
       } catch (e: unknown) {
         emit("error", e);
       }

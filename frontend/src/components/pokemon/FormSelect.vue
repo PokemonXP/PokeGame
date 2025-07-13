@@ -79,9 +79,8 @@ watch(
         forms.value = [...results.items];
 
         const defaultForm: Form | undefined = forms.value.find(({ isDefault }) => isDefault);
-        if (defaultForm) {
-          emit("selected", defaultForm);
-        }
+        emit("model-value:update", defaultForm?.id ?? "");
+        emit("selected", defaultForm);
       } catch (e: unknown) {
         emit("error", e);
       }
