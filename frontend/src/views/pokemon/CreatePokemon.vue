@@ -57,7 +57,7 @@ import { LEVEL_MAXIMUM, LEVEL_MINIMUM } from "@/types/pokemon";
 import { calculateStatistics, getLevel, getMaximumExperience } from "@/helpers/pokemon";
 import { createPokemon } from "@/api/pokemon";
 import { handleErrorKey } from "@/inject";
-import { roll } from "@/helpers/random";
+import { randomInteger } from "@/helpers/random";
 import { useForm } from "@/forms";
 import { useToastStore } from "@/stores/toast";
 
@@ -194,7 +194,7 @@ function onVarietySelected(selectedVariety: Variety | undefined): void {
           gender.value = "Male";
           break;
         default:
-          const value: number = roll("1d8") - 1;
+          const value: number = randomInteger(0, 7);
           gender.value = value < selectedVariety.genderRatio ? "Male" : "Female";
           break;
       }
