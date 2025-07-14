@@ -28,6 +28,13 @@ public class PokemonController : ControllerBase
     return Created(location, pokemon);
   }
 
+  [HttpDelete("{id}")]
+  public async Task<ActionResult<PokemonModel>> DeleteAsync(Guid id, CancellationToken cancellationToken)
+  {
+    PokemonModel? pokemon = await _pokemonService.DeleteAsync(id, cancellationToken);
+    return pokemon is null ? NotFound() : Ok(pokemon);
+  }
+
   [HttpGet("{id}")]
   public async Task<ActionResult<PokemonModel>> ReadAsync(Guid id, CancellationToken cancellationToken)
   {

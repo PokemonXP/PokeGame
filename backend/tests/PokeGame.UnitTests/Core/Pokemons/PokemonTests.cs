@@ -294,6 +294,8 @@ public class PokemonTests
     Assert.False(_hedwidge.HasChanges);
   }
 
+  // TODO(fpion): Delete
+
   // TODO(fpion): Vitality
   // TODO(fpion): Stamina
   // TODO(fpion): StatusCondition

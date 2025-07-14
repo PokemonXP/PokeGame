@@ -285,6 +285,14 @@ public class Pokemon : AggregateRoot
     Ownership = new PokemonOwnership(OwnershipKind.Caught, @event.TrainerId, @event.PokeBallId, @event.Level, @event.Location, @event.OccurredOn, @event.Description);
   }
 
+  public void Delete(ActorId? actorId = null)
+  {
+    if (!IsDeleted)
+    {
+      Raise(new PokemonDeleted(), actorId);
+    }
+  }
+
   public void HoldItem(ItemId itemId, ActorId? actorId = null)
   {
     if (HeldItemId != itemId)
