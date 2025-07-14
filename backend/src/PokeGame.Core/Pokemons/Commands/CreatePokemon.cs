@@ -57,6 +57,7 @@ internal class CreatePokemonHandler : ICommandHandler<CreatePokemon, PokemonMode
     IUniqueNameSettings uniqueNameSettings = _applicationContext.UniqueNameSettings;
 
     CreatePokemonPayload payload = command.Payload;
+    new CreatePokemonValidator(uniqueNameSettings).ValidateAndThrow(payload);
 
     PokemonId pokemonId = PokemonId.NewId();
     Pokemon? pokemon;
