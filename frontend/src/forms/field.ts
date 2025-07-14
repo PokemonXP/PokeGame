@@ -30,6 +30,16 @@ export function useField(id: string, options?: FieldOptions): Field {
     }
   }
 
+  function change(newValue: string, skipValidation?: boolean): void {
+    value.value = newValue || "";
+    events?.updated(id, value.value);
+    emit("update:model-value", value.value);
+
+    if (!skipValidation) {
+      validate();
+    }
+  }
+
   function focus(): void {
     if (options?.focus) {
       options.focus();
@@ -41,13 +51,7 @@ export function useField(id: string, options?: FieldOptions): Field {
     if (element?.id !== id) {
       return;
     }
-    value.value = element.value ?? "";
-    events?.updated(id, value.value);
-    emit("update:model-value", value.value);
-
-    if (!skipValidation) {
-      validate();
-    }
+    change(element.value || "", skipValidation);
   }
 
   function reinitialize(): void {
@@ -79,5 +83,5 @@ export function useField(id: string, options?: FieldOptions): Field {
     events = bindField(id, actions, initialValue.value);
   }
 
-  return { errors, isValid, value, bindField, focus, handleChange, reinitialize, reset, unbindField, validate };
+  return { errors, isValid, value, bindField, change, focus, handleChange, reinitialize, reset, unbindField, validate };
 }

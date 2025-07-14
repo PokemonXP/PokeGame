@@ -1,24 +1,23 @@
 <script setup lang="ts">
 import { useI18n } from "vue-i18n";
 
+import AbilityIcon from "@/components/icons/AbilityIcon.vue";
 import AdminBreadcrumb from "@/components/admin/AdminBreadcrumb.vue";
+import BattleItemIcon from "@/components/icons/items/BattleItemIcon.vue";
+import BerryIcon from "@/components/icons/items/BerryIcon.vue";
+import FormIcon from "@/components/icons/FormIcon.vue";
+import ItemIcon from "@/components/icons/items/ItemIcon.vue";
+import MedicineIcon from "@/components/icons/items/MedicineIcon.vue";
+import MoveIcon from "@/components/icons/MoveIcon.vue";
+import PokeBallIcon from "@/components/icons/items/PokeBallIcon.vue";
+import PokemonIcon from "@/components/icons/PokemonIcon.vue";
+import RegionIcon from "@/components/icons/RegionIcon.vue";
+import SpeciesIcon from "@/components/icons/SpeciesIcon.vue";
+import TechnicalMachineIcon from "@/components/icons/items/TechnicalMachineIcon.vue";
+import TrainerIcon from "@/components/icons/TrainerIcon.vue";
+import VarietyIcon from "@/components/icons/VarietyIcon.vue";
+import { ContentTypes, getContentListUrl } from "@/helpers/cms";
 
-const cmsBaseUrl: string = import.meta.env.VITE_APP_CMS_BASE_URL ?? "";
-const ContentTypes = {
-  Abilities: "748ded48-8f53-4e17-8524-e098a468daf4",
-  BattleItems: "e2712045-480f-40ed-81ee-f44d26def685",
-  Berries: "0be02b4f-7e27-479e-b119-7790d582b80f",
-  Forms: "9eb068a7-6b10-4fbc-b722-11ba522c00f5",
-  Items: "f03d8207-3469-489c-8cef-ed2f55672048",
-  Medicines: "07ca76cf-d73c-44d8-926e-9ead192427c0",
-  Moves: "ee1f0b92-6970-4d27-aa8f-b2e779608ecc",
-  PokeBalls: "4374a286-2ea2-433c-bbba-76b0e882210a",
-  Regions: "4bd6ba59-6d0e-4a61-8d6e-cc65deb6baab",
-  Species: "da10e8b3-6284-487a-9e48-48b8f356e4b7",
-  TechnicalMachines: "7ea2356b-a0b5-45e3-a814-5fc71d5241dd",
-  Trainers: "660f4f93-66b2-4a6a-87e0-1b07e8f5fdd7",
-  Varieties: "31ae9c83-d4a1-44cf-9007-c614c68cc1d3",
-};
 const { t } = useI18n();
 </script>
 
@@ -28,51 +27,25 @@ const { t } = useI18n();
     <AdminBreadcrumb />
     <div class="d-flex flex-column justify-content-center align-items-center mt-3">
       <div class="grid">
-        <a :href="`${cmsBaseUrl}/admin/contents?type=${ContentTypes.Regions}`" target="_blank" class="tile">
-          <font-awesome-icon icon="fas fa-earth-asia" class="icon" /> Regions
-        </a>
-        <a :href="`${cmsBaseUrl}/admin/contents?type=${ContentTypes.Abilities}`" target="_blank" class="tile">
-          <font-awesome-icon icon="fas fa-hand-sparkles" class="icon" /> Abilities
-        </a>
-        <a :href="`${cmsBaseUrl}/admin/contents?type=${ContentTypes.Moves}`" target="_blank" class="tile">
-          <font-awesome-icon icon="fas fa-wand-sparkles" class="icon" /> Moves
-        </a>
-        <a :href="`${cmsBaseUrl}/admin/contents?type=${ContentTypes.Trainers}`" target="_blank" class="tile">
-          <font-awesome-icon icon="fas fa-person" class="icon" /> Trainers
-        </a>
-        <a :href="`${cmsBaseUrl}/admin/contents?type=${ContentTypes.Species}`" target="_blank" class="tile">
-          <font-awesome-icon icon="fas fa-paw" class="icon" /> Species
-        </a>
-        <a :href="`${cmsBaseUrl}/admin/contents?type=${ContentTypes.Varieties}`" target="_blank" class="tile">
-          <font-awesome-icon icon="fas fa-list" class="icon" /> Varieties
-        </a>
-        <a :href="`${cmsBaseUrl}/admin/contents?type=${ContentTypes.Forms}`" target="_blank" class="tile">
-          <font-awesome-icon icon="fas fa-masks-theater" class="icon" /> Forms
-        </a>
-        <RouterLink :to="{ name: 'PokemonList' }" class="tile"><font-awesome-icon icon="fas fa-dog" class="icon" /> {{ t("pokemon.title") }}</RouterLink>
+        <a :href="getContentListUrl(ContentTypes.Regions)" target="_blank" class="tile"><RegionIcon class="icon" /> Regions</a>
+        <a :href="getContentListUrl(ContentTypes.Abilities)" target="_blank" class="tile"><AbilityIcon class="icon" /> Abilities</a>
+        <a :href="getContentListUrl(ContentTypes.Moves)" target="_blank" class="tile"><MoveIcon class="icon" /> Moves </a>
+        <a :href="getContentListUrl(ContentTypes.Trainers)" target="_blank" class="tile"><TrainerIcon class="icon" /> Trainers</a>
+        <a :href="getContentListUrl(ContentTypes.Species)" target="_blank" class="tile"><SpeciesIcon class="icon" /> Species</a>
+        <a :href="getContentListUrl(ContentTypes.Varieties)" target="_blank" class="tile"><VarietyIcon class="icon" /> Varieties</a>
+        <a :href="getContentListUrl(ContentTypes.Forms)" target="_blank" class="tile"><FormIcon class="icon" /> Forms</a>
+        <RouterLink :to="{ name: 'PokemonList' }" class="tile"><PokemonIcon class="icon" /> {{ t("pokemon.title") }}</RouterLink>
       </div>
     </div>
     <h3 class="text-center">Items</h3>
     <div class="d-flex flex-column justify-content-center align-items-center mt-3">
       <div class="grid">
-        <a :href="`${cmsBaseUrl}/admin/contents?type=${ContentTypes.Items}`" target="_blank" class="tile">
-          <font-awesome-icon icon="fas fa-cart-shopping" class="icon" /> Items
-        </a>
-        <a :href="`${cmsBaseUrl}/admin/contents?type=${ContentTypes.BattleItems}`" target="_blank" class="tile">
-          <font-awesome-icon icon="fas fa-dumbbell" class="icon" /> Battle Items
-        </a>
-        <a :href="`${cmsBaseUrl}/admin/contents?type=${ContentTypes.Berries}`" target="_blank" class="tile">
-          <font-awesome-icon icon="fas fa-seedling" class="icon" /> Berries
-        </a>
-        <a :href="`${cmsBaseUrl}/admin/contents?type=${ContentTypes.Medicines}`" target="_blank" class="tile">
-          <font-awesome-icon icon="fas fa-briefcase-medical" class="icon" /> Medicines
-        </a>
-        <a :href="`${cmsBaseUrl}/admin/contents?type=${ContentTypes.PokeBalls}`" target="_blank" class="tile">
-          <font-awesome-icon icon="fas fa-bullseye" class="icon" /> Poké Balls
-        </a>
-        <a :href="`${cmsBaseUrl}/admin/contents?type=${ContentTypes.TechnicalMachines}`" target="_blank" class="tile">
-          <font-awesome-icon icon="fas fa-compact-disc" class="icon" /> Technical Machines
-        </a>
+        <a :href="getContentListUrl(ContentTypes.Items)" target="_blank" class="tile"><ItemIcon class="icon" /> Items </a>
+        <a :href="getContentListUrl(ContentTypes.BattleItems)" target="_blank" class="tile"><BattleItemIcon class="icon" /> Battle Items</a>
+        <a :href="getContentListUrl(ContentTypes.Berries)" target="_blank" class="tile"><BerryIcon class="icon" /> Berries </a>
+        <a :href="getContentListUrl(ContentTypes.Medicines)" target="_blank" class="tile"><MedicineIcon class="icon" /> Medicines</a>
+        <a :href="getContentListUrl(ContentTypes.PokeBalls)" target="_blank" class="tile"><PokeBallIcon class="icon" /> Poké Balls</a>
+        <a :href="getContentListUrl(ContentTypes.TechnicalMachines)" target="_blank" class="tile"><TechnicalMachineIcon class="icon" /> Technical Machines</a>
       </div>
     </div>
   </main>

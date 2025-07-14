@@ -1,5 +1,6 @@
-import type { Aggregate } from "../aggregate";
+import type { Aggregate, Change } from "../aggregate";
 import type { Item } from "../items";
+import type { SearchPayload, SortOption } from "../search";
 import type { Move } from "./moves";
 
 export const EFFORT_VALUE_MAXIMUM: number = 255;
@@ -151,7 +152,7 @@ export type Pokemon = Aggregate & {
   originalTrainer?: Trainer | null;
   ownership?: PokemonOwnership | null;
   sprite?: string | null;
-  urlUtils?: string | null;
+  url?: string | null;
   notes?: string | null;
 };
 
@@ -197,6 +198,12 @@ export type PokemonSizeCategory = "ExtraSmall" | "Small" | "Medium" | "Large" | 
 export type PokemonSizePayload = {
   height: number;
   weight: number;
+};
+
+export type PokemonSort = "CreatedOn" | "Experience" | "Friendship" | "Level" | "Nickname" | "UniqueName" | "UpdatedOn";
+
+export type PokemonSortOption = SortOption & {
+  field: PokemonSort;
 };
 
 export type PokemonStatistic = "HP" | "Attack" | "Defense" | "SpecialAttack" | "SpecialDefense" | "Speed";
@@ -249,6 +256,11 @@ export type RegionalNumber = {
   number: number;
 };
 
+export type SearchPokemonPayload = SearchPayload & {
+  trainerId?: string;
+  sort: PokemonSortOption[];
+};
+
 export type Species = Aggregate & {
   number: number;
   category: PokemonCategory;
@@ -284,7 +296,7 @@ export type StatisticValues = {
 
 export type StatusCondition = "Burn" | "Freeze" | "Paralysis" | "Poison" | "Sleep";
 
-export type Trainer = {
+export type Trainer = Aggregate & {
   uniqueName: string;
   displayName?: string | null;
   description?: string | null;
@@ -298,6 +310,15 @@ export type Trainer = {
 };
 
 export type TrainerGender = "Female" | "Male";
+
+export type UpdatePokemonPayload = {
+  uniqueName?: string;
+  nickname?: Change<string>;
+  gender?: PokemonGender;
+  sprite?: Change<string>;
+  url?: Change<string>;
+  notes?: Change<string>;
+};
 
 export type Variety = Aggregate & {
   species: Species;

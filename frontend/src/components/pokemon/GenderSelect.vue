@@ -4,6 +4,8 @@ import { arrayUtils } from "logitar-js";
 import { useI18n } from "vue-i18n";
 
 import FormSelect from "@/components/forms/FormSelect.vue";
+import PokemonGenderIcon from "@/components/icons/PokemonGenderIcon.vue";
+import type { PokemonGender } from "@/types/pokemon";
 import { computed } from "vue";
 
 const { orderBy } = arrayUtils;
@@ -25,15 +27,7 @@ const props = withDefaults(
   },
 );
 
-const icon = computed<string>(() => {
-  switch (props.modelValue) {
-    case "Female":
-      return "fas fa-venus";
-    case "Male":
-      return "fas fa-mars";
-  }
-  return "fas fa-question";
-});
+const gender = computed<PokemonGender | undefined>(() => (props.modelValue ? (props.modelValue as PokemonGender) : undefined));
 const options = computed<SelectOption[]>(() =>
   orderBy(
     Object.entries(tm(rt("pokemon.gender.select.options"))).map(([value, text]) => ({ text, value }) as SelectOption),
@@ -41,14 +35,9 @@ const options = computed<SelectOption[]>(() =>
   ),
 );
 
-const emit = defineEmits<{
-  (e: "model-value:update", value: string): void;
+defineEmits<{
+  (e: "update:model-value", value: string): void;
 }>();
-
-function onModelValueUpdate(value: string) {
-  console.log(value);
-  emit("model-value:update", value);
-} // TODO(fpion): not working when assigning a value
 </script>
 
 <template>
@@ -60,11 +49,11 @@ function onModelValueUpdate(value: string) {
     :options="options"
     :placeholder="t(placeholder)"
     :required="required"
-    @update:model-value="onModelValueUpdate"
+    @update:model-value="$emit('update:model-value', $event)"
   >
     <template #append>
       <span class="input-group-text">
-        <font-awesome-icon :icon="icon" />
+        <PokemonGenderIcon :gender="gender" />
       </span>
     </template>
   </FormSelect>

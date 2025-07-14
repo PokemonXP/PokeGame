@@ -1,7 +1,10 @@
 ﻿using Krakenar.Contracts.Actors;
+using Krakenar.Contracts.Search;
 using Krakenar.Core;
 using Krakenar.Core.Actors;
+using Krakenar.EntityFrameworkCore.Relational;
 using Krakenar.EntityFrameworkCore.Relational.KrakenarDb;
+using Logitar.Data;
 using Logitar.EventSourcing;
 using Microsoft.EntityFrameworkCore;
 using PokeGame.Core.Pokemons;
@@ -15,12 +18,14 @@ internal class PokemonQuerier : IPokemonQuerier
   private readonly IActorService _actorService;
   private readonly DbSet<FormEntity> _forms;
   private readonly DbSet<PokemonEntity> _pokemon;
+  private readonly ISqlHelper _sqlHelper;
 
-  public PokemonQuerier(IActorService actorService, PokemonContext context)
+  public PokemonQuerier(IActorService actorService, PokemonContext context, ISqlHelper sqlHelper)
   {
     _actorService = actorService;
     _forms = context.Forms;
     _pokemon = context.Pokemon;
+    _sqlHelper = sqlHelper;
   }
 
   public async Task<PokemonId?> FindIdAsync(UniqueName uniqueName, CancellationToken cancellationToken)
@@ -96,6 +101,78 @@ internal class PokemonQuerier : IPokemonQuerier
     return await MapAsync(pokemon, cancellationToken);
   }
 
+  public async Task<SearchResults<PokemonModel>> SearchAsync(SearchPokemonPayload payload, CancellationToken cancellationToken)
+  {
+    IQueryBuilder builder = _sqlHelper.Query(PokemonDb.Pokemons.Table).SelectAll(PokemonDb.Pokemons.Table)
+      .ApplyIdFilter(PokemonDb.Pokemons.Id, payload.Ids);
+    _sqlHelper.ApplyTextSearch(builder, payload.Search, PokemonDb.Pokemons.UniqueName, PokemonDb.Pokemons.Nickname);
+
+    if (payload.TrainerId.HasValue)
+    {
+      builder.Where(PokemonDb.Pokemons.CurrentTrainerUid, Operators.IsEqualTo(payload.TrainerId.Value));
+    }
+
+    IQueryable<PokemonEntity> query = _pokemon.FromQuery(builder).AsNoTracking()
+      .Include(x => x.CurrentTrainer)
+      .Include(x => x.HeldItem).ThenInclude(x => x!.Move)
+      .Include(x => x.Moves).ThenInclude(x => x.Move)
+      .Include(x => x.OriginalTrainer)
+      .Include(x => x.PokeBall);
+    long total = await query.LongCountAsync(cancellationToken);
+
+    IOrderedQueryable<PokemonEntity>? ordered = null;
+    foreach (PokemonSortOption sort in payload.Sort)
+    {
+      switch (sort.Field)
+      {
+        case PokemonSort.CreatedOn:
+          ordered = ordered is null
+            ? (sort.IsDescending ? query.OrderByDescending(x => x.CreatedOn) : query.OrderBy(x => x.CreatedOn))
+            : (sort.IsDescending ? ordered.ThenByDescending(x => x.CreatedOn) : ordered.ThenBy(x => x.CreatedOn));
+          break;
+        case PokemonSort.Experience:
+          ordered = ordered is null
+            ? (sort.IsDescending ? query.OrderByDescending(x => x.Experience) : query.OrderBy(x => x.Experience))
+            : (sort.IsDescending ? ordered.ThenByDescending(x => x.Experience) : ordered.ThenBy(x => x.Experience));
+          break;
+        case PokemonSort.Friendship:
+          ordered = ordered is null
+            ? (sort.IsDescending ? query.OrderByDescending(x => x.Friendship) : query.OrderBy(x => x.Friendship))
+            : (sort.IsDescending ? ordered.ThenByDescending(x => x.Friendship) : ordered.ThenBy(x => x.Friendship));
+          break;
+        case PokemonSort.Level:
+          ordered = ordered is null
+            ? (sort.IsDescending ? query.OrderByDescending(x => x.Level) : query.OrderBy(x => x.Level))
+            : (sort.IsDescending ? ordered.ThenByDescending(x => x.Level) : ordered.ThenBy(x => x.Level));
+          break;
+        case PokemonSort.Nickname:
+          ordered = ordered is null
+            ? (sort.IsDescending ? query.OrderByDescending(x => x.Nickname) : query.OrderBy(x => x.Nickname))
+            : (sort.IsDescending ? ordered.ThenByDescending(x => x.Nickname) : ordered.ThenBy(x => x.Nickname));
+          break;
+        case PokemonSort.UniqueName:
+          ordered = ordered is null
+            ? (sort.IsDescending ? query.OrderByDescending(x => x.UniqueName) : query.OrderBy(x => x.UniqueName))
+            : (sort.IsDescending ? ordered.ThenByDescending(x => x.UniqueName) : ordered.ThenBy(x => x.UniqueName));
+          break;
+        case PokemonSort.UpdatedOn:
+          ordered = ordered is null
+            ? (sort.IsDescending ? query.OrderByDescending(x => x.UpdatedOn) : query.OrderBy(x => x.UpdatedOn))
+            : (sort.IsDescending ? ordered.ThenByDescending(x => x.UpdatedOn) : ordered.ThenBy(x => x.UpdatedOn));
+          break;
+      }
+    }
+    query = ordered ?? query;
+
+    query = query.ApplyPaging(payload);
+
+    PokemonEntity[] entities = await query.ToArrayAsync(cancellationToken);
+    await FillAsync(entities, cancellationToken);
+    IReadOnlyCollection<PokemonModel> pokemon = await MapAsync(entities, cancellationToken);
+
+    return new SearchResults<PokemonModel>(pokemon, total);
+  }
+
   private async Task FillAsync(PokemonEntity pokemon, CancellationToken cancellationToken)
   {
     FormEntity form = await _forms.AsNoTracking()
@@ -104,6 +181,22 @@ internal class PokemonQuerier : IPokemonQuerier
       .SingleOrDefaultAsync(x => x.FormId == pokemon.FormId, cancellationToken)
       ?? throw new InvalidOperationException($"The Pokémon form entity 'FormId={pokemon.FormId}' was not found.");
     pokemon.Form = form;
+  }
+  private async Task FillAsync(IEnumerable<PokemonEntity> pokemonList, CancellationToken cancellationToken)
+  {
+    IEnumerable<int> formIds = pokemonList.Select(x => x.FormId).Distinct();
+    Dictionary<int, FormEntity> forms = await _forms.AsNoTracking()
+      .Include(x => x.Abilities).ThenInclude(x => x.Ability)
+      .Include(x => x.Variety).ThenInclude(x => x!.Species).ThenInclude(x => x!.RegionalNumbers).ThenInclude(x => x.Region)
+      .Where(x => formIds.Contains(x.FormId))
+      .ToDictionaryAsync(x => x.FormId, x => x, cancellationToken);
+    foreach (PokemonEntity pokemon in pokemonList)
+    {
+      if (forms.TryGetValue(pokemon.FormId, out FormEntity? form))
+      {
+        pokemon.Form = form;
+      }
+    }
   }
 
   private async Task<PokemonModel> MapAsync(PokemonEntity pokemon, CancellationToken cancellationToken)

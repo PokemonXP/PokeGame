@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using Krakenar.Contracts.Settings;
 using Krakenar.Core;
+using Krakenar.Core.Realms;
 using Logitar.EventSourcing;
 using PokeGame.Core.Forms;
 using PokeGame.Core.Forms.Models;
@@ -52,9 +53,11 @@ internal class CreatePokemonHandler : ICommandHandler<CreatePokemon, PokemonMode
   public async Task<PokemonModel> HandleAsync(CreatePokemon command, CancellationToken cancellationToken)
   {
     ActorId? actorId = _applicationContext.ActorId;
+    RealmId? realmId = _applicationContext.RealmId;
     IUniqueNameSettings uniqueNameSettings = _applicationContext.UniqueNameSettings;
 
     CreatePokemonPayload payload = command.Payload;
+    new CreatePokemonValidator(uniqueNameSettings).ValidateAndThrow(payload);
 
     PokemonId pokemonId = PokemonId.NewId();
     Pokemon? pokemon;
@@ -64,14 +67,14 @@ internal class CreatePokemonHandler : ICommandHandler<CreatePokemon, PokemonMode
       pokemon = await _pokemonRepository.LoadAsync(pokemonId, cancellationToken);
       if (pokemon is not null)
       {
-        throw new IdAlreadyUsedException<Pokemon>(realmId: null, payload.Id.Value, nameof(payload.Id));
+        throw new IdAlreadyUsedException<Pokemon>(realmId, payload.Id.Value, nameof(payload.Id));
       }
     }
 
     FormModel form = await _pokemonManager.FindFormAsync(payload.Form, nameof(payload.Form), cancellationToken);
     VarietyModel variety = form.Variety;
     SpeciesModel species = variety.Species;
-    FormId formId = new(form.Id);
+    FormId formId = form.GetFormId(realmId);
 
     new CreatePokemonValidator(uniqueNameSettings, form).ValidateAndThrow(payload);
 
@@ -119,15 +122,16 @@ internal class CreatePokemonHandler : ICommandHandler<CreatePokemon, PokemonMode
     if (!string.IsNullOrWhiteSpace(payload.HeldItem))
     {
       ItemModel item = await _itemManager.FindAsync(payload.HeldItem, nameof(payload.HeldItem), cancellationToken);
-      ItemId itemId = new(item.Id);
+      ItemId itemId = item.GetItemId(realmId);
       pokemon.HoldItem(itemId, actorId);
     }
 
     IReadOnlyCollection<MoveModel> moves = await _moveManager.FindAsync(payload.Moves, nameof(payload.Moves), cancellationToken);
+    MoveId moveId;
     for (int i = 0; i < moves.Count; i++)
     {
       MoveModel move = moves.ElementAt(i);
-      MoveId moveId = new(move.Id);
+      moveId = move.GetMoveId(realmId);
       PowerPoints powerPoints = new(move.PowerPoints);
       int position = Math.Max(i + Pokemon.MoveLimit - moves.Count, 0);
       pokemon.LearnMove(moveId, powerPoints, position, actorId);
@@ -135,31 +139,31 @@ internal class CreatePokemonHandler : ICommandHandler<CreatePokemon, PokemonMode
     if (moves.Count == 5)
     {
       MoveModel move = moves.ElementAt(4 - 1);
-      MoveId moveId = new(move.Id);
+      moveId = move.GetMoveId(realmId);
       pokemon.RelearnMove(moveId, position: 2, actorId);
 
       move = moves.ElementAt(3 - 1);
-      moveId = new(move.Id);
+      moveId = move.GetMoveId(realmId);
       pokemon.RelearnMove(moveId, position: 1, actorId);
 
       move = moves.ElementAt(2 - 1);
-      moveId = new(move.Id);
+      moveId = move.GetMoveId(realmId);
       pokemon.RelearnMove(moveId, position: 0, actorId);
     }
     if (moves.Count == 6)
     {
       MoveModel move = moves.ElementAt(4 - 1);
-      MoveId moveId = new(move.Id);
+      moveId = move.GetMoveId(realmId);
       pokemon.RelearnMove(moveId, position: 1, actorId);
 
       move = moves.ElementAt(3 - 1);
-      moveId = new(move.Id);
+      moveId = move.GetMoveId(realmId);
       pokemon.RelearnMove(moveId, position: 0, actorId);
     }
     if (moves.Count == 7)
     {
       MoveModel move = moves.ElementAt(4 - 1);
-      MoveId moveId = new(move.Id);
+      moveId = move.GetMoveId(realmId);
       pokemon.RelearnMove(moveId, position: 0, actorId);
     }
 

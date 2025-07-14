@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import type { InputType } from "logitar-vue3-ui";
+import { TarButton, type InputType } from "logitar-vue3-ui";
 import { parsingUtils } from "logitar-js";
+import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 
 import FormInput from "@/components/forms/FormInput.vue";
+import { randomInteger } from "@/helpers/random";
 
 const { parseNumber } = parsingUtils;
 const { t } = useI18n();
@@ -30,9 +32,16 @@ withDefaults(
   },
 );
 
+const inputRef = ref<InstanceType<typeof FormInput> | null>(null);
+
 defineEmits<{
   (e: "update:model-value", height: number): void;
 }>();
+
+function randomize(): void {
+  const height: number = randomInteger(0, 255);
+  inputRef.value?.change(height.toString());
+}
 </script>
 
 <template>
@@ -42,13 +51,14 @@ defineEmits<{
     :min="min"
     :max="max"
     :model-value="modelValue?.toString()"
+    ref="inputRef"
     :required="required"
     :step="step"
     :type="type"
     @update:model-value="$emit('update:model-value', parseNumber($event) ?? 0)"
   >
     <template #append>
-      <slot name="append"></slot>
+      <TarButton icon="fas fa-dice" @click="randomize" />
     </template>
   </FormInput>
 </template>

@@ -7,13 +7,21 @@
     },
     "title": "Ability"
   },
+  "characteristic": {
+    "label": "Characteristic"
+  },
   "create": "Create Pokémon",
   "created": "The Pokémon has been created.",
+  "empty": "This list is empty.",
   "experience": {
+    "format": "XP: {experience}",
     "label": "Experience",
     "maximum": "Maximum Experience",
     "minimum": "Minimum Experience",
-    "next": "To Next Level",
+    "next": {
+      "format": "Next: {next}",
+      "label": "To Next Level"
+    },
     "percentage": "Percentage",
     "table": {
       "open": "Table",
@@ -74,10 +82,8 @@
     }
   },
   "level": {
+    "format": "Lv. {level}",
     "label": "Level"
-  },
-  "metadata": {
-    "title": "Metadata"
   },
   "move": {
     "accuracy": "Accuracy",
@@ -99,6 +105,7 @@
     "title": "Moves",
     "typeAndCategory": "Type & Category"
   },
+  "name": "Name",
   "nature": {
     "flavor": {
       "disliked": "Disliked Flavor",
@@ -134,11 +141,24 @@
       }
     },
     "height": {
+      "label": "Height",
       "scalar": "Height Scalar"
     },
     "title": "Size",
     "weight": {
+      "label": "Weight",
       "scalar": "Weight Scalar"
+    }
+  },
+  "sort": {
+    "options": {
+      "CreatedOn": "Created on",
+      "Experience": "Experience",
+      "Friendship": "Friendship",
+      "Level": "Level",
+      "Nickname": "Nickname",
+      "UniqueName": "Unique Name",
+      "UpdatedOn": "Updated on"
     }
   },
   "species": {
@@ -184,6 +204,9 @@
     "total": "Total Values"
   },
   "title": "Pokémon",
+  "trainer": {
+    "label": "Trainer"
+  },
   "type": {
     "none": "None",
     "primary": "Primary",
@@ -218,6 +241,7 @@
   "uniqueName": {
     "label": "Unique Name"
   },
+  "updated": "The Pokémon has been updated.",
   "url": {
     "label": "URL"
   },

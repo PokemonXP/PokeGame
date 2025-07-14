@@ -1,4 +1,5 @@
-﻿using Krakenar.Core;
+﻿using Krakenar.Contracts.Search;
+using Krakenar.Core;
 using PokeGame.Core.Pokemons.Commands;
 using PokeGame.Core.Pokemons.Models;
 using PokeGame.Core.Pokemons.Queries;
@@ -9,30 +10,42 @@ public interface IPokemonService
 {
   Task<PokemonModel> CreateAsync(CreatePokemonPayload payload, CancellationToken cancellationToken = default);
   Task<PokemonModel?> ReadAsync(Guid? id = null, string? uniqueName = null, CancellationToken cancellationToken = default);
+  Task<SearchResults<PokemonModel>> SearchAsync(SearchPokemonPayload payload, CancellationToken cancellationToken = default);
+  Task<PokemonModel?> UpdateAsync(Guid id, UpdatePokemonPayload payload, CancellationToken cancellationToken = default);
 }
 
 internal class PokemonService : IPokemonService
 {
-  private readonly ICommandHandler<CreatePokemon, PokemonModel> _createPokemon;
-  private readonly IQueryHandler<ReadPokemon, PokemonModel?> _readPokemon;
+  private readonly ICommandBus _commandBus;
+  private readonly IQueryBus _queryBus;
 
-  public PokemonService(
-    ICommandHandler<CreatePokemon, PokemonModel> createPokemon,
-    IQueryHandler<ReadPokemon, PokemonModel?> readPokemon)
+  public PokemonService(ICommandBus commandBus, IQueryBus queryBus)
   {
-    _createPokemon = createPokemon;
-    _readPokemon = readPokemon;
+    _commandBus = commandBus;
+    _queryBus = queryBus;
   }
 
   public async Task<PokemonModel> CreateAsync(CreatePokemonPayload payload, CancellationToken cancellationToken)
   {
     CreatePokemon command = new(payload);
-    return await _createPokemon.HandleAsync(command, cancellationToken);
+    return await _commandBus.ExecuteAsync(command, cancellationToken);
   }
 
   public async Task<PokemonModel?> ReadAsync(Guid? id, string? uniqueName, CancellationToken cancellationToken)
   {
     ReadPokemon query = new(id, uniqueName);
-    return await _readPokemon.HandleAsync(query, cancellationToken);
+    return await _queryBus.ExecuteAsync(query, cancellationToken);
+  }
+
+  public async Task<SearchResults<PokemonModel>> SearchAsync(SearchPokemonPayload payload, CancellationToken cancellationToken)
+  {
+    SearchPokemon query = new(payload);
+    return await _queryBus.ExecuteAsync(query, cancellationToken);
+  }
+
+  public async Task<PokemonModel?> UpdateAsync(Guid id, UpdatePokemonPayload payload, CancellationToken cancellationToken)
+  {
+    UpdatePokemon command = new(id, payload);
+    return await _commandBus.ExecuteAsync(command, cancellationToken);
   }
 }

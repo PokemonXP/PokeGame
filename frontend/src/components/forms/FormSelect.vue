@@ -52,7 +52,7 @@ const rules = computed<ValidationRuleSet>(() => {
   };
   return { ...rules, ...props.rules };
 });
-const { errors, isValid, handleChange, unbindField } = useField(props.id, {
+const { errors, isValid, change, handleChange, unbindField } = useField(props.id, {
   focus,
   initialValue: props.modelValue,
   name: props.label?.toLowerCase() ?? props.name,
@@ -62,7 +62,7 @@ const { errors, isValid, handleChange, unbindField } = useField(props.id, {
 function focus(): void {
   selectRef.value?.focus();
 }
-defineExpose({ focus });
+defineExpose({ change, focus });
 
 onUnmounted(() => {
   if (unbindField) {

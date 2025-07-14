@@ -46,7 +46,7 @@ internal class HttpApplicationContext : IApplicationContext
   public string BaseUrl => throw new NotImplementedException();
 
   public Realm? Realm => Context.GetUser()?.Realm ?? Context.GetApiKey()?.Realm;
-  public RealmId? RealmId => throw new NotImplementedException();
+  public RealmId? RealmId => Realm is null ? null : new(Realm.Id);
 
   public Secret Secret => throw new NotImplementedException();
   public IUniqueNameSettings UniqueNameSettings => Realm?.UniqueNameSettings ?? throw new InvalidOperationException("The Realm is required");

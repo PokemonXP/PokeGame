@@ -1,4 +1,5 @@
-﻿using Krakenar.Core;
+﻿using Krakenar.Contracts.Search;
+using Krakenar.Core;
 using Microsoft.Extensions.DependencyInjection;
 using PokeGame.Core.Items;
 using PokeGame.Core.Moves;
@@ -23,7 +24,9 @@ public static class DependencyInjectionExtensions
 
   private static IServiceCollection AddCommands(this IServiceCollection services)
   {
-    return services.AddTransient<ICommandHandler<CreatePokemon, PokemonModel>, CreatePokemonHandler>();
+    return services
+      .AddTransient<ICommandHandler<CreatePokemon, PokemonModel>, CreatePokemonHandler>()
+      .AddTransient<ICommandHandler<UpdatePokemon, PokemonModel?>, UpdatePokemonHandler>();
   }
 
   private static IServiceCollection AddCoreServices(this IServiceCollection services)
@@ -41,6 +44,8 @@ public static class DependencyInjectionExtensions
 
   private static IServiceCollection AddQueries(this IServiceCollection services)
   {
-    return services.AddTransient<IQueryHandler<ReadPokemon, PokemonModel?>, ReadPokemonHandler>();
+    return services
+      .AddTransient<IQueryHandler<ReadPokemon, PokemonModel?>, ReadPokemonHandler>()
+      .AddTransient<IQueryHandler<SearchPokemon, SearchResults<PokemonModel>>, SearchPokemonHandler>();
   }
 }

@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { TarButton, type SelectOption } from "logitar-vue3-ui";
 import { arrayUtils } from "logitar-js";
+import { computed, ref, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 
 import FormSelect from "@/components/forms/FormSelect.vue";
 import natures from "@/resources/natures.json";
-import { computed, onMounted } from "vue";
 import type { PokemonNature } from "@/types/pokemon";
 
 const { orderBy } = arrayUtils;
@@ -28,6 +28,8 @@ withDefaults(
   },
 );
 
+const selectRef = ref<InstanceType<typeof FormSelect> | null>(null);
+
 const options = computed<SelectOption[]>(() =>
   orderBy(
     natures.map((nature) => ({ text: nature.name }) as SelectOption),
@@ -36,8 +38,8 @@ const options = computed<SelectOption[]>(() =>
 );
 
 const emit = defineEmits<{
-  (e: "update:model-value", value: string): void;
   (e: "selected", value: PokemonNature | undefined): void;
+  (e: "update:model-value", value: string): void;
 }>();
 
 function onModelValueUpdate(name: string) {
@@ -45,12 +47,11 @@ function onModelValueUpdate(name: string) {
 
   const nature = natures.find((nature) => nature.name === name) as PokemonNature | undefined;
   emit("selected", nature);
-} // TODO(fpion): not working when assigning a value
+}
 function randomize(): void {
   const index: number = Math.floor(Math.random() * natures.length);
   const nature = natures[index] as PokemonNature | undefined;
-  emit("update:model-value", nature?.name ?? "");
-  emit("selected", nature);
+  selectRef.value?.change(nature?.name ?? "");
 }
 
 onMounted(randomize);
@@ -64,6 +65,7 @@ onMounted(randomize);
     :model-value="modelValue"
     :options="options"
     :placeholder="t(placeholder)"
+    ref="selectRef"
     :required="required"
     @update:model-value="onModelValueUpdate"
   >

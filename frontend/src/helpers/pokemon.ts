@@ -2,9 +2,13 @@ import { EFFORT_VALUE_MAXIMUM, EFFORT_VALUE_MINIMUM, INDIVIDUAL_VALUE_MAXIMUM, I
 import type {
   BaseStatistics,
   EffortValues,
+  Form,
   GrowthRate,
   IndividualValues,
+  Pokemon,
   PokemonNature,
+  PokemonSize,
+  PokemonSizeCategory,
   PokemonStatistic,
   PokemonStatistics,
   StatisticValues,
@@ -71,6 +75,15 @@ const _thresholds = new Map<GrowthRate, number[]>([
   ["MediumSlow", mediumSlow],
   ["Slow", slow],
 ]);
+
+export function calculateSize(form: Form, scalars: PokemonSize): PokemonSize {
+  const heightMultiplier: number = (scalars.height / 255) * 0.4 + 0.8;
+  return {
+    height: Math.floor(heightMultiplier * form.height) / 10,
+    weight: Math.floor(((scalars.weight / 255) * 0.4 + 0.8) * heightMultiplier * form.weight) / 10,
+    category: getSizeCategory(scalars.height),
+  };
+}
 
 function calculateHP(base: number, individual: number, effort: number, level: number): StatisticValues {
   if (individual < INDIVIDUAL_VALUE_MINIMUM || individual > INDIVIDUAL_VALUE_MAXIMUM) {
@@ -173,6 +186,28 @@ export function getMaximumExperience(growthRate: GrowthRate, level: number): num
   }
 
   return thresholds[Math.min(level, LEVEL_MAXIMUM - 1)];
+}
+
+export function getSizeCategory(heightScalar: number): PokemonSizeCategory {
+  if (heightScalar <= 15) {
+    return "ExtraSmall";
+  } else if (heightScalar <= 47) {
+    return "Small";
+  } else if (heightScalar >= 240) {
+    return "ExtraLarge";
+  } else if (heightScalar >= 208) {
+    return "Large";
+  }
+  return "Medium";
+}
+
+export function getSpriteUrl(pokemon: Pokemon): string {
+  if (pokemon.sprite) {
+    return pokemon.sprite;
+  } else if (pokemon.form.sprites.alternative && pokemon.gender === "Female") {
+    return pokemon.form.sprites.alternative;
+  }
+  return pokemon.form.sprites.default;
 }
 
 // TODO(fpion): unit tests

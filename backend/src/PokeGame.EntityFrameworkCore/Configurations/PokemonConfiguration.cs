@@ -30,7 +30,9 @@ internal class PokemonConfiguration : AggregateConfiguration<PokemonEntity>, IEn
     builder.HasIndex(x => x.TeraType);
     builder.HasIndex(x => x.Nature);
     builder.HasIndex(x => x.Level);
+    builder.HasIndex(x => x.Experience);
     builder.HasIndex(x => x.StatusCondition);
+    builder.HasIndex(x => x.Friendship);
     builder.HasIndex(x => x.HeldItemUid);
     builder.HasIndex(x => x.OriginalTrainerUid);
     builder.HasIndex(x => x.CurrentTrainerUid);
