@@ -315,6 +315,10 @@ export type UpdatePokemonPayload = {
   uniqueName?: string;
   nickname?: Change<string>;
   gender?: PokemonGender;
+  vitality?: number;
+  stamina?: number;
+  statusCondition?: Change<StatusCondition>;
+  friendship?: number;
   sprite?: Change<string>;
   url?: Change<string>;
   notes?: Change<string>;

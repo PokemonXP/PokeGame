@@ -3,6 +3,7 @@ import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 
 import AbilityIcon from "@/components/icons/AbilityIcon.vue";
+import ExperienceTableModal from "./ExperienceTableModal.vue";
 import FormIcon from "@/components/icons/FormIcon.vue";
 import ItemIcon from "@/components/icons/items/ItemIcon.vue";
 import PokemonTypeImage from "./PokemonTypeImage.vue";
@@ -82,7 +83,13 @@ const experiencePercentage = computed<number>(() =>
           {{ " / " }}
           {{ t("pokemon.experience.label") }}
         </th>
-        <td>{{ pokemon.level }}</td>
+        <td>
+          {{ pokemon.level }} (<a href="#" data-bs-toggle="modal" data-bs-target="#experience-table">{{
+            t(`pokemon.growthRate.select.options.${species.growthRate}`)
+          }}</a
+          >)
+          <ExperienceTableModal :growth-rate="species.growthRate" />
+        </td>
         <td>{{ pokemon.experience }} / {{ pokemon.maximumExperience }} ({{ n(experiencePercentage, "integer_percent") }})</td>
         <td>{{ t("pokemon.experience.next.format", { next: pokemon.toNextLevel }) }}</td>
       </tr>
@@ -125,16 +132,6 @@ const experiencePercentage = computed<number>(() =>
         </td>
       </tr>
       <tr>
-        <th scope="row">{{ t("pokemon.characteristic.label") }}</th>
-        <!-- TODO(fpion): should not take an entire row -->
-        <td colspan="3">{{ pokemon.characteristic }}.</td>
-      </tr>
-      <tr>
-        <th scope="row">{{ t("pokemon.friendship.label") }}</th>
-        <!-- TODO(fpion): should not take an entire row; should be editable -->
-        <td colspan="3">{{ pokemon.friendship }}</td>
-      </tr>
-      <tr>
         <th scope="row">{{ t("pokemon.ability.title") }}</th>
         <!-- TODO(fpion): should not take an entire row -->
         <td colspan="3">
@@ -142,9 +139,9 @@ const experiencePercentage = computed<number>(() =>
         </td>
       </tr>
       <tr>
-        <th scope="row">{{ t("pokemon.growthRate.select.label") }}</th>
-        <!-- TODO(fpion): should not take an entire row; show experience table modal -->
-        <td colspan="3">{{ t(`pokemon.growthRate.select.options.${species.growthRate}`) }}</td>
+        <th scope="row">{{ t("pokemon.characteristic.label") }}</th>
+        <!-- TODO(fpion): should not take an entire row -->
+        <td colspan="3">{{ pokemon.characteristic }}.</td>
       </tr>
       <tr>
         <th scope="row">{{ t("pokemon.item.held") }}</th>

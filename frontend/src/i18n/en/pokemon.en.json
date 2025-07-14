@@ -203,6 +203,21 @@
     "title": "Statistics",
     "total": "Total Values"
   },
+  "status": {
+    "condition": {
+      "select": {
+        "label": "Status Condition",
+        "options": {
+          "Burn": "Burn",
+          "Freeze": "Freeze",
+          "Paralysis": "Paralysis",
+          "Poison": "Poison",
+          "Sleep": "Sleep"
+        },
+        "placeholder": "Select a status condition"
+      }
+    }
+  },
   "title": "Pokémon",
   "trainer": {
     "label": "Trainer"

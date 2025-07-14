@@ -8,6 +8,8 @@ import AdminBreadcrumb from "@/components/admin/AdminBreadcrumb.vue";
 import PokemonDetail from "@/components/pokemon/PokemonDetail.vue";
 import PokemonGeneral from "@/components/pokemon/PokemonGeneral.vue";
 import PokemonMetadata from "@/components/pokemon/PokemonMetadata.vue";
+import PokemonMoves from "@/components/pokemon/PokemonMoves.vue";
+import PokemonStatistics from "@/components/pokemon/PokemonStatistics.vue";
 import StatusDetail from "@/components/shared/StatusDetail.vue";
 import type { Breadcrumb } from "@/types/components";
 import type { Pokemon } from "@/types/pokemon";
@@ -56,6 +58,23 @@ function onMetadataUpdated(updated: Pokemon): void {
   }
   toasts.success("pokemon.updated");
 }
+function onMovesUpdated(updated: Pokemon): void {
+  updateAggregate(updated);
+  if (pokemon.value) {
+    // TODO(fpion): implement
+  }
+  toasts.success("pokemon.updated");
+}
+function onStatisticsUpdated(updated: Pokemon): void {
+  updateAggregate(updated);
+  if (pokemon.value) {
+    pokemon.value.vitality = updated.vitality;
+    pokemon.value.stamina = updated.stamina;
+    pokemon.value.statusCondition = updated.statusCondition;
+    pokemon.value.friendship = updated.friendship;
+  }
+  toasts.success("pokemon.updated");
+}
 
 onMounted(async () => {
   isLoading.value = true;
@@ -74,10 +93,6 @@ onMounted(async () => {
   }
 });
 
-// TODO(fpion): Statistics, Vitality, Stamina, StatusCondition
-
-// TODO(fpion): Moves
-
 // TODO(fpion): Original Trainer
 // TODO(fpion): Ownership
 </script>
@@ -90,8 +105,14 @@ onMounted(async () => {
       <StatusDetail :aggregate="pokemon" />
       <PokemonDetail :pokemon="pokemon" />
       <TarTabs>
-        <TarTab active id="general" :title="t('general')">
+        <TarTab id="general" :title="t('general')">
           <PokemonGeneral :pokemon="pokemon" @error="handleError" @saved="onGeneralUpdated" />
+        </TarTab>
+        <TarTab active id="statistics" :title="t('pokemon.statistic.title')">
+          <PokemonStatistics :pokemon="pokemon" @error="handleError" @saved="onStatisticsUpdated" />
+        </TarTab>
+        <TarTab id="moves" :title="t('pokemon.move.title')">
+          <PokemonMoves :pokemon="pokemon" @error="handleError" @saved="onMovesUpdated" />
         </TarTab>
         <TarTab id="metadata" :title="t('metadata')">
           <PokemonMetadata :pokemon="pokemon" @error="handleError" @saved="onMetadataUpdated" />
