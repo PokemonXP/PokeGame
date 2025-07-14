@@ -4,35 +4,35 @@ import { computed, inject, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 
-import AbilitySlotSelect from "@/components/pokemon/AbilitySlotSelect.vue";
+import AbilitySlotSelect from "@/components/pokemon/creation/AbilitySlotSelect.vue";
 import AdminBreadcrumb from "@/components/admin/AdminBreadcrumb.vue";
-import BaseStatisticsView from "@/components/pokemon/BaseStatisticsView.vue";
-import EffortValuesEdit from "@/components/pokemon/EffortValuesEdit.vue";
-import ExperienceInput from "@/components/pokemon/ExperienceInput.vue";
+import BaseStatisticsView from "@/components/pokemon/creation/BaseStatisticsView.vue";
+import EffortValuesEdit from "@/components/pokemon/creation/EffortValuesEdit.vue";
+import ExperienceInput from "@/components/pokemon/creation/ExperienceInput.vue";
 import ExperienceTableModal from "@/components/pokemon/ExperienceTableModal.vue";
-import FormSelect from "@/components/pokemon/FormSelect.vue";
+import FormSelect from "@/components/pokemon/creation/FormSelect.vue";
 import FriendshipInput from "@/components/pokemon/FriendshipInput.vue";
 import GenderSelect from "@/components/pokemon/GenderSelect.vue";
-import GrowthRateSelect from "@/components/pokemon/GrowthRateSelect.vue";
-import IndividualValuesEdit from "@/components/pokemon/IndividualValuesEdit.vue";
+import GrowthRateSelect from "@/components/pokemon/creation/GrowthRateSelect.vue";
+import IndividualValuesEdit from "@/components/pokemon/creation/IndividualValuesEdit.vue";
 import ItemSelect from "@/components/items/ItemSelect.vue";
-import LevelInput from "@/components/pokemon/LevelInput.vue";
+import LevelInput from "@/components/pokemon/creation/LevelInput.vue";
 import MoveSelect from "@/components/moves/MoveSelect.vue";
-import MoveTable from "@/components/pokemon/MoveTable.vue";
-import NatureSelect from "@/components/pokemon/NatureSelect.vue";
-import NatureTable from "@/components/pokemon/NatureTable.vue";
+import MoveInfoTable from "@/components/pokemon/creation/MoveInfoTable.vue";
+import NatureSelect from "@/components/pokemon/creation/NatureSelect.vue";
+import NatureTable from "@/components/pokemon/creation/NatureTable.vue";
 import NicknameInput from "@/components/pokemon/NicknameInput.vue";
 import NotesTextarea from "@/components/pokemon/NotesTextarea.vue";
-import ProgressTable from "@/components/pokemon/ProgressTable.vue";
-import SizeEdit from "@/components/pokemon/SizeEdit.vue";
-import SpeciesSelect from "@/components/pokemon/SpeciesSelect.vue";
+import ProgressTable from "@/components/pokemon/creation/ProgressTable.vue";
+import SizeEdit from "@/components/pokemon/creation/SizeEdit.vue";
+import SpeciesSelect from "@/components/pokemon/creation/SpeciesSelect.vue";
 import StaminaInput from "@/components/pokemon/StaminaInput.vue";
 import SubmitButton from "@/components/shared/SubmitButton.vue";
-import TotalStatisticsView from "@/components/pokemon/TotalStatisticsView.vue";
-import TypeSelect from "@/components/pokemon/TypeSelect.vue";
+import TotalStatisticsView from "@/components/pokemon/creation/TotalStatisticsView.vue";
+import TypeSelect from "@/components/pokemon/creation/TypeSelect.vue";
 import UniqueNameInput from "@/components/pokemon/UniqueNameInput.vue";
 import UrlInput from "@/components/pokemon/UrlInput.vue";
-import VarietySelect from "@/components/pokemon/VarietySelect.vue";
+import VarietySelect from "@/components/pokemon/creation/VarietySelect.vue";
 import VitalityInput from "@/components/pokemon/VitalityInput.vue";
 import type {
   AbilitySlot,
@@ -327,7 +327,7 @@ watch(
             <TarButton :disabled="!move" icon="fas fa-plus" :text="t('actions.add')" variant="success" @click="addMove" />
           </template>
         </MoveSelect>
-        <MoveTable v-if="moves.length" :moves="moves" @down="onMoveDown" @removed="onMoveRemoved" @up="onMoveUp" />
+        <MoveInfoTable v-if="moves.length" :moves="moves" @down="onMoveDown" @removed="onMoveRemoved" @up="onMoveUp" />
         <h2 class="h3">{{ t("metadata") }}</h2>
         <div class="row">
           <UrlInput class="col" v-model="url" />
