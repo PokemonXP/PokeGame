@@ -13,6 +13,8 @@ public interface IPokemonService
   Task<PokemonModel?> ReadAsync(Guid? id = null, string? uniqueName = null, CancellationToken cancellationToken = default);
   Task<SearchResults<PokemonModel>> SearchAsync(SearchPokemonPayload payload, CancellationToken cancellationToken = default);
   Task<PokemonModel?> UpdateAsync(Guid id, UpdatePokemonPayload payload, CancellationToken cancellationToken = default);
+
+  Task<PokemonModel?> RelearnMoveAsync(Guid id, RelearnPokemonMovePayload payload, CancellationToken cancellationToken = default);
 }
 
 internal class PokemonService : IPokemonService
@@ -53,6 +55,12 @@ internal class PokemonService : IPokemonService
   public async Task<PokemonModel?> UpdateAsync(Guid id, UpdatePokemonPayload payload, CancellationToken cancellationToken)
   {
     UpdatePokemon command = new(id, payload);
+    return await _commandBus.ExecuteAsync(command, cancellationToken);
+  }
+
+  public async Task<PokemonModel?> RelearnMoveAsync(Guid id, RelearnPokemonMovePayload payload, CancellationToken cancellationToken)
+  {
+    RelearnPokemonMove command = new(id, payload);
     return await _commandBus.ExecuteAsync(command, cancellationToken);
   }
 }

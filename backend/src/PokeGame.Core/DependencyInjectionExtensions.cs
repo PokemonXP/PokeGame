@@ -27,6 +27,7 @@ public static class DependencyInjectionExtensions
     return services
       .AddTransient<ICommandHandler<CreatePokemon, PokemonModel>, CreatePokemonHandler>()
       .AddTransient<ICommandHandler<DeletePokemon, PokemonModel?>, DeletePokemonHandler>()
+      .AddTransient<ICommandHandler<RelearnPokemonMove, PokemonModel?>, RelearnPokemonMoveHandler>()
       .AddTransient<ICommandHandler<UpdatePokemon, PokemonModel?>, UpdatePokemonHandler>();
   }
 
