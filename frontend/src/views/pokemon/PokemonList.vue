@@ -9,8 +9,8 @@ import { useRoute, useRouter } from "vue-router";
 import AdminBreadcrumb from "@/components/admin/AdminBreadcrumb.vue";
 import AppPagination from "@/components/shared/AppPagination.vue";
 import CountSelect from "@/components/shared/CountSelect.vue";
-import EditIcon from "@/components/shared/EditIcon.vue";
-import GenderIcon from "@/components/pokemon/GenderIcon.vue";
+import EditIcon from "@/components/icons/EditIcon.vue";
+import PokemonGenderIcon from "@/components/icons/PokemonGenderIcon.vue";
 import RefreshButton from "@/components/shared/RefreshButton.vue";
 import SearchInput from "@/components/shared/SearchInput.vue";
 import SortSelect from "@/components/shared/SortSelect.vue";
@@ -172,12 +172,12 @@ watch(
                     <template v-if="pokemon.nickname">
                       <EditIcon /> {{ pokemon.nickname }}
                       <br />
-                      <GenderIcon :gender="pokemon.gender" /> {{ pokemon.uniqueName }}
+                      <PokemonGenderIcon :gender="pokemon.gender" /> {{ pokemon.uniqueName }}
                     </template>
                     <template v-else>
                       <EditIcon /> {{ pokemon.nickname }}
                       {{ pokemon.uniqueName }}
-                      <GenderIcon :gender="pokemon.gender" />
+                      <PokemonGenderIcon :gender="pokemon.gender" />
                     </template>
                   </RouterLink>
                 </div>

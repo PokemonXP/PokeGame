@@ -2,7 +2,7 @@
 import { useI18n } from "vue-i18n";
 
 import AdminBreadcrumb from "@/components/admin/AdminBreadcrumb.vue";
-import TrainerIcon from "@/components/trainers/TrainerIcon.vue";
+import TrainerIcon from "@/components/icons/TrainerIcon.vue";
 
 const cmsBaseUrl: string = import.meta.env.VITE_APP_CMS_BASE_URL ?? "";
 const ContentTypes = {

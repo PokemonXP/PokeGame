@@ -4,7 +4,7 @@ import { arrayUtils } from "logitar-js";
 import { useI18n } from "vue-i18n";
 
 import FormSelect from "@/components/forms/FormSelect.vue";
-import GenderIcon from "./GenderIcon.vue";
+import PokemonGenderIcon from "@/components/icons/PokemonGenderIcon.vue";
 import type { PokemonGender } from "@/types/pokemon";
 import { computed } from "vue";
 
@@ -53,7 +53,7 @@ defineEmits<{
   >
     <template #append>
       <span class="input-group-text">
-        <GenderIcon :gender="gender" />
+        <PokemonGenderIcon :gender="gender" />
       </span>
     </template>
   </FormSelect>
