@@ -16,6 +16,7 @@ public record EffortValues : IEffortValues
   {
   }
 
+  [JsonConstructor]
   public EffortValues(byte hp, byte attack, byte defense, byte specialAttack, byte specialDefense, byte speed)
   {
     HP = hp;

@@ -16,6 +16,7 @@ public record IndividualValues : IIndividualValues
   {
   }
 
+  [JsonConstructor]
   public IndividualValues(byte hp, byte attack, byte defense, byte specialAttack, byte specialDefense, byte speed)
   {
     HP = hp;
