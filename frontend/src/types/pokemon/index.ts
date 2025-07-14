@@ -312,13 +312,13 @@ export type Trainer = Aggregate & {
 export type TrainerGender = "Female" | "Male";
 
 export type UpdatePokemonPayload = {
-  uniqueName?: string
-  nickname?: Change<string>
-  gender?: PokemonGender
-  sprite?: Change<string>
-  url?: Change<string>
-  notes?: Change<string>
-}
+  uniqueName?: string;
+  nickname?: Change<string>;
+  gender?: PokemonGender;
+  sprite?: Change<string>;
+  url?: Change<string>;
+  notes?: Change<string>;
+};
 
 export type Variety = Aggregate & {
   species: Species;
@@ -332,5 +332,3 @@ export type Variety = Aggregate & {
   url?: string | null;
   notes?: string | null;
 };
-
-

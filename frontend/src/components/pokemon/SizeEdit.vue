@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { TarInput } from "logitar-vue3-ui";
-import { computed, onMounted } from "vue";
+import { onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 
 import HeightInput from "./HeightInput.vue";
 import WeightInput from "./WeightInput.vue";
-import type { PokemonSizeCategory, PokemonSizePayload } from "@/types/pokemon";
+import type { PokemonSizePayload } from "@/types/pokemon";
+import { getSizeCategory } from "@/helpers/pokemon";
 import { randomInteger } from "@/helpers/random";
 
 const { t } = useI18n();
@@ -13,19 +14,6 @@ const { t } = useI18n();
 const props = defineProps<{
   modelValue: PokemonSizePayload;
 }>();
-
-const category = computed<PokemonSizeCategory>(() => {
-  if (props.modelValue.height <= 15) {
-    return "ExtraSmall";
-  } else if (props.modelValue.height <= 47) {
-    return "Small";
-  } else if (props.modelValue.height >= 240) {
-    return "ExtraLarge";
-  } else if (props.modelValue.height >= 208) {
-    return "Large";
-  }
-  return "Medium";
-});
 
 const emit = defineEmits<{
   (e: "update:model-value", size: PokemonSizePayload): void;
@@ -59,7 +47,7 @@ onMounted(() => {
       floating
       id="size-category"
       :label="t('pokemon.size.category.label')"
-      :model-value="t(`pokemon.size.category.options.${category}`)"
+      :model-value="t(`pokemon.size.category.options.${getSizeCategory(modelValue.height)}`)"
     />
   </div>
 </template>

@@ -35,5 +35,5 @@ export async function searchPokemon(payload: SearchPokemonPayload): Promise<Sear
 
 export async function updatePokemon(id: string, payload: UpdatePokemonPayload): Promise<Pokemon> {
   const url: string = new urlUtils.UrlBuilder({ path: "/pokemon/{id}" }).setParameter("id", id).buildRelative();
-  return (await patch<UpdatePokemonPayload, Pokemon>(url, payload)).data
+  return (await patch<UpdatePokemonPayload, Pokemon>(url, payload)).data;
 }

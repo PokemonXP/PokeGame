@@ -7,6 +7,9 @@
     },
     "title": "Ability"
   },
+  "characteristic": {
+    "label": "Characteristic"
+  },
   "create": "Create Pokémon",
   "created": "The Pokémon has been created.",
   "empty": "This list is empty.",
@@ -15,7 +18,10 @@
     "label": "Experience",
     "maximum": "Maximum Experience",
     "minimum": "Minimum Experience",
-    "next": "To Next Level",
+    "next": {
+      "format": "Next: {next}",
+      "label": "To Next Level"
+    },
     "percentage": "Percentage",
     "table": {
       "open": "Table",
@@ -135,10 +141,12 @@
       }
     },
     "height": {
+      "label": "Height",
       "scalar": "Height Scalar"
     },
     "title": "Size",
     "weight": {
+      "label": "Weight",
       "scalar": "Weight Scalar"
     }
   },

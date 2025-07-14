@@ -47,6 +47,13 @@ export default createI18n<[MessageSchema], "en" | "fr">({
         style: "decimal",
         minimumFractionDigits: 2,
       },
+      height: {
+        style: "unit",
+        unit: "meter",
+        unitDisplay: "short",
+        minimumFractionDigits: 1,
+        maximumFractionDigits: 1,
+      },
       integer: {
         style: "decimal",
         maximumFractionDigits: 0,
@@ -58,6 +65,13 @@ export default createI18n<[MessageSchema], "en" | "fr">({
       percent: {
         style: "percent",
         minimumFractionDigits: 3,
+      },
+      weight: {
+        style: "unit",
+        unit: "kilogram",
+        unitDisplay: "short",
+        minimumFractionDigits: 1,
+        maximumFractionDigits: 1,
       },
     },
     fr: {
@@ -71,6 +85,13 @@ export default createI18n<[MessageSchema], "en" | "fr">({
         style: "decimal",
         minimumFractionDigits: 2,
       },
+      height: {
+        style: "unit",
+        unit: "meter",
+        unitDisplay: "short",
+        minimumFractionDigits: 1,
+        maximumFractionDigits: 1,
+      },
       integer: {
         style: "decimal",
         maximumFractionDigits: 0,
@@ -82,6 +103,13 @@ export default createI18n<[MessageSchema], "en" | "fr">({
       percent: {
         style: "percent",
         minimumFractionDigits: 3,
+      },
+      weight: {
+        style: "unit",
+        unit: "kilogram",
+        unitDisplay: "short",
+        minimumFractionDigits: 1,
+        maximumFractionDigits: 1,
       },
     },
   },

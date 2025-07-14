@@ -3,7 +3,7 @@ import { TarButton } from "logitar-vue3-ui";
 import { useI18n } from "vue-i18n";
 
 import type { Move } from "@/types/pokemon/moves";
-import { getMoveUrl } from "@/helpers/pokemon";
+import { getMoveUrl } from "@/helpers/cms";
 
 const { t } = useI18n();
 

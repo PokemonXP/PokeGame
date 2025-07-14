@@ -17,7 +17,8 @@ import SortSelect from "@/components/shared/SortSelect.vue";
 import StatusBlock from "@/components/shared/StatusBlock.vue";
 import type { Pokemon, PokemonSort, SearchPokemonPayload } from "@/types/pokemon";
 import type { SearchResults } from "@/types/search";
-import { getSpriteUrl, getTrainerUrl } from "@/helpers/pokemon";
+import { getSpriteUrl } from "@/helpers/pokemon";
+import { getTrainerUrl } from "@/helpers/cms";
 import { handleErrorKey } from "@/inject";
 import { searchPokemon } from "@/api/pokemon";
 
@@ -189,7 +190,7 @@ watch(
               {{ t("pokemon.experience.format", { experience: pokemon.experience }) }}
             </td>
             <td>
-              <a v-if="pokemon.ownership?.trainer" :href="getTrainerUrl(pokemon.ownership.trainer)">
+              <a v-if="pokemon.ownership?.trainer" :href="getTrainerUrl(pokemon.ownership.trainer)" target="_blank">
                 <template v-if="pokemon.ownership.trainer.displayName">
                   {{ pokemon.ownership.trainer.displayName }}
                   <br />

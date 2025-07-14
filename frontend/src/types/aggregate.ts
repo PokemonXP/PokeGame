@@ -20,5 +20,5 @@ export type Aggregate = {
 };
 
 export type Change<T> = {
-  value?: T
-}
+  value?: T;
+};

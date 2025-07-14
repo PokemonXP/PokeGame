@@ -5,6 +5,7 @@ import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 
 import AdminBreadcrumb from "@/components/admin/AdminBreadcrumb.vue";
+import PokemonDetail from "@/components/pokemon/PokemonDetail.vue";
 import PokemonGeneral from "@/components/pokemon/PokemonGeneral.vue";
 import PokemonMetadata from "@/components/pokemon/PokemonMetadata.vue";
 import StatusDetail from "@/components/shared/StatusDetail.vue";
@@ -73,27 +74,12 @@ onMounted(async () => {
   }
 });
 
-// TODO(fpion): Species, Variety, Form
-
-// TODO(fpion): Types (primary, secondary, tera)
-// TODO(fpion): Height & Weight
-// TODO(fpion): Ability
-// TODO(fpion): Nature
-
-// TODO(fpion): GrowthRate, Level, Experience, MaximumExperience, ToNextLevel
-
-// TODO(fpion): Statistics, Vitality, Stamina, StatusCondition, Characteristic
-
-// TODO(fpion): Friendship
-
-// TODO(fpion): HeldItem
+// TODO(fpion): Statistics, Vitality, Stamina, StatusCondition
 
 // TODO(fpion): Moves
 
 // TODO(fpion): Original Trainer
 // TODO(fpion): Ownership
-
-// TODO(fpion): Sprite
 </script>
 
 <template>
@@ -102,6 +88,7 @@ onMounted(async () => {
       <h1>{{ title }}</h1>
       <AdminBreadcrumb :current="title" :parent="breadcrumb" />
       <StatusDetail :aggregate="pokemon" />
+      <PokemonDetail :pokemon="pokemon" />
       <TarTabs>
         <TarTab active id="general" :title="t('general')">
           <PokemonGeneral :pokemon="pokemon" @error="handleError" @saved="onGeneralUpdated" />

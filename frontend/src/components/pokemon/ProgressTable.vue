@@ -29,7 +29,7 @@ const toNextLevel = computed<number>(() => Math.max(maximumExperience.value - pr
       <tr>
         <th scope="col">{{ t("pokemon.experience.minimum") }}</th>
         <th scope="col">{{ t("pokemon.experience.maximum") }}</th>
-        <th scope="col">{{ t("pokemon.experience.next") }}</th>
+        <th scope="col">{{ t("pokemon.experience.next.label") }}</th>
         <th scope="col">{{ t("pokemon.experience.percentage") }}</th>
       </tr>
     </thead>

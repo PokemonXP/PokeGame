@@ -1,24 +1,18 @@
-import { stringUtils } from "logitar-js";
-
 import { EFFORT_VALUE_MAXIMUM, EFFORT_VALUE_MINIMUM, INDIVIDUAL_VALUE_MAXIMUM, INDIVIDUAL_VALUE_MINIMUM, LEVEL_MAXIMUM, LEVEL_MINIMUM } from "@/types/pokemon";
 import type {
-  Ability,
   BaseStatistics,
   EffortValues,
+  Form,
   GrowthRate,
   IndividualValues,
   Pokemon,
   PokemonNature,
+  PokemonSize,
+  PokemonSizeCategory,
   PokemonStatistic,
   PokemonStatistics,
   StatisticValues,
-  Trainer,
 } from "@/types/pokemon";
-import type { Move } from "@/types/pokemon/moves";
-import type { Item } from "@/types/items";
-
-const cmsBaseUrl: string = import.meta.env.VITE_APP_CMS_BASE_URL ?? "";
-const { trimEnd } = stringUtils;
 
 function calculateErratic(level: number): number {
   let experience: number = 0;
@@ -81,6 +75,15 @@ const _thresholds = new Map<GrowthRate, number[]>([
   ["MediumSlow", mediumSlow],
   ["Slow", slow],
 ]);
+
+export function calculateSize(form: Form, scalars: PokemonSize): PokemonSize {
+  const heightMultiplier: number = (scalars.height / 255) * 0.4 + 0.8;
+  return {
+    height: Math.floor(heightMultiplier * form.height) / 10,
+    weight: Math.floor(((scalars.weight / 255) * 0.4 + 0.8) * heightMultiplier * form.weight) / 10,
+    category: getSizeCategory(scalars.height),
+  };
+}
 
 function calculateHP(base: number, individual: number, effort: number, level: number): StatisticValues {
   if (individual < INDIVIDUAL_VALUE_MINIMUM || individual > INDIVIDUAL_VALUE_MAXIMUM) {
@@ -185,17 +188,17 @@ export function getMaximumExperience(growthRate: GrowthRate, level: number): num
   return thresholds[Math.min(level, LEVEL_MAXIMUM - 1)];
 }
 
-export function getAbilityUrl(ability: Ability): string {
-  return `${trimEnd(cmsBaseUrl, "/")}/admin/contents/${ability.id}`;
-}
-export function getItemUrl(item: Item): string {
-  return `${trimEnd(cmsBaseUrl, "/")}/admin/contents/${item.id}`;
-}
-export function getMoveUrl(move: Move): string {
-  return `${trimEnd(cmsBaseUrl, "/")}/admin/contents/${move.id}`;
-}
-export function getTrainerUrl(trainer: Trainer): string {
-  return `${trimEnd(cmsBaseUrl, "/")}/admin/contents/${trainer.id}`;
+export function getSizeCategory(heightScalar: number): PokemonSizeCategory {
+  if (heightScalar <= 15) {
+    return "ExtraSmall";
+  } else if (heightScalar <= 47) {
+    return "Small";
+  } else if (heightScalar >= 240) {
+    return "ExtraLarge";
+  } else if (heightScalar >= 208) {
+    return "Large";
+  }
+  return "Medium";
 }
 
 export function getSpriteUrl(pokemon: Pokemon): string {
