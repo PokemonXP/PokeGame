@@ -1,8 +1,11 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Krakenar.Contracts.Search;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PokeGame.Api.Constants;
+using PokeGame.Api.Models.Pokemon;
 using PokeGame.Core.Pokemons;
 using PokeGame.Core.Pokemons.Models;
+using PokeGame.Core.Regions.Models;
 
 namespace PokeGame.Api.Controllers;
 
@@ -38,5 +41,13 @@ public class PokemonController : ControllerBase
   {
     PokemonModel? pokemon = await _pokemonService.ReadAsync(id: null, uniqueName, cancellationToken);
     return pokemon is null ? NotFound() : Ok(pokemon);
+  }
+
+  [HttpGet]
+  public async Task<ActionResult<SearchResults<RegionModel>>> SearchAsync([FromQuery] SearchPokemonParameters parameters, CancellationToken cancellationToken)
+  {
+    SearchPokemonPayload payload = parameters.ToPayload();
+    SearchResults<PokemonModel> regions = await _pokemonService.SearchAsync(payload, cancellationToken);
+    return Ok(regions);
   }
 }
