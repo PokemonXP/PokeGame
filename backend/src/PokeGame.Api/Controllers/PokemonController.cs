@@ -5,7 +5,6 @@ using PokeGame.Api.Constants;
 using PokeGame.Api.Models.Pokemon;
 using PokeGame.Core.Pokemons;
 using PokeGame.Core.Pokemons.Models;
-using PokeGame.Core.Regions.Models;
 
 namespace PokeGame.Api.Controllers;
 
@@ -44,10 +43,17 @@ public class PokemonController : ControllerBase
   }
 
   [HttpGet]
-  public async Task<ActionResult<SearchResults<RegionModel>>> SearchAsync([FromQuery] SearchPokemonParameters parameters, CancellationToken cancellationToken)
+  public async Task<ActionResult<SearchResults<PokemonModel>>> SearchAsync([FromQuery] SearchPokemonParameters parameters, CancellationToken cancellationToken)
   {
     SearchPokemonPayload payload = parameters.ToPayload();
     SearchResults<PokemonModel> regions = await _pokemonService.SearchAsync(payload, cancellationToken);
     return Ok(regions);
+  }
+
+  [HttpPatch("{id}")]
+  public async Task<ActionResult<PokemonModel>> UpdateAsync(Guid id, [FromBody] UpdatePokemonPayload payload, CancellationToken cancellationToken)
+  {
+    PokemonModel? pokemon = await _pokemonService.UpdateAsync(id, payload, cancellationToken);
+    return pokemon is null ? NotFound() : Ok(pokemon);
   }
 }

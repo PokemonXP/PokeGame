@@ -24,7 +24,9 @@ public static class DependencyInjectionExtensions
 
   private static IServiceCollection AddCommands(this IServiceCollection services)
   {
-    return services.AddTransient<ICommandHandler<CreatePokemon, PokemonModel>, CreatePokemonHandler>();
+    return services
+      .AddTransient<ICommandHandler<CreatePokemon, PokemonModel>, CreatePokemonHandler>()
+      .AddTransient<ICommandHandler<UpdatePokemon, PokemonModel?>, UpdatePokemonHandler>();
   }
 
   private static IServiceCollection AddCoreServices(this IServiceCollection services)
