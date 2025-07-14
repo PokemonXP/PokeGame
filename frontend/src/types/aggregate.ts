@@ -18,3 +18,7 @@ export type Aggregate = {
   updatedBy: Actor;
   updatedOn: string;
 };
+
+export type Change<T> = {
+  value?: T
+}

@@ -1,13 +1,11 @@
 <script setup lang="ts">
 import { TarButton } from "logitar-vue3-ui";
-import { stringUtils } from "logitar-js";
 import { useI18n } from "vue-i18n";
 
 import type { Move } from "@/types/pokemon/moves";
+import { getMoveUrl } from "@/helpers/pokemon";
 
-const cmsBaseUrl: string = import.meta.env.VITE_APP_CMS_BASE_URL ?? "";
 const { t } = useI18n();
-const { trimEnd } = stringUtils;
 
 defineProps<{
   moves: Move[];
@@ -18,10 +16,6 @@ defineEmits<{
   (e: "removed", index: number): void;
   (e: "up", index: number): void;
 }>();
-
-function getMoveUrl(move: Move): string {
-  return `${trimEnd(cmsBaseUrl, "/")}/admin/contents/${move.id}`;
-}
 </script>
 
 <template>

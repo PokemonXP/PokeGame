@@ -2,6 +2,7 @@
 import { useI18n } from "vue-i18n";
 
 import AdminBreadcrumb from "@/components/admin/AdminBreadcrumb.vue";
+import TrainerIcon from "@/components/trainers/TrainerIcon.vue";
 
 const cmsBaseUrl: string = import.meta.env.VITE_APP_CMS_BASE_URL ?? "";
 const ContentTypes = {
@@ -37,9 +38,7 @@ const { t } = useI18n();
         <a :href="`${cmsBaseUrl}/admin/contents?type=${ContentTypes.Moves}`" target="_blank" class="tile">
           <font-awesome-icon icon="fas fa-wand-sparkles" class="icon" /> Moves
         </a>
-        <a :href="`${cmsBaseUrl}/admin/contents?type=${ContentTypes.Trainers}`" target="_blank" class="tile">
-          <font-awesome-icon icon="fas fa-person" class="icon" /> Trainers
-        </a>
+        <a :href="`${cmsBaseUrl}/admin/contents?type=${ContentTypes.Trainers}`" target="_blank" class="tile"><TrainerIcon class="icon" /> Trainers</a>
         <a :href="`${cmsBaseUrl}/admin/contents?type=${ContentTypes.Species}`" target="_blank" class="tile">
           <font-awesome-icon icon="fas fa-paw" class="icon" /> Species
         </a>

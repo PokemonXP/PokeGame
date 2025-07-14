@@ -17,8 +17,8 @@ import GrowthRateSelect from "@/components/pokemon/GrowthRateSelect.vue";
 import IndividualValuesEdit from "@/components/pokemon/IndividualValuesEdit.vue";
 import ItemSelect from "@/components/items/ItemSelect.vue";
 import LevelInput from "@/components/pokemon/LevelInput.vue";
-import MoveTable from "@/components/pokemon/MoveTable.vue";
 import MoveSelect from "@/components/moves/MoveSelect.vue";
+import MoveTable from "@/components/pokemon/MoveTable.vue";
 import NatureSelect from "@/components/pokemon/NatureSelect.vue";
 import NatureTable from "@/components/pokemon/NatureTable.vue";
 import NicknameInput from "@/components/pokemon/NicknameInput.vue";
@@ -27,6 +27,7 @@ import ProgressTable from "@/components/pokemon/ProgressTable.vue";
 import SizeEdit from "@/components/pokemon/SizeEdit.vue";
 import SpeciesSelect from "@/components/pokemon/SpeciesSelect.vue";
 import StaminaInput from "@/components/pokemon/StaminaInput.vue";
+import SubmitButton from "@/components/shared/SubmitButton.vue";
 import TotalStatisticsView from "@/components/pokemon/TotalStatisticsView.vue";
 import TypeSelect from "@/components/pokemon/TypeSelect.vue";
 import UniqueNameInput from "@/components/pokemon/UniqueNameInput.vue";
@@ -71,7 +72,7 @@ const effortValues = ref<EffortValues>({ hp: 0, attack: 0, defense: 0, specialAt
 const experience = ref<number>(0);
 const form = ref<Form>();
 const friendship = ref<number>(0);
-const gender = ref<PokemonGender>();
+const gender = ref<string>("");
 const heldItem = ref<Item>();
 const individualValues = ref<IndividualValues>({ hp: 0, attack: 0, defense: 0, specialAttack: 0, specialDefense: 0, speed: 0 });
 const isLoading = ref<boolean>(false);
@@ -135,7 +136,7 @@ async function submit(): Promise<void> {
           form: form.value.id,
           uniqueName: uniqueName.value,
           nickname: nickname.value,
-          gender: gender.value,
+          gender: (gender.value || undefined) as PokemonGender,
           teraType: teraType.value,
           size: size.value,
           abilitySlot: abilitySlot.value,
@@ -157,6 +158,7 @@ async function submit(): Promise<void> {
         router.push({ name: "PokemonEdit", params: { id: pokemon.id } });
       }
     } catch (e: unknown) {
+      // TODO(fpion): handle 409
       handleError(e);
     } finally {
       isLoading.value = false;
@@ -185,7 +187,7 @@ function onVarietySelected(selectedVariety: Variety | undefined): void {
       switch (selectedVariety.genderRatio) {
         case null:
         case undefined:
-          gender.value = undefined;
+          gender.value = "";
           break;
         case 0:
           gender.value = "Female";
@@ -326,7 +328,7 @@ watch(
           </template>
         </MoveSelect>
         <MoveTable v-if="moves.length" :moves="moves" @down="onMoveDown" @removed="onMoveRemoved" @up="onMoveUp" />
-        <h2 class="h3">{{ t("pokemon.metadata.title") }}</h2>
+        <h2 class="h3">{{ t("metadata") }}</h2>
         <div class="row">
           <UrlInput class="col" v-model="url" />
           <UrlInput class="col" id="sprite" label="pokemon.sprite.label" v-model="sprite" />
@@ -338,15 +340,7 @@ watch(
           </div>
         </div>
         <div class="mb-3">
-          <TarButton
-            :disabled="isLoading"
-            icon="fas fa-plus"
-            :loading="isLoading"
-            :status="t('loading')"
-            :text="t('actions.create')"
-            type="submit"
-            variant="success"
-          />
+          <SubmitButton icon="fas fa-plus" :loading="isLoading" text="actions.create" variant="success" />
         </div>
       </template>
     </form>

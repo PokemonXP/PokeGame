@@ -4,6 +4,8 @@ import { arrayUtils } from "logitar-js";
 import { useI18n } from "vue-i18n";
 
 import FormSelect from "@/components/forms/FormSelect.vue";
+import GenderIcon from "./GenderIcon.vue";
+import type { PokemonGender } from "@/types/pokemon";
 import { computed } from "vue";
 
 const { orderBy } = arrayUtils;
@@ -25,15 +27,7 @@ const props = withDefaults(
   },
 );
 
-const icon = computed<string>(() => {
-  switch (props.modelValue) {
-    case "Female":
-      return "fas fa-venus";
-    case "Male":
-      return "fas fa-mars";
-  }
-  return "fas fa-question";
-});
+const gender = computed<PokemonGender | undefined>(() => (props.modelValue ? (props.modelValue as PokemonGender) : undefined));
 const options = computed<SelectOption[]>(() =>
   orderBy(
     Object.entries(tm(rt("pokemon.gender.select.options"))).map(([value, text]) => ({ text, value }) as SelectOption),
@@ -59,7 +53,7 @@ defineEmits<{
   >
     <template #append>
       <span class="input-group-text">
-        <font-awesome-icon :icon="icon" />
+        <GenderIcon :gender="gender" />
       </span>
     </template>
   </FormSelect>
