@@ -101,6 +101,7 @@
     },
     "current": "Current Moves",
     "description": "Description",
+    "empty": "This list is empty.",
     "learn": "Learn",
     "learned": {
       "label": "Learned",
