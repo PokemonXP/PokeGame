@@ -1,8 +1,10 @@
 {
   "actions": {
     "add": "Add",
+    "cancel": "Cancel",
     "close": "Close",
     "create": "Create",
+    "delete": "Delete",
     "refresh": "Refresh",
     "save": "Save"
   },

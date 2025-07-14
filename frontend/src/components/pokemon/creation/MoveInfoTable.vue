@@ -2,10 +2,12 @@
 import { TarButton } from "logitar-vue3-ui";
 import { useI18n } from "vue-i18n";
 
+import MoveCategoryBadge from "@/components/moves/MoveCategoryBadge.vue";
+import PokemonTypeImage from "@/components/pokemon/PokemonTypeImage.vue";
 import type { Move } from "@/types/pokemon/moves";
 import { getMoveUrl } from "@/helpers/cms";
 
-const { t } = useI18n();
+const { n, t } = useI18n();
 
 defineProps<{
   moves: Move[];
@@ -26,7 +28,7 @@ defineEmits<{
         <th scope="col">{{ t("pokemon.move.typeAndCategory") }}</th>
         <th scope="col">{{ t("pokemon.move.accuracy") }}</th>
         <th scope="col">{{ t("pokemon.move.power") }}</th>
-        <th scope="col">{{ t("pokemon.move.powerPoints") }}</th>
+        <th scope="col">{{ t("pokemon.move.powerPoints.label") }}</th>
         <th scope="col">{{ t("pokemon.move.description") }}</th>
         <th scope="col"></th>
       </tr>
@@ -43,12 +45,12 @@ defineEmits<{
           </a>
         </td>
         <td>
-          {{ t(`pokemon.type.select.options.${move.type}`) }}
+          <PokemonTypeImage :type="move.type" />
           <br />
-          {{ t(`pokemon.move.category.options.${move.category}`) }}
+          <MoveCategoryBadge :category="move.category" />
         </td>
         <td>
-          <template v-if="move.accuracy">{{ move.accuracy }}</template>
+          <template v-if="move.accuracy">{{ n(move.accuracy / 100, "integer_percent") }}</template>
           <span v-else class="text-muted">{{ "—" }}</span>
         </td>
         <td>

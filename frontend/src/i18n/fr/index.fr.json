@@ -1,8 +1,10 @@
 {
   "actions": {
     "add": "Ajouter",
+    "cancel": "Annuler",
     "close": "Fermer",
     "create": "Créer",
+    "delete": "Supprimer",
     "refresh": "Rafraîchir",
     "save": "Enregistrer"
   },

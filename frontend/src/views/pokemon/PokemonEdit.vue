@@ -5,6 +5,7 @@ import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 
 import AdminBreadcrumb from "@/components/admin/AdminBreadcrumb.vue";
+import DeletePokemon from "@/components/pokemon/DeletePokemon.vue";
 import PokemonDetail from "@/components/pokemon/PokemonDetail.vue";
 import PokemonGeneral from "@/components/pokemon/PokemonGeneral.vue";
 import PokemonMetadata from "@/components/pokemon/PokemonMetadata.vue";
@@ -76,6 +77,11 @@ function onStatisticsUpdated(updated: Pokemon): void {
   toasts.success("pokemon.updated");
 }
 
+function onDeleted(): void {
+  toasts.success("pokemon.deleted");
+  router.push({ name: "PokemonList" });
+}
+
 onMounted(async () => {
   isLoading.value = true;
   try {
@@ -104,14 +110,17 @@ onMounted(async () => {
       <AdminBreadcrumb :current="title" :parent="breadcrumb" />
       <StatusDetail :aggregate="pokemon" />
       <PokemonDetail :pokemon="pokemon" />
+      <div class="mb-3">
+        <DeletePokemon :pokemon="pokemon" @deleted="onDeleted" @error="handleError" />
+      </div>
       <TarTabs>
         <TarTab id="general" :title="t('general')">
           <PokemonGeneral :pokemon="pokemon" @error="handleError" @saved="onGeneralUpdated" />
         </TarTab>
-        <TarTab active id="statistics" :title="t('pokemon.statistic.title')">
+        <TarTab id="statistics" :title="t('pokemon.statistic.title')">
           <PokemonStatistics :pokemon="pokemon" @error="handleError" @saved="onStatisticsUpdated" />
         </TarTab>
-        <TarTab id="moves" :title="t('pokemon.move.title')">
+        <TarTab active id="moves" :title="t('pokemon.move.title')">
           <PokemonMoves :pokemon="pokemon" @error="handleError" @saved="onMovesUpdated" />
         </TarTab>
         <TarTab id="metadata" :title="t('metadata')">
