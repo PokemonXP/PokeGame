@@ -25,6 +25,15 @@ internal class FormQuerier : IFormQuerier
     _sqlHelper = sqlHelper;
   }
 
+  public async Task<FormModel> ReadAsync(FormId id, CancellationToken cancellationToken)
+  {
+    FormEntity form = await _forms.AsNoTracking()
+      .Include(x => x.Abilities).ThenInclude(x => x.Ability)
+      .Include(x => x.Variety).ThenInclude(x => x!.Species).ThenInclude(x => x!.RegionalNumbers).ThenInclude(x => x.Region)
+      .SingleOrDefaultAsync(x => x.StreamId == id.Value, cancellationToken)
+      ?? throw new InvalidOperationException($"The form entity 'StreamId={id}' was not found.");
+    return await MapAsync(form, cancellationToken);
+  }
   public async Task<FormModel?> ReadAsync(Guid id, CancellationToken cancellationToken)
   {
     FormEntity? form = await _forms.AsNoTracking()

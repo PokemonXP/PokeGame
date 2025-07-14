@@ -2,6 +2,8 @@
 using Krakenar.Contracts.Settings;
 using Krakenar.Core;
 using Logitar.EventSourcing;
+using PokeGame.Core.Forms;
+using PokeGame.Core.Forms.Models;
 using PokeGame.Core.Pokemons.Models;
 using PokeGame.Core.Pokemons.Validators;
 
@@ -14,17 +16,20 @@ internal record UpdatePokemon(Guid Id, UpdatePokemonPayload Payload) : ICommand<
 internal class UpdatePokemonHandler : ICommandHandler<UpdatePokemon, PokemonModel?>
 {
   private readonly IApplicationContext _applicationContext;
+  private readonly IFormQuerier _formQuerier;
   private readonly IPokemonManager _pokemonManager;
   private readonly IPokemonQuerier _pokemonQuerier;
   private readonly IPokemonRepository _pokemonRepository;
 
   public UpdatePokemonHandler(
     IApplicationContext applicationContext,
+    IFormQuerier formQuerier,
     IPokemonManager pokemonManager,
     IPokemonQuerier pokemonQuerier,
     IPokemonRepository pokemonRepository)
   {
     _applicationContext = applicationContext;
+    _formQuerier = formQuerier;
     _pokemonManager = pokemonManager;
     _pokemonQuerier = pokemonQuerier;
     _pokemonRepository = pokemonRepository;
@@ -55,7 +60,13 @@ internal class UpdatePokemonHandler : ICommandHandler<UpdatePokemon, PokemonMode
       DisplayName? nickname = DisplayName.TryCreate(payload.Nickname.Value);
       pokemon.SetNickname(nickname, actorId);
     }
-    // TODO(fpion): Gender
+    if (payload.Gender.HasValue)
+    {
+      FormModel form = await _formQuerier.ReadAsync(pokemon.FormId, cancellationToken);
+      new UpdatePokemonValidator(uniqueNameSettings, form).ValidateAndThrow(payload);
+
+      pokemon.Gender = payload.Gender.Value;
+    }
 
     if (payload.Sprite is not null)
     {

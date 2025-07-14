@@ -6,7 +6,7 @@ public record UpdatePokemonPayload
 {
   public string? UniqueName { get; set; }
   public Change<string>? Nickname { get; set; }
-  // TODO(fpion): Gender
+  public PokemonGender? Gender { get; set; }
 
   public Change<string>? Sprite { get; set; }
   public Change<string>? Url { get; set; }
