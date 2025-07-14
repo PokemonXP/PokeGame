@@ -18,6 +18,10 @@ internal class UpdatePokemonValidator : AbstractValidator<UpdatePokemonPayload>
 
       When(x => !string.IsNullOrWhiteSpace(x.Sprite?.Value), () => RuleFor(x => x.Sprite!.Value!).Url());
       When(x => !string.IsNullOrWhiteSpace(x.Url?.Value), () => RuleFor(x => x.Url!.Value!).Url());
+
+      RuleFor(x => x.Vitality).GreaterThan(0);
+      RuleFor(x => x.Stamina).GreaterThan(0);
+      When(x => x.StatusCondition is not null, () => RuleFor(x => x.StatusCondition!.Value).IsInEnum());
     }
     else
     {

@@ -293,4 +293,9 @@ public class PokemonTests
     _hedwidge.SetUniqueName(uniqueName, actorId);
     Assert.False(_hedwidge.HasChanges);
   }
+
+  // TODO(fpion): Vitality
+  // TODO(fpion): Stamina
+  // TODO(fpion): StatusCondition
+  // TODO(fpion): Friendship
 }
