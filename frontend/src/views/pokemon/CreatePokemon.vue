@@ -324,7 +324,7 @@ watch(
         <h2 class="h3">{{ t("pokemon.move.title") }}</h2>
         <MoveSelect :exclude="excludedMoves" :model-value="move?.id" @selected="move = $event">
           <template #append>
-            <TarButton :disabled="!move" icon="fas fa-plus" :text="t('actions.add')" variant="success" @click="addMove" />
+            <TarButton :disabled="!move" icon="fas fa-plus" :text="t('pokemon.move.learn')" variant="success" @click="addMove" />
           </template>
         </MoveSelect>
         <MoveInfoTable v-if="moves.length" :moves="moves" @down="onMoveDown" @removed="onMoveRemoved" @up="onMoveUp" />

@@ -37,7 +37,11 @@ defineEmits<{
   (e: "saved", pokemon: Pokemon): void;
 }>();
 
-// TODO(fpion): Mastered
+// TODO(fpion): Learn
+// TODO(fpion): Master / Mastered
+// TODO(fpion): Relearn
+// TODO(fpion): Switch
+// TODO(fpion): Technical Machine
 </script>
 
 <template>

@@ -101,6 +101,7 @@
     },
     "current": "Current Moves",
     "description": "Description",
+    "learn": "Learn",
     "learned": {
       "label": "Learned",
       "technicalMachine": "TM"
