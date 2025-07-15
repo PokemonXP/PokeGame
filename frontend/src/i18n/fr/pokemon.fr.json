@@ -114,6 +114,7 @@
       "format": "Base: {powerPoints}",
       "label": "Power Points"
     },
+    "relearn": "Relearn",
     "select": {
       "label": "Move",
       "placeholder": "Select a move"

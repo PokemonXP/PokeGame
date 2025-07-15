@@ -25,6 +25,7 @@ const selectedPosition = computed<number | undefined>(() => parseNumber(props.se
 
 defineEmits<{
   (e: "selected", position: number): void;
+  (e: "relearn", move: PokemonMove): void;
   (e: "switch", destination: number): void;
 }>();
 
@@ -112,6 +113,16 @@ defineEmits<{
               :status="t('loading')"
               :text="t('pokemon.move.switch')"
               @click="$emit('switch', index)"
+            />
+            <TarButton
+              v-else
+              :disabled="typeof selectedPosition !== 'number' || loading"
+              icon="fas fa-rotate"
+              :loading="loading"
+              :status="t('loading')"
+              :text="t('pokemon.move.relearn')"
+              variant="warning"
+              @click="$emit('relearn', move)"
             />
           </td>
         </tr>
