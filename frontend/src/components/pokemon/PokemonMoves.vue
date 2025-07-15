@@ -75,8 +75,6 @@ async function onSwitch(destination: number): Promise<void> {
 }
 
 // TODO(fpion): Learn
-// TODO(fpion): Master
-// TODO(fpion): Technical Machine
 </script>
 
 <template>

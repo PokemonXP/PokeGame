@@ -28,8 +28,6 @@ defineEmits<{
   (e: "relearn", move: PokemonMove): void;
   (e: "switch", destination: number): void;
 }>();
-
-// TODO(fpion): Mastered
 </script>
 
 <template>
