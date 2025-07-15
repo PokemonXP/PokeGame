@@ -46,7 +46,6 @@ defineEmits<{
           <th scope="col">{{ t("pokemon.move.accuracy") }} / {{ t("pokemon.move.power") }}</th>
           <th scope="col">{{ t("pokemon.move.powerPoints.label") }}</th>
           <th scope="col">{{ t("pokemon.move.learned.label") }}</th>
-          <th scope="col">{{ t("pokemon.move.description") }}</th>
           <th scope="col"></th>
         </tr>
       </thead>
@@ -100,10 +99,6 @@ defineEmits<{
               <TarBadge>{{ t("pokemon.move.learned.technicalMachine") }}</TarBadge>
             </template>
           </td>
-          <td class="description">
-            <template v-if="move.move.description">{{ move.move.description }}</template>
-            <span v-else class="text-muted">{{ "—" }}</span>
-          </td>
           <td>
             <TarButton
               v-if="isCurrent"
@@ -133,12 +128,6 @@ defineEmits<{
 </template>
 
 <style scoped>
-.description {
-  max-width: 400px;
-  word-wrap: break-word;
-  white-space: normal;
-}
-
 input[type="radio"] {
   transform: scale(1.4);
   margin-right: 0.75rem;
