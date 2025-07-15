@@ -118,6 +118,7 @@
       "label": "Move",
       "placeholder": "Select a move"
     },
+    "switch": "Switch",
     "title": "Moves",
     "typeAndCategory": "Type & Category"
   },

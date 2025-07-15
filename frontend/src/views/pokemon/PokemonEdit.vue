@@ -62,7 +62,7 @@ function onMetadataUpdated(updated: Pokemon): void {
 function onMovesUpdated(updated: Pokemon): void {
   updateAggregate(updated);
   if (pokemon.value) {
-    // TODO(fpion): implement
+    pokemon.value.moves = [...updated.moves];
   }
   toasts.success("pokemon.updated");
 }
