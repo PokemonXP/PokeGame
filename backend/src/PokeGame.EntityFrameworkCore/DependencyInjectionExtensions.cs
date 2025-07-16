@@ -70,6 +70,8 @@ public static class DependencyInjectionExtensions
 
   private static IServiceCollection AddRepositories(this IServiceCollection services)
   {
-    return services.AddScoped<IPokemonRepository, PokemonRepository>();
+    return services
+      .AddScoped<IPokemonRepository, PokemonRepository>()
+      .AddScoped<IRegionRepository, RegionRepository>();
   }
 }

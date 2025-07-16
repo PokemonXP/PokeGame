@@ -1,5 +1,6 @@
 ﻿using Krakenar.Contracts.Actors;
 using Krakenar.Contracts.Search;
+using Krakenar.Core;
 using Krakenar.Core.Actors;
 using Krakenar.EntityFrameworkCore.Relational;
 using Krakenar.EntityFrameworkCore.Relational.KrakenarDb;
@@ -25,6 +26,26 @@ internal class RegionQuerier : IRegionQuerier
     _sqlHelper = sqlHelper;
   }
 
+  public async Task<RegionId?> FindIdAsync(UniqueName uniqueName, CancellationToken cancellationToken)
+  {
+    string uniqueNameNormalized = Helper.Normalize(uniqueName);
+
+    string? streamId = await _regions.AsNoTracking()
+      .Where(x => x.UniqueNameNormalized == uniqueNameNormalized)
+      .Select(x => x.StreamId)
+      .SingleOrDefaultAsync(cancellationToken);
+    return string.IsNullOrWhiteSpace(streamId) ? null : new RegionId(streamId);
+  }
+
+  public async Task<RegionModel> ReadAsync(Region region, CancellationToken cancellationToken)
+  {
+    return await ReadAsync(region.Id, cancellationToken) ?? throw new InvalidOperationException($"The region entity 'StreamId={region.Id}' was not found.");
+  }
+  public async Task<RegionModel?> ReadAsync(RegionId id, CancellationToken cancellationToken)
+  {
+    RegionEntity? region = await _regions.AsNoTracking().SingleOrDefaultAsync(x => x.StreamId == id.Value, cancellationToken);
+    return region is null ? null : await MapAsync(region, cancellationToken);
+  }
   public async Task<RegionModel?> ReadAsync(Guid id, CancellationToken cancellationToken)
   {
     RegionEntity? region = await _regions.AsNoTracking().SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
