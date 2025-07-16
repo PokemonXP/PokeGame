@@ -24,8 +24,8 @@ internal class SpeciesEntity : AggregateEntity
   }
   public string? DisplayName { get; private set; }
 
-  public int BaseFriendship { get; set; }
-  public int CatchRate { get; set; }
+  public byte BaseFriendship { get; set; }
+  public byte CatchRate { get; set; }
   public GrowthRate GrowthRate { get; set; }
 
   public string? Url { get; private set; }
@@ -73,8 +73,8 @@ internal class SpeciesEntity : AggregateEntity
     UniqueName = locale.UniqueName.Value;
     DisplayName = locale.DisplayName?.Value;
 
-    BaseFriendship = (int)invariant.FindNumberValue(Species.BaseFriendship);
-    CatchRate = (int)invariant.FindNumberValue(Species.CatchRate);
+    BaseFriendship = (byte)invariant.FindNumberValue(Species.BaseFriendship);
+    CatchRate = (byte)invariant.FindNumberValue(Species.CatchRate);
     GrowthRate = PokemonConverter.Instance.ToGrowthRate(invariant.FindSelectValue(Species.GrowthRate).Single());
 
     Url = locale.TryGetStringValue(Species.Url);

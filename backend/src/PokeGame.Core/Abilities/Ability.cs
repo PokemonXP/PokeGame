@@ -9,11 +9,11 @@ public class Ability : AggregateRoot
 
   private readonly UniqueName? _uniqueName = null;
   public UniqueName UniqueName => _uniqueName ?? throw new InvalidOperationException("The ability has not been initialized.");
-  public DisplayName? DisplayName { get; }
-  public Description? Description { get; }
+  public DisplayName? DisplayName { get; set; }
+  public Description? Description { get; set; }
 
-  public Url? Url { get; }
-  public Notes? Notes { get; }
+  public Url? Url { get; set; }
+  public Notes? Notes { get; set; }
 
   public Ability() : base()
   {

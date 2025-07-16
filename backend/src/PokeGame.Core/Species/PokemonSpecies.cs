@@ -12,7 +12,7 @@ public class PokemonSpecies : AggregateRoot
 
   private readonly UniqueName? _uniqueName = null;
   public UniqueName UniqueName => _uniqueName ?? throw new InvalidOperationException("The species has not been initialized.");
-  public DisplayName? DisplayName { get; private set; }
+  public DisplayName? DisplayName { get; set; }
 
   private readonly Friendship? _baseFriendship = null;
   public Friendship BaseFriendship => _baseFriendship ?? throw new InvalidOperationException("The species has not been initialized.");
@@ -20,8 +20,8 @@ public class PokemonSpecies : AggregateRoot
   public CatchRate CatchRate => _catchRate ?? throw new InvalidOperationException("The species has not been initialized.");
   public GrowthRate GrowthRate { get; private set; }
 
-  public Url? Url { get; private set; }
-  public Notes? Notes { get; private set; }
+  public Url? Url { get; set; }
+  public Notes? Notes { get; set; }
 
   public PokemonSpecies() : base()
   {

@@ -16,14 +16,14 @@ public class Form : AggregateRoot
 
   private readonly UniqueName? _uniqueName = null;
   public UniqueName UniqueName => _uniqueName ?? throw new InvalidOperationException("The form has not been initialized.");
-  public DisplayName? DisplayName { get; private set; }
-  public Description? Description { get; private set; }
+  public DisplayName? DisplayName { get; set; }
+  public Description? Description { get; set; }
 
-  public bool IsBattleOnly { get; private set; }
-  public bool IsMega { get; private set; }
+  public bool IsBattleOnly { get; set; }
+  public bool IsMega { get; set; }
 
-  public int Height { get; private set; }
-  public int Weight { get; private set; }
+  public int Height { get; set; }
+  public int Weight { get; set; }
 
   private readonly Types? _types = null;
   public Types Types => _types ?? throw new InvalidOperationException("The form has not been initialized.");
@@ -32,8 +32,8 @@ public class Form : AggregateRoot
   private readonly BaseStatistics? _baseStatistics = null;
   public BaseStatistics BaseStatistics => _baseStatistics ?? throw new InvalidOperationException("The form has not been initialized.");
 
-  public Url? Url { get; private set; }
-  public Notes? Notes { get; private set; }
+  public Url? Url { get; set; }
+  public Notes? Notes { get; set; }
 
   public Form() : base()
   {

@@ -13,16 +13,16 @@ public class Variety : AggregateRoot
 
   private readonly UniqueName? _uniqueName = null;
   public UniqueName UniqueName => _uniqueName ?? throw new InvalidOperationException("The variety has not been initialized.");
-  public DisplayName? DisplayName { get; private set; }
+  public DisplayName? DisplayName { get; set; }
 
-  public Genus? Genus { get; private set; }
-  public Description? Description { get; private set; }
+  public Genus? Genus { get; set; }
+  public Description? Description { get; set; }
 
   public GenderRatio? GenderRatio { get; private set; }
   public bool CanChangeForm { get; private set; }
 
-  public Url? Url { get; private set; }
-  public Notes? Notes { get; private set; }
+  public Url? Url { get; set; }
+  public Notes? Notes { get; set; }
 
   public Variety() : base()
   {
