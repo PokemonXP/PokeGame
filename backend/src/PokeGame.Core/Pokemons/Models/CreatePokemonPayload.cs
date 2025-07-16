@@ -13,6 +13,7 @@ public record CreatePokemonPayload
 
   public PokemonType? TeraType { get; set; }
   public PokemonSizePayload? Size { get; set; }
+  public AbilitySlot? AbilitySlot { get; set; }
   public string? Nature { get; set; }
 
   public int Experience { get; set; }

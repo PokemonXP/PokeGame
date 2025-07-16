@@ -72,7 +72,7 @@ internal class CreatePokemonHandler : ICommandHandler<CreatePokemon, PokemonMode
     PokemonSpecies species = formModel.Variety.Species.ToPokemonSpecies();
     Variety variety = formModel.Variety.ToVariety(species);
     Form form = formModel.ToForm(variety);
-    new CreatePokemonValidator(uniqueNameSettings, variety).ValidateAndThrow(payload);
+    new CreatePokemonValidator(variety, form).ValidateAndThrow(payload);
 
     UniqueName uniqueName = string.IsNullOrWhiteSpace(payload.UniqueName) ? species.UniqueName : new(uniqueNameSettings, payload.UniqueName);
     PokemonSize size = payload.Size is null ? _randomizer.PokemonSize() : new(payload.Size);
@@ -84,7 +84,7 @@ internal class CreatePokemonHandler : ICommandHandler<CreatePokemon, PokemonMode
     {
       gender = _randomizer.PokemonGender(variety.GenderRatio);
     }
-    AbilitySlot abilitySlot = _randomizer.AbilitySlot(form.Abilities);
+    AbilitySlot abilitySlot = payload.AbilitySlot ?? _randomizer.AbilitySlot(form.Abilities);
     Friendship? friendship = payload.Friendship.HasValue ? new(payload.Friendship.Value) : null;
 
     pokemon = new(species, variety, form, uniqueName, size, nature, individualValues, gender, payload.IsShiny, payload.TeraType,
