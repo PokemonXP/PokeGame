@@ -64,7 +64,9 @@ internal static class ModelExtensions
     Item item = new(new UniqueName(new UniqueNameSettings(), model.UniqueName), actorId: null, new ItemId(model.Id))
     {
       DisplayName = DisplayName.TryCreate(model.DisplayName),
-      Description = Description.TryCreate(model.Description)
+      Description = Description.TryCreate(model.Description),
+      Url = Url.TryCreate(model.Url),
+      Notes = Notes.TryCreate(model.Notes)
     };
     return item;
   }
