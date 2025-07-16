@@ -1,4 +1,4 @@
-﻿using PokeGame.Core.Speciez;
+﻿using PokeGame.Core.Species;
 
 namespace PokeGame.Infrastructure.Converters;
 

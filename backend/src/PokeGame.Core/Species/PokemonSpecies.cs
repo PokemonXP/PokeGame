@@ -1,10 +1,9 @@
 ﻿using Krakenar.Core;
 using Logitar.EventSourcing;
-using PokeGame.Core.Species;
 
-namespace PokeGame.Core.Speciez;
+namespace PokeGame.Core.Species;
 
-public class Species : AggregateRoot
+public class PokemonSpecies : AggregateRoot
 {
   public new SpeciesId Id => new(base.Id);
 
@@ -24,11 +23,11 @@ public class Species : AggregateRoot
   public Url? Url { get; private set; }
   public Notes? Notes { get; private set; }
 
-  public Species() : base()
+  public PokemonSpecies() : base()
   {
   }
 
-  public Species(
+  public PokemonSpecies(
     int number,
     UniqueName uniqueName,
     CatchRate catchRate,

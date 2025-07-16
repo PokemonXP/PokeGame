@@ -4,9 +4,7 @@ using Logitar.EventSourcing;
 using PokeGame.Core.Abilities;
 using PokeGame.Core.Forms;
 using PokeGame.Core.Species;
-using PokeGame.Core.Speciez;
 using PokeGame.Core.Varieties;
-using PokemonSpecies = PokeGame.Core.Speciez.Species;
 
 namespace PokeGame.Core.Pokemons;
 

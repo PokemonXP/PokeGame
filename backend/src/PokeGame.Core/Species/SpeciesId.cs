@@ -2,7 +2,7 @@
 using Krakenar.Core.Realms;
 using Logitar.EventSourcing;
 
-namespace PokeGame.Core.Speciez;
+namespace PokeGame.Core.Species;
 
 public readonly struct SpeciesId
 {

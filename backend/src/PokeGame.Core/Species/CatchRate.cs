@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace PokeGame.Core.Speciez;
+namespace PokeGame.Core.Species;
 
 public record CatchRate
 {

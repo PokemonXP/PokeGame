@@ -1,7 +1,7 @@
 ﻿using Krakenar.Core;
 using Logitar.EventSourcing;
 using PokeGame.Core.Pokemons;
-using PokeGame.Core.Speciez;
+using PokeGame.Core.Species;
 using PokeGame.Core.Varieties;
 
 namespace PokeGame.Core.Forms;
