@@ -114,6 +114,39 @@ public class PokemonTests
     Assert.Equal(7577, pokemon.MaximumExperience);
   }
 
+  [Fact(DisplayName = "It should delete the Pokémon.")]
+  public void Given_Pokemon_When_Delete_Then_IsDeleted()
+  {
+    Assert.False(_briquet.IsDeleted);
+
+    ActorId actorId = ActorId.NewId();
+    _briquet.Delete(actorId);
+    Assert.True(_briquet.IsDeleted);
+    Assert.Contains(_briquet.Changes, change => change is PokemonDeleted deleted && deleted.ActorId == actorId);
+
+    _briquet.ClearChanges();
+    _briquet.Delete();
+    Assert.False(_briquet.HasChanges);
+  }
+
+  [Fact(DisplayName = "It should handle Friendship changes correctly.")]
+  public void Given_Pokemon_When_Friendship_Then_Changed()
+  {
+    ActorId actorId = ActorId.NewId();
+
+    byte friendship = (byte)(_hedwidge.Friendship + 5);
+    _hedwidge.Friendship = friendship;
+    Assert.Equal(friendship, _hedwidge.Friendship);
+    _hedwidge.Update(actorId);
+    Assert.Contains(_hedwidge.Changes, change => change is PokemonUpdated updated && updated.ActorId == actorId && updated.Friendship == friendship);
+
+    _hedwidge.ClearChanges();
+    _hedwidge.Friendship = friendship;
+    Assert.Equal(friendship, _hedwidge.Friendship);
+    _hedwidge.Update(actorId);
+    Assert.False(_hedwidge.HasChanges);
+  }
+
   [Fact(DisplayName = "It should handle Gender changes correctly.")]
   public void Given_Pokemon_When_Gender_Then_Changed()
   {
@@ -184,6 +217,52 @@ public class PokemonTests
     Assert.Contains(_hedwidge.Changes, change => change is PokemonUpdated updated && updated.ActorId == actorId && updated.Sprite == new Change<Url>(null));
   }
 
+  [Fact(DisplayName = "It should handle Stamina changes correctly.")]
+  public void Given_Pokemon_When_Stamina_Then_Changed()
+  {
+    ActorId actorId = ActorId.NewId();
+
+    _hedwidge.ClearChanges();
+    _hedwidge.Stamina = int.MaxValue;
+    _hedwidge.Update(actorId);
+    Assert.False(_hedwidge.HasChanges);
+
+    int stamina = _hedwidge.Stamina - 10;
+    _hedwidge.Stamina = stamina;
+    Assert.Equal(stamina, _hedwidge.Stamina);
+    _hedwidge.Update(actorId);
+    Assert.Contains(_hedwidge.Changes, change => change is PokemonUpdated updated && updated.ActorId == actorId && updated.Stamina == stamina);
+
+    _hedwidge.ClearChanges();
+    _hedwidge.Stamina = stamina;
+    Assert.Equal(stamina, _hedwidge.Stamina);
+    _hedwidge.Update(actorId);
+    Assert.False(_hedwidge.HasChanges);
+  }
+
+  [Fact(DisplayName = "It should handle StatusCondition changes correctly.")]
+  public void Given_Pokemon_When_StatusCondition_Then_Changed()
+  {
+    ActorId actorId = ActorId.NewId();
+
+    StatusCondition statusCondition = StatusCondition.Sleep;
+    _hedwidge.StatusCondition = statusCondition;
+    Assert.Equal(statusCondition, _hedwidge.StatusCondition);
+    _hedwidge.Update(actorId);
+    Assert.Contains(_hedwidge.Changes, change => change is PokemonUpdated updated && updated.ActorId == actorId && updated.StatusCondition == new Change<StatusCondition?>(statusCondition));
+
+    _hedwidge.ClearChanges();
+    _hedwidge.StatusCondition = statusCondition;
+    Assert.Equal(statusCondition, _hedwidge.StatusCondition);
+    _hedwidge.Update(actorId);
+    Assert.False(_hedwidge.HasChanges);
+
+    _hedwidge.StatusCondition = null;
+    _hedwidge.Update(actorId);
+    Assert.Null(_hedwidge.StatusCondition);
+    Assert.Contains(_hedwidge.Changes, change => change is PokemonUpdated updated && updated.ActorId == actorId && updated.StatusCondition == new Change<StatusCondition?>(null));
+  }
+
   [Fact(DisplayName = "It should handle Url changes correctly.")]
   public void Given_Pokemon_When_Url_Then_Changed()
   {
@@ -205,6 +284,29 @@ public class PokemonTests
     _hedwidge.Update(actorId);
     Assert.Null(_hedwidge.Url);
     Assert.Contains(_hedwidge.Changes, change => change is PokemonUpdated updated && updated.ActorId == actorId && updated.Url == new Change<Url>(null));
+  }
+
+  [Fact(DisplayName = "It should handle Vitality changes correctly.")]
+  public void Given_Pokemon_When_Vitality_Then_Changed()
+  {
+    ActorId actorId = ActorId.NewId();
+
+    _hedwidge.ClearChanges();
+    _hedwidge.Vitality = int.MaxValue;
+    _hedwidge.Update(actorId);
+    Assert.False(_hedwidge.HasChanges);
+
+    int vitality = _hedwidge.Vitality - 10;
+    _hedwidge.Vitality = vitality;
+    Assert.Equal(vitality, _hedwidge.Vitality);
+    _hedwidge.Update(actorId);
+    Assert.Contains(_hedwidge.Changes, change => change is PokemonUpdated updated && updated.ActorId == actorId && updated.Vitality == vitality);
+
+    _hedwidge.ClearChanges();
+    _hedwidge.Vitality = vitality;
+    Assert.Equal(vitality, _hedwidge.Vitality);
+    _hedwidge.Update(actorId);
+    Assert.False(_hedwidge.HasChanges);
   }
 
   [Fact(DisplayName = "It should not create a Pokémon with more Stamina than its maximum.")]

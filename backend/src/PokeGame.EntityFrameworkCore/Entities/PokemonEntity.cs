@@ -274,6 +274,24 @@ internal class PokemonEntity : AggregateEntity
       Gender = @event.Gender.Value;
     }
 
+    if (@event.Vitality.HasValue)
+    {
+      Vitality = @event.Vitality.Value;
+    }
+    if (@event.Stamina.HasValue)
+    {
+      Stamina = @event.Stamina.Value;
+    }
+    if (@event.StatusCondition is not null)
+    {
+      StatusCondition = @event.StatusCondition.Value;
+    }
+
+    if (@event.Friendship.HasValue)
+    {
+      Friendship = @event.Friendship.Value;
+    }
+
     if (@event.Sprite is not null)
     {
       Sprite = @event.Sprite.Value?.Value;

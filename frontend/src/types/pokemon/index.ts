@@ -256,6 +256,11 @@ export type RegionalNumber = {
   number: number;
 };
 
+export type RelearnPokemonMovePayload = {
+  move: string;
+  position: number;
+};
+
 export type SearchPokemonPayload = SearchPayload & {
   trainerId?: string;
   sort: PokemonSortOption[];
@@ -296,6 +301,11 @@ export type StatisticValues = {
 
 export type StatusCondition = "Burn" | "Freeze" | "Paralysis" | "Poison" | "Sleep";
 
+export type SwitchPokemonMovesPayload = {
+  source: number;
+  destination: number;
+};
+
 export type Trainer = Aggregate & {
   uniqueName: string;
   displayName?: string | null;
@@ -315,6 +325,10 @@ export type UpdatePokemonPayload = {
   uniqueName?: string;
   nickname?: Change<string>;
   gender?: PokemonGender;
+  vitality?: number;
+  stamina?: number;
+  statusCondition?: Change<StatusCondition>;
+  friendship?: number;
   sprite?: Change<string>;
   url?: Change<string>;
   notes?: Change<string>;

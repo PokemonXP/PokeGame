@@ -14,7 +14,10 @@ public class Pokemon : AggregateRoot
   public const int MoveLimit = 4;
 
   private PokemonUpdated _updated = new();
-  private bool HasUpdates => _updated.Gender is not null || _updated.Sprite is not null || _updated.Url is not null || _updated.Notes is not null;
+  private bool HasUpdates => _updated.Gender is not null
+    || _updated.Vitality.HasValue || _updated.Stamina.HasValue || _updated.StatusCondition is not null
+    || _updated.Friendship.HasValue
+    || _updated.Sprite is not null || _updated.Url is not null || _updated.Notes is not null;
 
   public new PokemonId Id => new(base.Id);
 
@@ -59,13 +62,67 @@ public class Pokemon : AggregateRoot
   private EffortValues? _effortValues = null;
   public EffortValues EffortValues => _effortValues ?? throw new InvalidOperationException("The Pokémon has not been initialized.");
   public PokemonStatistics Statistics => new(this);
-  public int Vitality { get; private set; }
-  public int Stamina { get; private set; }
-  public StatusCondition? StatusCondition { get; private set; }
+  private int _vitality = 0;
+  public int Vitality
+  {
+    get => _vitality;
+    set
+    {
+      int vitality = Math.Min(value, Statistics.HP);
+      ArgumentOutOfRangeException.ThrowIfNegative(vitality, nameof(Vitality));
+
+      if (_vitality != vitality)
+      {
+        _vitality = vitality;
+        _updated.Vitality = vitality;
+      }
+    }
+  }
+  private int _stamina = 0;
+  public int Stamina
+  {
+    get => _stamina;
+    set
+    {
+      int stamina = Math.Min(value, Statistics.HP);
+      ArgumentOutOfRangeException.ThrowIfNegative(stamina, nameof(Stamina));
+
+      if (_stamina != stamina)
+      {
+        _stamina = stamina;
+        _updated.Stamina = stamina;
+      }
+    }
+  }
+  private StatusCondition? _statusCondition = null;
+  public StatusCondition? StatusCondition
+  {
+    get => _statusCondition;
+    set
+    {
+      if (_statusCondition != value)
+      {
+        _statusCondition = value;
+        _updated.StatusCondition = new Change<StatusCondition?>(value);
+      }
+    }
+  }
   private PokemonCharacteristic? _characteristic = null;
   public PokemonCharacteristic Characteristic => _characteristic ?? throw new InvalidOperationException("The Pokémon has not been initialized.");
 
-  public byte Friendship { get; private set; }
+  private byte _friendship = 0;
+  public byte Friendship
+  {
+    get => _friendship;
+    set
+    {
+      if (_friendship != value)
+      {
+        _friendship = value;
+        _updated.Friendship = value;
+      }
+    }
+  }
 
   public ItemId? HeldItemId { get; private set; }
 
@@ -205,11 +262,11 @@ public class Pokemon : AggregateRoot
     _baseStatistics = @event.BaseStatistics;
     _individualValues = @event.IndividualValues;
     _effortValues = @event.EffortValues;
-    Vitality = @event.Vitality;
-    Stamina = @event.Stamina;
+    _vitality = @event.Vitality;
+    _stamina = @event.Stamina;
     _characteristic = @event.Characteristic;
 
-    Friendship = @event.Friendship;
+    _friendship = @event.Friendship;
   }
 
   public bool Catch(TrainerId trainerId, ItemId pokeBallId, GameLocation location, DateTime? caughtOn = null, Description? description = null, ActorId? actorId = null)
@@ -226,6 +283,14 @@ public class Pokemon : AggregateRoot
   {
     OriginalTrainerId = @event.TrainerId;
     Ownership = new PokemonOwnership(OwnershipKind.Caught, @event.TrainerId, @event.PokeBallId, @event.Level, @event.Location, @event.OccurredOn, @event.Description);
+  }
+
+  public void Delete(ActorId? actorId = null)
+  {
+    if (!IsDeleted)
+    {
+      Raise(new PokemonDeleted(), actorId);
+    }
   }
 
   public void HoldItem(ItemId itemId, ActorId? actorId = null)
@@ -409,6 +474,24 @@ public class Pokemon : AggregateRoot
     if (@event.Gender is not null)
     {
       _gender = @event.Gender.Value;
+    }
+
+    if (@event.Vitality.HasValue)
+    {
+      _vitality = @event.Vitality.Value;
+    }
+    if (@event.Stamina.HasValue)
+    {
+      _stamina = @event.Stamina.Value;
+    }
+    if (@event.StatusCondition is not null)
+    {
+      _statusCondition = @event.StatusCondition.Value;
+    }
+
+    if (@event.Friendship.HasValue)
+    {
+      _friendship = @event.Friendship.Value;
     }
 
     if (@event.Sprite is not null)

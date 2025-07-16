@@ -28,6 +28,13 @@ public class PokemonController : ControllerBase
     return Created(location, pokemon);
   }
 
+  [HttpDelete("{id}")]
+  public async Task<ActionResult<PokemonModel>> DeleteAsync(Guid id, CancellationToken cancellationToken)
+  {
+    PokemonModel? pokemon = await _pokemonService.DeleteAsync(id, cancellationToken);
+    return pokemon is null ? NotFound() : Ok(pokemon);
+  }
+
   [HttpGet("{id}")]
   public async Task<ActionResult<PokemonModel>> ReadAsync(Guid id, CancellationToken cancellationToken)
   {
@@ -39,6 +46,20 @@ public class PokemonController : ControllerBase
   public async Task<ActionResult<PokemonModel>> ReadAsync(string uniqueName, CancellationToken cancellationToken)
   {
     PokemonModel? pokemon = await _pokemonService.ReadAsync(id: null, uniqueName, cancellationToken);
+    return pokemon is null ? NotFound() : Ok(pokemon);
+  }
+
+  [HttpPut("{id}/moves/relearn")]
+  public async Task<ActionResult<PokemonModel>> RelearnMoveAsync(Guid id, [FromBody] RelearnPokemonMovePayload payload, CancellationToken cancellationToken)
+  {
+    PokemonModel? pokemon = await _pokemonService.RelearnMoveAsync(id, payload, cancellationToken);
+    return pokemon is null ? NotFound() : Ok(pokemon);
+  }
+
+  [HttpPut("{id}/moves/switch")]
+  public async Task<ActionResult<PokemonModel>> SwitchMovesAsync(Guid id, [FromBody] SwitchPokemonMovesPayload payload, CancellationToken cancellationToken)
+  {
+    PokemonModel? pokemon = await _pokemonService.SwitchMovesAsync(id, payload, cancellationToken);
     return pokemon is null ? NotFound() : Ok(pokemon);
   }
 

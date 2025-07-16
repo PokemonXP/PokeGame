@@ -5,6 +5,7 @@ namespace PokeGame.Core.Moves;
 
 internal interface IMoveManager
 {
+  Task<MoveModel> FindAsync(string idOrUniqueName, string propertyName, CancellationToken cancellationToken = default);
   Task<IReadOnlyCollection<MoveModel>> FindAsync(IEnumerable<string> idOrUniqueNames, string propertyName, CancellationToken cancellationToken = default);
 }
 
@@ -15,6 +16,16 @@ internal class MoveManager : IMoveManager
   public MoveManager(IMoveQuerier moveQuerier)
   {
     _moveQuerier = moveQuerier;
+  }
+
+  public async Task<MoveModel> FindAsync(string idOrUniqueName, string propertyName, CancellationToken cancellationToken)
+  {
+    MoveModel? move = null;
+    if (Guid.TryParse(idOrUniqueName, out Guid id))
+    {
+      move = await _moveQuerier.ReadAsync(id, cancellationToken);
+    }
+    return move ?? await _moveQuerier.ReadAsync(idOrUniqueName, cancellationToken) ?? throw new MoveNotFoundException(idOrUniqueName, propertyName);
   }
 
   public async Task<IReadOnlyCollection<MoveModel>> FindAsync(IEnumerable<string> idOrUniqueNames, string propertyName, CancellationToken cancellationToken)

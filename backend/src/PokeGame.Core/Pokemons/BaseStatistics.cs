@@ -16,6 +16,7 @@ public record BaseStatistics : IBaseStatistics
   {
   }
 
+  [JsonConstructor]
   public BaseStatistics(byte hp, byte attack, byte defense, byte specialAttack, byte specialDefense, byte speed)
   {
     HP = hp;
