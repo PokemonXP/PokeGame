@@ -7,6 +7,9 @@ using PokeGame.Core.Pokemons;
 using PokeGame.Core.Pokemons.Commands;
 using PokeGame.Core.Pokemons.Models;
 using PokeGame.Core.Pokemons.Queries;
+using PokeGame.Core.Regions;
+using PokeGame.Core.Regions.Commands;
+using PokeGame.Core.Regions.Models;
 
 namespace PokeGame.Core;
 
@@ -25,6 +28,7 @@ public static class DependencyInjectionExtensions
   private static IServiceCollection AddCommands(this IServiceCollection services)
   {
     return services
+      .AddTransient<ICommandHandler<CreateOrReplaceRegionCommand, CreateOrReplaceRegionResult>, CreateOrReplaceRegionCommandHandler>()
       .AddTransient<ICommandHandler<CreatePokemon, PokemonModel>, CreatePokemonHandler>()
       .AddTransient<ICommandHandler<DeletePokemon, PokemonModel?>, DeletePokemonHandler>()
       .AddTransient<ICommandHandler<RelearnPokemonMove, PokemonModel?>, RelearnPokemonMoveHandler>()
@@ -34,7 +38,9 @@ public static class DependencyInjectionExtensions
 
   private static IServiceCollection AddCoreServices(this IServiceCollection services)
   {
-    return services.AddTransient<IPokemonService, PokemonService>();
+    return services
+      .AddTransient<IPokemonService, PokemonService>()
+      .AddTransient<IRegionService, RegionService>();
   }
 
   private static IServiceCollection AddManagers(this IServiceCollection services)
@@ -42,7 +48,8 @@ public static class DependencyInjectionExtensions
     return services
       .AddTransient<IItemManager, ItemManager>()
       .AddTransient<IMoveManager, MoveManager>()
-      .AddTransient<IPokemonManager, PokemonManager>();
+      .AddTransient<IPokemonManager, PokemonManager>()
+      .AddTransient<IRegionManager, RegionManager>();
   }
 
   private static IServiceCollection AddQueries(this IServiceCollection services)
