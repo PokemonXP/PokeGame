@@ -290,3 +290,47 @@ public class Pokemon2 : AggregateRoot
 
   public override string ToString() => $"{Nickname?.Value ?? UniqueName.Value} | {base.ToString()}";
 }
+
+/* Move Learning Methods:
+ * Leveling-up
+ * Evolving
+ * HM (item)
+ * TM (item)
+ * Breeding
+ * Tutoring
+ */
+
+/* Pokémon Move Properties:
+ * MoveId: MoveId
+ * Position: Byte?
+ * CurrentPowerPoints: Byte
+ * MaximumPowerPoints: Byte
+ * (ReferencePowerPoints: Byte)
+ * IsMastered: Boolean
+ * LearnedAtLevel: Int32
+ * Method: MoveLearningMethod
+ * (ItemId: ItemId?)
+ * Notes: String?
+ */
+
+/* Ownership Kinds:
+ * Caught
+ * Hatched
+ * Bought
+ * (Gifted/Received?)
+ * Traded
+ * (Winned?)
+ */
+
+/* Ownership Properties:
+ * OriginalTrainerId: TrainerId
+ * CurrentTrainerId: TrainerId
+ * Kind: OwnershipKind
+ * MetAtLevel: Int32
+ * MetLocation: String
+ * MetOn: DateTime
+ * (flavor_text)
+ * Notes?: Notes
+ * Position: Byte
+ * Box: Byte?
+ */
