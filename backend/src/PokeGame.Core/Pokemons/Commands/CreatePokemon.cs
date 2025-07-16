@@ -1,7 +1,6 @@
 ﻿using FluentValidation;
 using Krakenar.Contracts.Settings;
 using Krakenar.Core;
-using Krakenar.Core.Realms;
 using Logitar.EventSourcing;
 using PokeGame.Core.Forms;
 using PokeGame.Core.Forms.Models;
@@ -51,7 +50,6 @@ internal class CreatePokemonHandler : ICommandHandler<CreatePokemon, PokemonMode
   public async Task<PokemonModel> HandleAsync(CreatePokemon command, CancellationToken cancellationToken)
   {
     ActorId? actorId = _applicationContext.ActorId;
-    RealmId? realmId = _applicationContext.RealmId;
     IUniqueNameSettings uniqueNameSettings = _applicationContext.UniqueNameSettings;
 
     CreatePokemonPayload payload = command.Payload;
@@ -74,56 +72,32 @@ internal class CreatePokemonHandler : ICommandHandler<CreatePokemon, PokemonMode
     PokemonSpecies species = formModel.Variety.Species.ToPokemonSpecies();
     Variety variety = formModel.Variety.ToVariety(species);
     Form form = formModel.ToForm(variety);
-    new CreatePokemonValidator(uniqueNameSettings, form).ValidateAndThrow(payload);
+    new CreatePokemonValidator(uniqueNameSettings, variety).ValidateAndThrow(payload);
 
     UniqueName uniqueName = string.IsNullOrWhiteSpace(payload.UniqueName) ? species.UniqueName : new(uniqueNameSettings, payload.UniqueName);
-    PokemonSize size = _randomizer.PokemonSize();
+    PokemonSize size = payload.Size is null ? _randomizer.PokemonSize() : new(payload.Size);
     PokemonNature nature = _randomizer.PokemonNature();
     IndividualValues individualValues = _randomizer.IndividualValues();
-    PokemonGender? gender = variety.GenderRatio is null ? null : _randomizer.PokemonGender(variety.GenderRatio);
+    PokemonGender? gender = payload.Gender;
+    if (!gender.HasValue && variety.GenderRatio is not null)
+    {
+      gender = _randomizer.PokemonGender(variety.GenderRatio);
+    }
+    AbilitySlot abilitySlot = _randomizer.AbilitySlot(form.Abilities);
 
-    pokemon = new(species, variety, form, uniqueName, size, nature, individualValues, gender, actorId: actorId, pokemonId: pokemonId);
+    pokemon = new(species, variety, form, uniqueName, size, nature, individualValues, gender,
+      payload.IsShiny, payload.TeraType, abilitySlot, actorId: actorId, pokemonId: pokemonId)
+    {
+      Sprite = Url.TryCreate(payload.Sprite),
+      Url = Url.TryCreate(payload.Url),
+      Notes = Notes.TryCreate(payload.Notes)
+    };
 
-    //UniqueName uniqueName = new(uniqueNameSettings, payload.UniqueName);
-    //PokemonType teraType = payload.TeraType ?? form.Types.Primary;
-    //PokemonSize size = payload.Size is null ? _randomizer.PokemonSize() : new(payload.Size);
-    //PokemonGender? gender = payload.Gender ?? (variety.GenderRatio.HasValue ? _randomizer.PokemonGender(variety.GenderRatio.Value) : null);
-    //AbilitySlot abilitySlot = payload.AbilitySlot ?? _randomizer.AbilitySlot(form.Abilities);
-    //PokemonNature nature = string.IsNullOrWhiteSpace(payload.Nature) ? _randomizer.PokemonNature() : PokemonNatures.Instance.Find(payload.Nature);
-    //BaseStatistics baseStatistics = new(form.BaseStatistics);
-    //IndividualValues individualValues = payload.IndividualValues is null ? _randomizer.IndividualValues() : new(payload.IndividualValues);
-    //EffortValues effortValues = payload.EffortValues is null ? new() : new(payload.EffortValues);
-    //byte friendship = payload.Friendship ?? (byte)species.BaseFriendship;
-
-    //pokemon = new(
-    //  formId,
-    //  uniqueName,
-    //  teraType,
-    //  size,
-    //  nature,
-    //  baseStatistics,
-    //  gender,
-    //  abilitySlot,
-    //  individualValues,
-    //  effortValues,
-    //  species.GrowthRate,
-    //  payload.Experience,
-    //  payload.Vitality,
-    //  payload.Stamina,
-    //  friendship,
-    //  actorId,
-    //  pokemonId)
-    //{
-    //  Sprite = Url.TryCreate(payload.Sprite),
-    //  Url = Url.TryCreate(payload.Url),
-    //  Notes = Description.TryCreate(payload.Notes)
-    //};
-
-    //DisplayName? nickname = DisplayName.TryCreate(payload.Nickname);
-    //if (nickname is not null)
-    //{
-    //  pokemon.SetNickname(nickname, actorId);
-    //}
+    if (!string.IsNullOrWhiteSpace(payload.Nickname))
+    {
+      Nickname nickname = new(payload.Nickname);
+      pokemon.SetNickname(nickname, actorId);
+    }
 
     //if (!string.IsNullOrWhiteSpace(payload.HeldItem))
     //{
@@ -173,6 +147,7 @@ internal class CreatePokemonHandler : ICommandHandler<CreatePokemon, PokemonMode
     //  pokemon.RelearnMove(moveId, position: 0, actorId);
     //}
 
+    pokemon.Update(actorId);
     //await _pokemonManager.SaveAsync(pokemon, cancellationToken);
 
     //return await _pokemonQuerier.ReadAsync(pokemon, cancellationToken);
