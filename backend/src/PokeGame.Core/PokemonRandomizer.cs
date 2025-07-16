@@ -1,13 +1,14 @@
-﻿using PokeGame.Core.Forms.Models;
+﻿using PokeGame.Core.Forms;
 using PokeGame.Core.Pokemons;
+using PokeGame.Core.Varieties;
 
 namespace PokeGame.Core;
 
 public interface IPokemonRandomizer
 {
-  AbilitySlot AbilitySlot(AbilitiesModel abilities);
+  AbilitySlot AbilitySlot(FormAbilities abilities);
   IndividualValues IndividualValues();
-  PokemonGender PokemonGender(int genderRatio);
+  PokemonGender PokemonGender(GenderRatio genderRatio);
   PokemonNature PokemonNature();
   PokemonSize PokemonSize();
 }
@@ -30,7 +31,7 @@ public class PokemonRandomizer : IPokemonRandomizer
   {
   }
 
-  public AbilitySlot AbilitySlot(AbilitiesModel abilities)
+  public AbilitySlot AbilitySlot(FormAbilities abilities)
   {
     List<AbilitySlot> slots = new(capacity: 3)
     {
@@ -50,19 +51,17 @@ public class PokemonRandomizer : IPokemonRandomizer
   public IndividualValues IndividualValues()
   {
     byte[] bytes = new byte[6];
-    _random.NextBytes(bytes);
+    for (int i = 0; i < bytes.Length; i++)
+    {
+      bytes[i] = (byte)_random.Next(0, Pokemons.IndividualValues.MaximumValue + 1);
+    }
     return new IndividualValues(bytes[0], bytes[1], bytes[2], bytes[3], bytes[4], bytes[5]);
   }
 
-  public PokemonGender PokemonGender(int ratio)
+  public PokemonGender PokemonGender(GenderRatio genderRatio)
   {
-    if (ratio < 0 || ratio > 8)
-    {
-      throw new ArgumentOutOfRangeException(nameof(ratio));
-    }
-
-    int value = _random.Next(1, 8 + 1);
-    return value <= ratio ? Pokemons.PokemonGender.Male : Pokemons.PokemonGender.Female;
+    int value = _random.Next(0, GenderRatio.MaximumValue);
+    return value < genderRatio.Value ? Pokemons.PokemonGender.Male : Pokemons.PokemonGender.Female;
   }
 
   public PokemonNature PokemonNature() => _random.Pick(PokemonNatures.Instance.ToList());

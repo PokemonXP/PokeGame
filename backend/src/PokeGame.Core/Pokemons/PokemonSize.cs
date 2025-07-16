@@ -4,6 +4,8 @@ public record PokemonSize : IPokemonSize
 {
   public byte Height { get; }
   public byte Weight { get; }
+
+  [JsonIgnore]
   public PokemonSizeCategory Category => Categorize(this);
 
   public PokemonSize()

@@ -5,6 +5,8 @@ namespace PokeGame.Core.Pokemons;
 
 public record IndividualValues : IIndividualValues
 {
+  public const byte MaximumValue = 31;
+
   public byte HP { get; }
   public byte Attack { get; }
   public byte Defense { get; }
