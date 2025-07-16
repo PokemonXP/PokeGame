@@ -76,7 +76,7 @@ internal class CreatePokemonHandler : ICommandHandler<CreatePokemon, PokemonMode
 
     UniqueName uniqueName = string.IsNullOrWhiteSpace(payload.UniqueName) ? species.UniqueName : new(uniqueNameSettings, payload.UniqueName);
     PokemonSize size = payload.Size is null ? _randomizer.PokemonSize() : new(payload.Size);
-    PokemonNature nature = _randomizer.PokemonNature();
+    PokemonNature nature = string.IsNullOrWhiteSpace(payload.Nature) ? _randomizer.PokemonNature() : PokemonNatures.Instance.Find(payload.Nature);
     IndividualValues individualValues = payload.IndividualValues is null ? _randomizer.IndividualValues() : new(payload.IndividualValues);
     EffortValues? effortValues = payload.EffortValues is null ? null : new(payload.EffortValues);
     PokemonGender? gender = payload.Gender;
