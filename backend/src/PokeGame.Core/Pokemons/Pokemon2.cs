@@ -291,6 +291,8 @@ public class Pokemon2 : AggregateRoot
   public override string ToString() => $"{Nickname?.Value ?? UniqueName.Value} | {base.ToString()}";
 }
 
+// TODO(fpion): add EggCycle byte
+
 /* Move Learning Methods:
  * Leveling-up
  * Evolving
