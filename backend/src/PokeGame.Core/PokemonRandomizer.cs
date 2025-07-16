@@ -50,7 +50,10 @@ public class PokemonRandomizer : IPokemonRandomizer
   public IndividualValues IndividualValues()
   {
     byte[] bytes = new byte[6];
-    _random.NextBytes(bytes);
+    for (int i = 0; i < bytes.Length; i++)
+    {
+      bytes[i] = (byte)_random.Next(0, Pokemons.IndividualValues.MaximumValue + 1);
+    }
     return new IndividualValues(bytes[0], bytes[1], bytes[2], bytes[3], bytes[4], bytes[5]);
   }
 

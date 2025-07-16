@@ -27,8 +27,8 @@ public class Form : AggregateRoot
 
   private readonly Types? _types = null;
   public Types Types => _types ?? throw new InvalidOperationException("The form has not been initialized.");
-  private readonly Abilities? _abilities = null;
-  public Abilities Abilities => _abilities ?? throw new InvalidOperationException("The form has not been initialized.");
+  private readonly FormAbilities? _abilities = null;
+  public FormAbilities Abilities => _abilities ?? throw new InvalidOperationException("The form has not been initialized.");
   private readonly BaseStatistics? _baseStatistics = null;
   public BaseStatistics BaseStatistics => _baseStatistics ?? throw new InvalidOperationException("The form has not been initialized.");
 
@@ -43,7 +43,7 @@ public class Form : AggregateRoot
     Variety variety,
     UniqueName uniqueName,
     Types types,
-    Abilities abilities,
+    FormAbilities abilities,
     BaseStatistics baseStatistics,
     bool isDefault = false,
     ActorId? actorId = null,

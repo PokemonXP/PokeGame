@@ -41,7 +41,7 @@ public class Pokemon2 : AggregateRoot
   public BaseStatistics BaseStatistics => _baseStatistics ?? throw new InvalidOperationException("The Pokémon has not been initialized.");
   private IndividualValues? _individualValues = null;
   public IndividualValues IndividualValues => _individualValues ?? throw new InvalidOperationException("The Pokémon has not been initialized.");
-  private readonly EffortValues? _effortValues = null;
+  private EffortValues? _effortValues = null;
   public EffortValues EffortValues => _effortValues ?? throw new InvalidOperationException("The Pokémon has not been initialized.");
   public PokemonStatistics Statistics => new(this);
   public int Vitality { get; private set; }
@@ -167,24 +167,26 @@ public class Pokemon2 : AggregateRoot
     ArgumentOutOfRangeException.ThrowIfNegative(experience, nameof(experience));
 
     effortValues ??= new();
-    int maximumHP = Statistics.HP;
+
+    int level = ExperienceTable.Instance.GetLevel(species.GrowthRate, experience);
+    PokemonStatistics statistics = new(form.BaseStatistics, individualValues, effortValues, level, nature);
 
     if (vitality.HasValue)
     {
       ArgumentOutOfRangeException.ThrowIfNegative(vitality.Value, nameof(vitality));
     }
-    if (vitality is null || vitality > maximumHP)
+    if (vitality is null || vitality > statistics.HP)
     {
-      vitality = maximumHP;
+      vitality = statistics.HP;
     }
 
     if (stamina.HasValue)
     {
       ArgumentOutOfRangeException.ThrowIfNegative(stamina.Value, nameof(stamina));
     }
-    if (stamina is null || stamina > maximumHP)
+    if (stamina is null || stamina > statistics.HP)
     {
-      stamina = maximumHP;
+      stamina = statistics.HP;
     }
 
     friendship ??= species.BaseFriendship;
@@ -213,6 +215,7 @@ public class Pokemon2 : AggregateRoot
 
     _baseStatistics = @event.BaseStatistics;
     _individualValues = @event.IndividualValues;
+    _effortValues = @event.EffortValues;
     Vitality = @event.Vitality;
     Stamina = @event.Stamina;
     _friendship = @event.Friendship;

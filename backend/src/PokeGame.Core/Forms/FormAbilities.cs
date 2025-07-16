@@ -3,13 +3,19 @@ using PokeGame.Core.Abilities;
 
 namespace PokeGame.Core.Forms;
 
-public record Abilities
+public record FormAbilities
 {
   public AbilityId Primary { get; }
   public AbilityId? Secondary { get; }
   public AbilityId? Hidden { get; }
 
-  public Abilities(AbilityId primary, AbilityId? secondary = null, AbilityId? hidden = null)
+  public FormAbilities(Ability primary, Ability? secondary = null, Ability? hidden = null)
+    : this(primary.Id, secondary?.Id, hidden?.Id)
+  {
+  }
+
+  [JsonConstructor]
+  public FormAbilities(AbilityId primary, AbilityId? secondary = null, AbilityId? hidden = null)
   {
     Primary = primary;
     Secondary = secondary;
@@ -17,7 +23,7 @@ public record Abilities
     new Validator().ValidateAndThrow(this);
   }
 
-  private class Validator : AbstractValidator<Abilities>
+  private class Validator : AbstractValidator<FormAbilities>
   {
     public Validator()
     {
