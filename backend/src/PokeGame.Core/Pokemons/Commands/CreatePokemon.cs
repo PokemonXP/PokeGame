@@ -77,16 +77,18 @@ internal class CreatePokemonHandler : ICommandHandler<CreatePokemon, PokemonMode
     UniqueName uniqueName = string.IsNullOrWhiteSpace(payload.UniqueName) ? species.UniqueName : new(uniqueNameSettings, payload.UniqueName);
     PokemonSize size = payload.Size is null ? _randomizer.PokemonSize() : new(payload.Size);
     PokemonNature nature = _randomizer.PokemonNature();
-    IndividualValues individualValues = _randomizer.IndividualValues();
+    IndividualValues individualValues = payload.IndividualValues is null ? _randomizer.IndividualValues() : new(payload.IndividualValues);
+    EffortValues? effortValues = payload.EffortValues is null ? null : new(payload.EffortValues);
     PokemonGender? gender = payload.Gender;
     if (!gender.HasValue && variety.GenderRatio is not null)
     {
       gender = _randomizer.PokemonGender(variety.GenderRatio);
     }
     AbilitySlot abilitySlot = _randomizer.AbilitySlot(form.Abilities);
+    Friendship? friendship = payload.Friendship.HasValue ? new(payload.Friendship.Value) : null;
 
-    pokemon = new(species, variety, form, uniqueName, size, nature, individualValues, gender,
-      payload.IsShiny, payload.TeraType, abilitySlot, payload.Experience, actorId: actorId, pokemonId: pokemonId)
+    pokemon = new(species, variety, form, uniqueName, size, nature, individualValues, gender, payload.IsShiny, payload.TeraType,
+      abilitySlot, payload.Experience, effortValues, payload.Vitality, payload.Stamina, friendship, actorId, pokemonId)
     {
       Sprite = Url.TryCreate(payload.Sprite),
       Url = Url.TryCreate(payload.Url),
