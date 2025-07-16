@@ -86,7 +86,7 @@ internal class CreatePokemonHandler : ICommandHandler<CreatePokemon, PokemonMode
     AbilitySlot abilitySlot = _randomizer.AbilitySlot(form.Abilities);
 
     pokemon = new(species, variety, form, uniqueName, size, nature, individualValues, gender,
-      payload.IsShiny, payload.TeraType, abilitySlot, actorId: actorId, pokemonId: pokemonId)
+      payload.IsShiny, payload.TeraType, abilitySlot, payload.Experience, actorId: actorId, pokemonId: pokemonId)
     {
       Sprite = Url.TryCreate(payload.Sprite),
       Url = Url.TryCreate(payload.Url),
