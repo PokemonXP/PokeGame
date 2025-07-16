@@ -6,11 +6,11 @@ internal class IndividualValuesValidator : AbstractValidator<IIndividualValues>
 {
   public IndividualValuesValidator()
   {
-    RuleFor(x => x.HP).InclusiveBetween((byte)0, (byte)31);
-    RuleFor(x => x.Attack).InclusiveBetween((byte)0, (byte)31);
-    RuleFor(x => x.Defense).InclusiveBetween((byte)0, (byte)31);
-    RuleFor(x => x.SpecialAttack).InclusiveBetween((byte)0, (byte)31);
-    RuleFor(x => x.SpecialDefense).InclusiveBetween((byte)0, (byte)31);
-    RuleFor(x => x.Speed).InclusiveBetween((byte)0, (byte)31);
+    RuleFor(x => x.HP).LessThanOrEqualTo(IndividualValues.MaximumValue);
+    RuleFor(x => x.Attack).LessThanOrEqualTo(IndividualValues.MaximumValue);
+    RuleFor(x => x.Defense).LessThanOrEqualTo(IndividualValues.MaximumValue);
+    RuleFor(x => x.SpecialAttack).LessThanOrEqualTo(IndividualValues.MaximumValue);
+    RuleFor(x => x.SpecialDefense).LessThanOrEqualTo(IndividualValues.MaximumValue);
+    RuleFor(x => x.Speed).LessThanOrEqualTo(IndividualValues.MaximumValue);
   }
 }

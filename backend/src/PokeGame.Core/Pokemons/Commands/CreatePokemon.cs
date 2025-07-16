@@ -6,13 +6,11 @@ using Logitar.EventSourcing;
 using PokeGame.Core.Forms;
 using PokeGame.Core.Forms.Models;
 using PokeGame.Core.Items;
-using PokeGame.Core.Items.Models;
 using PokeGame.Core.Moves;
-using PokeGame.Core.Moves.Models;
 using PokeGame.Core.Pokemons.Models;
 using PokeGame.Core.Pokemons.Validators;
-using PokeGame.Core.Species.Models;
-using PokeGame.Core.Varieties.Models;
+using PokeGame.Core.Species;
+using PokeGame.Core.Varieties;
 
 namespace PokeGame.Core.Pokemons.Commands;
 
@@ -60,115 +58,124 @@ internal class CreatePokemonHandler : ICommandHandler<CreatePokemon, PokemonMode
     new CreatePokemonValidator(uniqueNameSettings).ValidateAndThrow(payload);
 
     PokemonId pokemonId = PokemonId.NewId();
-    Pokemon? pokemon;
+    Pokemon2? pokemon;
     if (payload.Id.HasValue)
     {
       pokemonId = new(payload.Id.Value);
-      pokemon = await _pokemonRepository.LoadAsync(pokemonId, cancellationToken);
-      if (pokemon is not null)
-      {
-        throw new IdAlreadyUsedException<Pokemon>(realmId, payload.Id.Value, nameof(payload.Id));
-      }
+      //pokemon = await _pokemonRepository.LoadAsync(pokemonId, cancellationToken);
+      //if (pokemon is not null)
+      //{
+      //  throw new IdAlreadyUsedException<Pokemon>(realmId, payload.Id.Value, nameof(payload.Id));
+      //} // TODO(fpion): uncomment
     }
 
-    FormModel form = await _pokemonManager.FindFormAsync(payload.Form, nameof(payload.Form), cancellationToken);
-    VarietyModel variety = form.Variety;
-    SpeciesModel species = variety.Species;
-    FormId formId = form.GetFormId(realmId);
+    FormModel formModel = await _pokemonManager.FindFormAsync(payload.Form, nameof(payload.Form), cancellationToken);
 
+    PokemonSpecies species = formModel.Variety.Species.ToPokemonSpecies();
+    Variety variety = formModel.Variety.ToVariety(species);
+    Form form = formModel.ToForm(variety);
     new CreatePokemonValidator(uniqueNameSettings, form).ValidateAndThrow(payload);
 
-    UniqueName uniqueName = new(uniqueNameSettings, payload.UniqueName);
-    PokemonType teraType = payload.TeraType ?? form.Types.Primary;
-    PokemonSize size = payload.Size is null ? _randomizer.PokemonSize() : new(payload.Size);
-    PokemonGender? gender = payload.Gender ?? (variety.GenderRatio.HasValue ? _randomizer.PokemonGender(variety.GenderRatio.Value) : null);
-    AbilitySlot abilitySlot = payload.AbilitySlot ?? _randomizer.AbilitySlot(form.Abilities);
-    PokemonNature nature = string.IsNullOrWhiteSpace(payload.Nature) ? _randomizer.PokemonNature() : PokemonNatures.Instance.Find(payload.Nature);
-    BaseStatistics baseStatistics = new(form.BaseStatistics);
-    IndividualValues individualValues = payload.IndividualValues is null ? _randomizer.IndividualValues() : new(payload.IndividualValues);
-    EffortValues effortValues = payload.EffortValues is null ? new() : new(payload.EffortValues);
-    byte friendship = payload.Friendship ?? (byte)species.BaseFriendship;
+    UniqueName uniqueName = string.IsNullOrWhiteSpace(payload.UniqueName) ? species.UniqueName : new(uniqueNameSettings, payload.UniqueName);
+    PokemonSize size = _randomizer.PokemonSize();
+    PokemonNature nature = _randomizer.PokemonNature();
+    IndividualValues individualValues = _randomizer.IndividualValues();
+    PokemonGender? gender = variety.GenderRatio is null ? null : _randomizer.PokemonGender(variety.GenderRatio);
 
-    pokemon = new(
-      formId,
-      uniqueName,
-      teraType,
-      size,
-      nature,
-      baseStatistics,
-      gender,
-      abilitySlot,
-      individualValues,
-      effortValues,
-      species.GrowthRate,
-      payload.Experience,
-      payload.Vitality,
-      payload.Stamina,
-      friendship,
-      actorId,
-      pokemonId)
-    {
-      Sprite = Url.TryCreate(payload.Sprite),
-      Url = Url.TryCreate(payload.Url),
-      Notes = Description.TryCreate(payload.Notes)
-    };
+    pokemon = new(species, variety, form, uniqueName, size, nature, individualValues, gender, actorId: actorId, pokemonId: pokemonId);
 
-    DisplayName? nickname = DisplayName.TryCreate(payload.Nickname);
-    if (nickname is not null)
-    {
-      pokemon.SetNickname(nickname, actorId);
-    }
+    //UniqueName uniqueName = new(uniqueNameSettings, payload.UniqueName);
+    //PokemonType teraType = payload.TeraType ?? form.Types.Primary;
+    //PokemonSize size = payload.Size is null ? _randomizer.PokemonSize() : new(payload.Size);
+    //PokemonGender? gender = payload.Gender ?? (variety.GenderRatio.HasValue ? _randomizer.PokemonGender(variety.GenderRatio.Value) : null);
+    //AbilitySlot abilitySlot = payload.AbilitySlot ?? _randomizer.AbilitySlot(form.Abilities);
+    //PokemonNature nature = string.IsNullOrWhiteSpace(payload.Nature) ? _randomizer.PokemonNature() : PokemonNatures.Instance.Find(payload.Nature);
+    //BaseStatistics baseStatistics = new(form.BaseStatistics);
+    //IndividualValues individualValues = payload.IndividualValues is null ? _randomizer.IndividualValues() : new(payload.IndividualValues);
+    //EffortValues effortValues = payload.EffortValues is null ? new() : new(payload.EffortValues);
+    //byte friendship = payload.Friendship ?? (byte)species.BaseFriendship;
 
-    if (!string.IsNullOrWhiteSpace(payload.HeldItem))
-    {
-      ItemModel item = await _itemManager.FindAsync(payload.HeldItem, nameof(payload.HeldItem), cancellationToken);
-      ItemId itemId = item.GetItemId(realmId);
-      pokemon.HoldItem(itemId, actorId);
-    }
+    //pokemon = new(
+    //  formId,
+    //  uniqueName,
+    //  teraType,
+    //  size,
+    //  nature,
+    //  baseStatistics,
+    //  gender,
+    //  abilitySlot,
+    //  individualValues,
+    //  effortValues,
+    //  species.GrowthRate,
+    //  payload.Experience,
+    //  payload.Vitality,
+    //  payload.Stamina,
+    //  friendship,
+    //  actorId,
+    //  pokemonId)
+    //{
+    //  Sprite = Url.TryCreate(payload.Sprite),
+    //  Url = Url.TryCreate(payload.Url),
+    //  Notes = Description.TryCreate(payload.Notes)
+    //};
 
-    IReadOnlyCollection<MoveModel> moves = await _moveManager.FindAsync(payload.Moves, nameof(payload.Moves), cancellationToken);
-    MoveId moveId;
-    for (int i = 0; i < moves.Count; i++)
-    {
-      MoveModel move = moves.ElementAt(i);
-      moveId = move.GetMoveId(realmId);
-      PowerPoints powerPoints = new(move.PowerPoints);
-      int position = Math.Max(i + Pokemon.MoveLimit - moves.Count, 0);
-      pokemon.LearnMove(moveId, powerPoints, position, actorId);
-    }
-    if (moves.Count == 5)
-    {
-      MoveModel move = moves.ElementAt(4 - 1);
-      moveId = move.GetMoveId(realmId);
-      pokemon.RelearnMove(moveId, position: 2, actorId);
+    //DisplayName? nickname = DisplayName.TryCreate(payload.Nickname);
+    //if (nickname is not null)
+    //{
+    //  pokemon.SetNickname(nickname, actorId);
+    //}
 
-      move = moves.ElementAt(3 - 1);
-      moveId = move.GetMoveId(realmId);
-      pokemon.RelearnMove(moveId, position: 1, actorId);
+    //if (!string.IsNullOrWhiteSpace(payload.HeldItem))
+    //{
+    //  ItemModel item = await _itemManager.FindAsync(payload.HeldItem, nameof(payload.HeldItem), cancellationToken);
+    //  ItemId itemId = item.GetItemId(realmId);
+    //  pokemon.HoldItem(itemId, actorId);
+    //}
 
-      move = moves.ElementAt(2 - 1);
-      moveId = move.GetMoveId(realmId);
-      pokemon.RelearnMove(moveId, position: 0, actorId);
-    }
-    if (moves.Count == 6)
-    {
-      MoveModel move = moves.ElementAt(4 - 1);
-      moveId = move.GetMoveId(realmId);
-      pokemon.RelearnMove(moveId, position: 1, actorId);
+    //IReadOnlyCollection<MoveModel> moves = await _moveManager.FindAsync(payload.Moves, nameof(payload.Moves), cancellationToken);
+    //MoveId moveId;
+    //for (int i = 0; i < moves.Count; i++)
+    //{
+    //  MoveModel move = moves.ElementAt(i);
+    //  moveId = move.GetMoveId(realmId);
+    //  PowerPoints powerPoints = new(move.PowerPoints);
+    //  int position = Math.Max(i + Pokemon.MoveLimit - moves.Count, 0);
+    //  pokemon.LearnMove(moveId, powerPoints, position, actorId);
+    //}
+    //if (moves.Count == 5)
+    //{
+    //  MoveModel move = moves.ElementAt(4 - 1);
+    //  moveId = move.GetMoveId(realmId);
+    //  pokemon.RelearnMove(moveId, position: 2, actorId);
 
-      move = moves.ElementAt(3 - 1);
-      moveId = move.GetMoveId(realmId);
-      pokemon.RelearnMove(moveId, position: 0, actorId);
-    }
-    if (moves.Count == 7)
-    {
-      MoveModel move = moves.ElementAt(4 - 1);
-      moveId = move.GetMoveId(realmId);
-      pokemon.RelearnMove(moveId, position: 0, actorId);
-    }
+    //  move = moves.ElementAt(3 - 1);
+    //  moveId = move.GetMoveId(realmId);
+    //  pokemon.RelearnMove(moveId, position: 1, actorId);
 
-    await _pokemonManager.SaveAsync(pokemon, cancellationToken);
+    //  move = moves.ElementAt(2 - 1);
+    //  moveId = move.GetMoveId(realmId);
+    //  pokemon.RelearnMove(moveId, position: 0, actorId);
+    //}
+    //if (moves.Count == 6)
+    //{
+    //  MoveModel move = moves.ElementAt(4 - 1);
+    //  moveId = move.GetMoveId(realmId);
+    //  pokemon.RelearnMove(moveId, position: 1, actorId);
 
-    return await _pokemonQuerier.ReadAsync(pokemon, cancellationToken);
+    //  move = moves.ElementAt(3 - 1);
+    //  moveId = move.GetMoveId(realmId);
+    //  pokemon.RelearnMove(moveId, position: 0, actorId);
+    //}
+    //if (moves.Count == 7)
+    //{
+    //  MoveModel move = moves.ElementAt(4 - 1);
+    //  moveId = move.GetMoveId(realmId);
+    //  pokemon.RelearnMove(moveId, position: 0, actorId);
+    //}
+
+    //await _pokemonManager.SaveAsync(pokemon, cancellationToken);
+
+    //return await _pokemonQuerier.ReadAsync(pokemon, cancellationToken);
+    throw new NotImplementedException(); // TODO(fpion): implement
   }
 }

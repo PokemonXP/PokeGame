@@ -11,8 +11,8 @@ public class SpeciesModel : AggregateModel
   public string UniqueName { get; set; } = string.Empty;
   public string? DisplayName { get; set; }
 
-  public int BaseFriendship { get; set; }
-  public int CatchRate { get; set; }
+  public byte BaseFriendship { get; set; }
+  public byte CatchRate { get; set; }
   public GrowthRate GrowthRate { get; set; }
 
   public List<RegionalNumberModel> RegionalNumbers { get; set; } = [];
