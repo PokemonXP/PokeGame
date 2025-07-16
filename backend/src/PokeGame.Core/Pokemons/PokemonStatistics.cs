@@ -22,6 +22,9 @@ public record PokemonStatistics
   public PokemonStatistics(Pokemon pokemon) : this(pokemon.BaseStatistics, pokemon.IndividualValues, pokemon.EffortValues, pokemon.Level, pokemon.Nature)
   {
   }
+  public PokemonStatistics(Pokemon2 pokemon) : this(pokemon.BaseStatistics, pokemon.IndividualValues, pokemon.EffortValues, pokemon.Level, pokemon.Nature)
+  {
+  }
 
   private static int CalculateHP(int @base, byte individualValue, byte effortValue, int level)
   {

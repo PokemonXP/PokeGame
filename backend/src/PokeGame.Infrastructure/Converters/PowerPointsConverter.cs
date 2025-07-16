@@ -9,8 +9,8 @@ internal class PowerPointsConverter : JsonConverter<PowerPoints>
     return reader.TryGetInt32(out int value) ? new PowerPoints(value) : null;
   }
 
-  public override void Write(Utf8JsonWriter writer, PowerPoints value, JsonSerializerOptions options)
+  public override void Write(Utf8JsonWriter writer, PowerPoints powerPoints, JsonSerializerOptions options)
   {
-    writer.WriteNumberValue(value.Value);
+    writer.WriteNumberValue(powerPoints.Value);
   }
 }
