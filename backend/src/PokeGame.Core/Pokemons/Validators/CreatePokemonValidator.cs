@@ -19,7 +19,7 @@ internal class CreatePokemonValidator : AbstractValidator<CreatePokemonPayload>
 
       RuleFor(x => x.TeraType).IsInEnum();
       //RuleFor(x => x.AbilitySlot).IsInEnum();
-      //When(x => !string.IsNullOrWhiteSpace(x.Nature), () => RuleFor(x => x.Nature!).PokemonNature());
+      When(x => !string.IsNullOrWhiteSpace(x.Nature), () => RuleFor(x => x.Nature!).PokemonNature());
 
       RuleFor(x => x.Experience).GreaterThanOrEqualTo(0);
 
