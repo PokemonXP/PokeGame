@@ -1,23 +1,23 @@
 ﻿using FluentValidation;
 using Krakenar.Contracts.Settings;
 using Krakenar.Core;
-using PokeGame.Core.Forms;
 using PokeGame.Core.Pokemons.Models;
+using PokeGame.Core.Varieties;
 
 namespace PokeGame.Core.Pokemons.Validators;
 
 internal class CreatePokemonValidator : AbstractValidator<CreatePokemonPayload>
 {
-  public CreatePokemonValidator(IUniqueNameSettings uniqueNameSettings, Form? form = null)
+  public CreatePokemonValidator(IUniqueNameSettings uniqueNameSettings, Variety? variety = null)
   {
-    if (form is null)
+    if (variety is null)
     {
       RuleFor(x => x.Form).NotEmpty();
 
       When(x => !string.IsNullOrWhiteSpace(x.UniqueName), () => RuleFor(x => x.UniqueName!).UniqueName(uniqueNameSettings));
-      //When(x => !string.IsNullOrWhiteSpace(x.Nickname), () => RuleFor(x => x.Nickname!).DisplayName());
+      When(x => !string.IsNullOrWhiteSpace(x.Nickname), () => RuleFor(x => x.Nickname!).Nickname());
 
-      //RuleFor(x => x.TeraType).IsInEnum();
+      RuleFor(x => x.TeraType).IsInEnum();
       //RuleFor(x => x.AbilitySlot).IsInEnum();
       //When(x => !string.IsNullOrWhiteSpace(x.Nature), () => RuleFor(x => x.Nature!).PokemonNature());
 
@@ -28,27 +28,27 @@ internal class CreatePokemonValidator : AbstractValidator<CreatePokemonPayload>
       //RuleFor(x => x.Vitality).InclusiveBetween(0, 999);
       //RuleFor(x => x.Stamina).InclusiveBetween(0, 999);
 
-      //When(x => !string.IsNullOrWhiteSpace(x.Sprite), () => RuleFor(x => x.Sprite!).Url());
-      //When(x => !string.IsNullOrWhiteSpace(x.Url), () => RuleFor(x => x.Url!).Url());
+      When(x => !string.IsNullOrWhiteSpace(x.Sprite), () => RuleFor(x => x.Sprite!).Url());
+      When(x => !string.IsNullOrWhiteSpace(x.Url), () => RuleFor(x => x.Url!).Url());
     }
     else
     {
-      //VarietyModel variety = form.Variety;
-      //switch (variety.GenderRatio)
-      //{
-      //  case null:
-      //    RuleFor(x => x.Gender).Null();
-      //    break;
-      //  case 0:
-      //    When(x => x.Gender.HasValue, () => RuleFor(x => x.Gender).Equal(PokemonGender.Female));
-      //    break;
-      //  case 8:
-      //    When(x => x.Gender.HasValue, () => RuleFor(x => x.Gender).Equal(PokemonGender.Male));
-      //    break;
-      //  default:
-      //    RuleFor(x => x.Gender).IsInEnum();
-      //    break;
-      //}
+      int? genderRatio = variety.GenderRatio?.Value;
+      switch (genderRatio)
+      {
+        case null:
+          RuleFor(x => x.Gender).Null();
+          break;
+        case 0:
+          When(x => x.Gender.HasValue, () => RuleFor(x => x.Gender).Equal(PokemonGender.Female));
+          break;
+        case 8:
+          When(x => x.Gender.HasValue, () => RuleFor(x => x.Gender).Equal(PokemonGender.Male));
+          break;
+        default:
+          RuleFor(x => x.Gender).IsInEnum();
+          break;
+      }
 
       //if (form.Abilities.Secondary is null)
       //{
