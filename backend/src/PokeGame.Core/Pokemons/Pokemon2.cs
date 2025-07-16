@@ -1,6 +1,7 @@
 ﻿using Krakenar.Core;
 using Logitar.EventSourcing;
 using PokeGame.Core.Forms;
+using PokeGame.Core.Items;
 using PokeGame.Core.Pokemons.Events;
 using PokeGame.Core.Species;
 using PokeGame.Core.Varieties;
@@ -49,6 +50,8 @@ public class Pokemon2 : AggregateRoot
   public Friendship Friendship => _friendship ?? throw new InvalidOperationException("The Pokémon has not been initialized.");
 
   public PokemonCharacteristic Characteristic => PokemonCharacteristics.Instance.Find(IndividualValues, Size);
+
+  public ItemId? HeldItemId { get; private set; }
 
   private Url? _sprite = null;
   public Url? Sprite
@@ -225,6 +228,31 @@ public class Pokemon2 : AggregateRoot
     {
       Raise(new PokemonDeleted(), actorId);
     }
+  }
+
+  public void HoldItem(Item item, ActorId? actorId = null) => HoldItem(item.Id, actorId);
+  public void HoldItem(ItemId itemId, ActorId? actorId = null)
+  {
+    if (HeldItemId != itemId)
+    {
+      Raise(new PokemonItemHeld(itemId), actorId);
+    }
+  }
+  protected virtual void Handle(PokemonItemHeld @event)
+  {
+    HeldItemId = @event.ItemId;
+  }
+
+  public void RemoveItem(ActorId? actorId = null)
+  {
+    if (HeldItemId.HasValue)
+    {
+      Raise(new PokemonItemRemoved(), actorId);
+    }
+  }
+  protected virtual void Handle(PokemonItemRemoved _)
+  {
+    HeldItemId = null;
   }
 
   public void SetNickname(Nickname? nickname, ActorId? actorId = null)

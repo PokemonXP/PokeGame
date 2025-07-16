@@ -4,7 +4,7 @@ namespace PokeGame.Core.Items;
 
 internal interface IItemManager
 {
-  Task<ItemModel> FindAsync(string idOrUniqueName, string propertyName, CancellationToken cancellationToken = default);
+  Task<Item> FindAsync(string idOrUniqueName, string propertyName, CancellationToken cancellationToken = default);
 }
 
 internal class ItemManager : IItemManager
@@ -16,13 +16,14 @@ internal class ItemManager : IItemManager
     _itemQuerier = itemQuerier;
   }
 
-  public async Task<ItemModel> FindAsync(string idOrUniqueName, string propertyName, CancellationToken cancellationToken)
+  public async Task<Item> FindAsync(string idOrUniqueName, string propertyName, CancellationToken cancellationToken)
   {
     ItemModel? item = null;
     if (Guid.TryParse(idOrUniqueName, out Guid itemId))
     {
       item = await _itemQuerier.ReadAsync(itemId, cancellationToken);
     }
-    return item ?? await _itemQuerier.ReadAsync(idOrUniqueName, cancellationToken) ?? throw new ItemNotFoundException(idOrUniqueName, propertyName);
+    item ??= await _itemQuerier.ReadAsync(idOrUniqueName, cancellationToken) ?? throw new ItemNotFoundException(idOrUniqueName, propertyName);
+    return item.ToItem();
   }
 }

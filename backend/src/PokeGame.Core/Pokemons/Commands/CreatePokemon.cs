@@ -99,12 +99,11 @@ internal class CreatePokemonHandler : ICommandHandler<CreatePokemon, PokemonMode
       pokemon.SetNickname(nickname, actorId);
     }
 
-    //if (!string.IsNullOrWhiteSpace(payload.HeldItem))
-    //{
-    //  ItemModel item = await _itemManager.FindAsync(payload.HeldItem, nameof(payload.HeldItem), cancellationToken);
-    //  ItemId itemId = item.GetItemId(realmId);
-    //  pokemon.HoldItem(itemId, actorId);
-    //}
+    if (!string.IsNullOrWhiteSpace(payload.HeldItem))
+    {
+      Item item = await _itemManager.FindAsync(payload.HeldItem, nameof(payload.HeldItem), cancellationToken);
+      pokemon.HoldItem(item, actorId);
+    }
 
     //IReadOnlyCollection<MoveModel> moves = await _moveManager.FindAsync(payload.Moves, nameof(payload.Moves), cancellationToken);
     //MoveId moveId;

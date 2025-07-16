@@ -4,6 +4,8 @@ using PokeGame.Core.Abilities;
 using PokeGame.Core.Abilities.Models;
 using PokeGame.Core.Forms;
 using PokeGame.Core.Forms.Models;
+using PokeGame.Core.Items;
+using PokeGame.Core.Items.Models;
 using PokeGame.Core.Pokemons;
 using PokeGame.Core.Species;
 using PokeGame.Core.Species.Models;
@@ -55,6 +57,16 @@ internal static class ModelExtensions
       Notes = Notes.TryCreate(model.Notes)
     };
     return form;
+  }
+
+  public static Item ToItem(this ItemModel model)
+  {
+    Item item = new(new UniqueName(new UniqueNameSettings(), model.UniqueName), actorId: null, new ItemId(model.Id))
+    {
+      DisplayName = DisplayName.TryCreate(model.DisplayName),
+      Description = Description.TryCreate(model.Description)
+    };
+    return item;
   }
 
   public static PokemonSpecies ToPokemonSpecies(this SpeciesModel model)

@@ -14,6 +14,8 @@ public record CreatePokemonPayload
   public PokemonType? TeraType { get; set; }
   public PokemonSizePayload? Size { get; set; }
 
+  public string? HeldItem { get; set; }
+
   public string? Sprite { get; set; }
   public string? Url { get; set; }
   public string? Notes { get; set; }
