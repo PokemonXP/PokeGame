@@ -16,6 +16,12 @@ public record CreatePokemonPayload
 
   public int Experience { get; set; }
 
+  public IndividualValuesModel? IndividualValues { get; set; }
+  public EffortValuesModel? EffortValues { get; set; }
+  public int? Vitality { get; set; }
+  public int? Stamina { get; set; }
+  public byte? Friendship { get; set; }
+
   public string? HeldItem { get; set; }
 
   public string? Sprite { get; set; }
