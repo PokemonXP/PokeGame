@@ -9,8 +9,8 @@ public record TrainerUpdated : DomainEvent
   public Change<DisplayName>? DisplayName { get; set; }
   public Change<Description>? Description { get; set; }
 
-  public Change<TrainerGender>? Gender { get; set; }
-  public Change<Money>? Money { get; set; }
+  public TrainerGender? Gender { get; set; }
+  public Money? Money { get; set; }
 
   public Change<UserId?>? UserId { get; set; }
 

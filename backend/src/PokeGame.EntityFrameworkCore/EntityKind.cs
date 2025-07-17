@@ -11,6 +11,5 @@ internal enum EntityKind
   PokeBall,
   Species,
   TechnicalMachine,
-  Trainer,
   Variety
 }

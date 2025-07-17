@@ -55,7 +55,7 @@ public class Trainer : AggregateRoot
       if (_gender != value)
       {
         _gender = value;
-        _updated.Gender = new Change<TrainerGender>(value);
+        _updated.Gender = value;
       }
     }
   }
@@ -68,7 +68,7 @@ public class Trainer : AggregateRoot
       if (_money != value)
       {
         _money = value;
-        _updated.Money = new Change<Money>(value);
+        _updated.Money = value;
       }
     }
   }
@@ -191,13 +191,13 @@ public class Trainer : AggregateRoot
       _description = @event.Description.Value;
     }
 
-    if (@event.Gender is not null)
+    if (@event.Gender.HasValue)
     {
       _gender = @event.Gender.Value;
     }
     if (@event.Money is not null)
     {
-      _money = @event.Money.Value;
+      _money = @event.Money;
     }
 
     if (@event.UserId is not null)
