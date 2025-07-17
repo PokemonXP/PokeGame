@@ -1,5 +1,4 @@
-﻿using Krakenar.Core.Contents;
-using Krakenar.EntityFrameworkCore.Relational.KrakenarDb;
+﻿using Krakenar.EntityFrameworkCore.Relational.KrakenarDb;
 using PokeGame.Core.Trainers;
 using PokeGame.Core.Trainers.Events;
 using AggregateEntity = Krakenar.EntityFrameworkCore.Relational.Entities.Aggregate;
@@ -42,7 +41,7 @@ internal class TrainerEntity : AggregateEntity
 
   public TrainerEntity(TrainerCreated @event) : base(@event)
   {
-    Id = new ContentId(@event.StreamId).EntityId;
+    Id = new TrainerId(@event.StreamId).ToGuid();
 
     License = @event.License.Value;
 
