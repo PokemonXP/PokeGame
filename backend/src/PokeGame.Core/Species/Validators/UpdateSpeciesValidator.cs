@@ -20,5 +20,7 @@ internal class UpdateSpeciesValidator : AbstractValidator<UpdateSpeciesPayload>
 
     When(x => !string.IsNullOrWhiteSpace(x.Url?.Value), () => RuleFor(x => x.Url!.Value!).Url());
     When(x => !string.IsNullOrWhiteSpace(x.Notes?.Value), () => RuleFor(x => x.Notes!.Value!).Notes());
+
+    RuleForEach(x => x.RegionalNumbers).SetValidator(new RegionalNumberValidator());
   }
 }
