@@ -13,6 +13,7 @@ internal class EventSerializer : Krakenar.Infrastructure.EventSerializer
   {
     base.RegisterConverters();
 
+    SerializerOptions.Converters.Add(new AbilityIdConverter());
     SerializerOptions.Converters.Add(new FormIdConverter());
     SerializerOptions.Converters.Add(new FriendshipConverter());
     SerializerOptions.Converters.Add(new GameLocationConverter());

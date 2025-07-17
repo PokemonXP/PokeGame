@@ -33,7 +33,7 @@ internal class SeedRegionsTaskHandler : INotificationHandler<SeedRegionsTask>
     foreach (SeedRegionPayload region in regions)
     {
       CreateOrReplaceRegionResult result = await _regionService.CreateOrReplaceAsync(region, region.Id, cancellationToken);
-      _logger.LogInformation("The region '{Region}' was {Verb}.", result.Region, result.Created ? "created" : "updated");
+      _logger.LogInformation("The region '{Region}' was {Status}.", result.Region, result.Created ? "created" : "updated");
     }
   }
 }

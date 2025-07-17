@@ -1,6 +1,7 @@
 ﻿using Krakenar.Contracts;
 using Krakenar.Core;
 using Logitar;
+using PokeGame.Core.Abilities;
 using PokeGame.Core.Regions;
 
 namespace PokeGame.Core;
@@ -49,6 +50,10 @@ public class UniqueNameAlreadyUsedException : ConflictException
     }
   }
 
+  public UniqueNameAlreadyUsedException(Ability ability, AbilityId conflictId)
+    : this("Ability", ability.Id.ToGuid(), conflictId.ToGuid(), ability.UniqueName, nameof(ability.UniqueName))
+  {
+  }
   public UniqueNameAlreadyUsedException(Region region, RegionId conflictId)
     : this("Region", region.Id.ToGuid(), conflictId.ToGuid(), region.UniqueName, nameof(region.UniqueName))
   {

@@ -1,5 +1,6 @@
 ﻿using Krakenar.Contracts.Actors;
 using Krakenar.Contracts.Search;
+using Krakenar.Core;
 using Krakenar.Core.Actors;
 using Krakenar.EntityFrameworkCore.Relational;
 using Krakenar.EntityFrameworkCore.Relational.KrakenarDb;
@@ -25,6 +26,26 @@ internal class AbilityQuerier : IAbilityQuerier
     _sqlHelper = sqlHelper;
   }
 
+  public async Task<AbilityId?> FindIdAsync(UniqueName uniqueName, CancellationToken cancellationToken)
+  {
+    string uniqueNameNormalized = Helper.Normalize(uniqueName);
+
+    string? streamId = await _abilities.AsNoTracking()
+      .Where(x => x.UniqueNameNormalized == uniqueNameNormalized)
+      .Select(x => x.StreamId)
+      .SingleOrDefaultAsync(cancellationToken);
+    return string.IsNullOrWhiteSpace(streamId) ? null : new AbilityId(streamId);
+  }
+
+  public async Task<AbilityModel> ReadAsync(Ability ability, CancellationToken cancellationToken)
+  {
+    return await ReadAsync(ability.Id, cancellationToken) ?? throw new InvalidOperationException($"The ability entity 'StreamId={ability.Id}' was not found.");
+  }
+  public async Task<AbilityModel?> ReadAsync(AbilityId id, CancellationToken cancellationToken)
+  {
+    AbilityEntity? ability = await _abilities.AsNoTracking().SingleOrDefaultAsync(x => x.StreamId == id.Value, cancellationToken);
+    return ability is null ? null : await MapAsync(ability, cancellationToken);
+  }
   public async Task<AbilityModel?> ReadAsync(Guid id, CancellationToken cancellationToken)
   {
     AbilityEntity? ability = await _abilities.AsNoTracking().SingleOrDefaultAsync(x => x.Id == id, cancellationToken);

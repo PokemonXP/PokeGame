@@ -21,10 +21,17 @@ public class RegionController : ControllerBase
   }
 
   [HttpPost]
-  public async Task<ActionResult<RegionModel>> CreateAsync(CreateOrReplaceRegionPayload payload, CancellationToken cancellationToken)
+  public async Task<ActionResult<RegionModel>> CreateAsync([FromBody] CreateOrReplaceRegionPayload payload, CancellationToken cancellationToken)
   {
     CreateOrReplaceRegionResult result = await _regionService.CreateOrReplaceAsync(payload, id: null, cancellationToken);
     return ToActionResult(result);
+  }
+
+  [HttpDelete("{id}")]
+  public async Task<ActionResult<RegionModel>> DeleteAsync(Guid id, CancellationToken cancellationToken)
+  {
+    RegionModel? region = await _regionService.DeleteAsync(id, cancellationToken);
+    return region is null ? NotFound() : Ok(region);
   }
 
   [HttpGet("{id}")]
@@ -42,7 +49,7 @@ public class RegionController : ControllerBase
   }
 
   [HttpPut("{id}")]
-  public async Task<ActionResult<RegionModel>> ReplaceAsync(Guid id, CreateOrReplaceRegionPayload payload, CancellationToken cancellationToken)
+  public async Task<ActionResult<RegionModel>> ReplaceAsync(Guid id, [FromBody] CreateOrReplaceRegionPayload payload, CancellationToken cancellationToken)
   {
     CreateOrReplaceRegionResult result = await _regionService.CreateOrReplaceAsync(payload, id, cancellationToken);
     return ToActionResult(result);
@@ -57,7 +64,7 @@ public class RegionController : ControllerBase
   }
 
   [HttpPatch("{id}")]
-  public async Task<ActionResult<RegionModel>> UpdateAsync(Guid id, UpdateRegionPayload payload, CancellationToken cancellationToken)
+  public async Task<ActionResult<RegionModel>> UpdateAsync(Guid id, [FromBody] UpdateRegionPayload payload, CancellationToken cancellationToken)
   {
     RegionModel? region = await _regionService.UpdateAsync(id, payload, cancellationToken);
     return region is null ? NotFound() : Ok(region);
