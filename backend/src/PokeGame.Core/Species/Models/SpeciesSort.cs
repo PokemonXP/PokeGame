@@ -6,6 +6,7 @@ public enum SpeciesSort
   CatchRate,
   CreatedOn,
   DisplayName,
+  EggCycles,
   Number,
   UniqueName,
   UpdatedOn

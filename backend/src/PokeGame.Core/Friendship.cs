@@ -4,6 +4,10 @@ public record Friendship
 {
   public byte Value { get; }
 
+  public Friendship() : this(value: 0)
+  {
+  }
+
   public Friendship(byte value)
   {
     Value = value;

@@ -21,8 +21,7 @@ public class PokemonDeleteTests
   {
     UniqueNameSettings uniqueNameSettings = new();
 
-    _species = new PokemonSpecies(number: 499, new UniqueName(uniqueNameSettings, "pignite"),
-      new CatchRate(45), PokemonCategory.Standard, new Friendship(70), GrowthRate.MediumSlow);
+    _species = new PokemonSpecies(new Number(499), PokemonCategory.Standard, new UniqueName(uniqueNameSettings, "pignite"), new Friendship(70), new CatchRate(45), GrowthRate.MediumSlow);
 
     _variety = new Variety(_species, _species.UniqueName, isDefault: true, new GenderRatio(7));
 

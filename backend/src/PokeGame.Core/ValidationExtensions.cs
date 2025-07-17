@@ -40,6 +40,11 @@ public static class ValidationExtensions
     return ruleBuilder.NotEmpty();
   }
 
+  public static IRuleBuilderOptions<T, int> Number<T>(this IRuleBuilder<T, int> ruleBuilder)
+  {
+    return ruleBuilder.GreaterThan(0);
+  }
+
   public static IRuleBuilderOptions<T, string> PokemonNature<T>(this IRuleBuilder<T, string> ruleBuilder)
   {
     return ruleBuilder.SetValidator(new PokemonNatureValidator<T>());

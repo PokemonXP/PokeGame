@@ -100,6 +100,11 @@ internal class SpeciesQuerier : ISpeciesQuerier
             ? (sort.IsDescending ? query.OrderByDescending(x => x.DisplayName) : query.OrderBy(x => x.DisplayName))
             : (sort.IsDescending ? ordered.ThenByDescending(x => x.DisplayName) : ordered.ThenBy(x => x.DisplayName));
           break;
+        case SpeciesSort.EggCycles:
+          ordered = ordered is null
+            ? (sort.IsDescending ? query.OrderByDescending(x => x.Number) : query.OrderBy(x => x.Number)) // TODO(fpion): implement
+            : (sort.IsDescending ? ordered.ThenByDescending(x => x.Number) : ordered.ThenBy(x => x.Number)); // TODO(fpion): implement
+          break;
         case SpeciesSort.Number:
           ordered = ordered is null
             ? (sort.IsDescending ? query.OrderByDescending(x => x.Number) : query.OrderBy(x => x.Number))
