@@ -5,7 +5,7 @@ using PokeGame.Seeding.Game.Payloads;
 
 namespace PokeGame.Seeding.Game.Validators;
 
-internal class AbilityValidator : AbstractValidator<AbilityPayload>
+internal class AbilityValidator : AbstractValidator<SeedAbilityPayload>
 {
   public AbilityValidator(IUniqueNameSettings uniqueNameSettings)
   {

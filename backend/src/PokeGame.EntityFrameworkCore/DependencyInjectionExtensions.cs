@@ -34,6 +34,7 @@ public static class DependencyInjectionExtensions
 
   private static IServiceCollection AddEventHandlers(this IServiceCollection services)
   {
+    AbilityEvents.Register(services);
     RegionEvents.Register(services);
 
     return services

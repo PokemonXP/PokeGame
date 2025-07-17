@@ -1,5 +1,6 @@
 ﻿using Krakenar.Contracts.Search;
 using Krakenar.Core;
+using Microsoft.Extensions.DependencyInjection;
 using PokeGame.Core.Abilities.Commands;
 using PokeGame.Core.Abilities.Models;
 using PokeGame.Core.Abilities.Queries;
@@ -17,6 +18,17 @@ public interface IAbilityService
 
 internal class AbilityService : IAbilityService
 {
+  public static void Register(IServiceCollection services)
+  {
+    services.AddTransient<IAbilityService, AbilityService>()
+      .AddTransient<IAbilityManager, AbilityManager>()
+      .AddTransient<ICommandHandler<CreateOrReplaceAbility, CreateOrReplaceAbilityResult>, CreateOrReplaceAbilityHandler>()
+      .AddTransient<ICommandHandler<DeleteAbility, AbilityModel?>, DeleteAbilityHandler>()
+      .AddTransient<ICommandHandler<UpdateAbility, AbilityModel?>, UpdateAbilityHandler>()
+      .AddTransient<IQueryHandler<ReadAbility, AbilityModel?>, ReadAbilityHandler>()
+      .AddTransient<IQueryHandler<SearchAbilities, SearchResults<AbilityModel>>, SearchAbilitiesHandler>();
+  }
+
   private readonly ICommandBus _commandBus;
   private readonly IQueryBus _queryBus;
 

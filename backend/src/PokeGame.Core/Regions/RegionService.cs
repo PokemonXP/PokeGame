@@ -1,5 +1,6 @@
 ﻿using Krakenar.Contracts.Search;
 using Krakenar.Core;
+using Microsoft.Extensions.DependencyInjection;
 using PokeGame.Core.Regions.Commands;
 using PokeGame.Core.Regions.Models;
 using PokeGame.Core.Regions.Queries;
@@ -17,6 +18,17 @@ public interface IRegionService
 
 internal class RegionService : IRegionService
 {
+  public static void Register(IServiceCollection services)
+  {
+    services.AddTransient<IRegionService, RegionService>()
+      .AddTransient<IRegionManager, RegionManager>()
+      .AddTransient<ICommandHandler<CreateOrReplaceRegion, CreateOrReplaceRegionResult>, CreateOrReplaceRegionHandler>()
+      .AddTransient<ICommandHandler<DeleteRegion, RegionModel?>, DeleteRegionHandler>()
+      .AddTransient<ICommandHandler<UpdateRegion, RegionModel?>, UpdateRegionHandler>()
+      .AddTransient<IQueryHandler<ReadRegion, RegionModel?>, ReadRegionHandler>()
+      .AddTransient<IQueryHandler<SearchRegions, SearchResults<RegionModel>>, SearchRegionsHandler>();
+  }
+
   private readonly ICommandBus _commandBus;
   private readonly IQueryBus _queryBus;
 
