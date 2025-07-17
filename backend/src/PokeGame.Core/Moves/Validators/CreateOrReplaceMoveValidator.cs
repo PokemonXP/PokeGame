@@ -9,10 +9,9 @@ internal class CreateOrReplaceMoveValidator : AbstractValidator<CreateOrReplaceM
 {
   public CreateOrReplaceMoveValidator(IUniqueNameSettings uniqueNameSettings)
   {
-    // TODO(fpion): a Status move cannot have power!
-
     RuleFor(x => x.Type).IsInEnum();
     RuleFor(x => x.Category).IsInEnum();
+    When(x => x.Category == MoveCategory.Status, ConfigureStatus);
 
     RuleFor(x => x.UniqueName).UniqueName(uniqueNameSettings);
     When(x => !string.IsNullOrWhiteSpace(x.DisplayName), () => RuleFor(x => x.DisplayName!).DisplayName());
@@ -24,5 +23,20 @@ internal class CreateOrReplaceMoveValidator : AbstractValidator<CreateOrReplaceM
 
     When(x => !string.IsNullOrWhiteSpace(x.Url), () => RuleFor(x => x.Url!).Url());
     When(x => !string.IsNullOrWhiteSpace(x.Notes), () => RuleFor(x => x.Notes!).Notes());
+  }
+
+  public CreateOrReplaceMoveValidator(Move move)
+  {
+    if (move.Category == MoveCategory.Status)
+    {
+      ConfigureStatus();
+    }
+  }
+
+  private void ConfigureStatus()
+  {
+    RuleFor(x => x.Power).Null()
+      .WithErrorCode("StatusMoveValidator")
+      .WithMessage($"'{{PropertyName}}' must be null when the move category is {MoveCategory.Status}.");
   }
 }

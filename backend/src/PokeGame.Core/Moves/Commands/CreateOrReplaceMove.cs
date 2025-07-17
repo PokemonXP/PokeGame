@@ -59,6 +59,8 @@ internal class CreateOrReplaceMoveHandler : ICommandHandler<CreateOrReplaceMove,
     }
     else
     {
+      new CreateOrReplaceMoveValidator(move).ValidateAndThrow(payload);
+
       move.SetUniqueName(uniqueName, actorId);
 
       move.Accuracy = accuracy;
