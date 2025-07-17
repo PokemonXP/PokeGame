@@ -24,27 +24,39 @@ internal record SeedSpeciesPayload : CreateOrReplaceSpeciesPayload
       Map(x => x.CatchRate).Index(6).Default(0);
       Map(x => x.GrowthRate).Index(7).Default(default(GrowthRate));
 
-      //Map(x => x.RegionalNumbers).Convert(args =>
-      //{
-      //  string? values = args.Row.GetField(8);
-      //  return string.IsNullOrWhiteSpace(values) ? [] : values.Split('|').Select(value =>
-      //  {
-      //    string[] values = value.Split(':');
-      //    RegionalNumberPayload regionalNumber = new();
-      //    if (values.Length == 2)
-      //    {
-      //      regionalNumber.Region = values.First();
-      //      if (int.TryParse(values.Last(), out int number))
-      //      {
-      //        regionalNumber.Number = number;
-      //      }
-      //    }
-      //    return regionalNumber;
-      //  }).ToList();
-      //}); // TODO(fpion): implement
+      Map(x => x.EggCycles).Index(8).Default(0);
+      References<EggGroupsMap>(x => x.EggGroups);
 
-      Map(x => x.Url).Index(9);
-      Map(x => x.Notes).Index(10);
+      Map(x => x.RegionalNumbers).Convert(args =>
+      {
+        string? values = args.Row.GetField(11);
+        return string.IsNullOrWhiteSpace(values) ? [] : values.Split('|').Select(value =>
+        {
+          string[] values = value.Split(':');
+          RegionalNumberPayload regionalNumber = new();
+          if (values.Length == 2)
+          {
+            regionalNumber.Region = values.First();
+            if (int.TryParse(values.Last(), out int number))
+            {
+              regionalNumber.Number = number;
+            }
+          }
+          return regionalNumber;
+        }).ToList();
+      });
+
+      Map(x => x.Url).Index(12);
+      Map(x => x.Notes).Index(13);
+    }
+  }
+
+  private class EggGroupsMap : ClassMap<EggGroupsModel>
+  {
+    public EggGroupsMap()
+    {
+      Map(x => x.Primary).Index(9).Default(default(EggGroup));
+      Map(x => x.Secondary).Index(10);
     }
   }
 }
