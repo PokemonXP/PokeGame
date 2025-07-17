@@ -4,7 +4,7 @@ using PokeGame.Core.Species.Models;
 
 namespace PokeGame.Core.Species.Queries;
 
-internal record ReadSpecies(Guid? Id, string? UniqueName) : IQuery<SpeciesModel?>;
+internal record ReadSpecies(Guid? Id, int? Number, string? UniqueName, Guid? RegionId) : IQuery<SpeciesModel?>;
 
 /// <exception cref="TooManyResultsException{T}"></exception>
 internal class ReadSpeciesHandler : IQueryHandler<ReadSpecies, SpeciesModel?>
@@ -18,11 +18,20 @@ internal class ReadSpeciesHandler : IQueryHandler<ReadSpecies, SpeciesModel?>
 
   public async Task<SpeciesModel?> HandleAsync(ReadSpecies query, CancellationToken cancellationToken)
   {
-    Dictionary<Guid, SpeciesModel> foundSpecies = new(capacity: 2);
+    Dictionary<Guid, SpeciesModel> foundSpecies = new(capacity: 3);
 
     if (query.Id.HasValue)
     {
       SpeciesModel? species = await _speciesQuerier.ReadAsync(query.Id.Value, cancellationToken);
+      if (species is not null)
+      {
+        foundSpecies[species.Id] = species;
+      }
+    }
+
+    if (query.Number.HasValue)
+    {
+      SpeciesModel? species = await _speciesQuerier.ReadAsync(query.Number.Value, query.RegionId, cancellationToken);
       if (species is not null)
       {
         foundSpecies[species.Id] = species;

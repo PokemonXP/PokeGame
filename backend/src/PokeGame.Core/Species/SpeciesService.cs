@@ -11,7 +11,7 @@ public interface ISpeciesService
 {
   Task<CreateOrReplaceSpeciesResult> CreateOrReplaceAsync(CreateOrReplaceSpeciesPayload payload, Guid? id = null, CancellationToken cancellationToken = default);
   Task<SpeciesModel?> DeleteAsync(Guid id, CancellationToken cancellationToken = default);
-  Task<SpeciesModel?> ReadAsync(Guid? id = null, string? uniqueName = null, CancellationToken cancellationToken = default);
+  Task<SpeciesModel?> ReadAsync(Guid? id = null, int? number = null, string? uniqueName = null, Guid? regionId = null, CancellationToken cancellationToken = default);
   Task<SearchResults<SpeciesModel>> SearchAsync(SearchSpeciesPayload payload, CancellationToken cancellationToken = default);
   Task<SpeciesModel?> UpdateAsync(Guid id, UpdateSpeciesPayload payload, CancellationToken cancellationToken = default);
 }
@@ -50,9 +50,9 @@ internal class SpeciesService : ISpeciesService
     return await _commandBus.ExecuteAsync(command, cancellationToken);
   }
 
-  public async Task<SpeciesModel?> ReadAsync(Guid? id, string? uniqueName, CancellationToken cancellationToken)
+  public async Task<SpeciesModel?> ReadAsync(Guid? id, int? number, string? uniqueName, Guid? regionId, CancellationToken cancellationToken)
   {
-    ReadSpecies query = new(id, uniqueName);
+    ReadSpecies query = new(id, number, uniqueName, regionId);
     return await _queryBus.ExecuteAsync(query, cancellationToken);
   }
 
