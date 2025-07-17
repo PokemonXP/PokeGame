@@ -14,6 +14,7 @@ internal class EventSerializer : Krakenar.Infrastructure.EventSerializer
     base.RegisterConverters();
 
     SerializerOptions.Converters.Add(new AbilityIdConverter());
+    SerializerOptions.Converters.Add(new AccuracyConverter());
     SerializerOptions.Converters.Add(new FormIdConverter());
     SerializerOptions.Converters.Add(new FriendshipConverter());
     SerializerOptions.Converters.Add(new GameLocationConverter());
@@ -26,6 +27,7 @@ internal class EventSerializer : Krakenar.Infrastructure.EventSerializer
     SerializerOptions.Converters.Add(new PokemonCharacteristicConverter());
     SerializerOptions.Converters.Add(new PokemonIdConverter());
     SerializerOptions.Converters.Add(new PokemonNatureConverter());
+    SerializerOptions.Converters.Add(new PowerConverter());
     SerializerOptions.Converters.Add(new PowerPointsConverter());
     SerializerOptions.Converters.Add(new RegionIdConverter());
     SerializerOptions.Converters.Add(new SpeciesIdConverter());
