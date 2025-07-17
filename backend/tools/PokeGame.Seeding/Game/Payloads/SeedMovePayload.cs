@@ -22,9 +22,9 @@ internal record SeedMovePayload : CreateOrReplaceMovePayload
       Map(x => x.Type).Index(1).Default(default(PokemonType));
       Map(x => x.Category).Index(2).Default(default(MoveCategory));
 
-      Map(x => x.Accuracy).Index(6).Default(0);
-      Map(x => x.Power).Index(7).Default(0);
-      Map(x => x.PowerPoints).Index(8).Default(0);
+      Map(x => x.Accuracy).Index(6);
+      Map(x => x.Power).Index(7);
+      Map(x => x.PowerPoints).Index(8);
 
       Map(x => x.Url).Index(20);
       Map(x => x.Notes).Index(21);
