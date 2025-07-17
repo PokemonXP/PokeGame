@@ -50,6 +50,11 @@ public static class ValidationExtensions
     return ruleBuilder.GreaterThan((byte)0);
   }
 
+  public static IRuleBuilderOptions<T, int> Price<T>(this IRuleBuilder<T, int> ruleBuilder)
+  {
+    return ruleBuilder.GreaterThan(0);
+  }
+
   public static IRuleBuilderOptions<T, byte> PowerPoints<T>(this IRuleBuilder<T, byte> ruleBuilder)
   {
     return ruleBuilder.GreaterThan((byte)0).LessThanOrEqualTo(Moves.PowerPoints.MaximumValue);

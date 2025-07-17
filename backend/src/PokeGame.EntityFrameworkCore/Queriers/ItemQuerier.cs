@@ -1,5 +1,6 @@
 ﻿using Krakenar.Contracts.Actors;
 using Krakenar.Contracts.Search;
+using Krakenar.Core;
 using Krakenar.Core.Actors;
 using Krakenar.EntityFrameworkCore.Relational;
 using Krakenar.EntityFrameworkCore.Relational.KrakenarDb;
@@ -25,6 +26,26 @@ internal class ItemQuerier : IItemQuerier
     _sqlHelper = sqlHelper;
   }
 
+  public async Task<ItemId?> FindIdAsync(UniqueName uniqueName, CancellationToken cancellationToken)
+  {
+    string uniqueNameNormalized = Helper.Normalize(uniqueName);
+
+    string? streamId = await _items.AsNoTracking()
+      .Where(x => x.UniqueNameNormalized == uniqueNameNormalized)
+      .Select(x => x.StreamId)
+      .SingleOrDefaultAsync(cancellationToken);
+    return string.IsNullOrWhiteSpace(streamId) ? null : new ItemId(streamId);
+  }
+
+  public async Task<ItemModel> ReadAsync(Item item, CancellationToken cancellationToken)
+  {
+    return await ReadAsync(item.Id, cancellationToken) ?? throw new InvalidOperationException($"The item entity 'StreamId={item.Id}' was not found.");
+  }
+  public async Task<ItemModel?> ReadAsync(ItemId id, CancellationToken cancellationToken)
+  {
+    ItemEntity? item = await _items.AsNoTracking().SingleOrDefaultAsync(x => x.StreamId == id.Value, cancellationToken);
+    return item is null ? null : await MapAsync(item, cancellationToken);
+  }
   public async Task<ItemModel?> ReadAsync(Guid id, CancellationToken cancellationToken)
   {
     ItemEntity? item = await _items.AsNoTracking()

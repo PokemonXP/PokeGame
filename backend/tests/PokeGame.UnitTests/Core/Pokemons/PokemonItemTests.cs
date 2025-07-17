@@ -4,6 +4,7 @@ using Logitar.EventSourcing;
 using PokeGame.Core.Abilities;
 using PokeGame.Core.Forms;
 using PokeGame.Core.Items;
+using PokeGame.Core.Items.Properties;
 using PokeGame.Core.Pokemons.Events;
 using PokeGame.Core.Species;
 using PokeGame.Core.Varieties;
@@ -43,7 +44,7 @@ public class PokemonItemTests
       new IndividualValues(),
       PokemonGender.Male);
 
-    _item = new(new UniqueName(uniqueNameSettings, "leftovers"));
+    _item = new(new UniqueName(uniqueNameSettings, "leftovers"), new OtherItemProperties());
   }
 
   [Fact(DisplayName = "HoldItem: it should handle held item changes correctly.")]

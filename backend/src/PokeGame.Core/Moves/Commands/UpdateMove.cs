@@ -44,6 +44,7 @@ internal class UpdateMoveHandler : ICommandHandler<UpdateMove, MoveModel?>
     {
       return null;
     }
+    new UpdateMoveValidator(move).ValidateAndThrow(payload);
 
     if (!string.IsNullOrWhiteSpace(payload.UniqueName))
     {
