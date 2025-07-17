@@ -336,13 +336,13 @@ internal class PokemonMapper
     TrainerModel destination = new()
     {
       Id = source.Id,
+      License = source.License,
       UniqueName = source.UniqueName,
       DisplayName = source.DisplayName,
       Description = source.Description,
       Gender = source.Gender,
-      License = source.License,
       Money = source.Money,
-      UserId = source.UserId,
+      UserId = source.UserUid,
       Sprite = source.Sprite,
       Url = source.Url,
       Notes = source.Notes

@@ -28,4 +28,5 @@ internal static class Trainers
   public static readonly ColumnId UniqueNameNormalized = new(nameof(TrainerEntity.UniqueNameNormalized), Table);
   public static readonly ColumnId Url = new(nameof(TrainerEntity.Url), Table);
   public static readonly ColumnId UserId = new(nameof(TrainerEntity.UserId), Table);
+  public static readonly ColumnId UserUid = new(nameof(TrainerEntity.UserUid), Table);
 }

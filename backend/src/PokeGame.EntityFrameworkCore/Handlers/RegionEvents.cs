@@ -82,7 +82,7 @@ internal class RegionEvents : IEventHandler<RegionCreated>,
   public async Task HandleAsync(RegionUpdated @event, CancellationToken cancellationToken)
   {
     RegionEntity? region = await _context.Regions
-  .SingleOrDefaultAsync(x => x.StreamId == @event.StreamId.Value, cancellationToken);
+      .SingleOrDefaultAsync(x => x.StreamId == @event.StreamId.Value, cancellationToken);
     if (region is null || (region.Version != (@event.Version - 1)))
     {
       _logger.LogUnexpectedVersion(@event, region);

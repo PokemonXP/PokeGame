@@ -82,7 +82,7 @@ internal class AbilityEvents : IEventHandler<AbilityCreated>,
   public async Task HandleAsync(AbilityUpdated @event, CancellationToken cancellationToken)
   {
     AbilityEntity? ability = await _context.Abilities
-  .SingleOrDefaultAsync(x => x.StreamId == @event.StreamId.Value, cancellationToken);
+      .SingleOrDefaultAsync(x => x.StreamId == @event.StreamId.Value, cancellationToken);
     if (ability is null || (ability.Version != (@event.Version - 1)))
     {
       _logger.LogUnexpectedVersion(@event, ability);

@@ -36,6 +36,7 @@ public static class DependencyInjectionExtensions
   {
     AbilityEvents.Register(services);
     RegionEvents.Register(services);
+    TrainerEvents.Register(services);
 
     return services
       .AddScoped<IEventHandler<ContentLocalePublished>, PokemonContentEvents>()
@@ -76,6 +77,7 @@ public static class DependencyInjectionExtensions
     return services
       .AddScoped<IAbilityRepository, AbilityRepository>()
       .AddScoped<IPokemonRepository, PokemonRepository>()
-      .AddScoped<IRegionRepository, RegionRepository>();
+      .AddScoped<IRegionRepository, RegionRepository>()
+      .AddScoped<ITrainerRepository, TrainerRepository>();
   }
 }

@@ -1,9 +1,6 @@
-﻿using Krakenar.Core.Contents;
-using Krakenar.EntityFrameworkCore.Relational.KrakenarDb;
-using PokeGame.Core;
+﻿using Krakenar.EntityFrameworkCore.Relational.KrakenarDb;
 using PokeGame.Core.Trainers;
-using PokeGame.EntityFrameworkCore.Handlers;
-using PokeGame.Infrastructure.Data;
+using PokeGame.Core.Trainers.Events;
 using AggregateEntity = Krakenar.EntityFrameworkCore.Relational.Entities.Aggregate;
 
 namespace PokeGame.EntityFrameworkCore.Entities;
@@ -12,6 +9,13 @@ internal class TrainerEntity : AggregateEntity
 {
   public int TrainerId { get; private set; }
   public Guid Id { get; private set; }
+
+  public string License { get; private set; } = string.Empty;
+  public string LicenseNormalized
+  {
+    get => Helper.Normalize(License);
+    private set { }
+  }
 
   public string UniqueName { get; private set; } = string.Empty;
   public string UniqueNameNormalized
@@ -23,57 +27,83 @@ internal class TrainerEntity : AggregateEntity
   public string? Description { get; private set; }
 
   public TrainerGender Gender { get; private set; }
-  public string License { get; private set; } = string.Empty;
-  public string LicenseNormalized
-  {
-    get => Helper.Normalize(License);
-    private set { }
-  }
   public int Money { get; private set; }
 
-  public Guid? UserId { get; private set; }
+  public string? UserId { get; private set; }
+  public Guid? UserUid { get; private set; }
 
   public string? Sprite { get; private set; }
-
   public string? Url { get; private set; }
   public string? Notes { get; private set; }
 
   public List<PokemonEntity> CurrentPokemon { get; private set; } = [];
   public List<PokemonEntity> OriginalPokemon { get; private set; } = [];
 
-  public TrainerEntity(TrainerPublished published) : base(published.Event)
+  public TrainerEntity(TrainerCreated @event) : base(@event)
   {
-    Id = new ContentId(published.Event.StreamId).EntityId;
+    Id = new TrainerId(@event.StreamId).ToGuid();
 
-    Update(published);
+    License = @event.License.Value;
+
+    UniqueName = @event.UniqueName.Value;
+
+    Gender = @event.Gender;
+    Money = @event.Money.Value;
   }
 
   private TrainerEntity() : base()
   {
   }
 
-  public void Update(TrainerPublished published)
+  public void SetUniqueName(TrainerUniqueNameChanged @event)
   {
-    ContentLocale invariant = published.Invariant;
-    ContentLocale locale = published.Locale;
+    Update(@event);
 
-    Update(published.Event);
+    UniqueName = @event.UniqueName.Value;
+  }
 
-    UniqueName = locale.UniqueName.Value;
-    DisplayName = locale.DisplayName?.Value;
-    Description = locale.Description?.Value;
+  public void SetUser(TrainerUserChanged @event)
+  {
+    Update(@event);
 
-    Gender = PokemonConverter.Instance.ToTrainerGender(invariant.FindSelectValue(Trainers.Gender).Single());
-    License = invariant.FindStringValue(Trainers.License);
-    Money = (int)invariant.FindNumberValue(Trainers.Money);
+    UserId = @event.UserId?.Value;
+    UserUid = @event.UserId?.EntityId;
+  }
 
-    string? userId = invariant.TryGetStringValue(Trainers.UserId);
-    UserId = userId is null ? null : Guid.Parse(userId);
+  public void Update(TrainerUpdated @event)
+  {
+    base.Update(@event);
 
-    Sprite = invariant.FindStringValue(Trainers.Sprite);
+    if (@event.DisplayName is not null)
+    {
+      DisplayName = @event.DisplayName.Value?.Value;
+    }
+    if (@event.Description is not null)
+    {
+      Description = @event.Description.Value?.Value;
+    }
 
-    Url = locale.TryGetStringValue(Trainers.Url);
-    Notes = locale.TryGetStringValue(Trainers.Notes);
+    if (@event.Gender.HasValue)
+    {
+      Gender = @event.Gender.Value;
+    }
+    if (@event.Money is not null)
+    {
+      Money = @event.Money.Value;
+    }
+
+    if (@event.Sprite is not null)
+    {
+      Sprite = @event.Sprite.Value?.Value;
+    }
+    if (@event.Url is not null)
+    {
+      Url = @event.Url.Value?.Value;
+    }
+    if (@event.Notes is not null)
+    {
+      Notes = @event.Notes.Value?.Value;
+    }
   }
 
   public override string ToString() => $"{DisplayName ?? UniqueName} | {base.ToString()}";

@@ -1,5 +1,6 @@
 ﻿using Krakenar.Contracts.Actors;
 using Krakenar.Contracts.Search;
+using Krakenar.Core;
 using Krakenar.Core.Actors;
 using Krakenar.EntityFrameworkCore.Relational;
 using Krakenar.EntityFrameworkCore.Relational.KrakenarDb;
@@ -23,6 +24,37 @@ internal class TrainerQuerier : ITrainerQuerier
     _actorService = actorService;
     _trainers = context.Trainers;
     _sqlHelper = sqlHelper;
+  }
+
+  public async Task<TrainerId?> FindIdAsync(License license, CancellationToken cancellationToken)
+  {
+    string licenseNormalized = Helper.Normalize(license.Value);
+
+    string? streamId = await _trainers.AsNoTracking()
+      .Where(x => x.LicenseNormalized == licenseNormalized)
+      .Select(x => x.StreamId)
+      .SingleOrDefaultAsync(cancellationToken);
+    return string.IsNullOrWhiteSpace(streamId) ? null : new TrainerId(streamId);
+  }
+  public async Task<TrainerId?> FindIdAsync(UniqueName uniqueName, CancellationToken cancellationToken)
+  {
+    string uniqueNameNormalized = Helper.Normalize(uniqueName);
+
+    string? streamId = await _trainers.AsNoTracking()
+      .Where(x => x.UniqueNameNormalized == uniqueNameNormalized)
+      .Select(x => x.StreamId)
+      .SingleOrDefaultAsync(cancellationToken);
+    return string.IsNullOrWhiteSpace(streamId) ? null : new TrainerId(streamId);
+  }
+
+  public async Task<TrainerModel> ReadAsync(Trainer trainer, CancellationToken cancellationToken)
+  {
+    return await ReadAsync(trainer.Id, cancellationToken) ?? throw new InvalidOperationException($"The trainer entity 'StreamId={trainer.Id}' was not found.");
+  }
+  public async Task<TrainerModel?> ReadAsync(TrainerId id, CancellationToken cancellationToken)
+  {
+    TrainerEntity? trainer = await _trainers.AsNoTracking().SingleOrDefaultAsync(x => x.StreamId == id.Value, cancellationToken);
+    return trainer is null ? null : await MapAsync(trainer, cancellationToken);
   }
 
   public async Task<TrainerModel?> ReadAsync(Guid id, CancellationToken cancellationToken)
@@ -49,7 +81,7 @@ internal class TrainerQuerier : ITrainerQuerier
   {
     IQueryBuilder builder = _sqlHelper.Query(PokemonDb.Trainers.Table).SelectAll(PokemonDb.Trainers.Table)
       .ApplyIdFilter(PokemonDb.Trainers.Id, payload.Ids);
-    _sqlHelper.ApplyTextSearch(builder, payload.Search, PokemonDb.Trainers.UniqueName, PokemonDb.Trainers.DisplayName, PokemonDb.Trainers.License);
+    _sqlHelper.ApplyTextSearch(builder, payload.Search, PokemonDb.Trainers.License, PokemonDb.Trainers.UniqueName, PokemonDb.Trainers.DisplayName);
 
     if (payload.Gender.HasValue)
     {
@@ -57,7 +89,7 @@ internal class TrainerQuerier : ITrainerQuerier
     }
     if (payload.UserId.HasValue)
     {
-      builder.Where(PokemonDb.Trainers.UserId, Operators.IsEqualTo(payload.UserId.Value));
+      builder.Where(PokemonDb.Trainers.UserUid, Operators.IsEqualTo(payload.UserId.Value));
     }
 
     IQueryable<TrainerEntity> query = _trainers.FromQuery(builder).AsNoTracking();

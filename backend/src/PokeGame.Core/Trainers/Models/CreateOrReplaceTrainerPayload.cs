@@ -1,8 +1,6 @@
-﻿using AggregateModel = Krakenar.Contracts.Aggregate;
+﻿namespace PokeGame.Core.Trainers.Models;
 
-namespace PokeGame.Core.Trainers.Models;
-
-public class TrainerModel : AggregateModel
+public record CreateOrReplaceTrainerPayload
 {
   public string License { get; set; } = string.Empty;
 
@@ -18,6 +16,4 @@ public class TrainerModel : AggregateModel
   public string? Sprite { get; set; }
   public string? Url { get; set; }
   public string? Notes { get; set; }
-
-  public override string ToString() => $"{DisplayName ?? UniqueName} | {base.ToString()}";
 }
