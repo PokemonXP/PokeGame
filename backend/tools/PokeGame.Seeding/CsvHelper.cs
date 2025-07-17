@@ -17,7 +17,7 @@ internal static class CsvHelper
     csv.Context.RegisterClassMap<SeedAbilityPayload.Map>();
     csv.Context.RegisterClassMap<BattleItemPayload.Map>();
     csv.Context.RegisterClassMap<BerryPayload.Map>();
-    csv.Context.RegisterClassMap<FormPayload.Map>();
+    csv.Context.RegisterClassMap<SeedFormPayload.Map>();
     csv.Context.RegisterClassMap<ItemPayload.Map>();
     csv.Context.RegisterClassMap<MedicinePayload.Map>();
     csv.Context.RegisterClassMap<SeedMovePayload.Map>();

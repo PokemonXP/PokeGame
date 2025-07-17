@@ -1,39 +1,14 @@
 ﻿using CsvHelper.Configuration;
 using PokeGame.Core;
+using PokeGame.Core.Forms.Models;
 
 namespace PokeGame.Seeding.Game.Payloads;
 
-internal class FormPayload
+internal record SeedFormPayload : CreateOrReplaceFormPayload
 {
   public Guid Id { get; set; }
 
-  public string UniqueName { get; set; } = string.Empty;
-  public string? DisplayName { get; set; }
-  public string? Description { get; set; }
-
-  public string Variety { get; set; } = string.Empty;
-  public bool IsDefault { get; set; }
-
-  public bool IsBattleOnly { get; set; }
-  public bool IsMega { get; set; }
-
-  public int Height { get; set; }
-  public int Weight { get; set; }
-
-  public TypesPayload Types { get; set; } = new();
-  public AbilitiesPayload Abilities { get; set; } = new();
-  public BaseStatisticsPayload BaseStatistics { get; set; } = new();
-  public YieldPayload Yield { get; set; } = new();
-  public SpritesPayload Sprites { get; set; } = new();
-
-  public string? Url { get; set; }
-  public string? Notes { get; set; }
-
-  public override bool Equals(object? obj) => obj is FormPayload form && form.Id == Id;
-  public override int GetHashCode() => Id.GetHashCode();
-  public override string ToString() => $"{DisplayName ?? UniqueName} | {GetType()} (Id={Id})";
-
-  public class Map : ClassMap<FormPayload>
+  public class Map : ClassMap<SeedFormPayload>
   {
     public Map()
     {
@@ -63,7 +38,7 @@ internal class FormPayload
     }
   }
 
-  private class AbilitiesMap : ClassMap<AbilitiesPayload>
+  private class AbilitiesMap : ClassMap<FormAbilitiesPayload>
   {
     public AbilitiesMap()
     {
@@ -73,7 +48,7 @@ internal class FormPayload
     }
   }
 
-  private class BaseStatisticsMap : ClassMap<BaseStatisticsPayload>
+  private class BaseStatisticsMap : ClassMap<BaseStatisticsModel>
   {
     public BaseStatisticsMap()
     {
@@ -86,18 +61,18 @@ internal class FormPayload
     }
   }
 
-  private class SpritesMap : ClassMap<SpritesPayload>
+  private class SpritesMap : ClassMap<SpritesModel>
   {
     public SpritesMap()
     {
       Map(x => x.Default).Index(28).Default(string.Empty);
-      Map(x => x.DefaultShiny).Index(29).Default(string.Empty);
+      Map(x => x.Shiny).Index(29).Default(string.Empty);
       Map(x => x.Alternative).Index(30);
       Map(x => x.AlternativeShiny).Index(31);
     }
   }
 
-  private class TypesMap : ClassMap<TypesPayload>
+  private class TypesMap : ClassMap<FormTypesModel>
   {
     public TypesMap()
     {
@@ -106,7 +81,7 @@ internal class FormPayload
     }
   }
 
-  private class YieldMap : ClassMap<YieldPayload>
+  private class YieldMap : ClassMap<YieldModel>
   {
     public YieldMap()
     {
