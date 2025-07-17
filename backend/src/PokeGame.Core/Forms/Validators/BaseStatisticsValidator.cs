@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace PokeGame.Core.Pokemons.Validators;
+namespace PokeGame.Core.Forms.Validators;
 
 internal class BaseStatisticsValidator : AbstractValidator<IBaseStatistics>
 {

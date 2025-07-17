@@ -2,7 +2,7 @@
 
 namespace PokeGame.Core.Forms.Models;
 
-public record AbilitiesModel
+public record FormAbilitiesModel
 {
   public AbilityModel Primary { get; set; } = new();
   public AbilityModel? Secondary { get; set; }

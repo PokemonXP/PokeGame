@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
-using PokeGame.Core.Pokemons.Validators;
+using PokeGame.Core.Forms.Validators;
 
-namespace PokeGame.Core.Pokemons;
+namespace PokeGame.Core.Forms;
 
 public record BaseStatistics : IBaseStatistics
 {
@@ -11,10 +11,6 @@ public record BaseStatistics : IBaseStatistics
   public byte SpecialAttack { get; }
   public byte SpecialDefense { get; }
   public byte Speed { get; }
-
-  public BaseStatistics()
-  {
-  }
 
   [JsonConstructor]
   public BaseStatistics(byte hp, byte attack, byte defense, byte specialAttack, byte specialDefense, byte speed)

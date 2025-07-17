@@ -9,11 +9,6 @@ public record FormAbilities
   public AbilityId? Secondary { get; }
   public AbilityId? Hidden { get; }
 
-  public FormAbilities(Ability primary, Ability? secondary = null, Ability? hidden = null)
-    : this(primary.Id, secondary?.Id, hidden?.Id)
-  {
-  }
-
   [JsonConstructor]
   public FormAbilities(AbilityId primary, AbilityId? secondary = null, AbilityId? hidden = null)
   {
@@ -23,19 +18,27 @@ public record FormAbilities
     new Validator().ValidateAndThrow(this);
   }
 
+  public FormAbilities(Ability primary, Ability? secondary = null, Ability? hidden = null)
+    : this(primary.Id, secondary?.Id, hidden?.Id)
+  {
+  }
+
   private class Validator : AbstractValidator<FormAbilities>
   {
     public Validator()
     {
+      RuleFor(x => x.Primary.Value).NotEmpty();
+
       When(x => x.Secondary.HasValue, () =>
       {
-        RuleFor(x => x.Primary).NotEqual(x => x.Secondary!.Value);
-        RuleFor(x => x.Hidden).NotEqual(x => x.Secondary);
+        RuleFor(x => x.Secondary!.Value.Value).NotEmpty();
+        RuleFor(x => x.Secondary).NotEqual(x => x.Primary).NotEqual(x => x.Hidden);
       });
+
       When(x => x.Hidden.HasValue, () =>
       {
-        RuleFor(x => x.Primary).NotEqual(x => x.Hidden!.Value);
-        RuleFor(x => x.Secondary).NotEqual(x => x.Hidden);
+        RuleFor(x => x.Hidden!.Value.Value).NotEmpty();
+        RuleFor(x => x.Hidden).NotEqual(x => x.Primary).NotEqual(x => x.Secondary);
       });
     }
   }

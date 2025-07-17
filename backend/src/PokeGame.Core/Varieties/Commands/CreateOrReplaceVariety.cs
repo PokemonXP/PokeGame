@@ -16,20 +16,20 @@ internal record CreateOrReplaceVariety(CreateOrReplaceVarietyPayload Payload, Gu
 internal class CreateOrReplaceVarietyHandler : ICommandHandler<CreateOrReplaceVariety, CreateOrReplaceVarietyResult>
 {
   private readonly IApplicationContext _applicationContext;
-  private readonly ISpeciesManager _speciesManager;
+  private readonly ISpeciesRepository _speciesRepository;
   private readonly IVarietyManager _varietyManager;
   private readonly IVarietyQuerier _varietyQuerier;
   private readonly IVarietyRepository _varietyRepository;
 
   public CreateOrReplaceVarietyHandler(
     IApplicationContext applicationContext,
-    ISpeciesManager speciesManager,
+    ISpeciesRepository speciesRepository,
     IVarietyManager varietyManager,
     IVarietyQuerier varietyQuerier,
     IVarietyRepository varietyRepository)
   {
     _applicationContext = applicationContext;
-    _speciesManager = speciesManager;
+    _speciesRepository = speciesRepository;
     _varietyManager = varietyManager;
     _varietyQuerier = varietyQuerier;
     _varietyRepository = varietyRepository;
@@ -57,7 +57,8 @@ internal class CreateOrReplaceVarietyHandler : ICommandHandler<CreateOrReplaceVa
     bool created = false;
     if (variety is null)
     {
-      PokemonSpecies species = await _speciesManager.FindAsync(payload.Species, nameof(payload.Species), cancellationToken);
+      PokemonSpecies species = await _speciesRepository.LoadAsync(payload.Species, cancellationToken)
+        ?? throw new SpeciesNotFoundException(payload.Species, nameof(payload.Species));
 
       variety = new(species, uniqueName, payload.IsDefault, genderRatio, payload.CanChangeForm, actorId, varietyId);
       created = true;

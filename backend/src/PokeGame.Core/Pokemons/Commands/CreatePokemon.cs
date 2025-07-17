@@ -3,9 +3,7 @@ using Krakenar.Contracts.Settings;
 using Krakenar.Core;
 using Logitar.EventSourcing;
 using PokeGame.Core.Forms;
-using PokeGame.Core.Forms.Models;
 using PokeGame.Core.Items;
-using PokeGame.Core.Moves;
 using PokeGame.Core.Pokemons.Models;
 using PokeGame.Core.Pokemons.Validators;
 using PokeGame.Core.Species;
@@ -24,27 +22,24 @@ internal record CreatePokemon(CreatePokemonPayload Payload) : ICommand<PokemonMo
 internal class CreatePokemonHandler : ICommandHandler<CreatePokemon, PokemonModel>
 {
   private readonly IApplicationContext _applicationContext;
+  private readonly IFormRepository _formRepository;
   private readonly IItemRepository _itemRepository;
-  private readonly IMoveManager _moveManager;
-  private readonly IPokemonManager _pokemonManager;
-  private readonly IPokemonQuerier _pokemonQuerier;
-  private readonly IPokemonRepository _pokemonRepository;
   private readonly IPokemonRandomizer _randomizer = PokemonRandomizer.Instance;
+  private readonly ISpeciesRepository _speciesRepository;
+  private readonly IVarietyRepository _varietyRepository;
 
   public CreatePokemonHandler(
     IApplicationContext applicationContext,
+    IFormRepository formRepository,
     IItemRepository itemRepository,
-    IMoveManager moveManager,
-    IPokemonManager pokemonManager,
-    IPokemonQuerier pokemonQuerier,
-    IPokemonRepository pokemonRepository)
+    ISpeciesRepository speciesRepository,
+    IVarietyRepository varietyRepository)
   {
     _applicationContext = applicationContext;
+    _formRepository = formRepository;
     _itemRepository = itemRepository;
-    _moveManager = moveManager;
-    _pokemonManager = pokemonManager;
-    _pokemonQuerier = pokemonQuerier;
-    _pokemonRepository = pokemonRepository;
+    _speciesRepository = speciesRepository;
+    _varietyRepository = varietyRepository;
   }
 
   public async Task<PokemonModel> HandleAsync(CreatePokemon command, CancellationToken cancellationToken)
@@ -67,11 +62,12 @@ internal class CreatePokemonHandler : ICommandHandler<CreatePokemon, PokemonMode
       //} // TODO(fpion): uncomment
     }
 
-    FormModel formModel = await _pokemonManager.FindFormAsync(payload.Form, nameof(payload.Form), cancellationToken);
-
-    PokemonSpecies species = formModel.Variety.Species.ToPokemonSpecies();
-    Variety variety = formModel.Variety.ToVariety(species);
-    Form form = formModel.ToForm(variety);
+    Form form = await _formRepository.LoadAsync(payload.Form, cancellationToken)
+      ?? throw new FormNotFoundException(payload.Form, nameof(payload.Form));
+    Variety variety = await _varietyRepository.LoadAsync(form.VarietyId, cancellationToken)
+      ?? throw new InvalidOperationException($"The variety 'Id={form.VarietyId}' was not loaded.");
+    PokemonSpecies species = await _speciesRepository.LoadAsync(variety.SpeciesId, cancellationToken)
+      ?? throw new InvalidOperationException($"The species 'Id={variety.SpeciesId}' was not loaded.");
     new CreatePokemonValidator(variety, form).ValidateAndThrow(payload);
 
     UniqueName uniqueName = string.IsNullOrWhiteSpace(payload.UniqueName) ? species.UniqueName : new(uniqueNameSettings, payload.UniqueName);
