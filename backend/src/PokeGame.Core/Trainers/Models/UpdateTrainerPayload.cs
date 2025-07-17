@@ -11,6 +11,8 @@ public record UpdateTrainerPayload
   public TrainerGender? Gender { get; set; }
   public int? Money { get; set; }
 
+  public Change<Guid?>? UserId { get; set; }
+
   public Change<string>? Sprite { get; set; }
   public Change<string>? Url { get; set; }
   public Change<string>? Notes { get; set; }

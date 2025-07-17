@@ -11,6 +11,8 @@ public record TrainerUpdated : DomainEvent
   public Change<TrainerGender>? Gender { get; set; }
   public Change<Money>? Money { get; set; }
 
+  public Change<Guid?>? UserId { get; set; }
+
   public Change<Url>? Sprite { get; set; }
   public Change<Url>? Url { get; set; }
   public Change<Notes>? Notes { get; set; }

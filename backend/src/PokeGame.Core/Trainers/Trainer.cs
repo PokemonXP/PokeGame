@@ -8,7 +8,7 @@ public class Trainer : AggregateRoot
 {
   private TrainerUpdated _updated = new();
   private bool HasUpdates => _updated.DisplayName is not null || _updated.Description is not null
-    || _updated.Gender is not null || _updated.Money is not null
+    || _updated.Gender is not null || _updated.Money is not null || _updated.UserId is not null
     || _updated.Sprite is not null || _updated.Url is not null || _updated.Notes is not null;
 
   public new TrainerId Id => new(base.Id);
@@ -72,7 +72,19 @@ public class Trainer : AggregateRoot
     }
   }
 
-  // TODO(fpion): UserId
+  private Guid? _userId = null;
+  public Guid? UserId
+  {
+    get => _userId;
+    set
+    {
+      if (_userId != value)
+      {
+        _userId = value;
+        _updated.UserId = new Change<Guid?>(value);
+      }
+    }
+  }
 
   private Url? _sprite = null;
   public Url? Sprite
@@ -185,6 +197,11 @@ public class Trainer : AggregateRoot
     if (@event.Money is not null)
     {
       _money = @event.Money.Value;
+    }
+
+    if (@event.UserId is not null)
+    {
+      _userId = @event.UserId.Value;
     }
 
     if (@event.Sprite is not null)

@@ -67,6 +67,8 @@ internal class CreateOrReplaceTrainerHandler : ICommandHandler<CreateOrReplaceTr
     trainer.DisplayName = DisplayName.TryCreate(payload.DisplayName);
     trainer.Description = Description.TryCreate(payload.Description);
 
+    trainer.UserId = payload.UserId;
+
     trainer.Sprite = Url.TryCreate(payload.Sprite);
     trainer.Url = Url.TryCreate(payload.Url);
     trainer.Notes = Notes.TryCreate(payload.Notes);

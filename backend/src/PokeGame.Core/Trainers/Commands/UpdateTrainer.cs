@@ -68,6 +68,11 @@ internal class UpdateTrainerHandler : ICommandHandler<UpdateTrainer, TrainerMode
       trainer.Money = new Money(payload.Money.Value);
     }
 
+    if (payload.UserId is not null)
+    {
+      trainer.UserId = payload.UserId.Value;
+    }
+
     if (payload.Sprite is not null)
     {
       trainer.Sprite = Url.TryCreate(payload.Sprite.Value);
