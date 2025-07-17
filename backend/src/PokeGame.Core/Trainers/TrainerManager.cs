@@ -20,7 +20,30 @@ internal class TrainerManager : ITrainerManager
 
   public async Task SaveAsync(Trainer trainer, CancellationToken cancellationToken)
   {
-    bool hasUniqueNameChanged = trainer.Changes.Any(change => change is TrainerCreated || change is TrainerUniqueNameChanged);
+    bool hasLicenseChanged = false;
+    bool hasUniqueNameChanged = false;
+    foreach (var change in trainer.Changes)
+    {
+      if (change is TrainerCreated)
+      {
+        hasLicenseChanged = true;
+        hasUniqueNameChanged = true;
+      }
+      else if (change is TrainerUniqueNameChanged)
+      {
+        hasUniqueNameChanged = true;
+      }
+    }
+
+    if (hasLicenseChanged)
+    {
+      TrainerId? conflictId = await _trainerQuerier.FindIdAsync(trainer.License, cancellationToken);
+      if (conflictId.HasValue && !conflictId.Value.Equals(trainer.Id))
+      {
+        throw new LicenseAlreadyUsedException(trainer, conflictId.Value);
+      }
+    }
+
     if (hasUniqueNameChanged)
     {
       TrainerId? conflictId = await _trainerQuerier.FindIdAsync(trainer.UniqueName, cancellationToken);

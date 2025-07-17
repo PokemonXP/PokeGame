@@ -26,6 +26,16 @@ internal class TrainerQuerier : ITrainerQuerier
     _sqlHelper = sqlHelper;
   }
 
+  public async Task<TrainerId?> FindIdAsync(License license, CancellationToken cancellationToken)
+  {
+    string licenseNormalized = Helper.Normalize(license.Value);
+
+    string? streamId = await _trainers.AsNoTracking()
+      .Where(x => x.LicenseNormalized == licenseNormalized)
+      .Select(x => x.StreamId)
+      .SingleOrDefaultAsync(cancellationToken);
+    return string.IsNullOrWhiteSpace(streamId) ? null : new TrainerId(streamId);
+  }
   public async Task<TrainerId?> FindIdAsync(UniqueName uniqueName, CancellationToken cancellationToken)
   {
     string uniqueNameNormalized = Helper.Normalize(uniqueName);

@@ -11,6 +11,7 @@ namespace PokeGame.Core.Trainers.Commands;
 
 internal record CreateOrReplaceTrainer(CreateOrReplaceTrainerPayload Payload, Guid? Id) : ICommand<CreateOrReplaceTrainerResult>;
 
+/// <exception cref="LicenseAlreadyUsedException"></exception>
 /// <exception cref="UniqueNameAlreadyUsedException"></exception>
 /// <exception cref="ValidationException"></exception>
 internal class CreateOrReplaceTrainerHandler : ICommandHandler<CreateOrReplaceTrainer, CreateOrReplaceTrainerResult>
