@@ -137,6 +137,10 @@ public class Variety : AggregateRoot
     IsDefault = @event.IsDefault;
 
     _uniqueName = @event.UniqueName;
+
+    _genderRatio = @event.GenderRatio;
+
+    _canChangeForm = @event.CanChangeForm;
   }
 
   public void Delete(ActorId? actorId = null)
