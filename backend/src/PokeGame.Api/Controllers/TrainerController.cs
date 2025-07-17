@@ -13,39 +13,78 @@ namespace PokeGame.Api.Controllers;
 [Route("trainers")]
 public class TrainerController : ControllerBase
 {
-  private readonly ITrainerQuerier _trainerQuerier;
+  private readonly ITrainerService _trainerService;
 
-  public TrainerController(ITrainerQuerier trainerQuerier)
+  public TrainerController(ITrainerService trainerService)
   {
-    _trainerQuerier = trainerQuerier;
+    _trainerService = trainerService;
+  }
+
+  [HttpPost]
+  public async Task<ActionResult<TrainerModel>> CreateAsync([FromBody] CreateOrReplaceTrainerPayload payload, CancellationToken cancellationToken)
+  {
+    CreateOrReplaceTrainerResult result = await _trainerService.CreateOrReplaceAsync(payload, id: null, cancellationToken);
+    return ToActionResult(result);
+  }
+
+  [HttpDelete("{id}")]
+  public async Task<ActionResult<TrainerModel>> DeleteAsync(Guid id, CancellationToken cancellationToken)
+  {
+    TrainerModel? trainer = await _trainerService.DeleteAsync(id, cancellationToken);
+    return trainer is null ? NotFound() : Ok(trainer);
   }
 
   [HttpGet("{id}")]
   public async Task<ActionResult<TrainerModel>> ReadAsync(Guid id, CancellationToken cancellationToken)
   {
-    TrainerModel? trainer = await _trainerQuerier.ReadAsync(id, cancellationToken);
+    TrainerModel? trainer = await _trainerService.ReadAsync(id, uniqueName: null, license: null, cancellationToken);
     return trainer is null ? NotFound() : Ok(trainer);
   }
 
   [HttpGet("name:{uniqueName}")]
   public async Task<ActionResult<TrainerModel>> ReadAsync(string uniqueName, CancellationToken cancellationToken)
   {
-    TrainerModel? trainer = await _trainerQuerier.ReadAsync(uniqueName, cancellationToken);
+    TrainerModel? trainer = await _trainerService.ReadAsync(id: null, uniqueName, license: null, cancellationToken);
     return trainer is null ? NotFound() : Ok(trainer);
   }
 
   [HttpGet("license:{license}")]
   public async Task<ActionResult<TrainerModel>> ReadByLicenseAsync(string license, CancellationToken cancellationToken)
   {
-    TrainerModel? trainer = await _trainerQuerier.ReadByLicenseAsync(license, cancellationToken);
+    TrainerModel? trainer = await _trainerService.ReadAsync(id: null, uniqueName: null, license, cancellationToken);
     return trainer is null ? NotFound() : Ok(trainer);
+  }
+
+  [HttpPut("{id}")]
+  public async Task<ActionResult<TrainerModel>> ReplaceAsync(Guid id, [FromBody] CreateOrReplaceTrainerPayload payload, CancellationToken cancellationToken)
+  {
+    CreateOrReplaceTrainerResult result = await _trainerService.CreateOrReplaceAsync(payload, id, cancellationToken);
+    return ToActionResult(result);
   }
 
   [HttpGet]
   public async Task<ActionResult<SearchResults<TrainerModel>>> SearchAsync([FromQuery] SearchTrainersParameters parameters, CancellationToken cancellationToken)
   {
     SearchTrainersPayload payload = parameters.ToPayload();
-    SearchResults<TrainerModel> trainers = await _trainerQuerier.SearchAsync(payload, cancellationToken);
+    SearchResults<TrainerModel> trainers = await _trainerService.SearchAsync(payload, cancellationToken);
     return Ok(trainers);
+  }
+
+  [HttpPatch("{id}")]
+  public async Task<ActionResult<TrainerModel>> UpdateAsync(Guid id, [FromBody] UpdateTrainerPayload payload, CancellationToken cancellationToken)
+  {
+    TrainerModel? trainer = await _trainerService.UpdateAsync(id, payload, cancellationToken);
+    return trainer is null ? NotFound() : Ok(trainer);
+  }
+
+  private ActionResult<TrainerModel> ToActionResult(CreateOrReplaceTrainerResult result)
+  {
+    if (result.Created)
+    {
+      Uri location = new($"{Request.Scheme}://{Request.Host}/trainers/{result.Trainer.Id}", UriKind.Absolute);
+      return Created(location, result.Trainer);
+    }
+
+    return Ok(result.Trainer);
   }
 }

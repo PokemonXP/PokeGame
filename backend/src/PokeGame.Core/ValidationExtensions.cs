@@ -15,6 +15,16 @@ public static class ValidationExtensions
     return ruleBuilder.NotEmpty().MaximumLength(Varieties.Genus.MaximumLength);
   }
 
+  public static IRuleBuilderOptions<T, string> License<T>(this IRuleBuilder<T, string> ruleBuilder)
+  {
+    return ruleBuilder.NotEmpty().MaximumLength(Trainers.License.MaximumLength);
+  }
+
+  public static IRuleBuilderOptions<T, int> Money<T>(this IRuleBuilder<T, int> ruleBuilder)
+  {
+    return ruleBuilder.GreaterThanOrEqualTo(0);
+  }
+
   public static IRuleBuilderOptions<T, string> Nickname<T>(this IRuleBuilder<T, string> ruleBuilder)
   {
     return ruleBuilder.NotEmpty().MaximumLength(Pokemons.Nickname.MaximumLength);

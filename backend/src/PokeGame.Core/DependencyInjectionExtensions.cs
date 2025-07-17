@@ -9,6 +9,7 @@ using PokeGame.Core.Pokemons.Commands;
 using PokeGame.Core.Pokemons.Models;
 using PokeGame.Core.Pokemons.Queries;
 using PokeGame.Core.Regions;
+using PokeGame.Core.Trainers;
 
 namespace PokeGame.Core;
 
@@ -28,6 +29,7 @@ public static class DependencyInjectionExtensions
   {
     AbilityService.Register(services);
     RegionService.Register(services);
+    TrainerService.Register(services);
 
     return services
       .AddTransient<ICommandHandler<CreatePokemon, PokemonModel>, CreatePokemonHandler>()
