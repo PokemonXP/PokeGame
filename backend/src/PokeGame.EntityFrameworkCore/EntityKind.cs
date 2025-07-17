@@ -10,7 +10,6 @@ internal enum EntityKind
   Medicine,
   Move,
   PokeBall,
-  Region,
   Species,
   TechnicalMachine,
   Trainer,

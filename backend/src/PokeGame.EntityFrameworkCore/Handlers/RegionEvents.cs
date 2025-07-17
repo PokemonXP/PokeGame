@@ -1,56 +1,97 @@
-﻿using Krakenar.Core.Contents;
-using Krakenar.Core.Contents.Events;
-using MediatR;
+﻿using Krakenar.Core;
+using Krakenar.EntityFrameworkCore.Relational.Handlers;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using PokeGame.Core.Regions.Events;
 using PokeGame.EntityFrameworkCore.Entities;
 
 namespace PokeGame.EntityFrameworkCore.Handlers;
 
-internal record RegionPublished(ContentLocalePublished Event, ContentLocale Invariant, ContentLocale Locale) : INotification;
-
-internal class RegionPublishedHandler : INotificationHandler<RegionPublished>
+internal class RegionEvents : IEventHandler<RegionCreated>,
+  IEventHandler<RegionDeleted>,
+  IEventHandler<RegionUniqueNameChanged>,
+  IEventHandler<RegionUpdated>
 {
-  private readonly PokemonContext _context;
-
-  public RegionPublishedHandler(PokemonContext context)
+  public static void Register(IServiceCollection services)
   {
-    _context = context;
+    services.AddScoped<IEventHandler<RegionCreated>, RegionEvents>();
+    services.AddScoped<IEventHandler<RegionDeleted>, RegionEvents>();
+    services.AddScoped<IEventHandler<RegionUniqueNameChanged>, RegionEvents>();
+    services.AddScoped<IEventHandler<RegionUpdated>, RegionEvents>();
   }
 
-  public async Task Handle(RegionPublished published, CancellationToken cancellationToken)
+  private readonly PokemonContext _context;
+  private readonly ILogger<RegionEvents> _logger;
+
+  public RegionEvents(PokemonContext context, ILogger<RegionEvents> logger)
   {
-    string streamId = published.Event.StreamId.Value;
-    RegionEntity? region = await _context.Regions.SingleOrDefaultAsync(x => x.StreamId == streamId, cancellationToken);
+    _context = context;
+    _logger = logger;
+  }
 
-    if (region is null)
+  public async Task HandleAsync(RegionCreated @event, CancellationToken cancellationToken)
+  {
+    RegionEntity? region = await _context.Regions.AsNoTracking()
+      .SingleOrDefaultAsync(x => x.StreamId == @event.StreamId.Value, cancellationToken);
+    if (region is not null)
     {
-      region = new RegionEntity(published);
+      _logger.LogUnexpectedVersion(@event, region);
+      return;
+    }
 
-      _context.Regions.Add(region);
-    }
-    else
-    {
-      region.Update(published);
-    }
+    region = new RegionEntity(@event);
+    _context.Regions.Add(region);
 
     await _context.SaveChangesAsync(cancellationToken);
-  }
-}
-
-internal record RegionUnpublished(ContentLocaleUnpublished Event) : INotification;
-
-internal class RegionUnpublishedHandler : INotificationHandler<RegionUnpublished>
-{
-  private readonly PokemonContext _context;
-
-  public RegionUnpublishedHandler(PokemonContext context)
-  {
-    _context = context;
+    _logger.LogSuccess(@event);
   }
 
-  public async Task Handle(RegionUnpublished unpublished, CancellationToken cancellationToken)
+  public async Task HandleAsync(RegionDeleted @event, CancellationToken cancellationToken)
   {
-    string streamId = unpublished.Event.StreamId.Value;
-    await _context.Regions.Where(x => x.StreamId == streamId).ExecuteDeleteAsync(cancellationToken);
+    RegionEntity? region = await _context.Regions
+      .SingleOrDefaultAsync(x => x.StreamId == @event.StreamId.Value, cancellationToken);
+    if (region is null)
+    {
+      _logger.LogUnexpectedVersion(@event, region);
+      return;
+    }
+
+    _context.Regions.Remove(region);
+
+    await _context.SaveChangesAsync(cancellationToken);
+    _logger.LogSuccess(@event);
+  }
+
+  public async Task HandleAsync(RegionUniqueNameChanged @event, CancellationToken cancellationToken)
+  {
+    RegionEntity? region = await _context.Regions
+      .SingleOrDefaultAsync(x => x.StreamId == @event.StreamId.Value, cancellationToken);
+    if (region is null || (region.Version != (@event.Version - 1)))
+    {
+      _logger.LogUnexpectedVersion(@event, region);
+      return;
+    }
+
+    region.SetUniqueName(@event);
+
+    await _context.SaveChangesAsync(cancellationToken);
+    _logger.LogSuccess(@event);
+  }
+
+  public async Task HandleAsync(RegionUpdated @event, CancellationToken cancellationToken)
+  {
+    RegionEntity? region = await _context.Regions
+  .SingleOrDefaultAsync(x => x.StreamId == @event.StreamId.Value, cancellationToken);
+    if (region is null || (region.Version != (@event.Version - 1)))
+    {
+      _logger.LogUnexpectedVersion(@event, region);
+      return;
+    }
+
+    region.Update(@event);
+
+    await _context.SaveChangesAsync(cancellationToken);
+    _logger.LogSuccess(@event);
   }
 }
