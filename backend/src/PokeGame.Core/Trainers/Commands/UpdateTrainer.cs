@@ -73,7 +73,8 @@ internal class UpdateTrainerHandler : ICommandHandler<UpdateTrainer, TrainerMode
 
     if (payload.UserId is not null)
     {
-      trainer.UserId = payload.UserId.Value.HasValue ? new UserId(payload.UserId.Value.Value, realmId) : null;
+      UserId? userId = payload.UserId.Value.HasValue ? new UserId(payload.UserId.Value.Value, realmId) : null;
+      trainer.SetUser(userId, actorId);
     }
 
     if (payload.Sprite is not null)

@@ -9,7 +9,7 @@ public class Trainer : AggregateRoot
 {
   private TrainerUpdated _updated = new();
   private bool HasUpdates => _updated.DisplayName is not null || _updated.Description is not null
-    || _updated.Gender is not null || _updated.Money is not null || _updated.UserId is not null
+    || _updated.Gender is not null || _updated.Money is not null
     || _updated.Sprite is not null || _updated.Url is not null || _updated.Notes is not null;
 
   public new TrainerId Id => new(base.Id);
@@ -73,19 +73,7 @@ public class Trainer : AggregateRoot
     }
   }
 
-  private UserId? _userId = null;
-  public UserId? UserId
-  {
-    get => _userId;
-    set
-    {
-      if (_userId != value)
-      {
-        _userId = value;
-        _updated.UserId = new Change<UserId?>(value);
-      }
-    }
-  }
+  public UserId? UserId { get; private set; }
 
   private Url? _sprite = null;
   public Url? Sprite
@@ -172,6 +160,18 @@ public class Trainer : AggregateRoot
     _uniqueName = @event.UniqueName;
   }
 
+  public void SetUser(UserId? userId, ActorId? actorId = null)
+  {
+    if (UserId != userId)
+    {
+      Raise(new TrainerUserChanged(userId), actorId);
+    }
+  }
+  protected virtual void Handle(TrainerUserChanged @event)
+  {
+    UserId = @event.UserId;
+  }
+
   public void Update(ActorId? actorId = null)
   {
     if (HasUpdates)
@@ -198,11 +198,6 @@ public class Trainer : AggregateRoot
     if (@event.Money is not null)
     {
       _money = @event.Money;
-    }
-
-    if (@event.UserId is not null)
-    {
-      _userId = @event.UserId.Value;
     }
 
     if (@event.Sprite is not null)

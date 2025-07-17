@@ -11,7 +11,8 @@ namespace PokeGame.EntityFrameworkCore.Handlers;
 internal class TrainerEvents : IEventHandler<TrainerCreated>,
   IEventHandler<TrainerDeleted>,
   IEventHandler<TrainerUniqueNameChanged>,
-  IEventHandler<TrainerUpdated>
+  IEventHandler<TrainerUpdated>,
+  IEventHandler<TrainerUserChanged>
 {
   public static void Register(IServiceCollection services)
   {
@@ -19,6 +20,7 @@ internal class TrainerEvents : IEventHandler<TrainerCreated>,
     services.AddScoped<IEventHandler<TrainerDeleted>, TrainerEvents>();
     services.AddScoped<IEventHandler<TrainerUniqueNameChanged>, TrainerEvents>();
     services.AddScoped<IEventHandler<TrainerUpdated>, TrainerEvents>();
+    services.AddScoped<IEventHandler<TrainerUserChanged>, TrainerEvents>();
   }
 
   private readonly PokemonContext _context;
@@ -82,7 +84,7 @@ internal class TrainerEvents : IEventHandler<TrainerCreated>,
   public async Task HandleAsync(TrainerUpdated @event, CancellationToken cancellationToken)
   {
     TrainerEntity? trainer = await _context.Trainers
-  .SingleOrDefaultAsync(x => x.StreamId == @event.StreamId.Value, cancellationToken);
+      .SingleOrDefaultAsync(x => x.StreamId == @event.StreamId.Value, cancellationToken);
     if (trainer is null || (trainer.Version != (@event.Version - 1)))
     {
       _logger.LogUnexpectedVersion(@event, trainer);
@@ -90,6 +92,22 @@ internal class TrainerEvents : IEventHandler<TrainerCreated>,
     }
 
     trainer.Update(@event);
+
+    await _context.SaveChangesAsync(cancellationToken);
+    _logger.LogSuccess(@event);
+  }
+
+  public async Task HandleAsync(TrainerUserChanged @event, CancellationToken cancellationToken)
+  {
+    TrainerEntity? trainer = await _context.Trainers
+  .SingleOrDefaultAsync(x => x.StreamId == @event.StreamId.Value, cancellationToken);
+    if (trainer is null || (trainer.Version != (@event.Version - 1)))
+    {
+      _logger.LogUnexpectedVersion(@event, trainer);
+      return;
+    }
+
+    trainer.SetUser(@event);
 
     await _context.SaveChangesAsync(cancellationToken);
     _logger.LogSuccess(@event);

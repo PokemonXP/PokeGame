@@ -62,6 +62,14 @@ internal class TrainerEntity : AggregateEntity
     UniqueName = @event.UniqueName.Value;
   }
 
+  public void SetUser(TrainerUserChanged @event)
+  {
+    Update(@event);
+
+    UserId = @event.UserId?.Value;
+    UserUid = @event.UserId?.EntityId;
+  }
+
   public void Update(TrainerUpdated @event)
   {
     base.Update(@event);
@@ -82,12 +90,6 @@ internal class TrainerEntity : AggregateEntity
     if (@event.Money is not null)
     {
       Money = @event.Money.Value;
-    }
-
-    if (@event.UserId is not null)
-    {
-      UserId = @event.UserId.Value?.Value;
-      UserUid = @event.UserId.Value?.EntityId;
     }
 
     if (@event.Sprite is not null)

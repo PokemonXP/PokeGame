@@ -1,5 +1,4 @@
 ﻿using Krakenar.Core;
-using Krakenar.Core.Users;
 using Logitar.EventSourcing;
 
 namespace PokeGame.Core.Trainers.Events;
@@ -11,8 +10,6 @@ public record TrainerUpdated : DomainEvent
 
   public TrainerGender? Gender { get; set; }
   public Money? Money { get; set; }
-
-  public Change<UserId?>? UserId { get; set; }
 
   public Change<Url>? Sprite { get; set; }
   public Change<Url>? Url { get; set; }
