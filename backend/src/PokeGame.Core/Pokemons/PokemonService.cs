@@ -1,5 +1,6 @@
 ﻿using Krakenar.Contracts.Search;
 using Krakenar.Core;
+using Microsoft.Extensions.DependencyInjection;
 using PokeGame.Core.Pokemons.Commands;
 using PokeGame.Core.Pokemons.Models;
 using PokeGame.Core.Pokemons.Queries;
@@ -20,6 +21,19 @@ public interface IPokemonService
 
 internal class PokemonService : IPokemonService
 {
+  public static void Register(IServiceCollection services)
+  {
+    services.AddTransient<IPokemonService, PokemonService>();
+    services.AddTransient<IPokemonManager, PokemonManager>();
+    services.AddTransient<ICommandHandler<CreatePokemon, PokemonModel>, CreatePokemonHandler>();
+    services.AddTransient<ICommandHandler<DeletePokemon, PokemonModel?>, DeletePokemonHandler>();
+    services.AddTransient<ICommandHandler<RelearnPokemonMove, PokemonModel?>, RelearnPokemonMoveHandler>();
+    services.AddTransient<ICommandHandler<SwitchPokemonMoves, PokemonModel?>, SwitchPokemonMovesHandler>();
+    services.AddTransient<ICommandHandler<UpdatePokemon, PokemonModel?>, UpdatePokemonHandler>();
+    services.AddTransient<IQueryHandler<ReadPokemon, PokemonModel?>, ReadPokemonHandler>();
+    services.AddTransient<IQueryHandler<SearchPokemon, SearchResults<PokemonModel>>, SearchPokemonHandler>();
+  }
+
   private readonly ICommandBus _commandBus;
   private readonly IQueryBus _queryBus;
 

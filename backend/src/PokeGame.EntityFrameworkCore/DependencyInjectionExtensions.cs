@@ -77,6 +77,7 @@ public static class DependencyInjectionExtensions
   {
     return services
       .AddScoped<IAbilityRepository, AbilityRepository>()
+      .AddScoped<IItemRepository, ItemRepository>()
       .AddScoped<IMoveRepository, MoveRepository>()
       .AddScoped<IPokemonRepository, PokemonRepository>()
       .AddScoped<IRegionRepository, RegionRepository>()

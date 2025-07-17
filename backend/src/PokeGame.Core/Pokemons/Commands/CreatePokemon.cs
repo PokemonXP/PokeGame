@@ -24,7 +24,7 @@ internal record CreatePokemon(CreatePokemonPayload Payload) : ICommand<PokemonMo
 internal class CreatePokemonHandler : ICommandHandler<CreatePokemon, PokemonModel>
 {
   private readonly IApplicationContext _applicationContext;
-  private readonly IItemManager _itemManager;
+  private readonly IItemRepository _itemRepository;
   private readonly IMoveManager _moveManager;
   private readonly IPokemonManager _pokemonManager;
   private readonly IPokemonQuerier _pokemonQuerier;
@@ -33,14 +33,14 @@ internal class CreatePokemonHandler : ICommandHandler<CreatePokemon, PokemonMode
 
   public CreatePokemonHandler(
     IApplicationContext applicationContext,
-    IItemManager itemManager,
+    IItemRepository itemRepository,
     IMoveManager moveManager,
     IPokemonManager pokemonManager,
     IPokemonQuerier pokemonQuerier,
     IPokemonRepository pokemonRepository)
   {
     _applicationContext = applicationContext;
-    _itemManager = itemManager;
+    _itemRepository = itemRepository;
     _moveManager = moveManager;
     _pokemonManager = pokemonManager;
     _pokemonQuerier = pokemonQuerier;
@@ -103,7 +103,7 @@ internal class CreatePokemonHandler : ICommandHandler<CreatePokemon, PokemonMode
 
     if (!string.IsNullOrWhiteSpace(payload.HeldItem))
     {
-      Item item = await _itemManager.FindAsync(payload.HeldItem, nameof(payload.HeldItem), cancellationToken);
+      Item item = await _itemRepository.LoadAsync(payload.HeldItem, cancellationToken) ?? throw new ItemNotFoundException(payload.HeldItem, nameof(payload.HeldItem));
       pokemon.HoldItem(item, actorId);
     }
 

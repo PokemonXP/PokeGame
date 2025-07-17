@@ -6,6 +6,7 @@ using PokeGame.Core.Forms;
 using PokeGame.Core.Forms.Models;
 using PokeGame.Core.Items;
 using PokeGame.Core.Items.Models;
+using PokeGame.Core.Items.Properties;
 using PokeGame.Core.Pokemons;
 using PokeGame.Core.Species;
 using PokeGame.Core.Species.Models;
@@ -61,7 +62,7 @@ internal static class ModelExtensions
 
   public static Item ToItem(this ItemModel model)
   {
-    Item item = new(new UniqueName(new UniqueNameSettings(), model.UniqueName), model.Category, actorId: null, new ItemId(model.Id))
+    Item item = new(new UniqueName(new UniqueNameSettings(), model.UniqueName), new OtherItemProperties(), actorId: null, new ItemId(model.Id))
     {
       DisplayName = DisplayName.TryCreate(model.DisplayName),
       Description = Description.TryCreate(model.Description),

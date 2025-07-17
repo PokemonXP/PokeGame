@@ -1,6 +1,7 @@
 ﻿using Krakenar.Core;
 using Logitar.EventSourcing;
 using PokeGame.Core.Items.Events;
+using PokeGame.Core.Items.Properties;
 
 namespace PokeGame.Core.Items;
 
@@ -58,6 +59,9 @@ public class Item : AggregateRoot
     }
   }
 
+  private ItemProperties? _properties = null;
+  public ItemProperties Properties => _properties ?? throw new InvalidOperationException("The item has not been initialized.");
+
   private Url? _sprite = null;
   public Url? Sprite
   {
@@ -102,15 +106,27 @@ public class Item : AggregateRoot
   {
   }
 
-  public Item(UniqueName uniqueName, ItemCategory category, ActorId? actorId = null, ItemId? itemId = null) // TODO(fpion): replace category with properties
+  public Item(UniqueName uniqueName, ItemProperties properties, ActorId? actorId = null, ItemId? itemId = null)
     : base((itemId ?? ItemId.NewId()).StreamId)
   {
-    if (!Enum.IsDefined(category))
+    if (!Enum.IsDefined(properties.Category))
     {
-      throw new ArgumentOutOfRangeException(nameof(category));
+      throw new ArgumentOutOfRangeException(nameof(properties), "The item category is not defined.");
     }
 
-    Raise(new ItemCreated(category, uniqueName), actorId);
+    Raise(new ItemCreated(properties.Category, uniqueName), actorId);
+
+    switch (properties.Category)
+    {
+      case ItemCategory.OtherItem:
+        SetProperties((OtherItemProperties)properties, actorId);
+        break;
+      case ItemCategory.Treasure:
+        SetProperties((TreasureProperties)properties, actorId);
+        break;
+      default:
+        throw new ItemCategoryNotSupportedException(properties.Category);
+    }
   }
   protected virtual void Handle(ItemCreated @event)
   {
@@ -125,6 +141,40 @@ public class Item : AggregateRoot
     {
       Raise(new ItemDeleted(), actorId);
     }
+  }
+
+  public void SetProperties(OtherItemProperties properties, ActorId? actorId = null)
+  {
+    if (Category != properties.Category)
+    {
+      throw new ArgumentException($"Cannot set properties of category '{properties.Category}' on an item in category '{Category}'.", nameof(properties));
+    }
+
+    if (_properties != properties)
+    {
+      Raise(new OtherItemPropertiesChanged(properties), actorId);
+    }
+  }
+  protected virtual void Handle(OtherItemPropertiesChanged @event)
+  {
+    _properties = @event.Properties;
+  }
+
+  public void SetProperties(TreasureProperties properties, ActorId? actorId = null)
+  {
+    if (Category != properties.Category)
+    {
+      throw new ArgumentException($"Cannot set properties of category '{properties.Category}' on an item in category '{Category}'.", nameof(properties));
+    }
+
+    if (_properties != properties)
+    {
+      Raise(new TreasurePropertiesChanged(properties), actorId);
+    }
+  }
+  protected virtual void Handle(TreasurePropertiesChanged @event)
+  {
+    _properties = @event.Properties;
   }
 
   public void SetUniqueName(UniqueName uniqueName, ActorId? actorId = null)
