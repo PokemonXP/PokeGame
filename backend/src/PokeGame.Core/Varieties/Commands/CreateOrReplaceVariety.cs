@@ -10,7 +10,7 @@ namespace PokeGame.Core.Varieties.Commands;
 
 internal record CreateOrReplaceVariety(CreateOrReplaceVarietyPayload Payload, Guid? Id) : ICommand<CreateOrReplaceVarietyResult>;
 
-///<exception cref="SpeciesNotFoundException"></exception>
+/// <exception cref="SpeciesNotFoundException"></exception>
 /// <exception cref="UniqueNameAlreadyUsedException"></exception>
 /// <exception cref="ValidationException"></exception>
 internal class CreateOrReplaceVarietyHandler : ICommandHandler<CreateOrReplaceVariety, CreateOrReplaceVarietyResult>
