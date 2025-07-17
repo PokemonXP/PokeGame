@@ -20,13 +20,13 @@ internal class TrainerService : ITrainerService
 {
   public static void Register(IServiceCollection services)
   {
-    services.AddTransient<ITrainerService, TrainerService>()
-      .AddTransient<ITrainerManager, TrainerManager>()
-      .AddTransient<ICommandHandler<CreateOrReplaceTrainer, CreateOrReplaceTrainerResult>, CreateOrReplaceTrainerHandler>()
-      .AddTransient<ICommandHandler<DeleteTrainer, TrainerModel?>, DeleteTrainerHandler>()
-      .AddTransient<ICommandHandler<UpdateTrainer, TrainerModel?>, UpdateTrainerHandler>()
-      .AddTransient<IQueryHandler<ReadTrainer, TrainerModel?>, ReadTrainerHandler>()
-      .AddTransient<IQueryHandler<SearchTrainers, SearchResults<TrainerModel>>, SearchTrainersHandler>();
+    services.AddTransient<ITrainerService, TrainerService>();
+    services.AddTransient<ITrainerManager, TrainerManager>();
+    services.AddTransient<ICommandHandler<CreateOrReplaceTrainer, CreateOrReplaceTrainerResult>, CreateOrReplaceTrainerHandler>();
+    services.AddTransient<ICommandHandler<DeleteTrainer, TrainerModel?>, DeleteTrainerHandler>();
+    services.AddTransient<ICommandHandler<UpdateTrainer, TrainerModel?>, UpdateTrainerHandler>();
+    services.AddTransient<IQueryHandler<ReadTrainer, TrainerModel?>, ReadTrainerHandler>();
+    services.AddTransient<IQueryHandler<SearchTrainers, SearchResults<TrainerModel>>, SearchTrainersHandler>();
   }
 
   private readonly ICommandBus _commandBus;

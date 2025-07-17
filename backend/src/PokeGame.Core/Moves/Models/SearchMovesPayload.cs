@@ -6,7 +6,6 @@ public record SearchMovesPayload : SearchPayload
 {
   public PokemonType? Type { get; set; }
   public MoveCategory? Category { get; set; }
-  public StatusCondition? StatusCondition { get; set; }
 
   public new List<MoveSortOption> Sort { get; set; } = [];
 }

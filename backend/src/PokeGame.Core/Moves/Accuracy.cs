@@ -2,13 +2,11 @@
 
 namespace PokeGame.Core.Moves;
 
-public record PowerPoints
+public record Accuracy
 {
-  public const byte MaximumValue = 40;
-
   public byte Value { get; }
 
-  public PowerPoints(byte value)
+  public Accuracy(byte value)
   {
     Value = value;
     new Validator().ValidateAndThrow(this);
@@ -16,11 +14,11 @@ public record PowerPoints
 
   public override string ToString() => Value.ToString();
 
-  private class Validator : AbstractValidator<PowerPoints>
+  private class Validator : AbstractValidator<Accuracy>
   {
     public Validator()
     {
-      RuleFor(x => x.Value).PowerPoints();
+      RuleFor(x => x.Value).Accuracy();
     }
   }
 }

@@ -40,7 +40,7 @@ internal class VarietyPayload
       Map(x => x.CanChangeForm).Index(6).Default(false);
       Map(x => x.GenderRatio).Index(7);
 
-      Map(x => x.Genus).Index(8).Default(string.Empty); ;
+      Map(x => x.Genus).Index(8).Default(string.Empty);
       Map(x => x.Url).Index(9);
       Map(x => x.Notes).Index(10);
     }

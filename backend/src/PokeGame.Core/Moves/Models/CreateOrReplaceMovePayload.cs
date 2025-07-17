@@ -1,8 +1,6 @@
-﻿using AggregateModel = Krakenar.Contracts.Aggregate;
+﻿namespace PokeGame.Core.Moves.Models;
 
-namespace PokeGame.Core.Moves.Models;
-
-public class MoveModel : AggregateModel
+public record CreateOrReplaceMovePayload
 {
   public PokemonType Type { get; set; }
   public MoveCategory Category { get; set; }
@@ -17,6 +15,4 @@ public class MoveModel : AggregateModel
 
   public string? Url { get; set; }
   public string? Notes { get; set; }
-
-  public override string ToString() => $"{DisplayName ?? UniqueName} | {base.ToString()}";
 }
