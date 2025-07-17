@@ -34,6 +34,8 @@ public static class DependencyInjectionExtensions
 
   private static IServiceCollection AddEventHandlers(this IServiceCollection services)
   {
+    RegionEvents.Register(services);
+
     return services
       .AddScoped<IEventHandler<ContentLocalePublished>, PokemonContentEvents>()
       .AddScoped<IEventHandler<ContentLocaleUnpublished>, PokemonContentEvents>()

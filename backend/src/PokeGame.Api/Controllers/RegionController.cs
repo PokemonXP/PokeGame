@@ -43,6 +43,13 @@ public class RegionController : ControllerBase
     return region is null ? NotFound() : Ok(region);
   }
 
+  [HttpPut("{id}")]
+  public async Task<ActionResult<RegionModel>> ReplaceAsync(Guid id, CreateOrReplaceRegionPayload payload, CancellationToken cancellationToken)
+  {
+    CreateOrReplaceRegionResult result = await _regionService.CreateOrReplaceAsync(payload, id, cancellationToken);
+    return ToActionResult(result);
+  }
+
   [HttpGet]
   public async Task<ActionResult<SearchResults<RegionModel>>> SearchAsync([FromQuery] SearchRegionsParameters parameters, CancellationToken cancellationToken)
   {

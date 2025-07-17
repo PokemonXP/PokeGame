@@ -1,7 +1,6 @@
-﻿using Krakenar.Core.Contents;
-using Krakenar.EntityFrameworkCore.Relational.KrakenarDb;
-using PokeGame.EntityFrameworkCore.Handlers;
-using PokeGame.Infrastructure.Data;
+﻿using Krakenar.EntityFrameworkCore.Relational.KrakenarDb;
+using PokeGame.Core.Regions;
+using PokeGame.Core.Regions.Events;
 using AggregateEntity = Krakenar.EntityFrameworkCore.Relational.Entities.Aggregate;
 
 namespace PokeGame.EntityFrameworkCore.Entities;
@@ -25,29 +24,45 @@ internal class RegionEntity : AggregateEntity
 
   public List<RegionalNumberEntity> RegionalNumbers { get; private set; } = [];
 
-  public RegionEntity(RegionPublished published) : base(published.Event)
+  public RegionEntity(RegionCreated @event) : base(@event)
   {
-    Id = new ContentId(published.Event.StreamId).EntityId;
+    Id = new RegionId(@event.StreamId).ToGuid();
 
-    Update(published);
+    UniqueName = @event.UniqueName.Value;
   }
 
   private RegionEntity() : base()
   {
   }
 
-  public void Update(RegionPublished published)
+  public void SetUniqueName(RegionUniqueNameChanged @event)
   {
-    ContentLocale locale = published.Locale;
+    Update(@event);
 
-    Update(published.Event);
+    UniqueName = @event.UniqueName.Value;
+  }
 
-    UniqueName = locale.UniqueName.Value;
-    DisplayName = locale.DisplayName?.Value;
-    Description = locale.Description?.Value;
+  public void Update(RegionUpdated @event)
+  {
+    base.Update(@event);
 
-    Url = locale.TryGetStringValue(Regions.Url);
-    Notes = locale.TryGetStringValue(Regions.Notes);
+    if (@event.DisplayName is not null)
+    {
+      DisplayName = @event.DisplayName.Value?.Value;
+    }
+    if (@event.Description is not null)
+    {
+      Description = @event.Description.Value?.Value;
+    }
+
+    if (@event.Url is not null)
+    {
+      Url = @event.Url.Value?.Value;
+    }
+    if (@event.Notes is not null)
+    {
+      Notes = @event.Notes.Value?.Value;
+    }
   }
 
   public override string ToString() => $"{DisplayName ?? UniqueName} | {base.ToString()}";
