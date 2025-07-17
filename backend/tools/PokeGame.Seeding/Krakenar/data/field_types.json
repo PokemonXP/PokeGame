@@ -591,55 +591,5 @@
         }
       ]
     }
-  },
-  {
-    "Id": "008f5738-b71f-444c-84ae-3319a97c838e",
-    "UniqueName": "TrainerGender",
-    "DisplayName": "Trainer Gender",
-    "Description": null,
-    "Select": {
-      "IsMultiple": false,
-      "Options": [
-        {
-          "Text": "Male",
-          "Value": "male"
-        },
-        {
-          "Text": "Female",
-          "Value": "female"
-        }
-      ]
-    }
-  },
-  {
-    "Id": "bdac2b47-c288-4d64-a943-bb17ccec497b",
-    "UniqueName": "TrainerLicense",
-    "DisplayName": "Trainer License",
-    "Description": null,
-    "String": {
-      "MaximumLength": 10
-    }
-  },
-  {
-    "Id": "284adb16-c5e8-4464-9da3-1ee546bbbf8a",
-    "UniqueName": "TrainerMoney",
-    "DisplayName": "Trainer Money",
-    "Description": null,
-    "Number": {
-      "MinimumValue": 0,
-      "MaximumValue": 999999999,
-      "Step": 1.0
-    }
-  },
-  {
-    "Id": "a8fb687c-418d-4113-a3a8-63bf857afbe6",
-    "UniqueName": "UUID",
-    "DisplayName": null,
-    "Description": null,
-    "String": {
-      "MinimumLength": 36,
-      "MaximumLength": 36,
-      "Pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
-    }
   }
 ]
