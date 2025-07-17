@@ -1,7 +1,6 @@
-﻿using Krakenar.Core.Contents;
-using Krakenar.EntityFrameworkCore.Relational.KrakenarDb;
-using PokeGame.EntityFrameworkCore.Handlers;
-using PokeGame.Infrastructure.Data;
+﻿using Krakenar.EntityFrameworkCore.Relational.KrakenarDb;
+using PokeGame.Core.Varieties;
+using PokeGame.Core.Varieties.Events;
 using AggregateEntity = Krakenar.EntityFrameworkCore.Relational.Entities.Aggregate;
 
 namespace PokeGame.EntityFrameworkCore.Entities;
@@ -23,12 +22,13 @@ internal class VarietyEntity : AggregateEntity
     private set { }
   }
   public string? DisplayName { get; private set; }
+
+  public string? Genus { get; private set; } = string.Empty;
   public string? Description { get; private set; }
 
-  public bool CanChangeForm { get; private set; }
   public int? GenderRatio { get; private set; }
 
-  public string Genus { get; private set; } = string.Empty;
+  public bool CanChangeForm { get; private set; }
 
   public string? Url { get; private set; }
   public string? Notes { get; private set; }
@@ -36,41 +36,70 @@ internal class VarietyEntity : AggregateEntity
   public List<FormEntity> Forms { get; private set; } = [];
   public List<PokemonEntity> Pokemon { get; private set; } = [];
 
-  public VarietyEntity(SpeciesEntity species, VarietyPublished published) : base(published.Event)
+  public VarietyEntity(SpeciesEntity species, VarietyCreated @event) : base(@event)
   {
-    Id = new ContentId(published.Event.StreamId).EntityId;
+    Id = new VarietyId(@event.StreamId).ToGuid();
 
     Species = species;
     SpeciesId = species.SpeciesId;
     SpeciesUid = species.Id;
 
-    Update(published);
+    IsDefault = @event.IsDefault;
+
+    UniqueName = @event.UniqueName.Value;
+
+    GenderRatio = @event.GenderRatio?.Value;
+
+    CanChangeForm = @event.CanChangeForm;
   }
 
   private VarietyEntity() : base()
   {
   }
 
-  public void Update(VarietyPublished published)
+  public void SetUniqueName(VarietyUniqueNameChanged @event)
   {
-    ContentLocale invariant = published.Invariant;
-    ContentLocale locale = published.Locale;
+    Update(@event);
 
-    Update(published.Event);
+    UniqueName = @event.UniqueName.Value;
+  }
 
-    IsDefault = invariant.FindBooleanValue(Varieties.IsDefault);
+  public void Update(VarietyUpdated @event)
+  {
+    base.Update(@event);
 
-    UniqueName = locale.UniqueName.Value;
-    DisplayName = locale.DisplayName?.Value;
-    Description = locale.Description?.Value;
+    if (@event.DisplayName is not null)
+    {
+      DisplayName = @event.DisplayName.Value?.Value;
+    }
 
-    CanChangeForm = invariant.FindBooleanValue(Varieties.CanChangeForm);
-    GenderRatio = (int)invariant.FindNumberValue(Varieties.GenderRatio);
+    if (@event.Genus is not null)
+    {
+      Genus = @event.Genus.Value?.Value;
+    }
+    if (@event.Description is not null)
+    {
+      Description = @event.Description.Value?.Value;
+    }
 
-    Genus = locale.FindStringValue(Varieties.Genus);
+    if (@event.GenderRatio is not null)
+    {
+      GenderRatio = @event.GenderRatio.Value?.Value;
+    }
 
-    Url = locale.TryGetStringValue(Varieties.Url);
-    Notes = locale.TryGetStringValue(Varieties.Notes);
+    if (@event.CanChangeForm.HasValue)
+    {
+      CanChangeForm = @event.CanChangeForm.Value;
+    }
+
+    if (@event.Url is not null)
+    {
+      Url = @event.Url.Value?.Value;
+    }
+    if (@event.Notes is not null)
+    {
+      Notes = @event.Notes.Value?.Value;
+    }
   }
 
   public override string ToString() => $"{DisplayName ?? UniqueName} | {base.ToString()}";

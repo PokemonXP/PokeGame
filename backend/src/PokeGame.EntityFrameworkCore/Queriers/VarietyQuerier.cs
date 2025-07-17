@@ -1,5 +1,6 @@
 ﻿using Krakenar.Contracts.Actors;
 using Krakenar.Contracts.Search;
+using Krakenar.Core;
 using Krakenar.Core.Actors;
 using Krakenar.EntityFrameworkCore.Relational;
 using Krakenar.EntityFrameworkCore.Relational.KrakenarDb;
@@ -15,16 +16,38 @@ namespace PokeGame.EntityFrameworkCore.Queriers;
 internal class VarietyQuerier : IVarietyQuerier
 {
   private readonly IActorService _actorService;
-  private readonly DbSet<VarietyEntity> _varieties;
   private readonly ISqlHelper _sqlHelper;
+  private readonly DbSet<VarietyEntity> _varieties;
 
   public VarietyQuerier(IActorService actorService, PokemonContext context, ISqlHelper sqlHelper)
   {
     _actorService = actorService;
-    _varieties = context.Varieties;
     _sqlHelper = sqlHelper;
+    _varieties = context.Varieties;
   }
 
+  public async Task<VarietyId?> FindIdAsync(UniqueName uniqueName, CancellationToken cancellationToken)
+  {
+    string uniqueNameNormalized = Helper.Normalize(uniqueName);
+
+    string? streamId = await _varieties.AsNoTracking()
+      .Where(x => x.UniqueNameNormalized == uniqueNameNormalized)
+      .Select(x => x.StreamId)
+      .SingleOrDefaultAsync(cancellationToken);
+    return string.IsNullOrWhiteSpace(streamId) ? null : new VarietyId(streamId);
+  }
+
+  public async Task<VarietyModel> ReadAsync(Variety variety, CancellationToken cancellationToken)
+  {
+    return await ReadAsync(variety.Id, cancellationToken) ?? throw new InvalidOperationException($"The variety entity 'StreamId={variety.Id}' was not found.");
+  }
+  public async Task<VarietyModel?> ReadAsync(VarietyId id, CancellationToken cancellationToken)
+  {
+    VarietyEntity? variety = await _varieties.AsNoTracking()
+      .Include(x => x.Species).ThenInclude(x => x!.RegionalNumbers).ThenInclude(x => x.Region)
+      .SingleOrDefaultAsync(x => x.StreamId == id.Value, cancellationToken);
+    return variety is null ? null : await MapAsync(variety, cancellationToken);
+  }
   public async Task<VarietyModel?> ReadAsync(Guid id, CancellationToken cancellationToken)
   {
     VarietyEntity? variety = await _varieties.AsNoTracking()
@@ -42,12 +65,16 @@ internal class VarietyQuerier : IVarietyQuerier
     return variety is null ? null : await MapAsync(variety, cancellationToken);
   }
 
-  public async Task<SearchResults<VarietyModel>> SearchAsync(Guid speciesId, SearchVarietiesPayload payload, CancellationToken cancellationToken)
+  public async Task<SearchResults<VarietyModel>> SearchAsync(SearchVarietiesPayload payload, CancellationToken cancellationToken)
   {
     IQueryBuilder builder = _sqlHelper.Query(PokemonDb.Varieties.Table).SelectAll(PokemonDb.Varieties.Table)
-      .Where(PokemonDb.Varieties.SpeciesUid, Operators.IsEqualTo(speciesId))
       .ApplyIdFilter(PokemonDb.Varieties.Id, payload.Ids);
     _sqlHelper.ApplyTextSearch(builder, payload.Search, PokemonDb.Varieties.UniqueName, PokemonDb.Varieties.DisplayName, PokemonDb.Varieties.Genus);
+
+    if (payload.SpeciesId.HasValue)
+    {
+      builder.Where(PokemonDb.Varieties.SpeciesUid, Operators.IsEqualTo(payload.SpeciesId.Value));
+    }
 
     IQueryable<VarietyEntity> query = _varieties.FromQuery(builder).AsNoTracking()
       .Include(x => x.Species).ThenInclude(x => x!.RegionalNumbers).ThenInclude(x => x.Region);

@@ -39,6 +39,7 @@ public static class DependencyInjectionExtensions
     RegionEvents.Register(services);
     SpeciesEvents.Register(services);
     TrainerEvents.Register(services);
+    VarietyEvents.Register(services);
 
     return services
       .AddScoped<IEventHandler<ContentLocalePublished>, PokemonContentEvents>()
@@ -83,6 +84,7 @@ public static class DependencyInjectionExtensions
       .AddScoped<IPokemonRepository, PokemonRepository>()
       .AddScoped<IRegionRepository, RegionRepository>()
       .AddScoped<ISpeciesRepository, SpeciesRepository>()
-      .AddScoped<ITrainerRepository, TrainerRepository>();
+      .AddScoped<ITrainerRepository, TrainerRepository>()
+      .AddScoped<IVarietyRepository, VarietyRepository>();
   }
 }

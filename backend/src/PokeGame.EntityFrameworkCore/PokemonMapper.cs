@@ -295,6 +295,8 @@ internal class PokemonMapper
       BaseFriendship = source.BaseFriendship,
       CatchRate = source.CatchRate,
       GrowthRate = source.GrowthRate,
+      EggCycles = source.EggCycles,
+      EggGroups = source.GetEggGroups(),
       Url = source.Url,
       Notes = source.Notes
     };
@@ -349,10 +351,10 @@ internal class PokemonMapper
       IsDefault = source.IsDefault,
       UniqueName = source.UniqueName,
       DisplayName = source.DisplayName,
-      Description = source.Description,
-      CanChangeForm = source.CanChangeForm,
-      GenderRatio = source.GenderRatio,
       Genus = source.Genus,
+      Description = source.Description,
+      GenderRatio = source.GenderRatio,
+      CanChangeForm = source.CanChangeForm,
       Url = source.Url,
       Notes = source.Notes
     };

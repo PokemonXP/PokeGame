@@ -19,8 +19,8 @@ internal class RegionRepository : Repository, IRegionRepository
     await base.SaveAsync(region, cancellationToken);
   }
 
-  public async Task SaveAsync(IEnumerable<Region> region, CancellationToken cancellationToken)
+  public async Task SaveAsync(IEnumerable<Region> regions, CancellationToken cancellationToken)
   {
-    await base.SaveAsync(region, cancellationToken);
+    await base.SaveAsync(regions, cancellationToken);
   }
 }

@@ -1,61 +1,101 @@
-﻿using Krakenar.Core.Contents;
-using Krakenar.Core.Contents.Events;
-using MediatR;
+﻿using Krakenar.Core;
+using Krakenar.EntityFrameworkCore.Relational.Handlers;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using PokeGame.Core.Varieties.Events;
 using PokeGame.EntityFrameworkCore.Entities;
-using PokeGame.Infrastructure.Data;
 
 namespace PokeGame.EntityFrameworkCore.Handlers;
 
-internal record VarietyPublished(ContentLocalePublished Event, ContentLocale Invariant, ContentLocale Locale) : INotification;
-
-internal class VarietyPublishedHandler : INotificationHandler<VarietyPublished>
+internal class VarietyEvents : IEventHandler<VarietyCreated>,
+  IEventHandler<VarietyDeleted>,
+  IEventHandler<VarietyUniqueNameChanged>,
+  IEventHandler<VarietyUpdated>
 {
-  private readonly PokemonContext _context;
-
-  public VarietyPublishedHandler(PokemonContext context)
+  public static void Register(IServiceCollection services)
   {
-    _context = context;
+    services.AddScoped<IEventHandler<VarietyCreated>, VarietyEvents>();
+    services.AddScoped<IEventHandler<VarietyDeleted>, VarietyEvents>();
+    services.AddScoped<IEventHandler<VarietyUniqueNameChanged>, VarietyEvents>();
+    services.AddScoped<IEventHandler<VarietyUpdated>, VarietyEvents>();
   }
 
-  public async Task Handle(VarietyPublished published, CancellationToken cancellationToken)
+  private readonly PokemonContext _context;
+  private readonly ILogger<VarietyEvents> _logger;
+
+  public VarietyEvents(PokemonContext context, ILogger<VarietyEvents> logger)
   {
-    string streamId = published.Event.StreamId.Value;
-    VarietyEntity? variety = await _context.Varieties.SingleOrDefaultAsync(x => x.StreamId == streamId, cancellationToken);
+    _context = context;
+    _logger = logger;
+  }
 
-    if (variety is null)
+  public async Task HandleAsync(VarietyCreated @event, CancellationToken cancellationToken)
+  {
+    VarietyEntity? variety = await _context.Varieties.AsNoTracking()
+      .SingleOrDefaultAsync(x => x.StreamId == @event.StreamId.Value, cancellationToken);
+    if (variety is not null)
     {
-      Guid speciesId = published.Invariant.FindRelatedContentValue(Varieties.Species).Single();
-      SpeciesEntity species = await _context.Species.SingleOrDefaultAsync(x => x.Id == speciesId, cancellationToken)
-        ?? throw new InvalidOperationException($"The species entity 'Id={speciesId}' was not found.");
-
-      variety = new VarietyEntity(species, published);
-
-      _context.Varieties.Add(variety);
+      _logger.LogUnexpectedVersion(@event, variety);
+      return;
     }
-    else
-    {
-      variety.Update(published);
-    }
+
+    SpeciesEntity species = await _context.Species
+      .SingleOrDefaultAsync(x => x.StreamId == @event.SpeciesId.Value, cancellationToken)
+      ?? throw new InvalidOperationException($"The species entity 'StreamId={@event.SpeciesId}' was not found.");
+
+    variety = new VarietyEntity(species, @event);
+    _context.Varieties.Add(variety);
 
     await _context.SaveChangesAsync(cancellationToken);
-  }
-}
-
-internal record VarietyUnpublished(ContentLocaleUnpublished Event) : INotification;
-
-internal class VarietyUnpublishedHandler : INotificationHandler<VarietyUnpublished>
-{
-  private readonly PokemonContext _context;
-
-  public VarietyUnpublishedHandler(PokemonContext context)
-  {
-    _context = context;
+    _logger.LogSuccess(@event);
   }
 
-  public async Task Handle(VarietyUnpublished unpublished, CancellationToken cancellationToken)
+  public async Task HandleAsync(VarietyDeleted @event, CancellationToken cancellationToken)
   {
-    string streamId = unpublished.Event.StreamId.Value;
-    await _context.Varieties.Where(x => x.StreamId == streamId).ExecuteDeleteAsync(cancellationToken);
+    VarietyEntity? variety = await _context.Varieties
+      .SingleOrDefaultAsync(x => x.StreamId == @event.StreamId.Value, cancellationToken);
+    if (variety is null)
+    {
+      _logger.LogUnexpectedVersion(@event, variety);
+      return;
+    }
+
+    _context.Varieties.Remove(variety);
+
+    await _context.SaveChangesAsync(cancellationToken);
+    _logger.LogSuccess(@event);
+  }
+
+  public async Task HandleAsync(VarietyUniqueNameChanged @event, CancellationToken cancellationToken)
+  {
+    VarietyEntity? variety = await _context.Varieties
+      .SingleOrDefaultAsync(x => x.StreamId == @event.StreamId.Value, cancellationToken);
+    if (variety is null || (variety.Version != (@event.Version - 1)))
+    {
+      _logger.LogUnexpectedVersion(@event, variety);
+      return;
+    }
+
+    variety.SetUniqueName(@event);
+
+    await _context.SaveChangesAsync(cancellationToken);
+    _logger.LogSuccess(@event);
+  }
+
+  public async Task HandleAsync(VarietyUpdated @event, CancellationToken cancellationToken)
+  {
+    VarietyEntity? variety = await _context.Varieties
+      .SingleOrDefaultAsync(x => x.StreamId == @event.StreamId.Value, cancellationToken);
+    if (variety is null || (variety.Version != (@event.Version - 1)))
+    {
+      _logger.LogUnexpectedVersion(@event, variety);
+      return;
+    }
+
+    variety.Update(@event);
+
+    await _context.SaveChangesAsync(cancellationToken);
+    _logger.LogSuccess(@event);
   }
 }
