@@ -4,6 +4,7 @@ using PokeGame.Core.Abilities;
 using PokeGame.Core.Moves;
 using PokeGame.Core.Pokemons;
 using PokeGame.Core.Regions;
+using PokeGame.Core.Species;
 using PokeGame.Core.Trainers;
 
 namespace PokeGame.Core;
@@ -16,6 +17,7 @@ public static class DependencyInjectionExtensions
     MoveService.Register(services);
     PokemonService.Register(services);
     RegionService.Register(services);
+    SpeciesService.Register(services);
     TrainerService.Register(services);
 
     return services.AddKrakenarCore();

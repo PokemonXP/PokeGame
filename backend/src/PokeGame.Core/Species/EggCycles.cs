@@ -18,7 +18,7 @@ public record EggCycles
   {
     public Validator()
     {
-      RuleFor(x => x.Value).GreaterThan((byte)0);
+      RuleFor(x => x.Value).EggCycles();
     }
   }
 }
