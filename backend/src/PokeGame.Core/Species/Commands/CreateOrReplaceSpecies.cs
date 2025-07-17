@@ -2,6 +2,7 @@
 using Krakenar.Contracts.Settings;
 using Krakenar.Core;
 using Logitar.EventSourcing;
+using PokeGame.Core.Regions;
 using PokeGame.Core.Species.Models;
 using PokeGame.Core.Species.Validators;
 
@@ -10,6 +11,7 @@ namespace PokeGame.Core.Species.Commands;
 internal record CreateOrReplaceSpecies(CreateOrReplaceSpeciesPayload Payload, Guid? Id) : ICommand<CreateOrReplaceSpeciesResult>;
 
 /// <exception cref="NumberAlreadyUsedException"></exception>
+/// <exception cref="RegionsNotFoundException"></exception>
 /// <exception cref="UniqueNameAlreadyUsedException"></exception>
 /// <exception cref="ValidationException"></exception>
 internal class CreateOrReplaceSpeciesHandler : ICommandHandler<CreateOrReplaceSpecies, CreateOrReplaceSpeciesResult>
@@ -77,7 +79,18 @@ internal class CreateOrReplaceSpeciesHandler : ICommandHandler<CreateOrReplaceSp
     species.Url = Url.TryCreate(payload.Url);
     species.Notes = Notes.TryCreate(payload.Notes);
 
-    // TODO(fpion): RegionalNumbers
+    IReadOnlyDictionary<RegionId, Number?> regionalNumbers = await _speciesManager.FindRegionalNumbersAsync(payload.RegionalNumbers, nameof(payload.RegionalNumbers), cancellationToken);
+    foreach (RegionId regionId in species.RegionalNumbers.Keys)
+    {
+      if (!regionalNumbers.ContainsKey(regionId))
+      {
+        species.SetRegionalNumber(regionId, number: null, actorId);
+      }
+    }
+    foreach (KeyValuePair<RegionId, Number?> regionalNumber in regionalNumbers)
+    {
+      species.SetRegionalNumber(regionalNumber.Key, regionalNumber.Value, actorId);
+    }
 
     species.Update(actorId);
     await _speciesManager.SaveAsync(species, cancellationToken);
