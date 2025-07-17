@@ -43,7 +43,7 @@ public class PokemonItemTests
       new IndividualValues(),
       PokemonGender.Male);
 
-    _item = new(new UniqueName(uniqueNameSettings, "leftovers"));
+    _item = new(new UniqueName(uniqueNameSettings, "leftovers"), ItemCategory.OtherItem);
   }
 
   [Fact(DisplayName = "HoldItem: it should handle held item changes correctly.")]

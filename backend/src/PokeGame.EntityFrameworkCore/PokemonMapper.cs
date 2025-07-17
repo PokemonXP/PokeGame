@@ -136,11 +136,11 @@ internal class PokemonMapper
     ItemModel destination = new()
     {
       Id = source.Id,
+      Category = source.Category,
       UniqueName = source.UniqueName,
       DisplayName = source.DisplayName,
       Description = source.Description,
       Price = source.Price,
-      Category = source.Category,
       BattleItem = source.GetBattleItem(),
       Berry = source.GetBerry(),
       Medicine = source.GetMedicine(),

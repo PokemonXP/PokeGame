@@ -61,7 +61,7 @@ internal static class ModelExtensions
 
   public static Item ToItem(this ItemModel model)
   {
-    Item item = new(new UniqueName(new UniqueNameSettings(), model.UniqueName), actorId: null, new ItemId(model.Id))
+    Item item = new(new UniqueName(new UniqueNameSettings(), model.UniqueName), model.Category, actorId: null, new ItemId(model.Id))
     {
       DisplayName = DisplayName.TryCreate(model.DisplayName),
       Description = Description.TryCreate(model.Description),
