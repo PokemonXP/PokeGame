@@ -10,6 +10,9 @@ public record SearchSpeciesParameters : SearchParameters
   [FromQuery(Name = "category")]
   public PokemonCategory? Category { get; set; }
 
+  [FromQuery(Name = "egg")]
+  public EggGroup? EggGroup { get; set; }
+
   [FromQuery(Name = "growth")]
   public GrowthRate? GrowthRate { get; set; }
 
@@ -21,6 +24,7 @@ public record SearchSpeciesParameters : SearchParameters
     SearchSpeciesPayload payload = new()
     {
       Category = Category,
+      EggGroup = EggGroup,
       GrowthRate = GrowthRate,
       RegionId = RegionId
     };

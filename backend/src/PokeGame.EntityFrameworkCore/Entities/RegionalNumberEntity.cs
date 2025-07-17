@@ -1,4 +1,6 @@
-﻿namespace PokeGame.EntityFrameworkCore.Entities;
+﻿using PokeGame.Core.Species.Events;
+
+namespace PokeGame.EntityFrameworkCore.Entities;
 
 internal class RegionalNumberEntity
 {
@@ -12,9 +14,9 @@ internal class RegionalNumberEntity
   public int RegionId { get; private set; }
   public Guid RegionUid { get; private set; }
 
-  public int Number { get; set; }
+  public int Number { get; private set; }
 
-  public RegionalNumberEntity(SpeciesEntity species, RegionEntity region, int number)
+  public RegionalNumberEntity(SpeciesEntity species, RegionEntity region, SpeciesRegionalNumberChanged @event)
   {
     Species = species;
     SpeciesId = species.SpeciesId;
@@ -24,11 +26,20 @@ internal class RegionalNumberEntity
     RegionId = region.RegionId;
     RegionUid = region.Id;
 
-    Number = number;
+    Update(@event);
   }
 
   private RegionalNumberEntity()
   {
+  }
+
+  public void Update(SpeciesRegionalNumberChanged @event)
+  {
+    if (@event.Number is null)
+    {
+      throw new ArgumentException("The number is required.", nameof(@event));
+    }
+    Number = @event.Number.Value;
   }
 
   public override bool Equals(object? obj) => obj is RegionalNumberEntity entity && entity.RegionalNumberId == RegionalNumberId;

@@ -1,11 +1,13 @@
 ﻿using Krakenar.Contracts.Search;
 using Krakenar.Core;
+using PokeGame.Core.Regions;
 using PokeGame.Core.Species.Models;
 
 namespace PokeGame.Core.Species;
 
 public interface ISpeciesQuerier
 {
+  Task<SpeciesId?> FindIdAsync(Number number, RegionId? regionId = null, CancellationToken cancellationToken = default);
   Task<SpeciesId?> FindIdAsync(UniqueName uniqueName, CancellationToken cancellationToken = default);
 
   Task<SpeciesModel> ReadAsync(PokemonSpecies species, CancellationToken cancellationToken = default);

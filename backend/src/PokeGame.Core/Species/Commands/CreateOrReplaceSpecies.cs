@@ -9,6 +9,7 @@ namespace PokeGame.Core.Species.Commands;
 
 internal record CreateOrReplaceSpecies(CreateOrReplaceSpeciesPayload Payload, Guid? Id) : ICommand<CreateOrReplaceSpeciesResult>;
 
+/// <exception cref="NumberAlreadyUsedException"></exception>
 /// <exception cref="UniqueNameAlreadyUsedException"></exception>
 /// <exception cref="ValidationException"></exception>
 internal class CreateOrReplaceSpeciesHandler : ICommandHandler<CreateOrReplaceSpecies, CreateOrReplaceSpeciesResult>

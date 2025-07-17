@@ -9,6 +9,7 @@ namespace PokeGame.Core.Species.Commands;
 
 internal record UpdateSpecies(Guid Id, UpdateSpeciesPayload Payload) : ICommand<SpeciesModel?>;
 
+/// <exception cref="NumberAlreadyUsedException"></exception>
 /// <exception cref="UniqueNameAlreadyUsedException"></exception>
 /// <exception cref="ValidationException"></exception>
 internal class UpdateSpeciesHandler : ICommandHandler<UpdateSpecies, SpeciesModel?>

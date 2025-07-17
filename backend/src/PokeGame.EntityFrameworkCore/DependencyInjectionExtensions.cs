@@ -37,6 +37,7 @@ public static class DependencyInjectionExtensions
     AbilityEvents.Register(services);
     MoveEvents.Register(services);
     RegionEvents.Register(services);
+    SpeciesEvents.Register(services);
     TrainerEvents.Register(services);
 
     return services

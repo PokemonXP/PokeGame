@@ -4,6 +4,7 @@ using Logitar;
 using PokeGame.Core.Abilities;
 using PokeGame.Core.Moves;
 using PokeGame.Core.Regions;
+using PokeGame.Core.Species;
 using PokeGame.Core.Trainers;
 
 namespace PokeGame.Core;
@@ -62,6 +63,10 @@ public class UniqueNameAlreadyUsedException : ConflictException
   }
   public UniqueNameAlreadyUsedException(Region region, RegionId conflictId)
     : this("Region", region.Id.ToGuid(), conflictId.ToGuid(), region.UniqueName, nameof(region.UniqueName))
+  {
+  }
+  public UniqueNameAlreadyUsedException(PokemonSpecies species, SpeciesId conflictId)
+    : this("Species", species.Id.ToGuid(), conflictId.ToGuid(), species.UniqueName, nameof(species.UniqueName))
   {
   }
   public UniqueNameAlreadyUsedException(Trainer trainer, TrainerId conflictId)

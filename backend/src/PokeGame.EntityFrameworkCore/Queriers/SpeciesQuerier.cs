@@ -7,6 +7,7 @@ using Krakenar.EntityFrameworkCore.Relational.KrakenarDb;
 using Logitar.Data;
 using Logitar.EventSourcing;
 using Microsoft.EntityFrameworkCore;
+using PokeGame.Core.Regions;
 using PokeGame.Core.Species;
 using PokeGame.Core.Species.Models;
 using PokeGame.EntityFrameworkCore.Entities;
@@ -26,6 +27,10 @@ internal class SpeciesQuerier : ISpeciesQuerier
     _sqlHelper = sqlHelper;
   }
 
+  public Task<SpeciesId?> FindIdAsync(Number number, RegionId? regionId, CancellationToken cancellationToken)
+  {
+    throw new NotImplementedException(); // TODO(fpion): implement
+  }
   public async Task<SpeciesId?> FindIdAsync(UniqueName uniqueName, CancellationToken cancellationToken)
   {
     string uniqueNameNormalized = Helper.Normalize(uniqueName);
@@ -82,6 +87,12 @@ internal class SpeciesQuerier : ISpeciesQuerier
     {
       builder.Where(PokemonDb.Species.Category, Operators.IsEqualTo(payload.Category.Value.ToString()));
     }
+    if (payload.EggGroup.HasValue)
+    {
+      builder.WhereOr(
+        new OperatorCondition(PokemonDb.Species.PrimaryEggGroup, Operators.IsEqualTo(payload.EggGroup.Value.ToString())),
+        new OperatorCondition(PokemonDb.Species.SecondaryEggGroup, Operators.IsEqualTo(payload.EggGroup.Value.ToString())));
+    }
     if (payload.GrowthRate.HasValue)
     {
       builder.Where(PokemonDb.Species.GrowthRate, Operators.IsEqualTo(payload.GrowthRate.Value.ToString()));
@@ -123,8 +134,8 @@ internal class SpeciesQuerier : ISpeciesQuerier
           break;
         case SpeciesSort.EggCycles:
           ordered = ordered is null
-            ? (sort.IsDescending ? query.OrderByDescending(x => x.Number) : query.OrderBy(x => x.Number)) // TODO(fpion): implement
-            : (sort.IsDescending ? ordered.ThenByDescending(x => x.Number) : ordered.ThenBy(x => x.Number)); // TODO(fpion): implement
+            ? (sort.IsDescending ? query.OrderByDescending(x => x.EggCycles) : query.OrderBy(x => x.EggCycles))
+            : (sort.IsDescending ? ordered.ThenByDescending(x => x.EggCycles) : ordered.ThenBy(x => x.EggCycles));
           break;
         case SpeciesSort.Number:
           ordered = ordered is null

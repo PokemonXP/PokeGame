@@ -1,9 +1,6 @@
-﻿using Krakenar.Core.Contents;
-using Krakenar.EntityFrameworkCore.Relational.KrakenarDb;
-using PokeGame.Core;
+﻿using Krakenar.EntityFrameworkCore.Relational.KrakenarDb;
 using PokeGame.Core.Species;
-using PokeGame.EntityFrameworkCore.Handlers;
-using PokeGame.Infrastructure.Data;
+using PokeGame.Core.Species.Events;
 using AggregateEntity = Krakenar.EntityFrameworkCore.Relational.Entities.Aggregate;
 
 namespace PokeGame.EntityFrameworkCore.Entities;
@@ -13,8 +10,8 @@ internal class SpeciesEntity : AggregateEntity
   public int SpeciesId { get; private set; }
   public Guid Id { get; private set; }
 
-  public int Number { get; set; }
-  public PokemonCategory Category { get; set; }
+  public int Number { get; private set; }
+  public PokemonCategory Category { get; private set; }
 
   public string UniqueName { get; private set; } = string.Empty;
   public string UniqueNameNormalized
@@ -24,9 +21,13 @@ internal class SpeciesEntity : AggregateEntity
   }
   public string? DisplayName { get; private set; }
 
-  public byte BaseFriendship { get; set; }
-  public byte CatchRate { get; set; }
-  public GrowthRate GrowthRate { get; set; }
+  public byte BaseFriendship { get; private set; }
+  public byte CatchRate { get; private set; }
+  public GrowthRate GrowthRate { get; private set; }
+
+  public byte EggCycles { get; private set; }
+  public EggGroup PrimaryEggGroup { get; private set; }
+  public EggGroup? SecondaryEggGroup { get; private set; }
 
   public string? Url { get; private set; }
   public string? Notes { get; private set; }
@@ -35,50 +36,100 @@ internal class SpeciesEntity : AggregateEntity
   public List<RegionalNumberEntity> RegionalNumbers { get; private set; } = [];
   public List<VarietyEntity> Varieties { get; private set; } = [];
 
-  public SpeciesEntity(SpeciesPublished published) : base(published.Event)
+  public SpeciesEntity(SpeciesCreated @event) : base(@event)
   {
-    Id = new ContentId(published.Event.StreamId).EntityId;
+    Id = new SpeciesId(@event.StreamId).ToGuid();
 
-    Update(published);
+    Number = @event.Number.Value;
+    Category = @event.Category;
+
+    UniqueName = @event.UniqueName.Value;
+
+    BaseFriendship = @event.BaseFriendship.Value;
+    CatchRate = @event.CatchRate.Value;
+    GrowthRate = @event.GrowthRate;
+
+    EggCycles = @event.EggCycles.Value;
+    SetEggGroups(@event.EggGroups);
   }
 
   private SpeciesEntity() : base()
   {
   }
 
-  public void SetRegionalNumber(RegionEntity region, int number)
+  public RegionalNumberEntity? SetRegionalNumber(RegionEntity? region, SpeciesRegionalNumberChanged @event)
   {
-    RegionalNumberEntity? regionalNumber = RegionalNumbers.SingleOrDefault(x => x.RegionUid == region.Id);
-    if (regionalNumber is null)
+    Update(@event);
+
+    RegionalNumberEntity? regionalNumber = RegionalNumbers.SingleOrDefault(x => x.Region?.StreamId == @event.RegionId.Value);
+    if (@event.Number is not null)
     {
-      regionalNumber = new RegionalNumberEntity(this, region, number);
-      RegionalNumbers.Add(regionalNumber);
+      if (regionalNumber is null)
+      {
+        ArgumentNullException.ThrowIfNull(region, nameof(region));
+        regionalNumber = new RegionalNumberEntity(this, region, @event);
+      }
+      else
+      {
+        regionalNumber.Update(@event);
+      }
     }
-    else
+
+    return regionalNumber;
+  }
+
+  public void SetUniqueName(SpeciesUniqueNameChanged @event)
+  {
+    Update(@event);
+
+    UniqueName = @event.UniqueName.Value;
+  }
+
+  public void Update(SpeciesUpdated @event)
+  {
+    base.Update(@event);
+
+    if (@event.DisplayName is not null)
     {
-      regionalNumber.Number = number;
+      DisplayName = @event.DisplayName.Value?.Value;
+    }
+
+    if (@event.BaseFriendship is not null)
+    {
+      BaseFriendship = @event.BaseFriendship.Value;
+    }
+    if (@event.CatchRate is not null)
+    {
+      CatchRate = @event.CatchRate.Value;
+    }
+    if (@event.GrowthRate.HasValue)
+    {
+      GrowthRate = @event.GrowthRate.Value;
+    }
+
+    if (@event.EggCycles is not null)
+    {
+      EggCycles = @event.EggCycles.Value;
+    }
+    if (@event.EggGroups is not null)
+    {
+      SetEggGroups(@event.EggGroups);
+    }
+
+    if (@event.Url is not null)
+    {
+      Url = @event.Url.Value?.Value;
+    }
+    if (@event.Notes is not null)
+    {
+      Notes = @event.Notes.Value?.Value;
     }
   }
 
-  public void Update(SpeciesPublished published)
+  private void SetEggGroups(IEggGroups eggGroups)
   {
-    ContentLocale invariant = published.Invariant;
-    ContentLocale locale = published.Locale;
-
-    Update(published.Event);
-
-    Number = (int)invariant.FindNumberValue(Species.Number);
-    Category = PokemonConverter.Instance.ToCategory(invariant.FindSelectValue(Species.Category).Single());
-
-    UniqueName = locale.UniqueName.Value;
-    DisplayName = locale.DisplayName?.Value;
-
-    BaseFriendship = (byte)invariant.FindNumberValue(Species.BaseFriendship);
-    CatchRate = (byte)invariant.FindNumberValue(Species.CatchRate);
-    GrowthRate = PokemonConverter.Instance.ToGrowthRate(invariant.FindSelectValue(Species.GrowthRate).Single());
-
-    Url = locale.TryGetStringValue(Species.Url);
-    Notes = locale.TryGetStringValue(Species.Notes);
+    PrimaryEggGroup = eggGroups.Primary;
+    SecondaryEggGroup = eggGroups.Secondary;
   }
 
   public override string ToString() => $"{DisplayName ?? UniqueName} | {base.ToString()}";
