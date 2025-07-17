@@ -1,5 +1,6 @@
 ﻿using Krakenar.Contracts.Actors;
 using Krakenar.Contracts.Search;
+using Krakenar.Core;
 using Krakenar.Core.Actors;
 using Krakenar.EntityFrameworkCore.Relational;
 using Krakenar.EntityFrameworkCore.Relational.KrakenarDb;
@@ -25,7 +26,22 @@ internal class FormQuerier : IFormQuerier
     _sqlHelper = sqlHelper;
   }
 
-  public async Task<FormModel> ReadAsync(FormId id, CancellationToken cancellationToken)
+  public async Task<FormId?> FindIdAsync(UniqueName uniqueName, CancellationToken cancellationToken)
+  {
+    string uniqueNameNormalized = Helper.Normalize(uniqueName);
+
+    string? streamId = await _forms.AsNoTracking()
+      .Where(x => x.UniqueNameNormalized == uniqueNameNormalized)
+      .Select(x => x.StreamId)
+      .SingleOrDefaultAsync(cancellationToken);
+    return string.IsNullOrWhiteSpace(streamId) ? null : new FormId(streamId);
+  }
+
+  public async Task<FormModel> ReadAsync(Form form, CancellationToken cancellationToken)
+  {
+    return await ReadAsync(form.Id, cancellationToken) ?? throw new InvalidOperationException($"The form entity 'StreamId={form.Id}' was not found.");
+  }
+  public async Task<FormModel?> ReadAsync(FormId id, CancellationToken cancellationToken)
   {
     FormEntity form = await _forms.AsNoTracking()
       .Include(x => x.Abilities).ThenInclude(x => x.Ability)
@@ -53,13 +69,16 @@ internal class FormQuerier : IFormQuerier
     return form is null ? null : await MapAsync(form, cancellationToken);
   }
 
-  public async Task<SearchResults<FormModel>> SearchAsync(Guid varietyId, SearchFormsPayload payload, CancellationToken cancellationToken)
+  public async Task<SearchResults<FormModel>> SearchAsync(SearchFormsPayload payload, CancellationToken cancellationToken)
   {
     IQueryBuilder builder = _sqlHelper.Query(PokemonDb.Forms.Table).SelectAll(PokemonDb.Forms.Table)
-      .Where(PokemonDb.Forms.VarietyUid, Operators.IsEqualTo(varietyId))
       .ApplyIdFilter(PokemonDb.Forms.Id, payload.Ids);
     _sqlHelper.ApplyTextSearch(builder, payload.Search, PokemonDb.Forms.UniqueName, PokemonDb.Forms.DisplayName);
 
+    if (payload.VarietyId.HasValue)
+    {
+      builder.Where(PokemonDb.Forms.VarietyUid, Operators.IsEqualTo(payload.VarietyId.Value));
+    }
     if (payload.Type.HasValue)
     {
       builder.WhereOr(
@@ -94,8 +113,8 @@ internal class FormQuerier : IFormQuerier
           break;
         case FormSort.ExperienceYield:
           ordered = ordered is null
-            ? (sort.IsDescending ? query.OrderByDescending(x => x.ExperienceYield) : query.OrderBy(x => x.ExperienceYield))
-            : (sort.IsDescending ? ordered.ThenByDescending(x => x.ExperienceYield) : ordered.ThenBy(x => x.ExperienceYield));
+            ? (sort.IsDescending ? query.OrderByDescending(x => x.YieldExperience) : query.OrderBy(x => x.YieldExperience))
+            : (sort.IsDescending ? ordered.ThenByDescending(x => x.YieldExperience) : ordered.ThenBy(x => x.YieldExperience));
           break;
         case FormSort.Height:
           ordered = ordered is null

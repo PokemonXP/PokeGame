@@ -4,7 +4,6 @@ internal enum EntityKind
 {
   BattleItem,
   Berry,
-  Form,
   Item,
   Medicine,
   PokeBall,

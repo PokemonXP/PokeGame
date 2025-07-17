@@ -35,6 +35,7 @@ public static class DependencyInjectionExtensions
   private static IServiceCollection AddEventHandlers(this IServiceCollection services)
   {
     AbilityEvents.Register(services);
+    FormEvents.Register(services);
     MoveEvents.Register(services);
     RegionEvents.Register(services);
     SpeciesEvents.Register(services);
@@ -79,6 +80,7 @@ public static class DependencyInjectionExtensions
   {
     return services
       .AddScoped<IAbilityRepository, AbilityRepository>()
+      .AddScoped<IFormRepository, FormRepository>()
       .AddScoped<IItemRepository, ItemRepository>()
       .AddScoped<IMoveRepository, MoveRepository>()
       .AddScoped<IPokemonRepository, PokemonRepository>()

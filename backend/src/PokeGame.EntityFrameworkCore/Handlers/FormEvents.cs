@@ -1,112 +1,101 @@
-﻿using Krakenar.Core.Contents;
-using Krakenar.Core.Contents.Events;
-using MediatR;
+﻿using Krakenar.Core;
+using Krakenar.EntityFrameworkCore.Relational.Handlers;
 using Microsoft.EntityFrameworkCore;
-using PokeGame.Core;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using PokeGame.Core.Forms.Events;
 using PokeGame.EntityFrameworkCore.Entities;
-using PokeGame.Infrastructure.Data;
 
 namespace PokeGame.EntityFrameworkCore.Handlers;
 
-internal record FormPublished(ContentLocalePublished Event, ContentLocale Invariant, ContentLocale Locale) : INotification;
-
-internal class FormPublishedHandler : INotificationHandler<FormPublished>
+internal class FormEvents : IEventHandler<FormCreated>,
+  IEventHandler<FormDeleted>,
+  IEventHandler<FormUniqueNameChanged>,
+  IEventHandler<FormUpdated>
 {
-  private readonly PokemonContext _context;
-
-  public FormPublishedHandler(PokemonContext context)
+  public static void Register(IServiceCollection services)
   {
-    _context = context;
+    services.AddScoped<IEventHandler<FormCreated>, FormEvents>();
+    services.AddScoped<IEventHandler<FormDeleted>, FormEvents>();
+    services.AddScoped<IEventHandler<FormUniqueNameChanged>, FormEvents>();
+    services.AddScoped<IEventHandler<FormUpdated>, FormEvents>();
   }
 
-  public async Task Handle(FormPublished published, CancellationToken cancellationToken)
+  private readonly PokemonContext _context;
+  private readonly ILogger<FormEvents> _logger;
+
+  public FormEvents(PokemonContext context, ILogger<FormEvents> logger)
   {
-    string streamId = published.Event.StreamId.Value;
-    FormEntity? form = await _context.Forms
-      .Include(x => x.Abilities)
-      .SingleOrDefaultAsync(x => x.StreamId == streamId, cancellationToken);
+    _context = context;
+    _logger = logger;
+  }
 
-    if (form is null)
+  public async Task HandleAsync(FormCreated @event, CancellationToken cancellationToken)
+  {
+    FormEntity? form = await _context.Forms.AsNoTracking()
+      .SingleOrDefaultAsync(x => x.StreamId == @event.StreamId.Value, cancellationToken);
+    if (form is not null)
     {
-      Guid varietyId = published.Invariant.FindRelatedContentValue(Forms.Variety).Single();
-      VarietyEntity variety = await _context.Varieties.SingleOrDefaultAsync(x => x.Id == varietyId, cancellationToken)
-        ?? throw new InvalidOperationException($"The variety entity 'Id={varietyId}' was not found.");
-
-      form = new FormEntity(variety, published);
-
-      _context.Forms.Add(form);
-    }
-    else
-    {
-      form.Update(published);
+      _logger.LogUnexpectedVersion(@event, form);
+      return;
     }
 
-    IReadOnlyDictionary<AbilitySlot, AbilityEntity> abilities = await GetAbilitiesAsync(published.Invariant, cancellationToken);
-    foreach (FormAbilityEntity ability in form.Abilities)
-    {
-      if (!abilities.ContainsKey(ability.Slot))
-      {
-        _context.FormAbilities.Remove(ability);
-      }
-    }
-    foreach (KeyValuePair<AbilitySlot, AbilityEntity> ability in abilities)
-    {
-      form.SetAbility(ability.Key, ability.Value);
-    }
+    VarietyEntity variety = await _context.Varieties.Include(x => x.Species)
+      .SingleOrDefaultAsync(x => x.StreamId == @event.VarietyId.Value, cancellationToken)
+      ?? throw new InvalidOperationException($"The variety entity 'StreamId={@event.VarietyId}' was not found");
+
+    form = new FormEntity(variety, @event);
+    _context.Forms.Add(form);
 
     await _context.SaveChangesAsync(cancellationToken);
+    _logger.LogSuccess(@event);
   }
 
-  private async Task<IReadOnlyDictionary<AbilitySlot, AbilityEntity>> GetAbilitiesAsync(ContentLocale form, CancellationToken cancellationToken)
+  public async Task HandleAsync(FormDeleted @event, CancellationToken cancellationToken)
   {
-    Guid primaryId = form.FindRelatedContentValue(Forms.PrimaryAbility).Single();
-    Guid? secondaryId = form.TryGetRelatedContentValue(Forms.SecondaryAbility)?.Single();
-    Guid? hiddenId = form.TryGetRelatedContentValue(Forms.HiddenAbility)?.Single();
-    List<Guid> ids = new(capacity: 3)
+    FormEntity? form = await _context.Forms
+      .SingleOrDefaultAsync(x => x.StreamId == @event.StreamId.Value, cancellationToken);
+    if (form is null)
     {
-      primaryId
-    };
-    if (secondaryId.HasValue)
-    {
-      ids.Add(secondaryId.Value);
-    }
-    if (hiddenId.HasValue)
-    {
-      ids.Add(hiddenId.Value);
+      _logger.LogUnexpectedVersion(@event, form);
+      return;
     }
 
-    Dictionary<Guid, AbilityEntity> abilities = await _context.Abilities.Where(x => ids.Contains(x.Id)).ToDictionaryAsync(x => x.Id, x => x, cancellationToken);
-    Dictionary<AbilitySlot, AbilityEntity> slots = new(capacity: 3);
-    if (abilities.TryGetValue(primaryId, out AbilityEntity? primaryAbility))
-    {
-      slots[AbilitySlot.Primary] = primaryAbility;
-    }
-    if (secondaryId.HasValue && abilities.TryGetValue(secondaryId.Value, out AbilityEntity? secondaryAbility))
-    {
-      slots[AbilitySlot.Secondary] = secondaryAbility;
-    }
-    if (hiddenId.HasValue && abilities.TryGetValue(hiddenId.Value, out AbilityEntity? hiddenAbility))
-    {
-      slots[AbilitySlot.Hidden] = hiddenAbility;
-    }
-    return slots.AsReadOnly();
-  }
-}
+    _context.Forms.Remove(form);
 
-internal record FormUnpublished(ContentLocaleUnpublished Event) : INotification;
-
-internal class FormUnpublishedHandler : INotificationHandler<FormUnpublished>
-{
-  private readonly PokemonContext _context;
-
-  public FormUnpublishedHandler(PokemonContext context)
-  {
-    _context = context;
+    await _context.SaveChangesAsync(cancellationToken);
+    _logger.LogSuccess(@event);
   }
 
-  public async Task Handle(FormUnpublished unpublished, CancellationToken cancellationToken)
+  public async Task HandleAsync(FormUniqueNameChanged @event, CancellationToken cancellationToken)
   {
-    string streamId = unpublished.Event.StreamId.Value;
-    await _context.Forms.Where(x => x.StreamId == streamId).ExecuteDeleteAsync(cancellationToken);
+    FormEntity? form = await _context.Forms
+      .SingleOrDefaultAsync(x => x.StreamId == @event.StreamId.Value, cancellationToken);
+    if (form is null || (form.Version != (@event.Version - 1)))
+    {
+      _logger.LogUnexpectedVersion(@event, form);
+      return;
+    }
+
+    form.SetUniqueName(@event);
+
+    await _context.SaveChangesAsync(cancellationToken);
+    _logger.LogSuccess(@event);
+  }
+
+  public async Task HandleAsync(FormUpdated @event, CancellationToken cancellationToken)
+  {
+    FormEntity? form = await _context.Forms
+      .SingleOrDefaultAsync(x => x.StreamId == @event.StreamId.Value, cancellationToken);
+    if (form is null || (form.Version != (@event.Version - 1)))
+    {
+      _logger.LogUnexpectedVersion(@event, form);
+      return;
+    }
+
+    form.Update(@event);
+
+    await _context.SaveChangesAsync(cancellationToken);
+    _logger.LogSuccess(@event);
   }
 }

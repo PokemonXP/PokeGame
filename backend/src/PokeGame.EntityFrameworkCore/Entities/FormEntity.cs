@@ -1,16 +1,20 @@
-﻿using Krakenar.Core.Contents;
-using Krakenar.EntityFrameworkCore.Relational.KrakenarDb;
+﻿using Krakenar.EntityFrameworkCore.Relational.KrakenarDb;
 using PokeGame.Core;
-using PokeGame.EntityFrameworkCore.Handlers;
-using PokeGame.Infrastructure.Data;
+using PokeGame.Core.Forms;
+using PokeGame.Core.Forms.Events;
+using PokeGame.Core.Forms.Models;
 using AggregateEntity = Krakenar.EntityFrameworkCore.Relational.Entities.Aggregate;
 
 namespace PokeGame.EntityFrameworkCore.Entities;
 
-internal class FormEntity : AggregateEntity
+internal class FormEntity : AggregateEntity // TODO(fpion): Abilities on creation & update
 {
   public int FormId { get; private set; }
   public Guid Id { get; private set; }
+
+  public SpeciesEntity? Species { get; private set; }
+  public int SpeciesId { get; private set; }
+  public Guid SpeciesUid { get; private set; }
 
   public VarietyEntity? Variety { get; private set; }
   public int VarietyId { get; private set; }
@@ -35,25 +39,25 @@ internal class FormEntity : AggregateEntity
   public PokemonType PrimaryType { get; private set; }
   public PokemonType? SecondaryType { get; private set; }
 
-  public int HPBase { get; private set; }
-  public int AttackBase { get; private set; }
-  public int DefenseBase { get; private set; }
-  public int SpecialAttackBase { get; private set; }
-  public int SpecialDefenseBase { get; private set; }
-  public int SpeedBase { get; private set; }
+  public byte BaseHP { get; private set; }
+  public byte BaseAttack { get; private set; }
+  public byte BaseDefense { get; private set; }
+  public byte BaseSpecialAttack { get; private set; }
+  public byte BaseSpecialDefense { get; private set; }
+  public byte BaseSpeed { get; private set; }
 
-  public int ExperienceYield { get; private set; }
-  public int HPYield { get; private set; }
-  public int AttackYield { get; private set; }
-  public int DefenseYield { get; private set; }
-  public int SpecialAttackYield { get; private set; }
-  public int SpecialDefenseYield { get; private set; }
-  public int SpeedYield { get; private set; }
+  public int YieldExperience { get; private set; }
+  public int YieldHP { get; private set; }
+  public int YieldAttack { get; private set; }
+  public int YieldDefense { get; private set; }
+  public int YieldSpecialAttack { get; private set; }
+  public int YieldSpecialDefense { get; private set; }
+  public int YieldSpeed { get; private set; }
 
-  public string DefaultSprite { get; private set; } = string.Empty;
-  public string DefaultSpriteShiny { get; private set; } = string.Empty;
-  public string? AlternativeSprite { get; private set; }
-  public string? AlternativeSpriteShiny { get; private set; }
+  public string SpriteDefault { get; private set; } = string.Empty;
+  public string SpriteShiny { get; private set; } = string.Empty;
+  public string? SpriteAlternative { get; private set; }
+  public string? SpriteAlternativeShiny { get; private set; }
 
   public string? Url { get; private set; }
   public string? Notes { get; private set; }
@@ -61,80 +65,140 @@ internal class FormEntity : AggregateEntity
   public List<FormAbilityEntity> Abilities { get; private set; } = [];
   public List<PokemonEntity> Pokemon { get; private set; } = [];
 
-  public FormEntity(VarietyEntity variety, FormPublished published) : base(published.Event)
+  public FormEntity(VarietyEntity variety, FormCreated e) : base(e)
   {
-    Id = new ContentId(published.Event.StreamId).EntityId;
+    Id = new FormId(e.StreamId).ToGuid();
+
+    SpeciesEntity species = variety.Species ?? throw new ArgumentException("The species is required.", nameof(variety));
+    Species = species;
+    SpeciesId = species.SpeciesId;
+    SpeciesUid = species.Id;
 
     Variety = variety;
     VarietyId = variety.VarietyId;
     VarietyUid = variety.Id;
+    IsDefault = e.IsDefault;
 
-    Update(published);
+    UniqueName = e.UniqueName.Value;
+
+    IsBattleOnly = e.IsBattleOnly;
+    IsMega = e.IsMega;
+
+    Height = e.Height.Value;
+    Weight = e.Weight.Value;
+
+    SetTypes(e.Types);
+    SetBaseStatistics(e.BaseStatistics);
+    SetYield(e.Yield);
+    SetSprites(e.Sprites);
   }
 
   private FormEntity() : base()
   {
   }
 
-  public void SetAbility(AbilitySlot slot, AbilityEntity ability)
+  public void SetUniqueName(FormUniqueNameChanged @event)
   {
-    FormAbilityEntity? entity = Abilities.SingleOrDefault(a => a.Slot == slot);
-    if (entity is null)
+    Update(@event);
+
+    UniqueName = @event.UniqueName.Value;
+  }
+
+  public void Update(FormUpdated @event)
+  {
+    base.Update(@event);
+
+    if (@event.DisplayName is not null)
     {
-      entity = new FormAbilityEntity(this, ability, slot);
-      Abilities.Add(entity);
+      DisplayName = @event.DisplayName.Value?.Value;
     }
-    else
+    if (@event.Description is not null)
     {
-      entity.SetAbility(ability);
+      Description = @event.Description.Value?.Value;
+    }
+
+    if (@event.IsBattleOnly.HasValue)
+    {
+      IsBattleOnly = @event.IsBattleOnly.Value;
+    }
+    if (@event.IsMega.HasValue)
+    {
+      IsMega = @event.IsMega.Value;
+    }
+
+    if (@event.Height is not null)
+    {
+      Height = @event.Height.Value;
+    }
+    if (@event.Weight is not null)
+    {
+      Weight = @event.Weight.Value;
+    }
+
+    if (@event.Types is not null)
+    {
+      SetTypes(@event.Types);
+    }
+    if (@event.BaseStatistics is not null)
+    {
+      SetBaseStatistics(@event.BaseStatistics);
+    }
+    if (@event.Yield is not null)
+    {
+      SetYield(@event.Yield);
+    }
+    if (@event.Sprites is not null)
+    {
+      SetSprites(@event.Sprites);
+    }
+
+    if (@event.Url is not null)
+    {
+      Url = @event.Url.Value?.Value;
+    }
+    if (@event.Notes is not null)
+    {
+      Notes = @event.Notes.Value?.Value;
     }
   }
 
-  public void Update(FormPublished published)
+  public FormTypesModel GetTypes() => new(PrimaryType, SecondaryType);
+  private void SetTypes(IFormTypes types)
   {
-    ContentLocale invariant = published.Invariant;
-    ContentLocale locale = published.Locale;
+    PrimaryType = types.Primary;
+    SecondaryType = types.Secondary;
+  }
 
-    Update(published.Event);
+  public BaseStatisticsModel GetBaseStatistics() => new(BaseHP, BaseAttack, BaseDefense, BaseSpecialAttack, BaseSpecialDefense, BaseSpeed);
+  private void SetBaseStatistics(IBaseStatistics @base)
+  {
+    BaseHP = @base.HP;
+    BaseAttack = @base.Attack;
+    BaseDefense = @base.Defense;
+    BaseSpecialAttack = @base.SpecialAttack;
+    BaseSpecialDefense = @base.SpecialDefense;
+    BaseSpeed = @base.Speed;
+  }
 
-    IsDefault = invariant.FindBooleanValue(Forms.IsDefault);
+  public YieldModel GetYield() => new(YieldExperience, YieldHP, YieldAttack, YieldDefense, YieldSpecialAttack, YieldSpecialDefense, YieldSpeed);
+  private void SetYield(IYield yield)
+  {
+    YieldExperience = yield.Experience;
+    YieldHP = yield.HP;
+    YieldAttack = yield.Attack;
+    YieldDefense = yield.Defense;
+    YieldSpecialAttack = yield.SpecialAttack;
+    YieldSpecialDefense = yield.SpecialDefense;
+    YieldSpeed = yield.Speed;
+  }
 
-    UniqueName = locale.UniqueName.Value;
-    DisplayName = locale.DisplayName?.Value;
-    Description = locale.Description?.Value;
-
-    IsBattleOnly = invariant.FindBooleanValue(Forms.IsBattleOnly);
-    IsMega = invariant.FindBooleanValue(Forms.IsMega);
-
-    Height = (int)invariant.FindNumberValue(Forms.Height);
-    Weight = (int)invariant.FindNumberValue(Forms.Weight);
-
-    PrimaryType = PokemonConverter.Instance.ToType(invariant.FindSelectValue(Forms.PrimaryType).Single());
-    string? secondaryType = invariant.TryGetSelectValue(Forms.SecondaryType)?.Single();
-    SecondaryType = secondaryType is null ? null : PokemonConverter.Instance.ToType(secondaryType);
-
-    HPBase = (int)invariant.FindNumberValue(Forms.HPBase);
-    AttackBase = (int)invariant.FindNumberValue(Forms.AttackBase);
-    DefenseBase = (int)invariant.FindNumberValue(Forms.DefenseBase);
-    SpecialAttackBase = (int)invariant.FindNumberValue(Forms.SpecialAttackBase);
-    SpecialDefenseBase = (int)invariant.FindNumberValue(Forms.SpecialDefenseBase);
-    SpeedBase = (int)invariant.FindNumberValue(Forms.SpeedBase);
-
-    ExperienceYield = (int)invariant.FindNumberValue(Forms.ExperienceYield);
-    HPYield = (int)invariant.GetNumberValue(Forms.HPYield);
-    AttackYield = (int)invariant.GetNumberValue(Forms.AttackYield);
-    DefenseYield = (int)invariant.GetNumberValue(Forms.DefenseYield);
-    SpecialAttackYield = (int)invariant.GetNumberValue(Forms.SpecialAttackYield);
-    SpecialDefenseYield = (int)invariant.GetNumberValue(Forms.SpecialDefenseYield);
-    SpeedYield = (int)invariant.GetNumberValue(Forms.SpeedYield);
-
-    DefaultSprite = invariant.FindStringValue(Forms.DefaultSprite);
-    DefaultSpriteShiny = invariant.FindStringValue(Forms.DefaultSpriteShiny);
-    AlternativeSprite = invariant.TryGetStringValue(Forms.AlternativeSprite);
-    AlternativeSpriteShiny = invariant.TryGetStringValue(Forms.AlternativeSpriteShiny);
-
-    Url = locale.TryGetStringValue(Forms.Url);
-    Notes = locale.TryGetStringValue(Forms.Notes);
+  public SpritesModel GetSprites() => new(SpriteDefault, SpriteShiny, SpriteAlternative, SpriteAlternativeShiny);
+  private void SetSprites(Sprites sprites)
+  {
+    SpriteDefault = sprites.Default.Value;
+    SpriteShiny = sprites.Shiny.Value;
+    SpriteAlternative = sprites.Alternative?.Value;
+    SpriteAlternativeShiny = sprites.AlternativeShiny?.Value;
   }
 
   public override string ToString() => $"{DisplayName ?? UniqueName} | {base.ToString()}";
