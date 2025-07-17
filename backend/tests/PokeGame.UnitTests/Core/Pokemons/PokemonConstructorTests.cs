@@ -20,8 +20,7 @@ public class PokemonConstructorTests
 
   public PokemonConstructorTests()
   {
-    _species = new PokemonSpecies(number: 499, new UniqueName(_uniqueNameSettings, "pignite"),
-      new CatchRate(45), PokemonCategory.Standard, new Friendship(70), GrowthRate.MediumSlow);
+    _species = new PokemonSpecies(new Number(499), PokemonCategory.Standard, new UniqueName(_uniqueNameSettings, "pignite"), new Friendship(70), new CatchRate(45), GrowthRate.MediumSlow);
 
     _variety = new Variety(_species, _species.UniqueName, isDefault: true, new GenderRatio(7));
 
@@ -148,8 +147,7 @@ public class PokemonConstructorTests
   [Fact(DisplayName = "It should throw ArgumentException when the form is not valid.")]
   public void Given_InvalidForm_When_ctor_Then_ArgumentException()
   {
-    PokemonSpecies species = new(number: 498, new UniqueName(_uniqueNameSettings, "tepig"),
-      new CatchRate(45), PokemonCategory.Standard, new Friendship(70), GrowthRate.MediumSlow);
+    PokemonSpecies species = new(new Number(498), PokemonCategory.Standard, new UniqueName(_uniqueNameSettings, "tepig"), new Friendship(70), new CatchRate(45), GrowthRate.MediumSlow);
     Variety variety = new(species, species.UniqueName, isDefault: true, new GenderRatio(7));
     Form form = new(variety, variety.UniqueName, new Types(PokemonType.Fire), _form.Abilities, new BaseStatistics(65, 63, 45, 45, 45, 45), isDefault: true);
 
@@ -161,7 +159,7 @@ public class PokemonConstructorTests
   [Fact(DisplayName = "It should throw ArgumentException when the gender should be unknown.")]
   public void Given_GenderShouldBeUnknown_When_ctor_Then_ArgumentException()
   {
-    PokemonSpecies species = new(number: 132, new UniqueName(_uniqueNameSettings, "ditto"), new CatchRate(35));
+    PokemonSpecies species = new(new Number(132), PokemonCategory.Standard, new UniqueName(_uniqueNameSettings, "ditto"));
     Variety variety = new(species, species.UniqueName, isDefault: true);
 
     Ability limber = new(new UniqueName(_uniqueNameSettings, "limber"));
@@ -177,8 +175,7 @@ public class PokemonConstructorTests
   [Fact(DisplayName = "It should throw ArgumentException when the variety is not valid.")]
   public void Given_InvalidVariety_When_ctor_Then_ArgumentException()
   {
-    PokemonSpecies species = new(number: 498, new UniqueName(_uniqueNameSettings, "tepig"),
-      new CatchRate(45), PokemonCategory.Standard, new Friendship(70), GrowthRate.MediumSlow);
+    PokemonSpecies species = new(new Number(498), PokemonCategory.Standard, new UniqueName(_uniqueNameSettings, "tepig"), new Friendship(70), new CatchRate(45), GrowthRate.MediumSlow);
     Variety variety = new(species, species.UniqueName, isDefault: true, new GenderRatio(7));
 
     var exception = Assert.Throws<ArgumentException>(
@@ -225,7 +222,7 @@ public class PokemonConstructorTests
   [Fact(DisplayName = "It should throw ArgumentOutOfRangeException when the gender is not Female.")]
   public void Given_GenderNotFemale_When_ctor_Then_ArgumentOutOfRangeException()
   {
-    PokemonSpecies species = new(number: 241, new UniqueName(_uniqueNameSettings, "miltank"), new CatchRate(45));
+    PokemonSpecies species = new(new Number(241), PokemonCategory.Standard, new UniqueName(_uniqueNameSettings, "miltank"));
     Variety variety = new(species, species.UniqueName, isDefault: true, new GenderRatio(0));
 
     Ability thickFat = new(new UniqueName(_uniqueNameSettings, "thick-fat"));
@@ -242,7 +239,7 @@ public class PokemonConstructorTests
   [Fact(DisplayName = "It should throw ArgumentOutOfRangeException when the gender is not Male.")]
   public void Given_GenderNotMale_When_ctor_Then_ArgumentOutOfRangeException()
   {
-    PokemonSpecies species = new(number: 128, new UniqueName(_uniqueNameSettings, "tauros"), new CatchRate(45));
+    PokemonSpecies species = new(new Number(128), PokemonCategory.Standard, new UniqueName(_uniqueNameSettings, "tauros"));
     Variety variety = new(species, species.UniqueName, isDefault: true, new GenderRatio(8));
 
     Ability intimidate = new(new UniqueName(_uniqueNameSettings, "intimidate"));

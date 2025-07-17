@@ -1,109 +1,127 @@
-﻿using Krakenar.Core.Contents;
-using Krakenar.Core.Contents.Events;
-using Krakenar.EntityFrameworkCore.Relational.KrakenarDb;
-using MediatR;
+﻿using Krakenar.Core;
+using Krakenar.EntityFrameworkCore.Relational.Handlers;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using PokeGame.Core.Species.Events;
 using PokeGame.EntityFrameworkCore.Entities;
-using PokeGame.Infrastructure.Data;
 
 namespace PokeGame.EntityFrameworkCore.Handlers;
 
-internal record SpeciesPublished(ContentLocalePublished Event, ContentLocale Invariant, ContentLocale Locale) : INotification;
-
-internal class SpeciesPublishedHandler : INotificationHandler<SpeciesPublished>
+internal class SpeciesEvents : IEventHandler<SpeciesCreated>,
+  IEventHandler<SpeciesDeleted>,
+  IEventHandler<SpeciesRegionalNumberChanged>,
+  IEventHandler<SpeciesUniqueNameChanged>,
+  IEventHandler<SpeciesUpdated>
 {
-  private readonly PokemonContext _context;
-
-  public SpeciesPublishedHandler(PokemonContext context)
+  public static void Register(IServiceCollection services)
   {
-    _context = context;
+    services.AddScoped<IEventHandler<SpeciesCreated>, SpeciesEvents>();
+    services.AddScoped<IEventHandler<SpeciesDeleted>, SpeciesEvents>();
+    services.AddScoped<IEventHandler<SpeciesRegionalNumberChanged>, SpeciesEvents>();
+    services.AddScoped<IEventHandler<SpeciesUniqueNameChanged>, SpeciesEvents>();
+    services.AddScoped<IEventHandler<SpeciesUpdated>, SpeciesEvents>();
   }
 
-  public async Task Handle(SpeciesPublished published, CancellationToken cancellationToken)
-  {
-    string streamId = published.Event.StreamId.Value;
-    SpeciesEntity? species = await _context.Species
-      .Include(x => x.RegionalNumbers)
-      .SingleOrDefaultAsync(x => x.StreamId == streamId, cancellationToken);
+  private readonly PokemonContext _context;
+  private readonly ILogger<SpeciesEvents> _logger;
 
+  public SpeciesEvents(PokemonContext context, ILogger<SpeciesEvents> logger)
+  {
+    _context = context;
+    _logger = logger;
+  }
+
+  public async Task HandleAsync(SpeciesCreated @event, CancellationToken cancellationToken)
+  {
+    SpeciesEntity? species = await _context.Species.AsNoTracking()
+      .SingleOrDefaultAsync(x => x.StreamId == @event.StreamId.Value, cancellationToken);
+    if (species is not null)
+    {
+      _logger.LogUnexpectedVersion(@event, species);
+      return;
+    }
+
+    species = new SpeciesEntity(@event);
+    _context.Species.Add(species);
+
+    await _context.SaveChangesAsync(cancellationToken);
+    _logger.LogSuccess(@event);
+  }
+
+  public async Task HandleAsync(SpeciesDeleted @event, CancellationToken cancellationToken)
+  {
+    SpeciesEntity? species = await _context.Species
+      .SingleOrDefaultAsync(x => x.StreamId == @event.StreamId.Value, cancellationToken);
     if (species is null)
     {
-      species = new SpeciesEntity(published);
-
-      _context.Species.Add(species);
-    }
-    else
-    {
-      species.Update(published);
+      _logger.LogUnexpectedVersion(@event, species);
+      return;
     }
 
-    IReadOnlyDictionary<RegionEntity, int> regionalNumbers = await GetRegionalNumbersAsync(published.Invariant, cancellationToken);
-    HashSet<int> regionIds = regionalNumbers.Select(x => x.Key.RegionId).ToHashSet();
-    foreach (RegionalNumberEntity regionalNumber in species.RegionalNumbers)
+    _context.Species.Remove(species);
+
+    await _context.SaveChangesAsync(cancellationToken);
+    _logger.LogSuccess(@event);
+  }
+
+  public async Task HandleAsync(SpeciesRegionalNumberChanged @event, CancellationToken cancellationToken)
+  {
+    SpeciesEntity? species = await _context.Species
+      .Include(x => x.RegionalNumbers).ThenInclude(x => x.Region)
+      .SingleOrDefaultAsync(x => x.StreamId == @event.StreamId.Value, cancellationToken);
+    if (species is null || (species.Version != (@event.Version - 1)))
     {
-      if (!regionIds.Contains(regionalNumber.RegionId))
-      {
-        _context.RegionalNumbers.Remove(regionalNumber);
-      }
+      _logger.LogUnexpectedVersion(@event, species);
+      return;
     }
-    foreach (KeyValuePair<RegionEntity, int> regionalNumber in regionalNumbers)
+
+    RegionEntity? region = null;
+    if (@event.Number is not null)
     {
-      species.SetRegionalNumber(regionalNumber.Key, regionalNumber.Value);
+      region = await _context.Regions.SingleOrDefaultAsync(x => x.StreamId == @event.RegionId.Value, cancellationToken)
+        ?? throw new InvalidOperationException($"The region entity 'StreamId={@event.RegionId}' was not found.");
+    }
+
+    RegionalNumberEntity? regionalNumber = species.SetRegionalNumber(region, @event);
+    if (regionalNumber is not null && @event.Number is null)
+    {
+      _context.RegionalNumbers.Remove(regionalNumber);
     }
 
     await _context.SaveChangesAsync(cancellationToken);
+    _logger.LogSuccess(@event);
   }
 
-  private async Task<IReadOnlyDictionary<RegionEntity, int>> GetRegionalNumbersAsync(ContentLocale species, CancellationToken cancellationToken)
+  public async Task HandleAsync(SpeciesUniqueNameChanged @event, CancellationToken cancellationToken)
   {
-    string? fieldValue = species.TryGetStringValue(Species.RegionalNumbers);
-    if (string.IsNullOrWhiteSpace(fieldValue))
+    SpeciesEntity? species = await _context.Species
+      .SingleOrDefaultAsync(x => x.StreamId == @event.StreamId.Value, cancellationToken);
+    if (species is null || (species.Version != (@event.Version - 1)))
     {
-      return new Dictionary<RegionEntity, int>();
-    }
-    string[] fieldValues = fieldValue.Split('|');
-
-    RegionEntity[] regions = await _context.Regions.ToArrayAsync(cancellationToken);
-    int capacity = regions.Length;
-    Dictionary<Guid, RegionEntity> regionsById = new(capacity);
-    Dictionary<string, RegionEntity> regionsByName = new(capacity);
-    foreach (RegionEntity region in regions)
-    {
-      regionsById[region.Id] = region;
-      regionsByName[region.UniqueNameNormalized] = region;
+      _logger.LogUnexpectedVersion(@event, species);
+      return;
     }
 
-    Dictionary<RegionEntity, int> regionalNumbers = new(capacity);
-    foreach (string value in fieldValues)
-    {
-      string[] values = value.Split(':');
-      if (values.Length == 2 && int.TryParse(values.Last(), out int number))
-      {
-        if ((Guid.TryParse(values.First(), out Guid id) && regionsById.TryGetValue(id, out RegionEntity? region))
-          || regionsByName.TryGetValue(Helper.Normalize(values.First()), out region))
-        {
-          regionalNumbers[region] = number;
-        }
-      }
-    }
-    return regionalNumbers.AsReadOnly();
-  }
-}
+    species.SetUniqueName(@event);
 
-internal record SpeciesUnpublished(ContentLocaleUnpublished Event) : INotification;
-
-internal class SpeciesUnpublishedHandler : INotificationHandler<SpeciesUnpublished>
-{
-  private readonly PokemonContext _context;
-
-  public SpeciesUnpublishedHandler(PokemonContext context)
-  {
-    _context = context;
+    await _context.SaveChangesAsync(cancellationToken);
+    _logger.LogSuccess(@event);
   }
 
-  public async Task Handle(SpeciesUnpublished unpublished, CancellationToken cancellationToken)
+  public async Task HandleAsync(SpeciesUpdated @event, CancellationToken cancellationToken)
   {
-    string streamId = unpublished.Event.StreamId.Value;
-    await _context.Species.Where(x => x.StreamId == streamId).ExecuteDeleteAsync(cancellationToken);
+    SpeciesEntity? species = await _context.Species
+      .SingleOrDefaultAsync(x => x.StreamId == @event.StreamId.Value, cancellationToken);
+    if (species is null || (species.Version != (@event.Version - 1)))
+    {
+      _logger.LogUnexpectedVersion(@event, species);
+      return;
+    }
+
+    species.Update(@event);
+
+    await _context.SaveChangesAsync(cancellationToken);
+    _logger.LogSuccess(@event);
   }
 }

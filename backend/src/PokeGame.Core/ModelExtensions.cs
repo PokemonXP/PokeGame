@@ -75,12 +75,14 @@ internal static class ModelExtensions
   public static PokemonSpecies ToPokemonSpecies(this SpeciesModel model)
   {
     PokemonSpecies species = new(
-      model.Number,
-      new UniqueName(new UniqueNameSettings(), model.UniqueName),
-      new CatchRate(model.CatchRate),
+      new Number(model.Number),
       model.Category,
+      new UniqueName(new UniqueNameSettings(), model.UniqueName),
       new Friendship(model.BaseFriendship),
+      new CatchRate(model.CatchRate),
       model.GrowthRate,
+      eggCycles: null,
+      eggGroups: null,
       actorId: null,
       new SpeciesId(model.Id))
     {

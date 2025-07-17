@@ -15,11 +15,14 @@ public class SpeciesModel : AggregateModel
   public byte CatchRate { get; set; }
   public GrowthRate GrowthRate { get; set; }
 
-  public List<RegionalNumberModel> RegionalNumbers { get; set; } = [];
-  public List<VarietyModel> Varieties { get; set; } = [];
+  public byte EggCycles { get; set; }
+  public EggGroupsModel EggGroups { get; set; } = new();
 
   public string? Url { get; set; }
   public string? Notes { get; set; }
+
+  public List<RegionalNumberModel> RegionalNumbers { get; set; } = [];
+  public List<VarietyModel> Varieties { get; set; } = [];
 
   public override string ToString() => $"{DisplayName ?? UniqueName} | {base.ToString()}";
 }

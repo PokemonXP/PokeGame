@@ -1,6 +1,6 @@
-﻿namespace PokeGame.Seeding.Game.Payloads;
+﻿namespace PokeGame.Core.Species.Models;
 
-internal record RegionalNumberPayload
+public record RegionalNumberPayload
 {
   public string Region { get; set; } = string.Empty;
   public int Number { get; set; }

@@ -8,7 +8,6 @@ internal enum EntityKind
   Item,
   Medicine,
   PokeBall,
-  Species,
   TechnicalMachine,
   Variety
 }

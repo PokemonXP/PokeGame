@@ -23,7 +23,7 @@ internal static class CsvHelper
     csv.Context.RegisterClassMap<SeedMovePayload.Map>();
     csv.Context.RegisterClassMap<PokeBallPayload.Map>();
     csv.Context.RegisterClassMap<SeedRegionPayload.Map>();
-    csv.Context.RegisterClassMap<SpeciesPayload.Map>();
+    csv.Context.RegisterClassMap<SeedSpeciesPayload.Map>();
     csv.Context.RegisterClassMap<TechnicalMachinePayload.Map>();
     csv.Context.RegisterClassMap<SeedTrainerPayload.Map>();
     csv.Context.RegisterClassMap<VarietyPayload.Map>();

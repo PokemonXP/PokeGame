@@ -1019,6 +1019,9 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
 
+                    b.Property<byte>("EggCycles")
+                        .HasColumnType("smallint");
+
                     b.Property<string>("GrowthRate")
                         .IsRequired()
                         .HasMaxLength(255)
@@ -1032,6 +1035,15 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
 
                     b.Property<int>("Number")
                         .HasColumnType("integer");
+
+                    b.Property<string>("PrimaryEggGroup")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<string>("SecondaryEggGroup")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
                     b.Property<string>("StreamId")
                         .IsRequired()
@@ -1076,6 +1088,8 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
 
                     b.HasIndex("DisplayName");
 
+                    b.HasIndex("EggCycles");
+
                     b.HasIndex("GrowthRate");
 
                     b.HasIndex("Id")
@@ -1083,6 +1097,10 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
 
                     b.HasIndex("Number")
                         .IsUnique();
+
+                    b.HasIndex("PrimaryEggGroup");
+
+                    b.HasIndex("SecondaryEggGroup");
 
                     b.HasIndex("StreamId")
                         .IsUnique();

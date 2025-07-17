@@ -1,32 +1,14 @@
 ﻿using CsvHelper.Configuration;
 using PokeGame.Core.Species;
+using PokeGame.Core.Species.Models;
 
 namespace PokeGame.Seeding.Game.Payloads;
 
-internal class SpeciesPayload
+internal record SeedSpeciesPayload : CreateOrReplaceSpeciesPayload
 {
   public Guid Id { get; set; }
 
-  public string UniqueName { get; set; } = string.Empty;
-  public string? DisplayName { get; set; }
-
-  public int Number { get; set; }
-  public PokemonCategory Category { get; set; }
-
-  public int BaseFriendship { get; set; }
-  public int CatchRate { get; set; }
-  public GrowthRate GrowthRate { get; set; }
-
-  public List<RegionalNumberPayload> RegionalNumbers { get; set; } = [];
-
-  public string? Url { get; set; }
-  public string? Notes { get; set; }
-
-  public override bool Equals(object? obj) => obj is SpeciesPayload species && species.Id == Id;
-  public override int GetHashCode() => Id.GetHashCode();
-  public override string ToString() => $"{DisplayName ?? UniqueName} | {GetType()} (Id={Id})";
-
-  public class Map : ClassMap<SpeciesPayload>
+  public class Map : ClassMap<SeedSpeciesPayload>
   {
     public Map()
     {
@@ -42,9 +24,12 @@ internal class SpeciesPayload
       Map(x => x.CatchRate).Index(6).Default(0);
       Map(x => x.GrowthRate).Index(7).Default(default(GrowthRate));
 
+      Map(x => x.EggCycles).Index(8).Default(0);
+      References<EggGroupsMap>(x => x.EggGroups);
+
       Map(x => x.RegionalNumbers).Convert(args =>
       {
-        string? values = args.Row.GetField(8);
+        string? values = args.Row.GetField(11);
         return string.IsNullOrWhiteSpace(values) ? [] : values.Split('|').Select(value =>
         {
           string[] values = value.Split(':');
@@ -61,8 +46,17 @@ internal class SpeciesPayload
         }).ToList();
       });
 
-      Map(x => x.Url).Index(9);
-      Map(x => x.Notes).Index(10);
+      Map(x => x.Url).Index(12);
+      Map(x => x.Notes).Index(13);
+    }
+  }
+
+  private class EggGroupsMap : ClassMap<EggGroupsModel>
+  {
+    public EggGroupsMap()
+    {
+      Map(x => x.Primary).Index(9).Default(default(EggGroup));
+      Map(x => x.Secondary).Index(10);
     }
   }
 }

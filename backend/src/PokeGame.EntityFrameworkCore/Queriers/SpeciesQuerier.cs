@@ -1,11 +1,13 @@
 ﻿using Krakenar.Contracts.Actors;
 using Krakenar.Contracts.Search;
+using Krakenar.Core;
 using Krakenar.Core.Actors;
 using Krakenar.EntityFrameworkCore.Relational;
 using Krakenar.EntityFrameworkCore.Relational.KrakenarDb;
 using Logitar.Data;
 using Logitar.EventSourcing;
 using Microsoft.EntityFrameworkCore;
+using PokeGame.Core.Regions;
 using PokeGame.Core.Species;
 using PokeGame.Core.Species.Models;
 using PokeGame.EntityFrameworkCore.Entities;
@@ -25,6 +27,46 @@ internal class SpeciesQuerier : ISpeciesQuerier
     _sqlHelper = sqlHelper;
   }
 
+  public async Task<SpeciesId?> FindIdAsync(Number number, RegionId? regionId, CancellationToken cancellationToken)
+  {
+    string? streamId = null;
+    if (regionId.HasValue)
+    {
+      streamId = await _species.AsNoTracking()
+        .Include(x => x.RegionalNumbers).ThenInclude(x => x.Region)
+        .Where(x => x.RegionalNumbers.Any(r => r.Region!.StreamId == regionId.Value.Value && r.Number == number.Value))
+        .Select(x => x.StreamId)
+        .SingleOrDefaultAsync(cancellationToken);
+    }
+    else
+    {
+      streamId = await _species.AsNoTracking()
+        .Where(x => x.Number == number.Value)
+        .Select(x => x.StreamId)
+        .SingleOrDefaultAsync(cancellationToken);
+    }
+    return string.IsNullOrWhiteSpace(streamId) ? null : new SpeciesId(streamId);
+  }
+  public async Task<SpeciesId?> FindIdAsync(UniqueName uniqueName, CancellationToken cancellationToken)
+  {
+    string uniqueNameNormalized = Helper.Normalize(uniqueName);
+
+    string? streamId = await _species.AsNoTracking()
+      .Where(x => x.UniqueNameNormalized == uniqueNameNormalized)
+      .Select(x => x.StreamId)
+      .SingleOrDefaultAsync(cancellationToken);
+    return string.IsNullOrWhiteSpace(streamId) ? null : new SpeciesId(streamId);
+  }
+
+  public async Task<SpeciesModel> ReadAsync(PokemonSpecies species, CancellationToken cancellationToken)
+  {
+    return await ReadAsync(species.Id, cancellationToken) ?? throw new InvalidOperationException($"The species entity 'StreamId={species.Id}' was not found.");
+  }
+  public async Task<SpeciesModel?> ReadAsync(SpeciesId id, CancellationToken cancellationToken)
+  {
+    SpeciesEntity? species = await _species.AsNoTracking().SingleOrDefaultAsync(x => x.StreamId == id.Value, cancellationToken);
+    return species is null ? null : await MapAsync(species, cancellationToken);
+  }
   public async Task<SpeciesModel?> ReadAsync(Guid id, CancellationToken cancellationToken)
   {
     SpeciesEntity? species = await _species.AsNoTracking()
@@ -60,6 +102,12 @@ internal class SpeciesQuerier : ISpeciesQuerier
     if (payload.Category.HasValue)
     {
       builder.Where(PokemonDb.Species.Category, Operators.IsEqualTo(payload.Category.Value.ToString()));
+    }
+    if (payload.EggGroup.HasValue)
+    {
+      builder.WhereOr(
+        new OperatorCondition(PokemonDb.Species.PrimaryEggGroup, Operators.IsEqualTo(payload.EggGroup.Value.ToString())),
+        new OperatorCondition(PokemonDb.Species.SecondaryEggGroup, Operators.IsEqualTo(payload.EggGroup.Value.ToString())));
     }
     if (payload.GrowthRate.HasValue)
     {
@@ -99,6 +147,11 @@ internal class SpeciesQuerier : ISpeciesQuerier
           ordered = ordered is null
             ? (sort.IsDescending ? query.OrderByDescending(x => x.DisplayName) : query.OrderBy(x => x.DisplayName))
             : (sort.IsDescending ? ordered.ThenByDescending(x => x.DisplayName) : ordered.ThenBy(x => x.DisplayName));
+          break;
+        case SpeciesSort.EggCycles:
+          ordered = ordered is null
+            ? (sort.IsDescending ? query.OrderByDescending(x => x.EggCycles) : query.OrderBy(x => x.EggCycles))
+            : (sort.IsDescending ? ordered.ThenByDescending(x => x.EggCycles) : ordered.ThenBy(x => x.EggCycles));
           break;
         case SpeciesSort.Number:
           ordered = ordered is null

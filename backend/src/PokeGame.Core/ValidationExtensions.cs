@@ -10,6 +10,16 @@ public static class ValidationExtensions
     return ruleBuilder.GreaterThan((byte)0).LessThanOrEqualTo((byte)100);
   }
 
+  public static IRuleBuilderOptions<T, byte> CatchRate<T>(this IRuleBuilder<T, byte> ruleBuilder)
+  {
+    return ruleBuilder.GreaterThan((byte)0);
+  }
+
+  public static IRuleBuilderOptions<T, byte> EggCycles<T>(this IRuleBuilder<T, byte> ruleBuilder)
+  {
+    return ruleBuilder.GreaterThan((byte)0);
+  }
+
   public static IRuleBuilderOptions<T, int> GenderRatio<T>(this IRuleBuilder<T, int> ruleBuilder)
   {
     return ruleBuilder.InclusiveBetween(Varieties.GenderRatio.MinimumValue, Varieties.GenderRatio.MaximumValue);
@@ -38,6 +48,11 @@ public static class ValidationExtensions
   public static IRuleBuilderOptions<T, string> Notes<T>(this IRuleBuilder<T, string> ruleBuilder)
   {
     return ruleBuilder.NotEmpty();
+  }
+
+  public static IRuleBuilderOptions<T, int> Number<T>(this IRuleBuilder<T, int> ruleBuilder)
+  {
+    return ruleBuilder.GreaterThan(0);
   }
 
   public static IRuleBuilderOptions<T, string> PokemonNature<T>(this IRuleBuilder<T, string> ruleBuilder)
