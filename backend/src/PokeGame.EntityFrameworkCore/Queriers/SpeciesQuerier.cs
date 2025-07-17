@@ -1,5 +1,6 @@
 ﻿using Krakenar.Contracts.Actors;
 using Krakenar.Contracts.Search;
+using Krakenar.Core;
 using Krakenar.Core.Actors;
 using Krakenar.EntityFrameworkCore.Relational;
 using Krakenar.EntityFrameworkCore.Relational.KrakenarDb;
@@ -25,6 +26,26 @@ internal class SpeciesQuerier : ISpeciesQuerier
     _sqlHelper = sqlHelper;
   }
 
+  public async Task<SpeciesId?> FindIdAsync(UniqueName uniqueName, CancellationToken cancellationToken)
+  {
+    string uniqueNameNormalized = Helper.Normalize(uniqueName);
+
+    string? streamId = await _species.AsNoTracking()
+      .Where(x => x.UniqueNameNormalized == uniqueNameNormalized)
+      .Select(x => x.StreamId)
+      .SingleOrDefaultAsync(cancellationToken);
+    return string.IsNullOrWhiteSpace(streamId) ? null : new SpeciesId(streamId);
+  }
+
+  public async Task<SpeciesModel> ReadAsync(PokemonSpecies species, CancellationToken cancellationToken)
+  {
+    return await ReadAsync(species.Id, cancellationToken) ?? throw new InvalidOperationException($"The species entity 'StreamId={species.Id}' was not found.");
+  }
+  public async Task<SpeciesModel?> ReadAsync(SpeciesId id, CancellationToken cancellationToken)
+  {
+    SpeciesEntity? species = await _species.AsNoTracking().SingleOrDefaultAsync(x => x.StreamId == id.Value, cancellationToken);
+    return species is null ? null : await MapAsync(species, cancellationToken);
+  }
   public async Task<SpeciesModel?> ReadAsync(Guid id, CancellationToken cancellationToken)
   {
     SpeciesEntity? species = await _species.AsNoTracking()

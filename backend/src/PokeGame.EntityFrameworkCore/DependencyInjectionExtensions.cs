@@ -81,6 +81,7 @@ public static class DependencyInjectionExtensions
       .AddScoped<IMoveRepository, MoveRepository>()
       .AddScoped<IPokemonRepository, PokemonRepository>()
       .AddScoped<IRegionRepository, RegionRepository>()
+      .AddScoped<ISpeciesRepository, SpeciesRepository>()
       .AddScoped<ITrainerRepository, TrainerRepository>();
   }
 }
