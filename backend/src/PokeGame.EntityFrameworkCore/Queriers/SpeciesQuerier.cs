@@ -27,9 +27,25 @@ internal class SpeciesQuerier : ISpeciesQuerier
     _sqlHelper = sqlHelper;
   }
 
-  public Task<SpeciesId?> FindIdAsync(Number number, RegionId? regionId, CancellationToken cancellationToken)
+  public async Task<SpeciesId?> FindIdAsync(Number number, RegionId? regionId, CancellationToken cancellationToken)
   {
-    throw new NotImplementedException(); // TODO(fpion): implement
+    string? streamId = null;
+    if (regionId.HasValue)
+    {
+      streamId = await _species.AsNoTracking()
+        .Include(x => x.RegionalNumbers).ThenInclude(x => x.Region)
+        .Where(x => x.RegionalNumbers.Any(r => r.Region!.StreamId == regionId.Value.Value && r.Number == number.Value))
+        .Select(x => x.StreamId)
+        .SingleOrDefaultAsync(cancellationToken);
+    }
+    else
+    {
+      streamId = await _species.AsNoTracking()
+        .Where(x => x.Number == number.Value)
+        .Select(x => x.StreamId)
+        .SingleOrDefaultAsync(cancellationToken);
+    }
+    return string.IsNullOrWhiteSpace(streamId) ? null : new SpeciesId(streamId);
   }
   public async Task<SpeciesId?> FindIdAsync(UniqueName uniqueName, CancellationToken cancellationToken)
   {
