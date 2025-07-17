@@ -1,5 +1,4 @@
-﻿using PokeGame.Core.Models;
-using AggregateModel = Krakenar.Contracts.Aggregate;
+﻿using AggregateModel = Krakenar.Contracts.Aggregate;
 
 namespace PokeGame.Core.Moves.Models;
 
@@ -12,14 +11,9 @@ public class MoveModel : AggregateModel
   public string? DisplayName { get; set; }
   public string? Description { get; set; }
 
-  public int Accuracy { get; set; }
-  public int Power { get; set; }
-  public int PowerPoints { get; set; }
-
-  public InflictedStatusModel? Status { get; set; }
-  public List<string> VolatileConditions { get; set; } = [];
-
-  public StatisticChangesModel StatisticChanges { get; set; } = new();
+  public byte? Accuracy { get; set; }
+  public byte? Power { get; set; }
+  public byte PowerPoints { get; set; }
 
   public string? Url { get; set; }
   public string? Notes { get; set; }

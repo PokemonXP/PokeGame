@@ -20,13 +20,13 @@ internal class AbilityService : IAbilityService
 {
   public static void Register(IServiceCollection services)
   {
-    services.AddTransient<IAbilityService, AbilityService>()
-      .AddTransient<IAbilityManager, AbilityManager>()
-      .AddTransient<ICommandHandler<CreateOrReplaceAbility, CreateOrReplaceAbilityResult>, CreateOrReplaceAbilityHandler>()
-      .AddTransient<ICommandHandler<DeleteAbility, AbilityModel?>, DeleteAbilityHandler>()
-      .AddTransient<ICommandHandler<UpdateAbility, AbilityModel?>, UpdateAbilityHandler>()
-      .AddTransient<IQueryHandler<ReadAbility, AbilityModel?>, ReadAbilityHandler>()
-      .AddTransient<IQueryHandler<SearchAbilities, SearchResults<AbilityModel>>, SearchAbilitiesHandler>();
+    services.AddTransient<IAbilityService, AbilityService>();
+    services.AddTransient<IAbilityManager, AbilityManager>();
+    services.AddTransient<ICommandHandler<CreateOrReplaceAbility, CreateOrReplaceAbilityResult>, CreateOrReplaceAbilityHandler>();
+    services.AddTransient<ICommandHandler<DeleteAbility, AbilityModel?>, DeleteAbilityHandler>();
+    services.AddTransient<ICommandHandler<UpdateAbility, AbilityModel?>, UpdateAbilityHandler>();
+    services.AddTransient<IQueryHandler<ReadAbility, AbilityModel?>, ReadAbilityHandler>();
+    services.AddTransient<IQueryHandler<SearchAbilities, SearchResults<AbilityModel>>, SearchAbilitiesHandler>();
   }
 
   private readonly ICommandBus _commandBus;

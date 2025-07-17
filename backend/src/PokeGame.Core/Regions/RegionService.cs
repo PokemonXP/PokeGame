@@ -20,13 +20,13 @@ internal class RegionService : IRegionService
 {
   public static void Register(IServiceCollection services)
   {
-    services.AddTransient<IRegionService, RegionService>()
-      .AddTransient<IRegionManager, RegionManager>()
-      .AddTransient<ICommandHandler<CreateOrReplaceRegion, CreateOrReplaceRegionResult>, CreateOrReplaceRegionHandler>()
-      .AddTransient<ICommandHandler<DeleteRegion, RegionModel?>, DeleteRegionHandler>()
-      .AddTransient<ICommandHandler<UpdateRegion, RegionModel?>, UpdateRegionHandler>()
-      .AddTransient<IQueryHandler<ReadRegion, RegionModel?>, ReadRegionHandler>()
-      .AddTransient<IQueryHandler<SearchRegions, SearchResults<RegionModel>>, SearchRegionsHandler>();
+    services.AddTransient<IRegionService, RegionService>();
+    services.AddTransient<IRegionManager, RegionManager>();
+    services.AddTransient<ICommandHandler<CreateOrReplaceRegion, CreateOrReplaceRegionResult>, CreateOrReplaceRegionHandler>();
+    services.AddTransient<ICommandHandler<DeleteRegion, RegionModel?>, DeleteRegionHandler>();
+    services.AddTransient<ICommandHandler<UpdateRegion, RegionModel?>, UpdateRegionHandler>();
+    services.AddTransient<IQueryHandler<ReadRegion, RegionModel?>, ReadRegionHandler>();
+    services.AddTransient<IQueryHandler<SearchRegions, SearchResults<RegionModel>>, SearchRegionsHandler>();
   }
 
   private readonly ICommandBus _commandBus;

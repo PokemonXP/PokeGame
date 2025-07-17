@@ -177,24 +177,6 @@ internal class PokemonMapper
       Notes = source.Notes
     };
 
-    if (source.StatusCondition.HasValue)
-    {
-      destination.Status = new InflictedStatusModel(source.StatusCondition.Value, source.StatusChance);
-    }
-    if (source.VolatileConditions is not null)
-    {
-      destination.VolatileConditions.AddRange(PokemonSerializer.Instance.Deserialize<string[]>(source.VolatileConditions) ?? []);
-    }
-
-    destination.StatisticChanges.Attack = source.AttackChange;
-    destination.StatisticChanges.Defense = source.DefenseChange;
-    destination.StatisticChanges.SpecialAttack = source.SpecialAttackChange;
-    destination.StatisticChanges.SpecialDefense = source.SpecialDefenseChange;
-    destination.StatisticChanges.Speed = source.SpeedChange;
-    destination.StatisticChanges.Accuracy = source.AccuracyChange;
-    destination.StatisticChanges.Evasion = source.EvasionChange;
-    destination.StatisticChanges.Critical = source.CriticalChange;
-
     MapAggregate(source, destination);
 
     return destination;

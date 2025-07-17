@@ -28,6 +28,7 @@ public static class DependencyInjectionExtensions
   private static IServiceCollection AddCommands(this IServiceCollection services)
   {
     AbilityService.Register(services);
+    MoveService.Register(services);
     RegionService.Register(services);
     TrainerService.Register(services);
 
@@ -48,7 +49,6 @@ public static class DependencyInjectionExtensions
   {
     return services
       .AddTransient<IItemManager, ItemManager>()
-      .AddTransient<IMoveManager, MoveManager>()
       .AddTransient<IPokemonManager, PokemonManager>();
   }
 

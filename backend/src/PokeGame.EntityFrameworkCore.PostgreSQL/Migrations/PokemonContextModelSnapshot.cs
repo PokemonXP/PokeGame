@@ -462,14 +462,8 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("MoveId"));
 
-                    b.Property<int>("Accuracy")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("AccuracyChange")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("AttackChange")
-                        .HasColumnType("integer");
+                    b.Property<byte?>("Accuracy")
+                        .HasColumnType("smallint");
 
                     b.Property<string>("Category")
                         .IsRequired()
@@ -483,12 +477,6 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("CriticalChange")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("DefenseChange")
-                        .HasColumnType("integer");
-
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
@@ -496,36 +484,17 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
 
-                    b.Property<int>("EvasionChange")
-                        .HasColumnType("integer");
-
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid");
 
                     b.Property<string>("Notes")
                         .HasColumnType("text");
 
-                    b.Property<int>("Power")
-                        .HasColumnType("integer");
+                    b.Property<byte?>("Power")
+                        .HasColumnType("smallint");
 
-                    b.Property<int>("PowerPoints")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("SpecialAttackChange")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("SpecialDefenseChange")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("SpeedChange")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("StatusChance")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("StatusCondition")
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
+                    b.Property<byte>("PowerPoints")
+                        .HasColumnType("smallint");
 
                     b.Property<string>("StreamId")
                         .IsRequired()
@@ -561,9 +530,6 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
                     b.Property<long>("Version")
                         .HasColumnType("bigint");
 
-                    b.Property<string>("VolatileConditions")
-                        .HasColumnType("text");
-
                     b.HasKey("MoveId");
 
                     b.HasIndex("Accuracy");
@@ -582,8 +548,6 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
                     b.HasIndex("Power");
 
                     b.HasIndex("PowerPoints");
-
-                    b.HasIndex("StatusCondition");
 
                     b.HasIndex("StreamId")
                         .IsUnique();

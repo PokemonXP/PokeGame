@@ -3,6 +3,6 @@
 public enum MoveCategory
 {
   Status = 0,
-  Physical,
-  Special
+  Physical = 1,
+  Special = 2
 }

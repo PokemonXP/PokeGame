@@ -14,16 +14,12 @@ public record SearchMovesParameters : SearchParameters
   [FromQuery(Name = "category")]
   public MoveCategory? Category { get; set; }
 
-  [FromQuery(Name = "status")]
-  public StatusCondition? StatusCondition { get; set; }
-
   public virtual SearchMovesPayload ToPayload()
   {
     SearchMovesPayload payload = new()
     {
       Type = Type,
-      Category = Category,
-      StatusCondition = StatusCondition
+      Category = Category
     };
     Fill(payload);
 

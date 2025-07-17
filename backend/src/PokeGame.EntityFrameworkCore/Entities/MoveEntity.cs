@@ -1,9 +1,7 @@
-﻿using Krakenar.Core.Contents;
-using Krakenar.EntityFrameworkCore.Relational.KrakenarDb;
+﻿using Krakenar.EntityFrameworkCore.Relational.KrakenarDb;
 using PokeGame.Core;
 using PokeGame.Core.Moves;
-using PokeGame.EntityFrameworkCore.Handlers;
-using PokeGame.Infrastructure.Data;
+using PokeGame.Core.Moves.Events;
 using AggregateEntity = Krakenar.EntityFrameworkCore.Relational.Entities.Aggregate;
 
 namespace PokeGame.EntityFrameworkCore.Entities;
@@ -25,22 +23,9 @@ internal class MoveEntity : AggregateEntity
   public string? DisplayName { get; private set; }
   public string? Description { get; private set; }
 
-  public int Accuracy { get; private set; }
-  public int Power { get; private set; }
-  public int PowerPoints { get; private set; }
-
-  public StatusCondition? StatusCondition { get; private set; }
-  public int StatusChance { get; private set; }
-  public string? VolatileConditions { get; private set; }
-
-  public int AttackChange { get; private set; }
-  public int DefenseChange { get; private set; }
-  public int SpecialAttackChange { get; private set; }
-  public int SpecialDefenseChange { get; private set; }
-  public int SpeedChange { get; private set; }
-  public int AccuracyChange { get; private set; }
-  public int EvasionChange { get; private set; }
-  public int CriticalChange { get; private set; }
+  public byte? Accuracy { get; private set; }
+  public byte? Power { get; private set; }
+  public byte PowerPoints { get; private set; }
 
   public string? Url { get; private set; }
   public string? Notes { get; private set; }
@@ -48,55 +33,65 @@ internal class MoveEntity : AggregateEntity
   public List<PokemonMoveEntity> Pokemon { get; private set; } = [];
   public List<ItemEntity> TechnicalMachines { get; private set; } = [];
 
-  public MoveEntity(MovePublished published) : base(published.Event)
+  public MoveEntity(MoveCreated @event) : base(@event)
   {
-    Id = new ContentId(published.Event.StreamId).EntityId;
+    Id = new MoveId(@event.StreamId).ToGuid();
 
-    Update(published);
+    Type = @event.Type;
+    Category = @event.Category;
+
+    UniqueName = @event.UniqueName.Value;
+
+    Accuracy = @event.Accuracy?.Value;
+    Power = @event.Power?.Value;
+    PowerPoints = @event.PowerPoints.Value;
   }
 
   private MoveEntity() : base()
   {
   }
 
-  public void Update(MovePublished published)
+  public void SetUniqueName(MoveUniqueNameChanged @event)
   {
-    ContentLocale invariant = published.Invariant;
-    ContentLocale locale = published.Locale;
+    Update(@event);
 
-    Update(published.Event);
+    UniqueName = @event.UniqueName.Value;
+  }
 
-    Type = PokemonConverter.Instance.ToType(invariant.FindSelectValue(Moves.Type).Single());
-    Category = PokemonConverter.Instance.ToMoveCategory(invariant.FindSelectValue(Moves.Category).Single());
+  public void Update(MoveUpdated @event)
+  {
+    base.Update(@event);
 
-    UniqueName = locale.UniqueName.Value;
-    DisplayName = locale.DisplayName?.Value;
-    Description = locale.Description?.Value;
+    if (@event.DisplayName is not null)
+    {
+      DisplayName = @event.DisplayName.Value?.Value;
+    }
+    if (@event.Description is not null)
+    {
+      Description = @event.Description.Value?.Value;
+    }
 
-    Accuracy = (int)invariant.GetNumberValue(Moves.Accuracy);
-    Power = (int)invariant.GetNumberValue(Moves.Power);
-    PowerPoints = (int)invariant.FindNumberValue(Moves.PowerPoints);
+    if (@event.Accuracy is not null)
+    {
+      Accuracy = @event.Accuracy.Value?.Value;
+    }
+    if (@event.Power is not null)
+    {
+      Power = @event.Power.Value?.Value;
+    }
+    if (@event.PowerPoints is not null)
+    {
+      PowerPoints = @event.PowerPoints.Value;
+    }
 
-    IReadOnlyCollection<string>? statusConditions = invariant.TryGetSelectValue(Moves.InflictedCondition);
-    StatusCondition = statusConditions is null || statusConditions.Count < 1 ? null : PokemonConverter.Instance.ToStatusCondition(statusConditions.Single());
-    StatusChance = (int)invariant.GetNumberValue(Moves.StatusChance);
-
-    IReadOnlyCollection<string>? volatileConditions = invariant.TryGetSelectValue(Moves.VolatileConditions);
-    VolatileConditions = volatileConditions is null || volatileConditions.Count < 1
-      ? null
-      : PokemonSerializer.Instance.Serialize(volatileConditions.Select(PokemonConverter.Instance.ToVolatileCondition).Distinct());
-
-    AttackChange = (int)invariant.GetNumberValue(Moves.AttackChange);
-    DefenseChange = (int)invariant.GetNumberValue(Moves.DefenseChange);
-    SpecialAttackChange = (int)invariant.GetNumberValue(Moves.SpecialAttackChange);
-    SpecialDefenseChange = (int)invariant.GetNumberValue(Moves.SpecialDefenseChange);
-    SpeedChange = (int)invariant.GetNumberValue(Moves.SpeedChange);
-    AccuracyChange = (int)invariant.GetNumberValue(Moves.AccuracyChange);
-    EvasionChange = (int)invariant.GetNumberValue(Moves.EvasionChange);
-    CriticalChange = (int)invariant.GetNumberValue(Moves.CriticalChange);
-
-    Url = locale.TryGetStringValue(Moves.Url);
-    Notes = locale.TryGetStringValue(Moves.Notes);
+    if (@event.Url is not null)
+    {
+      Url = @event.Url.Value?.Value;
+    }
+    if (@event.Notes is not null)
+    {
+      Notes = @event.Notes.Value?.Value;
+    }
   }
 
   public override string ToString() => $"{DisplayName ?? UniqueName} | {base.ToString()}";

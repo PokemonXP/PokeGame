@@ -1,7 +1,6 @@
 ﻿using FluentValidation;
 using Krakenar.Core;
 using PokeGame.Core.Moves;
-using PokeGame.Core.Moves.Models;
 using PokeGame.Core.Pokemons.Models;
 using PokeGame.Core.Pokemons.Validators;
 
@@ -43,13 +42,13 @@ internal class RelearnPokemonMoveHandler : ICommandHandler<RelearnPokemonMove, P
       return null;
     }
 
-    MoveModel move = await _moveManager.FindAsync(payload.Move, nameof(payload.Move), cancellationToken);
-    MoveId moveId = move.GetMoveId(_applicationContext.RealmId);
-    if (!pokemon.RelearnMove(moveId, payload.Position, _applicationContext.ActorId))
-    {
-      throw new PokemonNeverLearnedMoveException(pokemon, moveId, nameof(payload.Move));
-    }
-    await _pokemonRepository.SaveAsync(pokemon, cancellationToken);
+    //MoveModel move = await _moveManager.FindAsync(payload.Move, nameof(payload.Move), cancellationToken);
+    //MoveId moveId = move.GetMoveId(_applicationContext.RealmId);
+    //if (!pokemon.RelearnMove(moveId, payload.Position, _applicationContext.ActorId))
+    //{
+    //  throw new PokemonNeverLearnedMoveException(pokemon, moveId, nameof(payload.Move));
+    //}
+    //await _pokemonRepository.SaveAsync(pokemon, cancellationToken);
 
     return await _pokemonQuerier.ReadAsync(pokemon, cancellationToken);
   }

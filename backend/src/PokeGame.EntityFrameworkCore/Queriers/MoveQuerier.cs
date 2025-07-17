@@ -1,5 +1,6 @@
 ﻿using Krakenar.Contracts.Actors;
 using Krakenar.Contracts.Search;
+using Krakenar.Core;
 using Krakenar.Core.Actors;
 using Krakenar.EntityFrameworkCore.Relational;
 using Krakenar.EntityFrameworkCore.Relational.KrakenarDb;
@@ -23,6 +24,27 @@ internal class MoveQuerier : IMoveQuerier
     _actorService = actorService;
     _moves = context.Moves;
     _sqlHelper = sqlHelper;
+  }
+
+  public async Task<MoveId?> FindIdAsync(UniqueName uniqueName, CancellationToken cancellationToken)
+  {
+    string uniqueNameNormalized = Helper.Normalize(uniqueName);
+
+    string? streamId = await _moves.AsNoTracking()
+      .Where(x => x.UniqueNameNormalized == uniqueNameNormalized)
+      .Select(x => x.StreamId)
+      .SingleOrDefaultAsync(cancellationToken);
+    return string.IsNullOrWhiteSpace(streamId) ? null : new MoveId(streamId);
+  }
+
+  public async Task<MoveModel> ReadAsync(Move move, CancellationToken cancellationToken)
+  {
+    return await ReadAsync(move.Id, cancellationToken) ?? throw new InvalidOperationException($"The move entity 'StreamId={move.Id}' was not found.");
+  }
+  public async Task<MoveModel?> ReadAsync(MoveId id, CancellationToken cancellationToken)
+  {
+    MoveEntity? move = await _moves.AsNoTracking().SingleOrDefaultAsync(x => x.StreamId == id.Value, cancellationToken);
+    return move is null ? null : await MapAsync(move, cancellationToken);
   }
 
   public async Task<MoveModel?> ReadAsync(Guid id, CancellationToken cancellationToken)
@@ -51,10 +73,6 @@ internal class MoveQuerier : IMoveQuerier
     if (payload.Category.HasValue)
     {
       builder.Where(PokemonDb.Moves.Category, Operators.IsEqualTo(payload.Category.Value.ToString()));
-    }
-    if (payload.StatusCondition.HasValue)
-    {
-      builder.Where(PokemonDb.Moves.StatusCondition, Operators.IsEqualTo(payload.StatusCondition.Value.ToString()));
     }
 
     IQueryable<MoveEntity> query = _moves.FromQuery(builder).AsNoTracking();

@@ -4,9 +4,11 @@ namespace PokeGame.Core.Moves;
 
 public record PowerPoints
 {
-  public int Value { get; }
+  public const byte MaximumValue = 40;
 
-  public PowerPoints(int value)
+  public byte Value { get; }
+
+  public PowerPoints(byte value)
   {
     Value = value;
     new Validator().ValidateAndThrow(this);
@@ -18,7 +20,7 @@ public record PowerPoints
   {
     public Validator()
     {
-      RuleFor(x => x.Value).InclusiveBetween(1, 40);
+      RuleFor(x => x.Value).PowerPoints();
     }
   }
 }
