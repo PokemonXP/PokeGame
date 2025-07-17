@@ -21,10 +21,17 @@ public class AbilityController : ControllerBase
   }
 
   [HttpPost]
-  public async Task<ActionResult<AbilityModel>> CreateAsync(CreateOrReplaceAbilityPayload payload, CancellationToken cancellationToken)
+  public async Task<ActionResult<AbilityModel>> CreateAsync([FromBody] CreateOrReplaceAbilityPayload payload, CancellationToken cancellationToken)
   {
     CreateOrReplaceAbilityResult result = await _abilityService.CreateOrReplaceAsync(payload, id: null, cancellationToken);
     return ToActionResult(result);
+  }
+
+  [HttpDelete("{id}")]
+  public async Task<ActionResult<AbilityModel>> DeleteAsync(Guid id, CancellationToken cancellationToken)
+  {
+    AbilityModel? ability = await _abilityService.DeleteAsync(id, cancellationToken);
+    return ability is null ? NotFound() : Ok(ability);
   }
 
   [HttpGet("{id}")]
@@ -42,7 +49,7 @@ public class AbilityController : ControllerBase
   }
 
   [HttpPut("{id}")]
-  public async Task<ActionResult<AbilityModel>> ReplaceAsync(Guid id, CreateOrReplaceAbilityPayload payload, CancellationToken cancellationToken)
+  public async Task<ActionResult<AbilityModel>> ReplaceAsync(Guid id, [FromBody] CreateOrReplaceAbilityPayload payload, CancellationToken cancellationToken)
   {
     CreateOrReplaceAbilityResult result = await _abilityService.CreateOrReplaceAsync(payload, id, cancellationToken);
     return ToActionResult(result);
@@ -57,7 +64,7 @@ public class AbilityController : ControllerBase
   }
 
   [HttpPatch("{id}")]
-  public async Task<ActionResult<AbilityModel>> UpdateAsync(Guid id, UpdateAbilityPayload payload, CancellationToken cancellationToken)
+  public async Task<ActionResult<AbilityModel>> UpdateAsync(Guid id, [FromBody] UpdateAbilityPayload payload, CancellationToken cancellationToken)
   {
     AbilityModel? ability = await _abilityService.UpdateAsync(id, payload, cancellationToken);
     return ability is null ? NotFound() : Ok(ability);
