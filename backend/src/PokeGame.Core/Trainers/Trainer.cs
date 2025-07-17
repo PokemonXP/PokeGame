@@ -1,4 +1,5 @@
 ﻿using Krakenar.Core;
+using Krakenar.Core.Users;
 using Logitar.EventSourcing;
 using PokeGame.Core.Trainers.Events;
 
@@ -72,8 +73,8 @@ public class Trainer : AggregateRoot
     }
   }
 
-  private Guid? _userId = null;
-  public Guid? UserId
+  private UserId? _userId = null;
+  public UserId? UserId
   {
     get => _userId;
     set
@@ -81,7 +82,7 @@ public class Trainer : AggregateRoot
       if (_userId != value)
       {
         _userId = value;
-        _updated.UserId = new Change<Guid?>(value);
+        _updated.UserId = new Change<UserId?>(value);
       }
     }
   }

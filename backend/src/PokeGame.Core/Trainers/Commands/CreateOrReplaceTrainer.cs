@@ -1,6 +1,8 @@
 ﻿using FluentValidation;
 using Krakenar.Contracts.Settings;
 using Krakenar.Core;
+using Krakenar.Core.Realms;
+using Krakenar.Core.Users;
 using Logitar.EventSourcing;
 using PokeGame.Core.Trainers.Models;
 using PokeGame.Core.Trainers.Validators;
@@ -33,6 +35,7 @@ internal class CreateOrReplaceTrainerHandler : ICommandHandler<CreateOrReplaceTr
   public async Task<CreateOrReplaceTrainerResult> HandleAsync(CreateOrReplaceTrainer command, CancellationToken cancellationToken)
   {
     ActorId? actorId = _applicationContext.ActorId;
+    RealmId? realmId = _applicationContext.RealmId;
     IUniqueNameSettings uniqueNameSettings = _applicationContext.UniqueNameSettings;
 
     CreateOrReplaceTrainerPayload payload = command.Payload;
@@ -67,7 +70,7 @@ internal class CreateOrReplaceTrainerHandler : ICommandHandler<CreateOrReplaceTr
     trainer.DisplayName = DisplayName.TryCreate(payload.DisplayName);
     trainer.Description = Description.TryCreate(payload.Description);
 
-    trainer.UserId = payload.UserId;
+    trainer.UserId = payload.UserId.HasValue ? new UserId(payload.UserId.Value, realmId) : null;
 
     trainer.Sprite = Url.TryCreate(payload.Sprite);
     trainer.Url = Url.TryCreate(payload.Url);

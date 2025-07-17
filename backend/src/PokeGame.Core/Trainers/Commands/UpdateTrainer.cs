@@ -1,6 +1,8 @@
 ﻿using FluentValidation;
 using Krakenar.Contracts.Settings;
 using Krakenar.Core;
+using Krakenar.Core.Realms;
+using Krakenar.Core.Users;
 using Logitar.EventSourcing;
 using PokeGame.Core.Trainers.Models;
 using PokeGame.Core.Trainers.Validators;
@@ -33,6 +35,7 @@ internal class UpdateTrainerHandler : ICommandHandler<UpdateTrainer, TrainerMode
   public async Task<TrainerModel?> HandleAsync(UpdateTrainer command, CancellationToken cancellationToken)
   {
     ActorId? actorId = _applicationContext.ActorId;
+    RealmId? realmId = _applicationContext.RealmId;
     IUniqueNameSettings uniqueNameSettings = _applicationContext.UniqueNameSettings;
 
     UpdateTrainerPayload payload = command.Payload;
@@ -70,7 +73,7 @@ internal class UpdateTrainerHandler : ICommandHandler<UpdateTrainer, TrainerMode
 
     if (payload.UserId is not null)
     {
-      trainer.UserId = payload.UserId.Value;
+      trainer.UserId = payload.UserId.Value.HasValue ? new UserId(payload.UserId.Value.Value, realmId) : null;
     }
 
     if (payload.Sprite is not null)
