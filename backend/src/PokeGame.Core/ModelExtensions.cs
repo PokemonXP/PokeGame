@@ -81,6 +81,8 @@ internal static class ModelExtensions
       new Friendship(model.BaseFriendship),
       new CatchRate(model.CatchRate),
       model.GrowthRate,
+      eggCycles: null,
+      eggGroups: null,
       actorId: null,
       new SpeciesId(model.Id))
     {

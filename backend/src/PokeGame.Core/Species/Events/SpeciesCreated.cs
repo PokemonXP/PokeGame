@@ -10,4 +10,5 @@ public record SpeciesCreated(
   Friendship BaseFriendship,
   CatchRate CatchRate,
   GrowthRate GrowthRate,
+  EggCycles EggCycles,
   EggGroups EggGroups) : DomainEvent;

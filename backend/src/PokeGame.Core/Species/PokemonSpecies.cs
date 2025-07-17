@@ -10,7 +10,7 @@ public class PokemonSpecies : AggregateRoot
   private SpeciesUpdated _updated = new();
   private bool HasUpdates => _updated.DisplayName is not null
     || _updated.BaseFriendship is not null || _updated.CatchRate is not null || _updated.GrowthRate.HasValue
-    || _updated.EggGroups is not null
+    || _updated.EggCycles is not null || _updated.EggGroups is not null
     || _updated.Url is not null || _updated.Notes is not null;
 
   public new SpeciesId Id => new(base.Id);
@@ -75,6 +75,19 @@ public class PokemonSpecies : AggregateRoot
     }
   }
 
+  private EggCycles? _eggCycles = null;
+  public EggCycles EggCycles
+  {
+    get => _eggCycles ?? throw new InvalidOperationException("The species has not been initialized.");
+    set
+    {
+      if (_eggCycles != value)
+      {
+        _eggCycles = value;
+        _updated.EggCycles = value;
+      }
+    }
+  }
   private EggGroups? _eggGroups = null;
   public EggGroups EggGroups
   {
@@ -130,6 +143,7 @@ public class PokemonSpecies : AggregateRoot
     Friendship? baseFriendship = null,
     CatchRate? catchRate = null,
     GrowthRate growthRate = GrowthRate.MediumFast,
+    EggCycles? eggCycles = null,
     EggGroups? eggGroups = null,
     ActorId? actorId = null,
     SpeciesId? speciesId = null) : base((speciesId ?? SpeciesId.NewId()).StreamId)
@@ -145,8 +159,9 @@ public class PokemonSpecies : AggregateRoot
 
     baseFriendship ??= new Friendship();
     catchRate ??= new CatchRate(1);
+    eggCycles ??= new EggCycles(1);
     eggGroups ??= new EggGroups();
-    Raise(new SpeciesCreated(number, category, uniqueName, baseFriendship, catchRate, growthRate, eggGroups), actorId);
+    Raise(new SpeciesCreated(number, category, uniqueName, baseFriendship, catchRate, growthRate, eggCycles, eggGroups), actorId);
   }
   protected virtual void Handle(SpeciesCreated @event)
   {
@@ -159,6 +174,7 @@ public class PokemonSpecies : AggregateRoot
     _catchRate = @event.CatchRate;
     _growthRate = @event.GrowthRate;
 
+    _eggCycles = @event.EggCycles;
     _eggGroups = @event.EggGroups;
   }
 
@@ -231,6 +247,10 @@ public class PokemonSpecies : AggregateRoot
       _growthRate = @event.GrowthRate.Value;
     }
 
+    if (@event.EggCycles is not null)
+    {
+      _eggCycles = @event.EggCycles;
+    }
     if (@event.EggGroups is not null)
     {
       _eggGroups = @event.EggGroups;

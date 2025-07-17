@@ -11,6 +11,7 @@ public record SpeciesUpdated : DomainEvent
   public CatchRate? CatchRate { get; set; }
   public GrowthRate? GrowthRate { get; set; }
 
+  public EggCycles? EggCycles { get; set; }
   public EggGroups? EggGroups { get; set; }
 
   public Change<Url>? Url { get; set; }

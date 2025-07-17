@@ -11,6 +11,7 @@ public record UpdateSpeciesPayload
   public byte? CatchRate { get; set; }
   public GrowthRate? GrowthRate { get; set; }
 
+  public byte? EggCycles { get; set; }
   public EggGroupsModel? EggGroups { get; set; }
 
   public Change<string>? Url { get; set; }

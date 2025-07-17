@@ -12,6 +12,7 @@ public record CreateOrReplaceSpeciesPayload
   public byte CatchRate { get; set; }
   public GrowthRate GrowthRate { get; set; }
 
+  public byte EggCycles { get; set; }
   public EggGroupsModel EggGroups { get; set; } = new();
 
   public string? Url { get; set; }
