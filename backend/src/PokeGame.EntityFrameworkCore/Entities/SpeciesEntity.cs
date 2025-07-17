@@ -68,6 +68,7 @@ internal class SpeciesEntity : AggregateEntity
       {
         ArgumentNullException.ThrowIfNull(region, nameof(region));
         regionalNumber = new RegionalNumberEntity(this, region, @event);
+        RegionalNumbers.Add(regionalNumber);
       }
       else
       {

@@ -18,6 +18,7 @@ internal class SpeciesEvents : IEventHandler<SpeciesCreated>,
   {
     services.AddScoped<IEventHandler<SpeciesCreated>, SpeciesEvents>();
     services.AddScoped<IEventHandler<SpeciesDeleted>, SpeciesEvents>();
+    services.AddScoped<IEventHandler<SpeciesRegionalNumberChanged>, SpeciesEvents>();
     services.AddScoped<IEventHandler<SpeciesUniqueNameChanged>, SpeciesEvents>();
     services.AddScoped<IEventHandler<SpeciesUpdated>, SpeciesEvents>();
   }
