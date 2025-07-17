@@ -8,6 +8,5 @@ internal enum EntityKind
   Item,
   Medicine,
   PokeBall,
-  TechnicalMachine,
-  Variety
+  TechnicalMachine
 }

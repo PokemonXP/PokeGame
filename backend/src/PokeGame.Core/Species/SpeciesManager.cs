@@ -1,4 +1,7 @@
-﻿using Logitar.EventSourcing;
+﻿using FluentValidation;
+using Krakenar.Core;
+using Krakenar.Core.Settings;
+using Logitar.EventSourcing;
 using PokeGame.Core.Regions;
 using PokeGame.Core.Species.Events;
 using PokeGame.Core.Species.Models;
@@ -7,6 +10,7 @@ namespace PokeGame.Core.Species;
 
 internal interface ISpeciesManager
 {
+  Task<PokemonSpecies> FindAsync(string idOrUniqueName, string propertyName, CancellationToken cancellationToken = default);
   Task<IReadOnlyDictionary<RegionId, Number?>> FindRegionalNumbersAsync(IEnumerable<RegionalNumberPayload> payloads, string propertyName, CancellationToken cancellationToken = default);
   Task SaveAsync(PokemonSpecies species, CancellationToken cancellationToken = default);
 }
@@ -22,6 +26,36 @@ internal class SpeciesManager : ISpeciesManager
     _regionQuerier = regionQuerier;
     _speciesQuerier = speciesQuerier;
     _speciesRepository = speciesRepository;
+  }
+
+  public async Task<PokemonSpecies> FindAsync(string idOrUniqueName, string propertyName, CancellationToken cancellationToken)
+  {
+    PokemonSpecies? species = null;
+
+    if (Guid.TryParse(idOrUniqueName, out Guid id))
+    {
+      SpeciesId speciesId = new(id);
+      species = await _speciesRepository.LoadAsync(speciesId, cancellationToken);
+    }
+
+    if (species is null)
+    {
+      SpeciesId? speciesId = null;
+      try
+      {
+        UniqueName uniqueName = new(new UniqueNameSettings(allowedCharacters: null), idOrUniqueName);
+        speciesId = await _speciesQuerier.FindIdAsync(uniqueName, cancellationToken);
+      }
+      catch (ValidationException)
+      {
+      }
+      if (speciesId.HasValue)
+      {
+        species = await _speciesRepository.LoadAsync(speciesId.Value, cancellationToken);
+      }
+    }
+
+    return species ?? throw new SpeciesNotFoundException(idOrUniqueName, propertyName);
   }
 
   public async Task<IReadOnlyDictionary<RegionId, Number?>> FindRegionalNumbersAsync(IEnumerable<RegionalNumberPayload> payloads, string propertyName, CancellationToken cancellationToken)

@@ -1,6 +1,7 @@
 ﻿using Krakenar.EntityFrameworkCore.Relational.KrakenarDb;
 using PokeGame.Core.Species;
 using PokeGame.Core.Species.Events;
+using PokeGame.Core.Species.Models;
 using AggregateEntity = Krakenar.EntityFrameworkCore.Relational.Entities.Aggregate;
 
 namespace PokeGame.EntityFrameworkCore.Entities;
@@ -127,6 +128,7 @@ internal class SpeciesEntity : AggregateEntity
     }
   }
 
+  public EggGroupsModel GetEggGroups() => new(PrimaryEggGroup, SecondaryEggGroup);
   private void SetEggGroups(IEggGroups eggGroups)
   {
     PrimaryEggGroup = eggGroups.Primary;

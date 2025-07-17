@@ -16,14 +16,14 @@ namespace PokeGame.EntityFrameworkCore.Queriers;
 internal class TrainerQuerier : ITrainerQuerier
 {
   private readonly IActorService _actorService;
-  private readonly DbSet<TrainerEntity> _trainers;
   private readonly ISqlHelper _sqlHelper;
+  private readonly DbSet<TrainerEntity> _trainers;
 
   public TrainerQuerier(IActorService actorService, PokemonContext context, ISqlHelper sqlHelper)
   {
     _actorService = actorService;
-    _trainers = context.Trainers;
     _sqlHelper = sqlHelper;
+    _trainers = context.Trainers;
   }
 
   public async Task<TrainerId?> FindIdAsync(License license, CancellationToken cancellationToken)

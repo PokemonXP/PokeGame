@@ -8,6 +8,9 @@ public record GenderRatio
   public const int MinimumValue = 0;
   public const int MaximumValue = 8;
 
+  public static GenderRatio AllFemale { get; } = new(MinimumValue);
+  public static GenderRatio AllMale { get; } = new(MaximumValue);
+
   public int Value { get; set; }
 
   public GenderRatio(int value)

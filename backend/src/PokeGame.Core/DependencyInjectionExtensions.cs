@@ -6,6 +6,7 @@ using PokeGame.Core.Pokemons;
 using PokeGame.Core.Regions;
 using PokeGame.Core.Species;
 using PokeGame.Core.Trainers;
+using PokeGame.Core.Varieties;
 
 namespace PokeGame.Core;
 
@@ -19,6 +20,7 @@ public static class DependencyInjectionExtensions
     RegionService.Register(services);
     SpeciesService.Register(services);
     TrainerService.Register(services);
+    VarietyService.Register(services);
 
     return services.AddKrakenarCore();
   }

@@ -19,8 +19,8 @@ internal class AbilityRepository : Repository, IAbilityRepository
     await base.SaveAsync(ability, cancellationToken);
   }
 
-  public async Task SaveAsync(IEnumerable<Ability> ability, CancellationToken cancellationToken)
+  public async Task SaveAsync(IEnumerable<Ability> abilities, CancellationToken cancellationToken)
   {
-    await base.SaveAsync(ability, cancellationToken);
+    await base.SaveAsync(abilities, cancellationToken);
   }
 }

@@ -19,8 +19,8 @@ internal class TrainerRepository : Repository, ITrainerRepository
     await base.SaveAsync(trainer, cancellationToken);
   }
 
-  public async Task SaveAsync(IEnumerable<Trainer> trainer, CancellationToken cancellationToken)
+  public async Task SaveAsync(IEnumerable<Trainer> trainers, CancellationToken cancellationToken)
   {
-    await base.SaveAsync(trainer, cancellationToken);
+    await base.SaveAsync(trainers, cancellationToken);
   }
 }

@@ -6,6 +6,7 @@ using PokeGame.Core.Moves;
 using PokeGame.Core.Regions;
 using PokeGame.Core.Species;
 using PokeGame.Core.Trainers;
+using PokeGame.Core.Varieties;
 
 namespace PokeGame.Core;
 
@@ -71,6 +72,10 @@ public class UniqueNameAlreadyUsedException : ConflictException
   }
   public UniqueNameAlreadyUsedException(Trainer trainer, TrainerId conflictId)
     : this("Trainer", trainer.Id.ToGuid(), conflictId.ToGuid(), trainer.UniqueName, nameof(trainer.UniqueName))
+  {
+  }
+  public UniqueNameAlreadyUsedException(Variety variety, VarietyId conflictId)
+    : this("Variety", variety.Id.ToGuid(), conflictId.ToGuid(), variety.UniqueName, nameof(variety.UniqueName))
   {
   }
   private UniqueNameAlreadyUsedException(string entityType, Guid entityId, Guid conflictId, UniqueName uniqueName, string propertyName)

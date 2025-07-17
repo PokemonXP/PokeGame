@@ -2,6 +2,7 @@
 using Krakenar.EntityFrameworkCore.Relational.Configurations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using PokeGame.Core.Varieties;
 using PokeGame.EntityFrameworkCore.Entities;
 
 namespace PokeGame.EntityFrameworkCore.Configurations;
@@ -26,7 +27,7 @@ internal class VarietyConfiguration : AggregateConfiguration<VarietyEntity>, IEn
     builder.Property(x => x.UniqueName).HasMaxLength(UniqueName.MaximumLength);
     builder.Property(x => x.UniqueNameNormalized).HasMaxLength(UniqueName.MaximumLength);
     builder.Property(x => x.DisplayName).HasMaxLength(DisplayName.MaximumLength);
-    builder.Property(x => x.Genus).HasMaxLength(Constants.GenusMaximumLength);
+    builder.Property(x => x.Genus).HasMaxLength(Genus.MaximumLength);
     builder.Property(x => x.Url).HasMaxLength(Url.MaximumLength);
 
     builder.HasOne(x => x.Species).WithMany(x => x.Varieties).OnDelete(DeleteBehavior.Restrict);

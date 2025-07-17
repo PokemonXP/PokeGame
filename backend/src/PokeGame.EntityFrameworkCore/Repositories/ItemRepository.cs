@@ -51,8 +51,8 @@ internal class ItemRepository : Repository, IItemRepository
     await base.SaveAsync(item, cancellationToken);
   }
 
-  public async Task SaveAsync(IEnumerable<Item> item, CancellationToken cancellationToken)
+  public async Task SaveAsync(IEnumerable<Item> items, CancellationToken cancellationToken)
   {
-    await base.SaveAsync(item, cancellationToken);
+    await base.SaveAsync(items, cancellationToken);
   }
 }

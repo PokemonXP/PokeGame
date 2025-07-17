@@ -19,8 +19,8 @@ internal class MoveRepository : Repository, IMoveRepository
     await base.SaveAsync(move, cancellationToken);
   }
 
-  public async Task SaveAsync(IEnumerable<Move> move, CancellationToken cancellationToken)
+  public async Task SaveAsync(IEnumerable<Move> moves, CancellationToken cancellationToken)
   {
-    await base.SaveAsync(move, cancellationToken);
+    await base.SaveAsync(moves, cancellationToken);
   }
 }
