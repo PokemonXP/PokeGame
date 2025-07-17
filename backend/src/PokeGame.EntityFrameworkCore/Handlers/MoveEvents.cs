@@ -1,56 +1,97 @@
-﻿using Krakenar.Core.Contents;
-using Krakenar.Core.Contents.Events;
-using MediatR;
+﻿using Krakenar.Core;
+using Krakenar.EntityFrameworkCore.Relational.Handlers;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using PokeGame.Core.Moves.Events;
 using PokeGame.EntityFrameworkCore.Entities;
 
 namespace PokeGame.EntityFrameworkCore.Handlers;
 
-internal record MovePublished(ContentLocalePublished Event, ContentLocale Invariant, ContentLocale Locale) : INotification;
-
-internal class MovePublishedHandler : INotificationHandler<MovePublished>
+internal class MoveEvents : IEventHandler<MoveCreated>,
+  IEventHandler<MoveDeleted>,
+  IEventHandler<MoveUniqueNameChanged>,
+  IEventHandler<MoveUpdated>
 {
-  private readonly PokemonContext _context;
-
-  public MovePublishedHandler(PokemonContext context)
+  public static void Register(IServiceCollection services)
   {
-    _context = context;
+    services.AddScoped<IEventHandler<MoveCreated>, MoveEvents>();
+    services.AddScoped<IEventHandler<MoveDeleted>, MoveEvents>();
+    services.AddScoped<IEventHandler<MoveUniqueNameChanged>, MoveEvents>();
+    services.AddScoped<IEventHandler<MoveUpdated>, MoveEvents>();
   }
 
-  public async Task Handle(MovePublished published, CancellationToken cancellationToken)
+  private readonly PokemonContext _context;
+  private readonly ILogger<MoveEvents> _logger;
+
+  public MoveEvents(PokemonContext context, ILogger<MoveEvents> logger)
   {
-    string streamId = published.Event.StreamId.Value;
-    MoveEntity? move = await _context.Moves.SingleOrDefaultAsync(x => x.StreamId == streamId, cancellationToken);
+    _context = context;
+    _logger = logger;
+  }
 
-    if (move is null)
+  public async Task HandleAsync(MoveCreated @event, CancellationToken cancellationToken)
+  {
+    MoveEntity? move = await _context.Moves.AsNoTracking()
+      .SingleOrDefaultAsync(x => x.StreamId == @event.StreamId.Value, cancellationToken);
+    if (move is not null)
     {
-      move = new MoveEntity(published);
+      _logger.LogUnexpectedVersion(@event, move);
+      return;
+    }
 
-      _context.Moves.Add(move);
-    }
-    else
-    {
-      move.Update(published);
-    }
+    move = new MoveEntity(@event);
+    _context.Moves.Add(move);
 
     await _context.SaveChangesAsync(cancellationToken);
-  }
-}
-
-internal record MoveUnpublished(ContentLocaleUnpublished Event) : INotification;
-
-internal class MoveUnpublishedHandler : INotificationHandler<MoveUnpublished>
-{
-  private readonly PokemonContext _context;
-
-  public MoveUnpublishedHandler(PokemonContext context)
-  {
-    _context = context;
+    _logger.LogSuccess(@event);
   }
 
-  public async Task Handle(MoveUnpublished unpublished, CancellationToken cancellationToken)
+  public async Task HandleAsync(MoveDeleted @event, CancellationToken cancellationToken)
   {
-    string streamId = unpublished.Event.StreamId.Value;
-    await _context.Moves.Where(x => x.StreamId == streamId).ExecuteDeleteAsync(cancellationToken);
+    MoveEntity? move = await _context.Moves
+      .SingleOrDefaultAsync(x => x.StreamId == @event.StreamId.Value, cancellationToken);
+    if (move is null)
+    {
+      _logger.LogUnexpectedVersion(@event, move);
+      return;
+    }
+
+    _context.Moves.Remove(move);
+
+    await _context.SaveChangesAsync(cancellationToken);
+    _logger.LogSuccess(@event);
+  }
+
+  public async Task HandleAsync(MoveUniqueNameChanged @event, CancellationToken cancellationToken)
+  {
+    MoveEntity? move = await _context.Moves
+      .SingleOrDefaultAsync(x => x.StreamId == @event.StreamId.Value, cancellationToken);
+    if (move is null || (move.Version != (@event.Version - 1)))
+    {
+      _logger.LogUnexpectedVersion(@event, move);
+      return;
+    }
+
+    move.SetUniqueName(@event);
+
+    await _context.SaveChangesAsync(cancellationToken);
+    _logger.LogSuccess(@event);
+  }
+
+  public async Task HandleAsync(MoveUpdated @event, CancellationToken cancellationToken)
+  {
+    MoveEntity? move = await _context.Moves
+      .SingleOrDefaultAsync(x => x.StreamId == @event.StreamId.Value, cancellationToken);
+    if (move is null || (move.Version != (@event.Version - 1)))
+    {
+      _logger.LogUnexpectedVersion(@event, move);
+      return;
+    }
+
+    move.Update(@event);
+
+    await _context.SaveChangesAsync(cancellationToken);
+    _logger.LogSuccess(@event);
   }
 }

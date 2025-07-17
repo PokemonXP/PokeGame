@@ -7,7 +7,6 @@ internal enum EntityKind
   Form,
   Item,
   Medicine,
-  Move,
   PokeBall,
   Species,
   TechnicalMachine,
