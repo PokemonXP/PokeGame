@@ -2,7 +2,6 @@
 
 internal enum EntityKind
 {
-  Ability,
   BattleItem,
   Berry,
   Form,

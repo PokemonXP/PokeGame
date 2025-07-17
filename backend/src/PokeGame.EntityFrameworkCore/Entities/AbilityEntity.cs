@@ -1,7 +1,6 @@
-﻿using Krakenar.Core.Contents;
-using Krakenar.EntityFrameworkCore.Relational.KrakenarDb;
-using PokeGame.EntityFrameworkCore.Handlers;
-using PokeGame.Infrastructure.Data;
+﻿using Krakenar.EntityFrameworkCore.Relational.KrakenarDb;
+using PokeGame.Core.Abilities;
+using PokeGame.Core.Abilities.Events;
 using AggregateEntity = Krakenar.EntityFrameworkCore.Relational.Entities.Aggregate;
 
 namespace PokeGame.EntityFrameworkCore.Entities;
@@ -25,29 +24,45 @@ internal class AbilityEntity : AggregateEntity
 
   public List<FormAbilityEntity> Forms { get; private set; } = [];
 
-  public AbilityEntity(AbilityPublished published) : base(published.Event)
+  public AbilityEntity(AbilityCreated @event) : base(@event)
   {
-    Id = new ContentId(published.Event.StreamId).EntityId;
+    Id = new AbilityId(@event.StreamId).ToGuid();
 
-    Update(published);
+    UniqueName = @event.UniqueName.Value;
   }
 
   private AbilityEntity() : base()
   {
   }
 
-  public void Update(AbilityPublished published)
+  public void SetUniqueName(AbilityUniqueNameChanged @event)
   {
-    ContentLocale locale = published.Locale;
+    Update(@event);
 
-    Update(published.Event);
+    UniqueName = @event.UniqueName.Value;
+  }
 
-    UniqueName = locale.UniqueName.Value;
-    DisplayName = locale.DisplayName?.Value;
-    Description = locale.Description?.Value;
+  public void Update(AbilityUpdated @event)
+  {
+    base.Update(@event);
 
-    Url = locale.TryGetStringValue(Abilities.Url);
-    Notes = locale.TryGetStringValue(Abilities.Notes);
+    if (@event.DisplayName is not null)
+    {
+      DisplayName = @event.DisplayName.Value?.Value;
+    }
+    if (@event.Description is not null)
+    {
+      Description = @event.Description.Value?.Value;
+    }
+
+    if (@event.Url is not null)
+    {
+      Url = @event.Url.Value?.Value;
+    }
+    if (@event.Notes is not null)
+    {
+      Notes = @event.Notes.Value?.Value;
+    }
   }
 
   public override string ToString() => $"{DisplayName ?? UniqueName} | {base.ToString()}";
