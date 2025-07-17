@@ -13,12 +13,10 @@ namespace PokeGame.Api.Controllers;
 [Route("regions")]
 public class RegionController : ControllerBase
 {
-  private readonly IRegionQuerier _regionQuerier;
   private readonly IRegionService _regionService;
 
-  public RegionController(IRegionQuerier regionQuerier, IRegionService regionService)
+  public RegionController(IRegionService regionService)
   {
-    _regionQuerier = regionQuerier;
     _regionService = regionService;
   }
 
@@ -32,14 +30,14 @@ public class RegionController : ControllerBase
   [HttpGet("{id}")]
   public async Task<ActionResult<RegionModel>> ReadAsync(Guid id, CancellationToken cancellationToken)
   {
-    RegionModel? region = await _regionQuerier.ReadAsync(id, cancellationToken);
+    RegionModel? region = await _regionService.ReadAsync(id, uniqueName: null, cancellationToken);
     return region is null ? NotFound() : Ok(region);
   }
 
   [HttpGet("name:{uniqueName}")]
   public async Task<ActionResult<RegionModel>> ReadAsync(string uniqueName, CancellationToken cancellationToken)
   {
-    RegionModel? region = await _regionQuerier.ReadAsync(uniqueName, cancellationToken);
+    RegionModel? region = await _regionService.ReadAsync(id: null, uniqueName, cancellationToken);
     return region is null ? NotFound() : Ok(region);
   }
 
@@ -54,8 +52,15 @@ public class RegionController : ControllerBase
   public async Task<ActionResult<SearchResults<RegionModel>>> SearchAsync([FromQuery] SearchRegionsParameters parameters, CancellationToken cancellationToken)
   {
     SearchRegionsPayload payload = parameters.ToPayload();
-    SearchResults<RegionModel> regions = await _regionQuerier.SearchAsync(payload, cancellationToken);
+    SearchResults<RegionModel> regions = await _regionService.SearchAsync(payload, cancellationToken);
     return Ok(regions);
+  }
+
+  [HttpPatch("{id}")]
+  public async Task<ActionResult<RegionModel>> UpdateAsync(Guid id, UpdateRegionPayload payload, CancellationToken cancellationToken)
+  {
+    RegionModel? region = await _regionService.UpdateAsync(id, payload, cancellationToken);
+    return region is null ? NotFound() : Ok(region);
   }
 
   private ActionResult<RegionModel> ToActionResult(CreateOrReplaceRegionResult result)

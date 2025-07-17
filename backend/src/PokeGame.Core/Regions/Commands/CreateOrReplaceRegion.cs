@@ -7,18 +7,18 @@ using PokeGame.Core.Regions.Validators;
 
 namespace PokeGame.Core.Regions.Commands;
 
-internal record CreateOrReplaceRegionCommand(CreateOrReplaceRegionPayload Payload, Guid? Id) : ICommand<CreateOrReplaceRegionResult>;
+internal record CreateOrReplaceRegion(CreateOrReplaceRegionPayload Payload, Guid? Id) : ICommand<CreateOrReplaceRegionResult>;
 
 /// <exception cref="UniqueNameAlreadyUsedException"></exception>
 /// <exception cref="ValidationException"></exception>
-internal class CreateOrReplaceRegionCommandHandler : ICommandHandler<CreateOrReplaceRegionCommand, CreateOrReplaceRegionResult>
+internal class CreateOrReplaceRegionHandler : ICommandHandler<CreateOrReplaceRegion, CreateOrReplaceRegionResult>
 {
   private readonly IApplicationContext _applicationContext;
   private readonly IRegionManager _regionManager;
   private readonly IRegionQuerier _regionQuerier;
   private readonly IRegionRepository _regionRepository;
 
-  public CreateOrReplaceRegionCommandHandler(
+  public CreateOrReplaceRegionHandler(
     IApplicationContext applicationContext,
     IRegionManager regionManager,
     IRegionQuerier regionQuerier,
@@ -30,7 +30,7 @@ internal class CreateOrReplaceRegionCommandHandler : ICommandHandler<CreateOrRep
     _regionRepository = regionRepository;
   }
 
-  public async Task<CreateOrReplaceRegionResult> HandleAsync(CreateOrReplaceRegionCommand command, CancellationToken cancellationToken)
+  public async Task<CreateOrReplaceRegionResult> HandleAsync(CreateOrReplaceRegion command, CancellationToken cancellationToken)
   {
     ActorId? actorId = _applicationContext.ActorId;
     IUniqueNameSettings uniqueNameSettings = _applicationContext.UniqueNameSettings;

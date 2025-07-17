@@ -10,6 +10,7 @@ using PokeGame.Core.Pokemons.Queries;
 using PokeGame.Core.Regions;
 using PokeGame.Core.Regions.Commands;
 using PokeGame.Core.Regions.Models;
+using PokeGame.Core.Regions.Queries;
 
 namespace PokeGame.Core;
 
@@ -28,12 +29,14 @@ public static class DependencyInjectionExtensions
   private static IServiceCollection AddCommands(this IServiceCollection services)
   {
     return services
-      .AddTransient<ICommandHandler<CreateOrReplaceRegionCommand, CreateOrReplaceRegionResult>, CreateOrReplaceRegionCommandHandler>()
+      .AddTransient<ICommandHandler<CreateOrReplaceRegion, CreateOrReplaceRegionResult>, CreateOrReplaceRegionHandler>()
       .AddTransient<ICommandHandler<CreatePokemon, PokemonModel>, CreatePokemonHandler>()
       .AddTransient<ICommandHandler<DeletePokemon, PokemonModel?>, DeletePokemonHandler>()
+      .AddTransient<ICommandHandler<DeleteRegion, RegionModel?>, DeleteRegionHandler>()
       .AddTransient<ICommandHandler<RelearnPokemonMove, PokemonModel?>, RelearnPokemonMoveHandler>()
       .AddTransient<ICommandHandler<SwitchPokemonMoves, PokemonModel?>, SwitchPokemonMovesHandler>()
-      .AddTransient<ICommandHandler<UpdatePokemon, PokemonModel?>, UpdatePokemonHandler>();
+      .AddTransient<ICommandHandler<UpdatePokemon, PokemonModel?>, UpdatePokemonHandler>()
+      .AddTransient<ICommandHandler<UpdateRegion, RegionModel?>, UpdateRegionHandler>();
   }
 
   private static IServiceCollection AddCoreServices(this IServiceCollection services)
@@ -56,6 +59,8 @@ public static class DependencyInjectionExtensions
   {
     return services
       .AddTransient<IQueryHandler<ReadPokemon, PokemonModel?>, ReadPokemonHandler>()
-      .AddTransient<IQueryHandler<SearchPokemon, SearchResults<PokemonModel>>, SearchPokemonHandler>();
+      .AddTransient<IQueryHandler<ReadRegion, RegionModel?>, ReadRegionHandler>()
+      .AddTransient<IQueryHandler<SearchPokemon, SearchResults<PokemonModel>>, SearchPokemonHandler>()
+      .AddTransient<IQueryHandler<SearchRegions, SearchResults<RegionModel>>, SearchRegionsHandler>();
   }
 }
