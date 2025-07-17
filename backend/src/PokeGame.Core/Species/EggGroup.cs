@@ -2,9 +2,10 @@
 
 public enum EggGroup
 {
+  NoEggsDiscovered = 0,
   Amorphous,
   Bug,
-  Ditto, // TODO(fpion): is this valid?
+  Ditto,
   Dragon,
   Fairy,
   Field,
@@ -13,7 +14,6 @@ public enum EggGroup
   HumanLike,
   Mineral,
   Monster,
-  NoEggsDiscovered, // TODO(fpion): is this valid?
   Water1,
   Water2,
   Water3

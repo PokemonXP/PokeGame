@@ -9,6 +9,8 @@ public class PokemonSpecies : AggregateRoot
 {
   private SpeciesUpdated _updated = new();
   private bool HasUpdates => _updated.DisplayName is not null
+    || _updated.BaseFriendship is not null || _updated.CatchRate is not null || _updated.GrowthRate.HasValue
+    || _updated.EggGroups is not null
     || _updated.Url is not null || _updated.Notes is not null;
 
   public new SpeciesId Id => new(base.Id);
@@ -73,7 +75,19 @@ public class PokemonSpecies : AggregateRoot
     }
   }
 
-  // TODO(fpion): Egg(Groups and Cycles)
+  private EggGroups? _eggGroups = null;
+  public EggGroups EggGroups
+  {
+    get => _eggGroups ?? throw new InvalidOperationException("The species has not been initialized.");
+    set
+    {
+      if (_eggGroups != value)
+      {
+        _eggGroups = value;
+        _updated.EggGroups = value;
+      }
+    }
+  }
 
   private Url? _url = null;
   public Url? Url
@@ -116,6 +130,7 @@ public class PokemonSpecies : AggregateRoot
     Friendship? baseFriendship = null,
     CatchRate? catchRate = null,
     GrowthRate growthRate = GrowthRate.MediumFast,
+    EggGroups? eggGroups = null,
     ActorId? actorId = null,
     SpeciesId? speciesId = null) : base((speciesId ?? SpeciesId.NewId()).StreamId)
   {
@@ -130,7 +145,8 @@ public class PokemonSpecies : AggregateRoot
 
     baseFriendship ??= new Friendship();
     catchRate ??= new CatchRate(1);
-    Raise(new SpeciesCreated(number, category, uniqueName, baseFriendship, catchRate, growthRate), actorId);
+    eggGroups ??= new EggGroups();
+    Raise(new SpeciesCreated(number, category, uniqueName, baseFriendship, catchRate, growthRate, eggGroups), actorId);
   }
   protected virtual void Handle(SpeciesCreated @event)
   {
@@ -142,6 +158,8 @@ public class PokemonSpecies : AggregateRoot
     _baseFriendship = @event.BaseFriendship;
     _catchRate = @event.CatchRate;
     _growthRate = @event.GrowthRate;
+
+    _eggGroups = @event.EggGroups;
   }
 
   public void Delete(ActorId? actorId = null)
@@ -211,6 +229,11 @@ public class PokemonSpecies : AggregateRoot
     if (@event.GrowthRate.HasValue)
     {
       _growthRate = @event.GrowthRate.Value;
+    }
+
+    if (@event.EggGroups is not null)
+    {
+      _eggGroups = @event.EggGroups;
     }
 
     if (@event.Url is not null)

@@ -15,7 +15,7 @@ public class SpeciesModel : AggregateModel
   public byte CatchRate { get; set; }
   public GrowthRate GrowthRate { get; set; }
 
-  // TODO(fpion): Egg(Groups and Cycles)
+  public EggGroupsModel EggGroups { get; set; } = new();
 
   public string? Url { get; set; }
   public string? Notes { get; set; }
