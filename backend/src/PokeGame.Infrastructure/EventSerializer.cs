@@ -23,6 +23,7 @@ internal class EventSerializer : Krakenar.Infrastructure.EventSerializer
     SerializerOptions.Converters.Add(new GenderRatioConverter());
     SerializerOptions.Converters.Add(new HeightConverter());
     SerializerOptions.Converters.Add(new ItemIdConverter());
+    SerializerOptions.Converters.Add(new LevelConverter());
     SerializerOptions.Converters.Add(new LicenseConverter());
     SerializerOptions.Converters.Add(new MoneyConverter());
     SerializerOptions.Converters.Add(new MoveIdConverter());
