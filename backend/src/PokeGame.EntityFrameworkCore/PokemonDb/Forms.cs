@@ -31,6 +31,8 @@ internal static class Forms
   public static readonly ColumnId Notes = new(nameof(FormEntity.Notes), Table);
   public static readonly ColumnId PrimaryType = new(nameof(FormEntity.PrimaryType), Table);
   public static readonly ColumnId SecondaryType = new(nameof(FormEntity.SecondaryType), Table);
+  public static readonly ColumnId SpeciesId = new(nameof(FormEntity.SpeciesId), Table);
+  public static readonly ColumnId SpeciesUid = new(nameof(FormEntity.SpeciesUid), Table);
   public static readonly ColumnId SpriteAlternative = new(nameof(FormEntity.SpriteAlternative), Table);
   public static readonly ColumnId SpriteAlternativeShiny = new(nameof(FormEntity.SpriteAlternativeShiny), Table);
   public static readonly ColumnId SpriteDefault = new(nameof(FormEntity.SpriteDefault), Table);

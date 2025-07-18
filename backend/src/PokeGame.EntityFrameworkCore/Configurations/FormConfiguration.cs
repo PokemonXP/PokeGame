@@ -18,6 +18,7 @@ internal class FormConfiguration : AggregateConfiguration<FormEntity>, IEntityTy
     builder.HasKey(x => x.FormId);
 
     builder.HasIndex(x => x.Id).IsUnique();
+    builder.HasIndex(x => x.SpeciesUid);
     builder.HasIndex(x => x.VarietyUid);
     builder.HasIndex(x => new { x.VarietyId, x.IsDefault });
     builder.HasIndex(x => x.UniqueName);
