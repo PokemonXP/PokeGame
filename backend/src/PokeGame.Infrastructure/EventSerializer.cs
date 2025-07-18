@@ -21,6 +21,7 @@ internal class EventSerializer : Krakenar.Infrastructure.EventSerializer
     SerializerOptions.Converters.Add(new FriendshipConverter());
     SerializerOptions.Converters.Add(new GameLocationConverter());
     SerializerOptions.Converters.Add(new GenderRatioConverter());
+    SerializerOptions.Converters.Add(new HeightConverter());
     SerializerOptions.Converters.Add(new ItemIdConverter());
     SerializerOptions.Converters.Add(new LicenseConverter());
     SerializerOptions.Converters.Add(new MoneyConverter());
@@ -38,5 +39,6 @@ internal class EventSerializer : Krakenar.Infrastructure.EventSerializer
     SerializerOptions.Converters.Add(new SpeciesIdConverter());
     SerializerOptions.Converters.Add(new TrainerIdConverter());
     SerializerOptions.Converters.Add(new VarietyIdConverter());
+    SerializerOptions.Converters.Add(new WeightConverter());
   }
 }

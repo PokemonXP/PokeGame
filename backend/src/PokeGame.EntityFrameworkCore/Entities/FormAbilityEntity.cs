@@ -4,8 +4,6 @@ namespace PokeGame.EntityFrameworkCore.Entities;
 
 internal class FormAbilityEntity
 {
-  public int FormAbilityId { get; private set; }
-
   public FormEntity? Form { get; private set; }
   public int FormId { get; private set; }
   public Guid FormUid { get; private set; }
@@ -38,7 +36,7 @@ internal class FormAbilityEntity
     AbilityUid = ability.Id;
   }
 
-  public override bool Equals(object? obj) => obj is FormAbilityEntity entity && entity.FormAbilityId == FormAbilityId;
-  public override int GetHashCode() => FormAbilityId.GetHashCode();
-  public override string ToString() => $"{GetType()} (FormAbilityId={FormAbilityId})";
+  public override bool Equals(object? obj) => obj is FormAbilityEntity entity && entity.FormId == FormId && entity.AbilityId == AbilityId;
+  public override int GetHashCode() => HashCode.Combine(FormId, AbilityId);
+  public override string ToString() => $"{GetType()} (FormId={FormId}, AbilityId={AbilityId})";
 }

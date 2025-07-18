@@ -7,6 +7,9 @@ namespace PokeGame.Api.Models.Form;
 
 public record SearchFormsParameters : SearchParameters
 {
+  [FromQuery(Name = "variety")]
+  public Guid? VarietyId { get; set; }
+
   [FromQuery(Name = "type")]
   public PokemonType? Type { get; set; }
 
@@ -17,6 +20,7 @@ public record SearchFormsParameters : SearchParameters
   {
     SearchFormsPayload payload = new()
     {
+      VarietyId = VarietyId,
       Type = Type,
       AbilityId = AbilityId
     };

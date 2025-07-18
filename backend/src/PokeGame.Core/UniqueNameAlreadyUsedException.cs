@@ -2,6 +2,7 @@
 using Krakenar.Core;
 using Logitar;
 using PokeGame.Core.Abilities;
+using PokeGame.Core.Forms;
 using PokeGame.Core.Moves;
 using PokeGame.Core.Regions;
 using PokeGame.Core.Species;
@@ -56,6 +57,10 @@ public class UniqueNameAlreadyUsedException : ConflictException
 
   public UniqueNameAlreadyUsedException(Ability ability, AbilityId conflictId)
     : this("Ability", ability.Id.ToGuid(), conflictId.ToGuid(), ability.UniqueName, nameof(ability.UniqueName))
+  {
+  }
+  public UniqueNameAlreadyUsedException(Form form, FormId conflictId)
+    : this("Form", form.Id.ToGuid(), conflictId.ToGuid(), form.UniqueName, nameof(form.UniqueName))
   {
   }
   public UniqueNameAlreadyUsedException(Move move, MoveId conflictId)

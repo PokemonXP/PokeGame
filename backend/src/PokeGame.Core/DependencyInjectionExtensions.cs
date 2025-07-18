@@ -1,6 +1,7 @@
 ﻿using Krakenar.Core;
 using Microsoft.Extensions.DependencyInjection;
 using PokeGame.Core.Abilities;
+using PokeGame.Core.Forms;
 using PokeGame.Core.Moves;
 using PokeGame.Core.Pokemons;
 using PokeGame.Core.Regions;
@@ -15,6 +16,7 @@ public static class DependencyInjectionExtensions
   public static IServiceCollection AddPokeGameCore(this IServiceCollection services)
   {
     AbilityService.Register(services);
+    FormService.Register(services);
     MoveService.Register(services);
     PokemonService.Register(services);
     RegionService.Register(services);

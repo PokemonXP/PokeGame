@@ -26,8 +26,10 @@ public class PokemonConstructorTests
 
     Ability blaze = new(new UniqueName(_uniqueNameSettings, "blaze"));
     Ability thickFat = new(new UniqueName(_uniqueNameSettings, "thick-fat"));
-    _form = new Form(_variety, _variety.UniqueName, new Types(PokemonType.Fire, PokemonType.Fighting),
-      new FormAbilities(blaze, secondary: null, thickFat), new BaseStatistics(90, 93, 55, 70, 55, 55), isDefault: true);
+    Sprites sprites = new(new Url("https://www.pokegame.com/assets/img/pokemon/pignite.png"), new Url("https://www.pokegame.com/assets/img/pokemon/pignite-shiny.png"));
+    _form = new Form(_variety, _variety.UniqueName, new FormTypes(PokemonType.Fire, PokemonType.Fighting),
+      new FormAbilities(blaze, secondary: null, thickFat), new BaseStatistics(90, 93, 55, 70, 55, 55),
+      new Yield(146, 0, 2, 0, 0, 0, 0), sprites, isDefault: true, height: new Height(10), weight: new Weight(555));
   }
 
   [Theory(DisplayName = "It should create the correct Pokémon from arguments.")]
@@ -149,7 +151,9 @@ public class PokemonConstructorTests
   {
     PokemonSpecies species = new(new Number(498), PokemonCategory.Standard, new UniqueName(_uniqueNameSettings, "tepig"), new Friendship(70), new CatchRate(45), GrowthRate.MediumSlow);
     Variety variety = new(species, species.UniqueName, isDefault: true, new GenderRatio(7));
-    Form form = new(variety, variety.UniqueName, new Types(PokemonType.Fire), _form.Abilities, new BaseStatistics(65, 63, 45, 45, 45, 45), isDefault: true);
+    Sprites sprites = new(new Url("https://www.pokegame.com/assets/img/pokemon/tepig.png"), new Url("https://www.pokegame.com/assets/img/pokemon/tepig-shiny.png"));
+    Form form = new(variety, variety.UniqueName, new FormTypes(PokemonType.Fire), _form.Abilities, new BaseStatistics(65, 63, 45, 45, 45, 45),
+      new Yield(62, 1, 0, 0, 0, 0, 0), sprites, isDefault: true, height: new Height(5), weight: new Weight(99));
 
     var exception = Assert.Throws<ArgumentException>(
       () => new Pokemon2(_species, _variety, form, new(_uniqueNameSettings, "briquet"), _randomizer.PokemonSize(), _randomizer.PokemonNature(), _randomizer.IndividualValues()));
@@ -164,7 +168,9 @@ public class PokemonConstructorTests
 
     Ability limber = new(new UniqueName(_uniqueNameSettings, "limber"));
     Ability imposter = new(new UniqueName(_uniqueNameSettings, "imposter"));
-    Form form = new(variety, variety.UniqueName, new Types(PokemonType.Normal), new FormAbilities(limber, imposter), new BaseStatistics(48, 48, 48, 48, 48, 48), isDefault: true);
+    Sprites sprites = new(new Url("https://www.pokegame.com/assets/img/pokemon/ditto.png"), new Url("https://www.pokegame.com/assets/img/pokemon/ditto-shiny.png"));
+    Form form = new(variety, variety.UniqueName, new FormTypes(PokemonType.Normal), new FormAbilities(limber, imposter), new BaseStatistics(48, 48, 48, 48, 48, 48),
+      new Yield(101, 1, 0, 0, 0, 0, 0), sprites, isDefault: true, height: new Height(3), weight: new Weight(40));
 
     var exception = Assert.Throws<ArgumentException>(
       () => new Pokemon2(species, variety, form, form.UniqueName, _randomizer.PokemonSize(), _randomizer.PokemonNature(), _randomizer.IndividualValues(), PokemonGender.Male));
@@ -228,7 +234,9 @@ public class PokemonConstructorTests
     Ability thickFat = new(new UniqueName(_uniqueNameSettings, "thick-fat"));
     Ability scrappy = new(new UniqueName(_uniqueNameSettings, "scrappy"));
     Ability sapSipper = new(new UniqueName(_uniqueNameSettings, "sap-sipper"));
-    Form form = new(variety, variety.UniqueName, new Types(PokemonType.Normal), new FormAbilities(thickFat, scrappy, sapSipper), new BaseStatistics(95, 80, 105, 40, 70, 100), isDefault: true);
+    Sprites sprites = new(new Url("https://www.pokegame.com/assets/img/pokemon/miltank.png"), new Url("https://www.pokegame.com/assets/img/pokemon/miltank-shiny.png"));
+    Form form = new(variety, variety.UniqueName, new FormTypes(PokemonType.Normal), new FormAbilities(thickFat, scrappy, sapSipper), new BaseStatistics(95, 80, 105, 40, 70, 100),
+      new Yield(172, 0, 0, 2, 0, 0, 0), sprites, isDefault: true, height: new Height(12), weight: new Weight(755));
 
     var exception = Assert.Throws<ArgumentOutOfRangeException>(
       () => new Pokemon2(species, variety, form, form.UniqueName, _randomizer.PokemonSize(), _randomizer.PokemonNature(), _randomizer.IndividualValues(), PokemonGender.Male));
@@ -245,7 +253,9 @@ public class PokemonConstructorTests
     Ability intimidate = new(new UniqueName(_uniqueNameSettings, "intimidate"));
     Ability angerPoint = new(new UniqueName(_uniqueNameSettings, "anger-point"));
     Ability sheerForce = new(new UniqueName(_uniqueNameSettings, "sheer-force"));
-    Form form = new(variety, variety.UniqueName, new Types(PokemonType.Normal), new FormAbilities(intimidate, angerPoint, sheerForce), new BaseStatistics(75, 100, 95, 40, 70, 110), isDefault: true);
+    Sprites sprites = new(new Url("https://www.pokegame.com/assets/img/pokemon/tauros.png"), new Url("https://www.pokegame.com/assets/img/pokemon/tauros-shiny.png"));
+    Form form = new(variety, variety.UniqueName, new FormTypes(PokemonType.Normal), new FormAbilities(intimidate, angerPoint, sheerForce), new BaseStatistics(75, 100, 95, 40, 70, 110),
+      new Yield(172, 0, 1, 0, 0, 0, 1), sprites, isDefault: true, height: new Height(14), weight: new Weight(884));
 
     var exception = Assert.Throws<ArgumentOutOfRangeException>(
       () => new Pokemon2(species, variety, form, form.UniqueName, _randomizer.PokemonSize(), _randomizer.PokemonNature(), _randomizer.IndividualValues(), PokemonGender.Female));

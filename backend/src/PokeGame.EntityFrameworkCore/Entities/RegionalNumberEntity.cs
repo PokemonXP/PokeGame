@@ -4,8 +4,6 @@ namespace PokeGame.EntityFrameworkCore.Entities;
 
 internal class RegionalNumberEntity
 {
-  public int RegionalNumberId { get; private set; }
-
   public SpeciesEntity? Species { get; private set; }
   public int SpeciesId { get; private set; }
   public Guid SpeciesUid { get; private set; }
@@ -42,7 +40,7 @@ internal class RegionalNumberEntity
     Number = @event.Number.Value;
   }
 
-  public override bool Equals(object? obj) => obj is RegionalNumberEntity entity && entity.RegionalNumberId == RegionalNumberId;
-  public override int GetHashCode() => RegionalNumberId.GetHashCode();
-  public override string ToString() => $"{GetType()} (RegionalNumberId={RegionalNumberId})";
+  public override bool Equals(object? obj) => obj is RegionalNumberEntity entity && entity.SpeciesId == SpeciesId && entity.RegionId == RegionId;
+  public override int GetHashCode() => HashCode.Combine(SpeciesId, RegionId);
+  public override string ToString() => $"{GetType()} (SpeciesId={SpeciesId}, RegionId={RegionId})";
 }

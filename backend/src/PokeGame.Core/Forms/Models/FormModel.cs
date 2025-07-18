@@ -18,8 +18,8 @@ public class FormModel : AggregateModel
   public int Height { get; set; }
   public int Weight { get; set; }
 
-  public TypesModel Types { get; set; } = new();
-  public AbilitiesModel Abilities { get; set; } = new();
+  public FormTypesModel Types { get; set; } = new();
+  public FormAbilitiesModel Abilities { get; set; } = new();
   public BaseStatisticsModel BaseStatistics { get; set; } = new();
   public YieldModel Yield { get; set; } = new();
   public SpritesModel Sprites { get; set; } = new();

@@ -3,6 +3,7 @@
 public interface IAbilityRepository
 {
   Task<Ability?> LoadAsync(AbilityId abilityId, CancellationToken cancellationToken = default);
+  Task<Ability?> LoadAsync(string idOrUniqueName, CancellationToken cancellationToken = default);
 
   Task SaveAsync(Ability ability, CancellationToken cancellationToken = default);
   Task SaveAsync(IEnumerable<Ability> abilities, CancellationToken cancellationToken = default);

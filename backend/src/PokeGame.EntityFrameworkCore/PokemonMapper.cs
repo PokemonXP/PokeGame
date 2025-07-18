@@ -72,12 +72,13 @@ internal class PokemonMapper
       IsMega = source.IsMega,
       Height = source.Height,
       Weight = source.Weight,
+      Types = source.GetTypes(),
+      BaseStatistics = source.GetBaseStatistics(),
+      Yield = source.GetYield(),
+      Sprites = source.GetSprites(),
       Url = source.Url,
       Notes = source.Notes
     };
-
-    destination.Types.Primary = source.PrimaryType;
-    destination.Types.Secondary = source.SecondaryType;
 
     foreach (FormAbilityEntity entity in source.Abilities)
     {
@@ -100,26 +101,6 @@ internal class PokemonMapper
           break;
       }
     }
-
-    destination.BaseStatistics.HP = (byte)source.HPBase;
-    destination.BaseStatistics.Attack = (byte)source.AttackBase;
-    destination.BaseStatistics.Defense = (byte)source.DefenseBase;
-    destination.BaseStatistics.SpecialAttack = (byte)source.SpecialAttackBase;
-    destination.BaseStatistics.SpecialDefense = (byte)source.SpecialDefenseBase;
-    destination.BaseStatistics.Speed = (byte)source.SpeedBase;
-
-    destination.Yield.Experience = source.ExperienceYield;
-    destination.Yield.HP = source.HPYield;
-    destination.Yield.Attack = source.AttackYield;
-    destination.Yield.Defense = source.DefenseYield;
-    destination.Yield.SpecialAttack = source.SpecialAttackYield;
-    destination.Yield.SpecialDefense = source.SpecialDefenseYield;
-    destination.Yield.Speed = source.SpeedYield;
-
-    destination.Sprites.Default = source.DefaultSprite;
-    destination.Sprites.DefaultShiny = source.DefaultSpriteShiny;
-    destination.Sprites.Alternative = source.AlternativeSprite;
-    destination.Sprites.AlternativeShiny = source.AlternativeSpriteShiny;
 
     MapAggregate(source, destination);
 

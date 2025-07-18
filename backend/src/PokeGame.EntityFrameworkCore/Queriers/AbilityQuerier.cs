@@ -37,6 +37,14 @@ internal class AbilityQuerier : IAbilityQuerier
     return string.IsNullOrWhiteSpace(streamId) ? null : new AbilityId(streamId);
   }
 
+  public async Task<IReadOnlyCollection<AbilityKey>> GetKeysAsync(CancellationToken cancellationToken)
+  {
+    var keys = await _abilities.AsNoTracking()
+      .Select(x => new { x.StreamId, x.Id, x.UniqueName })
+      .ToArrayAsync(cancellationToken);
+    return keys.Select(key => new AbilityKey(new AbilityId(key.StreamId), key.Id, key.UniqueName)).ToList().AsReadOnly();
+  }
+
   public async Task<AbilityModel> ReadAsync(Ability ability, CancellationToken cancellationToken)
   {
     return await ReadAsync(ability.Id, cancellationToken) ?? throw new InvalidOperationException($"The ability entity 'StreamId={ability.Id}' was not found.");

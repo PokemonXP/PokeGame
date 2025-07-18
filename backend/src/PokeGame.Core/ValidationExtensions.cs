@@ -30,6 +30,11 @@ public static class ValidationExtensions
     return ruleBuilder.NotEmpty().MaximumLength(Varieties.Genus.MaximumLength);
   }
 
+  public static IRuleBuilderOptions<T, int> Height<T>(this IRuleBuilder<T, int> ruleBuilder)
+  {
+    return ruleBuilder.GreaterThan(0);
+  }
+
   public static IRuleBuilderOptions<T, string> License<T>(this IRuleBuilder<T, string> ruleBuilder)
   {
     return ruleBuilder.NotEmpty().MaximumLength(Trainers.License.MaximumLength);
@@ -73,5 +78,10 @@ public static class ValidationExtensions
   public static IRuleBuilderOptions<T, byte> PowerPoints<T>(this IRuleBuilder<T, byte> ruleBuilder)
   {
     return ruleBuilder.GreaterThan((byte)0).LessThanOrEqualTo(Moves.PowerPoints.MaximumValue);
+  }
+
+  public static IRuleBuilderOptions<T, int> Weight<T>(this IRuleBuilder<T, int> ruleBuilder)
+  {
+    return ruleBuilder.GreaterThan(0);
   }
 }

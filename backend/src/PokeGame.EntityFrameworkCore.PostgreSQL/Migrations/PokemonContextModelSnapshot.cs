@@ -108,20 +108,14 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
 
             modelBuilder.Entity("PokeGame.EntityFrameworkCore.Entities.FormAbilityEntity", b =>
                 {
-                    b.Property<int>("FormAbilityId")
-                        .ValueGeneratedOnAdd()
+                    b.Property<int>("FormId")
                         .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("FormAbilityId"));
 
                     b.Property<int>("AbilityId")
                         .HasColumnType("integer");
 
                     b.Property<Guid>("AbilityUid")
                         .HasColumnType("uuid");
-
-                    b.Property<int>("FormId")
-                        .HasColumnType("integer");
 
                     b.Property<Guid>("FormUid")
                         .HasColumnType("uuid");
@@ -131,16 +125,13 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
 
-                    b.HasKey("FormAbilityId");
+                    b.HasKey("FormId", "AbilityId");
 
                     b.HasIndex("AbilityId");
 
                     b.HasIndex("AbilityUid");
 
                     b.HasIndex("FormUid");
-
-                    b.HasIndex("FormId", "AbilityId")
-                        .IsUnique();
 
                     b.HasIndex("FormId", "Slot")
                         .IsUnique();
@@ -156,19 +147,23 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("FormId"));
 
-                    b.Property<string>("AlternativeSprite")
-                        .HasMaxLength(2048)
-                        .HasColumnType("character varying(2048)");
+                    b.Property<byte>("BaseAttack")
+                        .HasColumnType("smallint");
 
-                    b.Property<string>("AlternativeSpriteShiny")
-                        .HasMaxLength(2048)
-                        .HasColumnType("character varying(2048)");
+                    b.Property<byte>("BaseDefense")
+                        .HasColumnType("smallint");
 
-                    b.Property<int>("AttackBase")
-                        .HasColumnType("integer");
+                    b.Property<byte>("BaseHP")
+                        .HasColumnType("smallint");
 
-                    b.Property<int>("AttackYield")
-                        .HasColumnType("integer");
+                    b.Property<byte>("BaseSpecialAttack")
+                        .HasColumnType("smallint");
+
+                    b.Property<byte>("BaseSpecialDefense")
+                        .HasColumnType("smallint");
+
+                    b.Property<byte>("BaseSpeed")
+                        .HasColumnType("smallint");
 
                     b.Property<string>("CreatedBy")
                         .HasMaxLength(255)
@@ -177,37 +172,12 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("DefaultSprite")
-                        .IsRequired()
-                        .HasMaxLength(2048)
-                        .HasColumnType("character varying(2048)");
-
-                    b.Property<string>("DefaultSpriteShiny")
-                        .IsRequired()
-                        .HasMaxLength(2048)
-                        .HasColumnType("character varying(2048)");
-
-                    b.Property<int>("DefenseBase")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("DefenseYield")
-                        .HasColumnType("integer");
-
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
                     b.Property<string>("DisplayName")
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
-
-                    b.Property<int>("ExperienceYield")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("HPBase")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("HPYield")
-                        .HasColumnType("integer");
 
                     b.Property<int>("Height")
                         .HasColumnType("integer");
@@ -236,23 +206,29 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
 
-                    b.Property<int>("SpecialAttackBase")
+                    b.Property<int>("SpeciesId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("SpecialAttackYield")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("SpeciesUid")
+                        .HasColumnType("uuid");
 
-                    b.Property<int>("SpecialDefenseBase")
-                        .HasColumnType("integer");
+                    b.Property<string>("SpriteAlternative")
+                        .HasMaxLength(2048)
+                        .HasColumnType("character varying(2048)");
 
-                    b.Property<int>("SpecialDefenseYield")
-                        .HasColumnType("integer");
+                    b.Property<string>("SpriteAlternativeShiny")
+                        .HasMaxLength(2048)
+                        .HasColumnType("character varying(2048)");
 
-                    b.Property<int>("SpeedBase")
-                        .HasColumnType("integer");
+                    b.Property<string>("SpriteDefault")
+                        .IsRequired()
+                        .HasMaxLength(2048)
+                        .HasColumnType("character varying(2048)");
 
-                    b.Property<int>("SpeedYield")
-                        .HasColumnType("integer");
+                    b.Property<string>("SpriteShiny")
+                        .IsRequired()
+                        .HasMaxLength(2048)
+                        .HasColumnType("character varying(2048)");
 
                     b.Property<string>("StreamId")
                         .IsRequired()
@@ -292,6 +268,27 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
                     b.Property<int>("Weight")
                         .HasColumnType("integer");
 
+                    b.Property<int>("YieldAttack")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("YieldDefense")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("YieldExperience")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("YieldHP")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("YieldSpecialAttack")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("YieldSpecialDefense")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("YieldSpeed")
+                        .HasColumnType("integer");
+
                     b.HasKey("FormId");
 
                     b.HasIndex("CreatedBy");
@@ -300,12 +297,14 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
 
                     b.HasIndex("DisplayName");
 
-                    b.HasIndex("ExperienceYield");
-
                     b.HasIndex("Height");
 
                     b.HasIndex("Id")
                         .IsUnique();
+
+                    b.HasIndex("SpeciesId");
+
+                    b.HasIndex("SpeciesUid");
 
                     b.HasIndex("StreamId")
                         .IsUnique();
@@ -324,6 +323,8 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
                     b.HasIndex("Version");
 
                     b.HasIndex("Weight");
+
+                    b.HasIndex("YieldExperience");
 
                     b.HasIndex("VarietyId", "IsDefault");
 
@@ -953,37 +954,28 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
 
             modelBuilder.Entity("PokeGame.EntityFrameworkCore.Entities.RegionalNumberEntity", b =>
                 {
-                    b.Property<int>("RegionalNumberId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("RegionalNumberId"));
-
-                    b.Property<int>("Number")
+                    b.Property<int>("SpeciesId")
                         .HasColumnType("integer");
 
                     b.Property<int>("RegionId")
                         .HasColumnType("integer");
 
+                    b.Property<int>("Number")
+                        .HasColumnType("integer");
+
                     b.Property<Guid>("RegionUid")
                         .HasColumnType("uuid");
-
-                    b.Property<int>("SpeciesId")
-                        .HasColumnType("integer");
 
                     b.Property<Guid>("SpeciesUid")
                         .HasColumnType("uuid");
 
-                    b.HasKey("RegionalNumberId");
+                    b.HasKey("SpeciesId", "RegionId");
 
                     b.HasIndex("RegionUid");
 
                     b.HasIndex("SpeciesUid");
 
                     b.HasIndex("RegionId", "Number")
-                        .IsUnique();
-
-                    b.HasIndex("SpeciesId", "RegionId")
                         .IsUnique();
 
                     b.ToTable("RegionalNumbers", "Pokemon");
@@ -1377,11 +1369,19 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
 
             modelBuilder.Entity("PokeGame.EntityFrameworkCore.Entities.FormEntity", b =>
                 {
+                    b.HasOne("PokeGame.EntityFrameworkCore.Entities.SpeciesEntity", "Species")
+                        .WithMany()
+                        .HasForeignKey("SpeciesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("PokeGame.EntityFrameworkCore.Entities.VarietyEntity", "Variety")
                         .WithMany("Forms")
                         .HasForeignKey("VarietyId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("Species");
 
                     b.Navigation("Variety");
                 });

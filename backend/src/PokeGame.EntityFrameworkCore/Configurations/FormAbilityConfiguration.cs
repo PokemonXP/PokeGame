@@ -11,9 +11,8 @@ internal class FormAbilityConfiguration : IEntityTypeConfiguration<FormAbilityEn
   public void Configure(EntityTypeBuilder<FormAbilityEntity> builder)
   {
     builder.ToTable(PokemonDb.FormAbilities.Table.Table!, PokemonDb.FormAbilities.Table.Schema);
-    builder.HasKey(x => x.FormAbilityId);
+    builder.HasKey(x => new { x.FormId, x.AbilityId });
 
-    builder.HasIndex(x => new { x.FormId, x.AbilityId }).IsUnique();
     builder.HasIndex(x => new { x.FormId, x.Slot }).IsUnique();
     builder.HasIndex(x => x.FormUid);
     builder.HasIndex(x => x.AbilityUid);

@@ -3,7 +3,6 @@ using Krakenar.Contracts.Settings;
 using Krakenar.Core;
 using Logitar.EventSourcing;
 using PokeGame.Core.Forms;
-using PokeGame.Core.Forms.Models;
 using PokeGame.Core.Pokemons.Models;
 using PokeGame.Core.Pokemons.Validators;
 
@@ -62,8 +61,8 @@ internal class UpdatePokemonHandler : ICommandHandler<UpdatePokemon, PokemonMode
     }
     if (payload.Gender.HasValue)
     {
-      FormModel form = await _formQuerier.ReadAsync(pokemon.FormId, cancellationToken);
-      new UpdatePokemonValidator(uniqueNameSettings, form).ValidateAndThrow(payload);
+      //FormModel form = await _formQuerier.ReadAsync(pokemon.FormId, cancellationToken);
+      //new UpdatePokemonValidator(uniqueNameSettings, form).ValidateAndThrow(payload);
 
       pokemon.Gender = payload.Gender.Value;
     }

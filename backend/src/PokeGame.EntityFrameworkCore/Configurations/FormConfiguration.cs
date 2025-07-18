@@ -18,6 +18,7 @@ internal class FormConfiguration : AggregateConfiguration<FormEntity>, IEntityTy
     builder.HasKey(x => x.FormId);
 
     builder.HasIndex(x => x.Id).IsUnique();
+    builder.HasIndex(x => x.SpeciesUid);
     builder.HasIndex(x => x.VarietyUid);
     builder.HasIndex(x => new { x.VarietyId, x.IsDefault });
     builder.HasIndex(x => x.UniqueName);
@@ -25,17 +26,17 @@ internal class FormConfiguration : AggregateConfiguration<FormEntity>, IEntityTy
     builder.HasIndex(x => x.DisplayName);
     builder.HasIndex(x => x.Height);
     builder.HasIndex(x => x.Weight);
-    builder.HasIndex(x => x.ExperienceYield);
+    builder.HasIndex(x => x.YieldExperience);
 
     builder.Property(x => x.UniqueName).HasMaxLength(UniqueName.MaximumLength);
     builder.Property(x => x.UniqueNameNormalized).HasMaxLength(UniqueName.MaximumLength);
     builder.Property(x => x.DisplayName).HasMaxLength(DisplayName.MaximumLength);
     builder.Property(x => x.PrimaryType).HasMaxLength(byte.MaxValue).HasConversion(new EnumToStringConverter<PokemonType>());
     builder.Property(x => x.SecondaryType).HasMaxLength(byte.MaxValue).HasConversion(new EnumToStringConverter<PokemonType>());
-    builder.Property(x => x.DefaultSprite).HasMaxLength(Url.MaximumLength);
-    builder.Property(x => x.DefaultSpriteShiny).HasMaxLength(Url.MaximumLength);
-    builder.Property(x => x.AlternativeSprite).HasMaxLength(Url.MaximumLength);
-    builder.Property(x => x.AlternativeSpriteShiny).HasMaxLength(Url.MaximumLength);
+    builder.Property(x => x.SpriteDefault).HasMaxLength(Url.MaximumLength);
+    builder.Property(x => x.SpriteShiny).HasMaxLength(Url.MaximumLength);
+    builder.Property(x => x.SpriteAlternative).HasMaxLength(Url.MaximumLength);
+    builder.Property(x => x.SpriteAlternativeShiny).HasMaxLength(Url.MaximumLength);
     builder.Property(x => x.Url).HasMaxLength(Url.MaximumLength);
 
     builder.HasOne(x => x.Variety).WithMany(x => x.Forms).OnDelete(DeleteBehavior.Restrict);

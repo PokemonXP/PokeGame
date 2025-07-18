@@ -9,9 +9,8 @@ internal class RegionalNumberConfiguration : IEntityTypeConfiguration<RegionalNu
   public void Configure(EntityTypeBuilder<RegionalNumberEntity> builder)
   {
     builder.ToTable(PokemonDb.RegionalNumbers.Table.Table!, PokemonDb.RegionalNumbers.Table.Schema);
-    builder.HasKey(x => x.RegionalNumberId);
+    builder.HasKey(x => new { x.SpeciesId, x.RegionId });
 
-    builder.HasIndex(x => new { x.SpeciesId, x.RegionId }).IsUnique();
     builder.HasIndex(x => new { x.RegionId, x.Number }).IsUnique();
     builder.HasIndex(x => x.SpeciesUid);
     builder.HasIndex(x => x.RegionUid);
