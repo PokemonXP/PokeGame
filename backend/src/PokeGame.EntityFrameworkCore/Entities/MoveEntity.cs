@@ -32,6 +32,7 @@ internal class MoveEntity : AggregateEntity
 
   public List<PokemonMoveEntity> Pokemon { get; private set; } = [];
   public List<ItemEntity> TechnicalMachines { get; private set; } = [];
+  public List<VarietyMoveEntity> Varieties { get; private set; } = [];
 
   public MoveEntity(MoveCreated @event) : base(@event)
   {

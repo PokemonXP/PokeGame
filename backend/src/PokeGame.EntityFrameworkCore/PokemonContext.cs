@@ -23,6 +23,7 @@ public class PokemonContext : DbContext
   internal DbSet<SpeciesEntity> Species => Set<SpeciesEntity>();
   internal DbSet<TrainerEntity> Trainers => Set<TrainerEntity>();
   internal DbSet<VarietyEntity> Varieties => Set<VarietyEntity>();
+  internal DbSet<VarietyMoveEntity> VarietyMoves => Set<VarietyMoveEntity>();
 
   protected override void OnModelCreating(ModelBuilder modelBuilder)
   {

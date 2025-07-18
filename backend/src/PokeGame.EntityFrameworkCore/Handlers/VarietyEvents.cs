@@ -10,6 +10,9 @@ namespace PokeGame.EntityFrameworkCore.Handlers;
 
 internal class VarietyEvents : IEventHandler<VarietyCreated>,
   IEventHandler<VarietyDeleted>,
+  IEventHandler<VarietyEvolutionMoveChanged>,
+  IEventHandler<VarietyLevelMoveChanged>,
+  IEventHandler<VarietyMoveRemoved>,
   IEventHandler<VarietyUniqueNameChanged>,
   IEventHandler<VarietyUpdated>
 {
@@ -17,6 +20,9 @@ internal class VarietyEvents : IEventHandler<VarietyCreated>,
   {
     services.AddScoped<IEventHandler<VarietyCreated>, VarietyEvents>();
     services.AddScoped<IEventHandler<VarietyDeleted>, VarietyEvents>();
+    services.AddScoped<IEventHandler<VarietyEvolutionMoveChanged>, VarietyEvents>();
+    services.AddScoped<IEventHandler<VarietyLevelMoveChanged>, VarietyEvents>();
+    services.AddScoped<IEventHandler<VarietyMoveRemoved>, VarietyEvents>();
     services.AddScoped<IEventHandler<VarietyUniqueNameChanged>, VarietyEvents>();
     services.AddScoped<IEventHandler<VarietyUpdated>, VarietyEvents>();
   }
@@ -62,6 +68,67 @@ internal class VarietyEvents : IEventHandler<VarietyCreated>,
     }
 
     _context.Varieties.Remove(variety);
+
+    await _context.SaveChangesAsync(cancellationToken);
+    _logger.LogSuccess(@event);
+  }
+
+  public async Task HandleAsync(VarietyEvolutionMoveChanged @event, CancellationToken cancellationToken)
+  {
+    VarietyEntity? variety = await _context.Varieties
+      .Include(x => x.Moves).ThenInclude(x => x.Move)
+      .SingleOrDefaultAsync(x => x.StreamId == @event.StreamId.Value, cancellationToken);
+    if (variety is null || (variety.Version != (@event.Version - 1)))
+    {
+      _logger.LogUnexpectedVersion(@event, variety);
+      return;
+    }
+
+    MoveEntity move = await _context.Moves.SingleOrDefaultAsync(x => x.StreamId == @event.MoveId.Value, cancellationToken)
+      ?? throw new InvalidOperationException($"The move entity 'StreamId={@event.MoveId}' was not found.");
+
+    variety.SetEvolutionMove(move, @event);
+
+    await _context.SaveChangesAsync(cancellationToken);
+    _logger.LogSuccess(@event);
+  }
+
+  public async Task HandleAsync(VarietyLevelMoveChanged @event, CancellationToken cancellationToken)
+  {
+    VarietyEntity? variety = await _context.Varieties
+      .Include(x => x.Moves).ThenInclude(x => x.Move)
+      .SingleOrDefaultAsync(x => x.StreamId == @event.StreamId.Value, cancellationToken);
+    if (variety is null || (variety.Version != (@event.Version - 1)))
+    {
+      _logger.LogUnexpectedVersion(@event, variety);
+      return;
+    }
+
+    MoveEntity move = await _context.Moves.SingleOrDefaultAsync(x => x.StreamId == @event.MoveId.Value, cancellationToken)
+      ?? throw new InvalidOperationException($"The move entity 'StreamId={@event.MoveId}' was not found.");
+
+    variety.SetLevelMove(move, @event);
+
+    await _context.SaveChangesAsync(cancellationToken);
+    _logger.LogSuccess(@event);
+  }
+
+  public async Task HandleAsync(VarietyMoveRemoved @event, CancellationToken cancellationToken)
+  {
+    VarietyEntity? variety = await _context.Varieties
+      .Include(x => x.Moves).ThenInclude(x => x.Move)
+      .SingleOrDefaultAsync(x => x.StreamId == @event.StreamId.Value, cancellationToken);
+    if (variety is null || (variety.Version != (@event.Version - 1)))
+    {
+      _logger.LogUnexpectedVersion(@event, variety);
+      return;
+    }
+
+    VarietyMoveEntity? varietyMove = variety.RemoveMove(@event);
+    if (varietyMove is not null)
+    {
+      _context.VarietyMoves.Remove(varietyMove);
+    }
 
     await _context.SaveChangesAsync(cancellationToken);
     _logger.LogSuccess(@event);

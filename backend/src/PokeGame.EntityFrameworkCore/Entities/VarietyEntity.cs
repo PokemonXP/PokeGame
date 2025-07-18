@@ -34,6 +34,7 @@ internal class VarietyEntity : AggregateEntity
   public string? Notes { get; private set; }
 
   public List<FormEntity> Forms { get; private set; } = [];
+  public List<VarietyMoveEntity> Moves { get; private set; } = [];
   public List<PokemonEntity> Pokemon { get; private set; } = [];
 
   public VarietyEntity(SpeciesEntity species, VarietyCreated @event) : base(@event)
@@ -55,6 +56,45 @@ internal class VarietyEntity : AggregateEntity
 
   private VarietyEntity() : base()
   {
+  }
+
+  public VarietyMoveEntity? RemoveMove(VarietyMoveRemoved @event)
+  {
+    Update(@event);
+
+    return Moves.SingleOrDefault(m => m.Move?.StreamId == @event.MoveId.Value);
+  }
+
+  public void SetEvolutionMove(MoveEntity move, VarietyEvolutionMoveChanged @event)
+  {
+    Update(@event);
+
+    VarietyMoveEntity? varietyMove = Moves.SingleOrDefault(m => m.Move?.StreamId == @event.MoveId.Value);
+    if (varietyMove is null)
+    {
+      varietyMove = new VarietyMoveEntity(this, move, @event);
+      Moves.Add(varietyMove);
+    }
+    else
+    {
+      varietyMove.Update(@event);
+    }
+  }
+
+  public void SetLevelMove(MoveEntity move, VarietyLevelMoveChanged @event)
+  {
+    Update(@event);
+
+    VarietyMoveEntity? varietyMove = Moves.SingleOrDefault(m => m.Move?.StreamId == @event.MoveId.Value);
+    if (varietyMove is null)
+    {
+      varietyMove = new VarietyMoveEntity(this, move, @event);
+      Moves.Add(varietyMove);
+    }
+    else
+    {
+      varietyMove.Update(@event);
+    }
   }
 
   public void SetUniqueName(VarietyUniqueNameChanged @event)
