@@ -10,7 +10,7 @@ public interface IExperienceTable
 
 public class ExperienceTable : IExperienceTable
 {
-  private const int MaximumLevel = 100;
+  private const int MaximumLevel = Level.MaximumValue;
 
   private static IExperienceTable? _instance = null;
   public static IExperienceTable Instance

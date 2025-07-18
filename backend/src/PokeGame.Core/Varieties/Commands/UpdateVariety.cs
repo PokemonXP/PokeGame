@@ -3,6 +3,7 @@ using Krakenar.Contracts.Settings;
 using Krakenar.Core;
 using Logitar.EventSourcing;
 using PokeGame.Core.Moves;
+using PokeGame.Core.Pokemons;
 using PokeGame.Core.Varieties.Models;
 using PokeGame.Core.Varieties.Validators;
 
@@ -88,7 +89,22 @@ internal class UpdateVarietyHandler : ICommandHandler<UpdateVariety, VarietyMode
     IReadOnlyDictionary<MoveId, int?> moves = await _varietyManager.FindMovesAsync(payload.Moves, nameof(payload.Moves), cancellationToken);
     foreach (KeyValuePair<MoveId, int?> move in moves)
     {
-      // TODO(fpion): implement
+      if (move.Value.HasValue)
+      {
+        if (move.Value.Value == 0)
+        {
+          variety.SetEvolutionMove(move.Key, actorId);
+        }
+        else
+        {
+          Level level = new(move.Value.Value);
+          variety.SetLevelMove(move.Key, level, actorId);
+        }
+      }
+      else
+      {
+        variety.RemoveMove(move.Key, actorId);
+      }
     }
 
     variety.Update(_applicationContext.ActorId);
