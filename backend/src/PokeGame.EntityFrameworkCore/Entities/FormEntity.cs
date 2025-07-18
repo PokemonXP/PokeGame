@@ -7,7 +7,7 @@ using AggregateEntity = Krakenar.EntityFrameworkCore.Relational.Entities.Aggrega
 
 namespace PokeGame.EntityFrameworkCore.Entities;
 
-internal class FormEntity : AggregateEntity // TODO(fpion): Abilities on creation & update
+internal class FormEntity : AggregateEntity
 {
   public int FormId { get; private set; }
   public Guid Id { get; private set; }
@@ -95,6 +95,20 @@ internal class FormEntity : AggregateEntity // TODO(fpion): Abilities on creatio
 
   private FormEntity() : base()
   {
+  }
+
+  public void SetAbility(AbilitySlot slot, AbilityEntity ability)
+  {
+    FormAbilityEntity? entity = Abilities.SingleOrDefault(a => a.Slot == slot);
+    if (entity is null)
+    {
+      entity = new FormAbilityEntity(this, ability, slot);
+      Abilities.Add(entity);
+    }
+    else
+    {
+      entity.SetAbility(ability);
+    }
   }
 
   public void SetUniqueName(FormUniqueNameChanged @event)

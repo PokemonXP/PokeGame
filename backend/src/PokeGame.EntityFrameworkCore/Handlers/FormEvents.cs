@@ -3,6 +3,8 @@ using Krakenar.EntityFrameworkCore.Relational.Handlers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using PokeGame.Core;
+using PokeGame.Core.Forms;
 using PokeGame.Core.Forms.Events;
 using PokeGame.EntityFrameworkCore.Entities;
 
@@ -46,6 +48,8 @@ internal class FormEvents : IEventHandler<FormCreated>,
 
     form = new FormEntity(variety, @event);
     _context.Forms.Add(form);
+
+    await SetAbilitiesAsync(form, @event.Abilities, cancellationToken);
 
     await _context.SaveChangesAsync(cancellationToken);
     _logger.LogSuccess(@event);
@@ -95,7 +99,57 @@ internal class FormEvents : IEventHandler<FormCreated>,
 
     form.Update(@event);
 
+    if (@event.Abilities is not null)
+    {
+      await SetAbilitiesAsync(form, @event.Abilities, cancellationToken);
+    }
+
     await _context.SaveChangesAsync(cancellationToken);
     _logger.LogSuccess(@event);
+  }
+
+  private async Task SetAbilitiesAsync(FormEntity form, FormAbilities abilities, CancellationToken cancellationToken)
+  {
+    List<string> streamIds = new(capacity: 3)
+    {
+      abilities.Primary.Value
+    };
+    if (abilities.Secondary.HasValue)
+    {
+      streamIds.Add(abilities.Secondary.Value.Value);
+    }
+    if (abilities.Hidden.HasValue)
+    {
+      streamIds.Add(abilities.Hidden.Value.Value);
+    }
+    Dictionary<string, AbilityEntity> abilitiesById = await _context.Abilities
+      .Where(x => streamIds.Contains(x.StreamId))
+      .ToDictionaryAsync(x => x.StreamId, x => x, cancellationToken);
+
+    Dictionary<AbilitySlot, AbilityEntity> slots = new(capacity: 3);
+    if (abilitiesById.TryGetValue(abilities.Primary.Value, out AbilityEntity? primary))
+    {
+      slots[AbilitySlot.Primary] = primary;
+    }
+    if (abilities.Secondary.HasValue && abilitiesById.TryGetValue(abilities.Secondary.Value.Value, out AbilityEntity? secondary))
+    {
+      slots[AbilitySlot.Secondary] = secondary;
+    }
+    if (abilities.Hidden.HasValue && abilitiesById.TryGetValue(abilities.Hidden.Value.Value, out AbilityEntity? hidden))
+    {
+      slots[AbilitySlot.Hidden] = hidden;
+    }
+
+    foreach (FormAbilityEntity ability in form.Abilities)
+    {
+      if (!slots.ContainsKey(ability.Slot))
+      {
+        _context.FormAbilities.Remove(ability);
+      }
+    }
+    foreach (KeyValuePair<AbilitySlot, AbilityEntity> ability in slots)
+    {
+      form.SetAbility(ability.Key, ability.Value);
+    }
   }
 }
