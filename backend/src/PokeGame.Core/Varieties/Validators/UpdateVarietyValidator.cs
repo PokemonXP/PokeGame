@@ -19,5 +19,7 @@ internal class UpdateVarietyValidator : AbstractValidator<UpdateVarietyPayload>
 
     When(x => !string.IsNullOrWhiteSpace(x.Url?.Value), () => RuleFor(x => x.Url!.Value!).Url());
     When(x => !string.IsNullOrWhiteSpace(x.Notes?.Value), () => RuleFor(x => x.Notes!.Value!).Notes());
+
+    RuleForEach(x => x.Moves).SetValidator(new VarietyMoveValidator());
   }
 }

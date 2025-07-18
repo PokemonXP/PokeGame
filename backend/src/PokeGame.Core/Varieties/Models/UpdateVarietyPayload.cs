@@ -16,4 +16,6 @@ public record UpdateVarietyPayload
 
   public Change<string>? Url { get; set; }
   public Change<string>? Notes { get; set; }
+
+  public List<VarietyMovePayload> Moves { get; set; } = [];
 }

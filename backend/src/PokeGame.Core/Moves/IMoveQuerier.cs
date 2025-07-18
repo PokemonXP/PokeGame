@@ -8,6 +8,8 @@ public interface IMoveQuerier
 {
   Task<MoveId?> FindIdAsync(UniqueName uniqueName, CancellationToken cancellationToken = default);
 
+  Task<IReadOnlyCollection<MoveKey>> GetKeysAsync(CancellationToken cancellationToken = default);
+
   Task<MoveModel> ReadAsync(Move move, CancellationToken cancellationToken = default);
   Task<MoveModel?> ReadAsync(MoveId id, CancellationToken cancellationToken = default);
   Task<MoveModel?> ReadAsync(Guid id, CancellationToken cancellationToken = default);

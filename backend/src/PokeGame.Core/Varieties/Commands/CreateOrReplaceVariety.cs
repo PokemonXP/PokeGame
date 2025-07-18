@@ -2,6 +2,7 @@
 using Krakenar.Contracts.Settings;
 using Krakenar.Core;
 using Logitar.EventSourcing;
+using PokeGame.Core.Moves;
 using PokeGame.Core.Species;
 using PokeGame.Core.Varieties.Models;
 using PokeGame.Core.Varieties.Validators;
@@ -10,6 +11,7 @@ namespace PokeGame.Core.Varieties.Commands;
 
 internal record CreateOrReplaceVariety(CreateOrReplaceVarietyPayload Payload, Guid? Id) : ICommand<CreateOrReplaceVarietyResult>;
 
+/// <exception cref="MovesNotFoundException"></exception>
 /// <exception cref="SpeciesNotFoundException"></exception>
 /// <exception cref="UniqueNameAlreadyUsedException"></exception>
 /// <exception cref="ValidationException"></exception>
@@ -78,6 +80,19 @@ internal class CreateOrReplaceVarietyHandler : ICommandHandler<CreateOrReplaceVa
 
     variety.Url = Url.TryCreate(payload.Url);
     variety.Notes = Notes.TryCreate(payload.Notes);
+
+    IReadOnlyDictionary<MoveId, int?> moves = await _varietyManager.FindMovesAsync(payload.Moves, nameof(payload.Moves), cancellationToken);
+    //foreach (MoveId moveId in variety.Moves.Keys)
+    //{
+    //  if (!moves.ContainsKey(moveId))
+    //  {
+
+    //  }
+    //} // TODO(fpion): implement
+    foreach (KeyValuePair<MoveId, int?> move in moves)
+    {
+      // TODO(fpion): implement
+    }
 
     variety.Update(actorId);
     await _varietyManager.SaveAsync(variety, cancellationToken);

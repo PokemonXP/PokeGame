@@ -23,5 +23,7 @@ public class VarietyModel : AggregateModel
   public bool CanChangeForm { get; set; }
   public List<FormModel> Forms { get; set; } = [];
 
+  public List<VarietyMoveModel> Moves { get; set; } = [];
+
   public override string ToString() => $"{DisplayName ?? UniqueName} | {base.ToString()}";
 }

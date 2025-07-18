@@ -340,6 +340,8 @@ internal class PokemonMapper
       Notes = source.Notes
     };
 
+    // TODO(fpion): Moves
+
     MapAggregate(source, destination);
 
     return destination;
