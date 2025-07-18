@@ -40,7 +40,7 @@ internal class PokemonQuerier : IPokemonQuerier
     return streamId is null ? null : new PokemonId(streamId);
   }
 
-  public async Task<PokemonModel> ReadAsync(Pokemon pokemon, CancellationToken cancellationToken)
+  public async Task<PokemonModel> ReadAsync(Pokemon2 pokemon, CancellationToken cancellationToken)
   {
     return await ReadAsync(pokemon.Id, cancellationToken) ?? throw new InvalidOperationException($"The Pokémon entity 'StreamId={pokemon.Id}' was not found.");
   }

@@ -1,10 +1,12 @@
 ﻿using FluentValidation;
 using Krakenar.Contracts.Settings;
 using Krakenar.Core;
+using Krakenar.Core.Realms;
 using Logitar.EventSourcing;
 using PokeGame.Core.Abilities;
 using PokeGame.Core.Forms;
 using PokeGame.Core.Items;
+using PokeGame.Core.Moves;
 using PokeGame.Core.Pokemons.Models;
 using PokeGame.Core.Pokemons.Validators;
 using PokeGame.Core.Species;
@@ -17,14 +19,17 @@ internal record CreatePokemon(CreatePokemonPayload Payload) : ICommand<PokemonMo
 /// <exception cref="FormNotFoundException"></exception>
 /// <exception cref="IdAlreadyUsedException{T}"></exception>
 /// <exception cref="ItemNotFoundException"></exception>
-/// <exception cref="MovesNotFoundException"></exception>
-/// <exception cref="PokemonUniqueNameAlreadyUsedException"></exception>
+/// <exception cref="UniqueNameAlreadyUsedException"></exception>
 /// <exception cref="ValidationException"></exception>
 internal class CreatePokemonHandler : ICommandHandler<CreatePokemon, PokemonModel>
 {
   private readonly IApplicationContext _applicationContext;
   private readonly IFormRepository _formRepository;
   private readonly IItemRepository _itemRepository;
+  private readonly IMoveRepository _moveRepository;
+  private readonly IPokemonManager _pokemonManager;
+  private readonly IPokemonQuerier _pokemonQuerier;
+  private readonly IPokemonRepository _pokemonRepository;
   private readonly IPokemonRandomizer _randomizer = PokemonRandomizer.Instance;
   private readonly ISpeciesRepository _speciesRepository;
   private readonly IVarietyRepository _varietyRepository;
@@ -33,12 +38,20 @@ internal class CreatePokemonHandler : ICommandHandler<CreatePokemon, PokemonMode
     IApplicationContext applicationContext,
     IFormRepository formRepository,
     IItemRepository itemRepository,
+    IMoveRepository moveRepository,
+    IPokemonManager pokemonManager,
+    IPokemonQuerier pokemonQuerier,
+    IPokemonRepository pokemonRepository,
     ISpeciesRepository speciesRepository,
     IVarietyRepository varietyRepository)
   {
     _applicationContext = applicationContext;
     _formRepository = formRepository;
     _itemRepository = itemRepository;
+    _moveRepository = moveRepository;
+    _pokemonManager = pokemonManager;
+    _pokemonQuerier = pokemonQuerier;
+    _pokemonRepository = pokemonRepository;
     _speciesRepository = speciesRepository;
     _varietyRepository = varietyRepository;
   }
@@ -46,6 +59,7 @@ internal class CreatePokemonHandler : ICommandHandler<CreatePokemon, PokemonMode
   public async Task<PokemonModel> HandleAsync(CreatePokemon command, CancellationToken cancellationToken)
   {
     ActorId? actorId = _applicationContext.ActorId;
+    RealmId? realmId = _applicationContext.RealmId;
     IUniqueNameSettings uniqueNameSettings = _applicationContext.UniqueNameSettings;
 
     CreatePokemonPayload payload = command.Payload;
@@ -56,11 +70,11 @@ internal class CreatePokemonHandler : ICommandHandler<CreatePokemon, PokemonMode
     if (payload.Id.HasValue)
     {
       pokemonId = new(payload.Id.Value);
-      //pokemon = await _pokemonRepository.LoadAsync(pokemonId, cancellationToken);
-      //if (pokemon is not null)
-      //{
-      //  throw new IdAlreadyUsedException<Pokemon>(realmId, payload.Id.Value, nameof(payload.Id));
-      //} // TODO(fpion): uncomment
+      pokemon = await _pokemonRepository.LoadAsync(pokemonId, cancellationToken);
+      if (pokemon is not null)
+      {
+        throw new IdAlreadyUsedException<Pokemon2>(realmId, payload.Id.Value, nameof(payload.Id));
+      }
     }
 
     Form form = await _formRepository.LoadAsync(payload.Form, cancellationToken)
@@ -104,51 +118,47 @@ internal class CreatePokemonHandler : ICommandHandler<CreatePokemon, PokemonMode
       pokemon.HoldItem(item, actorId);
     }
 
-    //IReadOnlyCollection<MoveModel> moves = await _moveManager.FindAsync(payload.Moves, nameof(payload.Moves), cancellationToken);
-    //MoveId moveId;
-    //for (int i = 0; i < moves.Count; i++)
-    //{
-    //  MoveModel move = moves.ElementAt(i);
-    //  moveId = move.GetMoveId(realmId);
-    //  PowerPoints powerPoints = new(move.PowerPoints);
-    //  int position = Math.Max(i + Pokemon.MoveLimit - moves.Count, 0);
-    //  pokemon.LearnMove(moveId, powerPoints, position, actorId);
-    //}
-    //if (moves.Count == 5)
-    //{
-    //  MoveModel move = moves.ElementAt(4 - 1);
-    //  moveId = move.GetMoveId(realmId);
-    //  pokemon.RelearnMove(moveId, position: 2, actorId);
+    IReadOnlyCollection<Move> moves = await _moveRepository.LoadAsync(variety.Moves.Keys, cancellationToken);
+    List<LearnedMove> learnedMoves = new(capacity: variety.Moves.Count);
+    foreach (Move move in moves)
+    {
+      Level? level = variety.Moves[move.Id];
+      if (level is null || level.Value <= pokemon.Level)
+      {
+        string order = string.Join('_', (level?.Value ?? 0).ToString("D3"), move.DisplayName?.Value ?? move.UniqueName.Value);
+        learnedMoves.Add(new LearnedMove(move, level, order));
+      }
+    }
+    learnedMoves = learnedMoves.OrderBy(x => x.Order).ToList();
+    for (int i = 0; i < learnedMoves.Count; i++)
+    {
+      LearnedMove learned = learnedMoves[i];
+      int position = Math.Max(i + Pokemon2.MoveLimit - learnedMoves.Count, 0);
+      pokemon.LearnMove(learned.Move, position, learned.Level, notes: null, actorId);
+      i++;
+    }
 
-    //  move = moves.ElementAt(3 - 1);
-    //  moveId = move.GetMoveId(realmId);
-    //  pokemon.RelearnMove(moveId, position: 1, actorId);
-
-    //  move = moves.ElementAt(2 - 1);
-    //  moveId = move.GetMoveId(realmId);
-    //  pokemon.RelearnMove(moveId, position: 0, actorId);
-    //}
-    //if (moves.Count == 6)
-    //{
-    //  MoveModel move = moves.ElementAt(4 - 1);
-    //  moveId = move.GetMoveId(realmId);
-    //  pokemon.RelearnMove(moveId, position: 1, actorId);
-
-    //  move = moves.ElementAt(3 - 1);
-    //  moveId = move.GetMoveId(realmId);
-    //  pokemon.RelearnMove(moveId, position: 0, actorId);
-    //}
-    //if (moves.Count == 7)
-    //{
-    //  MoveModel move = moves.ElementAt(4 - 1);
-    //  moveId = move.GetMoveId(realmId);
-    //  pokemon.RelearnMove(moveId, position: 0, actorId);
-    //}
+    if (learnedMoves.Count == 5)
+    {
+      pokemon.RelearnMove(learnedMoves[1].Move, position: 0, actorId);
+      pokemon.RelearnMove(learnedMoves[2].Move, position: 1, actorId);
+      pokemon.RelearnMove(learnedMoves[3].Move, position: 2, actorId);
+    }
+    else if (learnedMoves.Count == 6)
+    {
+      pokemon.RelearnMove(learnedMoves[2].Move, position: 0, actorId);
+      pokemon.RelearnMove(learnedMoves[3].Move, position: 1, actorId);
+    }
+    else if (learnedMoves.Count == 7)
+    {
+      pokemon.RelearnMove(learnedMoves[3].Move, position: 0, actorId);
+    }
 
     pokemon.Update(actorId);
-    //await _pokemonManager.SaveAsync(pokemon, cancellationToken);
+    await _pokemonManager.SaveAsync(pokemon, cancellationToken);
 
-    //return await _pokemonQuerier.ReadAsync(pokemon, cancellationToken);
-    throw new NotImplementedException(); // TODO(fpion): implement
+    return await _pokemonQuerier.ReadAsync(pokemon, cancellationToken);
   }
+
+  private record LearnedMove(Move Move, Level? Level, string Order);
 }

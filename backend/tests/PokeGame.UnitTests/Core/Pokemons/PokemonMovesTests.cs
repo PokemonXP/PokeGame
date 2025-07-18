@@ -6,193 +6,154 @@ using PokeGame.Core.Forms;
 using PokeGame.Core.Moves;
 using PokeGame.Core.Pokemons.Events;
 using PokeGame.Core.Species;
+using PokeGame.Core.Varieties;
 
 namespace PokeGame.Core.Pokemons;
 
 [Trait(Traits.Category, Categories.Unit)]
 public class PokemonMovesTests
 {
-  private readonly IPokemonRandomizer _randomizer = PokemonRandomizer.Instance;
+  private readonly UniqueNameSettings _uniqueNameSettings = new();
 
-  private readonly Pokemon _hedwidge;
+  private readonly PokemonSpecies _species;
+  private readonly Variety _variety;
+  private readonly Form _form;
+  private readonly Pokemon2 _pokemon;
 
   public PokemonMovesTests()
   {
-    _hedwidge = new(
-      FormId.NewId(),
-      new UniqueName(new UniqueNameSettings(), "rowlet"),
-      PokemonType.Grass,
-      _randomizer.PokemonSize(),
-      PokemonNatures.Instance.Gentle,
-      new BaseStatistics(60, 55, 55, 50, 50, 42),
-      PokemonGender.Male,
-      AbilitySlot.Primary,
-      new IndividualValues(24, 31, 21, 25, 22, 23),
-      new EffortValues(),
-      GrowthRate.MediumSlow,
-      experience: 419,
-      vitality: int.MaxValue,
-      stamina: int.MaxValue,
-      friendship: 70);
+    _species = new PokemonSpecies(new Number(499), PokemonCategory.Standard, new UniqueName(_uniqueNameSettings, "pignite"), new Friendship(70), new CatchRate(45), GrowthRate.MediumSlow);
+
+    _variety = new Variety(_species, _species.UniqueName, isDefault: true, new GenderRatio(7));
+
+    Ability blaze = new(new UniqueName(_uniqueNameSettings, "blaze"));
+    Ability thickFat = new(new UniqueName(_uniqueNameSettings, "thick-fat"));
+    Sprites sprites = new(new Url("https://www.pokegame.com/assets/img/pokemon/pignite.png"), new Url("https://www.pokegame.com/assets/img/pokemon/pignite-shiny.png"));
+    _form = new Form(_variety, _variety.UniqueName, new FormTypes(PokemonType.Fire, PokemonType.Fighting),
+      new FormAbilities(blaze, secondary: null, thickFat), new BaseStatistics(90, 93, 55, 70, 55, 55),
+      new Yield(146, 0, 2, 0, 0, 0, 0), sprites, isDefault: true, height: new Height(10), weight: new Weight(555));
+
+    _pokemon = new Pokemon2(_species, _variety, _form, new UniqueName(_uniqueNameSettings, "briquet"), new PokemonSize(128, 128),
+      PokemonNatures.Instance.Find("careful"), new IndividualValues(27, 27, 25, 22, 25, 26), PokemonGender.Male, isShiny: false, PokemonType.Fire,
+      AbilitySlot.Primary, experience: 7028, new EffortValues(4, 0, 16, 0, 0, 16), vitality: 64, stamina: 55, new Friendship(91));
   }
 
-  [Theory(DisplayName = "LearnMove: it should add the move to the list when the Pokémon has not reached the move limit.")]
+  [Fact(DisplayName = "LearnMove: it should learn a move by evolving.")]
+  public void Given_NoLevel_When_LearnMove_Then_EvolvingMove()
+  {
+    ActorId actorId = ActorId.NewId();
+
+    Move tackle = new(PokemonType.Normal, MoveCategory.Physical, new UniqueName(_uniqueNameSettings, "tackle"), new PowerPoints(35), new Accuracy(100), new Power(40));
+    Move tailWhip = new(PokemonType.Normal, MoveCategory.Status, new UniqueName(_uniqueNameSettings, "tail-whip"), new PowerPoints(30), new Accuracy(100));
+    Move ember = new(PokemonType.Fire, MoveCategory.Special, new UniqueName(_uniqueNameSettings, "ember"), new PowerPoints(25), new Accuracy(100), new Power(40));
+    Move endure = new(PokemonType.Normal, MoveCategory.Status, new UniqueName(_uniqueNameSettings, "endure"), new PowerPoints(10));
+    _pokemon.LearnMove(tackle, position: 0, new Level(1));
+    _pokemon.LearnMove(tailWhip, position: 1, new Level(1));
+    _pokemon.LearnMove(ember, position: 2, new Level(1));
+    _pokemon.LearnMove(endure, position: 3, new Level(1));
+
+    Move armThrust = new(PokemonType.Fighting, MoveCategory.Physical, new UniqueName(_uniqueNameSettings, "arm-thrust"), new PowerPoints(20), new Accuracy(100), new Power(15));
+    int position = 3;
+    Notes notes = new("Learned by evolving from Tepig to Pignite.");
+    Assert.True(_pokemon.LearnMove(armThrust, position, level: null, notes, actorId));
+    Assert.True(_pokemon.HasChanges);
+    Assert.Contains(_pokemon.Changes, change => change is PokemonMoveLearned2 learned && learned.ActorId == actorId && learned.MoveId == armThrust.Id && learned.Position == position);
+
+    KeyValuePair<MoveId, PokemonMove2> move = _pokemon.CurrentMoves.ElementAt(position);
+    Assert.Equal(armThrust.Id, move.Key);
+    Assert.Equal(armThrust.PowerPoints.Value, move.Value.CurrentPowerPoints);
+    Assert.Equal(armThrust.PowerPoints.Value, move.Value.MaximumPowerPoints);
+    Assert.Equal(armThrust.PowerPoints, move.Value.ReferencePowerPoints);
+    Assert.False(move.Value.IsMastered);
+    Assert.Equal(_pokemon.Level, move.Value.Level.Value);
+    Assert.Equal(MoveLearningMethod.Evolving, move.Value.Method);
+    Assert.Null(move.Value.ItemId);
+    Assert.Equal(notes, move.Value.Notes);
+  }
+
+  [Theory(DisplayName = "LearnMove: it should override the position when the move limit has not been reached.")]
   [InlineData(null)]
-  [InlineData(0)]
-  [InlineData(1)]
-  [InlineData(2)]
   [InlineData(3)]
-  public void Given_MoveLimitNotReached_When_LearnMove_Then_MoveAdded(int? position)
+  public void Given_LimitNotReached_When_LearnMove_Then_PositionOverriden(int? position)
   {
-    _hedwidge.LearnMove(MoveId.NewId(), new PowerPoints(35)); // NOTE(fpion): Tackle
-    _hedwidge.LearnMove(MoveId.NewId(), new PowerPoints(40)); // NOTE(fpion): Growl
-    _hedwidge.LearnMove(MoveId.NewId(), new PowerPoints(40)); // NOTE(fpion): Leafage
+    Move tackle = new(PokemonType.Normal, MoveCategory.Physical, new UniqueName(_uniqueNameSettings, "tackle"), new PowerPoints(35), new Accuracy(100), new Power(40));
+    Move tailWhip = new(PokemonType.Normal, MoveCategory.Status, new UniqueName(_uniqueNameSettings, "tail-whip"), new PowerPoints(30), new Accuracy(100));
+    _pokemon.LearnMove(tackle, position: 0, new Level(1));
+    _pokemon.LearnMove(tailWhip, position: 1, new Level(1));
 
-    MoveId moveId = MoveId.NewId(); // NOTE(fpion): Astonish
-    PowerPoints powerPoints = new(15);
-    ActorId actorId = ActorId.NewId();
-    Assert.True(_hedwidge.LearnMove(moveId, powerPoints, position, actorId));
+    Move ember = new(PokemonType.Fire, MoveCategory.Special, new UniqueName(_uniqueNameSettings, "ember"), new PowerPoints(25), new Accuracy(100), new Power(40));
+    Assert.True(_pokemon.LearnMove(ember, position, new Level(1)));
+    Assert.True(_pokemon.HasChanges);
+    Assert.Contains(_pokemon.Changes, change => change is PokemonMoveLearned2 learned && learned.MoveId == ember.Id && learned.Position == 2);
 
-    Assert.Contains(_hedwidge.Changes, change => change is PokemonMoveLearned learned && learned.ActorId == actorId
-      && learned.PowerPoints == powerPoints && learned.Position is null);
-
-    PokemonMove move = new(moveId, powerPoints.Value, powerPoints.Value, powerPoints, IsMastered: false, _hedwidge.Level, TechnicalMachine: false);
-    Assert.Equal(move, _hedwidge.AllMoves[move.MoveId]);
-    Assert.Equal(Pokemon.MoveLimit, _hedwidge.Moves.Count);
-    Assert.Equal(move, _hedwidge.Moves.Last());
-  }
-
-  [Theory(DisplayName = "LearnMove: it should replace a move in the list when the Pokémon has reached the move limit.")]
-  [InlineData(0)]
-  [InlineData(1)]
-  [InlineData(2)]
-  [InlineData(3)]
-  public void Given_MoveLimitReached_When_LearnMove_Then_MoveReplaced(int position)
-  {
-    MoveId tackle = MoveId.NewId();
-    MoveId growl = MoveId.NewId();
-    MoveId leafage = MoveId.NewId();
-    MoveId astonish = MoveId.NewId();
-    MoveId peck = MoveId.NewId();
-
-    _hedwidge.LearnMove(tackle, new PowerPoints(35));
-    _hedwidge.LearnMove(growl, new PowerPoints(40));
-    _hedwidge.LearnMove(leafage, new PowerPoints(40));
-    _hedwidge.LearnMove(astonish, new PowerPoints(15));
-
-    PowerPoints powerPoints = new(40);
-    ActorId actorId = ActorId.NewId();
-    Assert.True(_hedwidge.LearnMove(peck, powerPoints, position, actorId));
-
-    Assert.Contains(_hedwidge.Changes, change => change is PokemonMoveLearned learned && learned.ActorId == actorId
-      && learned.PowerPoints == powerPoints && learned.Position == position);
-
-    PokemonMove move = new(peck, powerPoints.Value, powerPoints.Value, powerPoints, IsMastered: false, _hedwidge.Level, TechnicalMachine: false);
-    Assert.Equal(move, _hedwidge.AllMoves[move.MoveId]);
-    Assert.Equal(Pokemon.MoveLimit, _hedwidge.Moves.Count);
-    Assert.Equal(move, _hedwidge.Moves.ElementAt(position));
-
-    Assert.Equal(5, _hedwidge.AllMoves.Count);
-    Assert.True(_hedwidge.AllMoves.ContainsKey(tackle));
-    Assert.True(_hedwidge.AllMoves.ContainsKey(growl));
-    Assert.True(_hedwidge.AllMoves.ContainsKey(leafage));
-    Assert.True(_hedwidge.AllMoves.ContainsKey(astonish));
-    Assert.True(_hedwidge.AllMoves.ContainsKey(peck));
+    KeyValuePair<MoveId, PokemonMove2> move = _pokemon.CurrentMoves.ElementAt(2);
+    Assert.Equal(ember.Id, move.Key);
+    Assert.Equal(ember.PowerPoints.Value, move.Value.CurrentPowerPoints);
+    Assert.Equal(ember.PowerPoints.Value, move.Value.MaximumPowerPoints);
+    Assert.Equal(ember.PowerPoints, move.Value.ReferencePowerPoints);
+    Assert.False(move.Value.IsMastered);
+    Assert.Equal(1, move.Value.Level.Value);
+    Assert.Equal(MoveLearningMethod.LevelingUp, move.Value.Method);
+    Assert.Null(move.Value.ItemId);
+    Assert.Null(move.Value.Notes);
   }
 
   [Fact(DisplayName = "LearnMove: it should return false when the Pokémon has already learned the move.")]
   public void Given_MoveAlreadyLearned_When_LearnMove_Then_FalseReturned()
   {
-    MoveId moveId = MoveId.NewId();
-    PowerPoints powerPoints = new(35);
-    _hedwidge.LearnMove(moveId, powerPoints);
-    Assert.False(_hedwidge.LearnMove(moveId, powerPoints));
-  }
-
-  [Fact(DisplayName = "LearnMove: it should throw ArgumentNullException when the position is null and the Pokémon has reached the move limit.")]
-  public void Given_MoveLimitReachedPositionNull_When_LearnMove_Then_ArgumentNullException()
-  {
-    _hedwidge.LearnMove(MoveId.NewId(), new PowerPoints(35)); // NOTE(fpion): Tackle
-    _hedwidge.LearnMove(MoveId.NewId(), new PowerPoints(40)); // NOTE(fpion): Growl
-    _hedwidge.LearnMove(MoveId.NewId(), new PowerPoints(40)); // NOTE(fpion): Leafage
-    _hedwidge.LearnMove(MoveId.NewId(), new PowerPoints(15)); // NOTE(fpion): Astonish
-    var exception = Assert.Throws<ArgumentNullException>(() => _hedwidge.LearnMove(MoveId.NewId(), new PowerPoints(35))); // NOTE(fpion): Peck
-    Assert.Equal("position", exception.ParamName);
+    Move move = new(PokemonType.Normal, MoveCategory.Physical, new UniqueName(_uniqueNameSettings, "tackle"), new PowerPoints(35), new Accuracy(100), new Power(40));
+    Assert.True(_pokemon.LearnMove(move));
+    Assert.False(_pokemon.LearnMove(move));
   }
 
   [Theory(DisplayName = "LearnMove: it should throw ArgumentOutOfRangeException when the position is out of bounds.")]
   [InlineData(-1)]
   [InlineData(4)]
-  public void Given_PositionOutOfBounds_When_LearnMove_Then_ArgumentOutOfRangeException(int source)
+  public void Given_PositionOutOfBounds_When_LearnMove_Then_ArgumentOutOfRangeException(int position)
   {
-    MoveId moveId = MoveId.NewId();
-    PowerPoints powerPoints = new(35);
-    var exception = Assert.Throws<ArgumentOutOfRangeException>(() => _hedwidge.LearnMove(moveId, powerPoints, source));
+    Move move = new(PokemonType.Normal, MoveCategory.Physical, new UniqueName(_uniqueNameSettings, "tackle"), new PowerPoints(35), new Accuracy(100), new Power(40));
+    var exception = Assert.Throws<ArgumentOutOfRangeException>(() => _pokemon.LearnMove(move, position));
     Assert.Equal("position", exception.ParamName);
   }
 
-  [Fact(DisplayName = "MasterMove: it should master a move a Pokémon has learned.")]
-  public void Given_MoveLearned_When_MasterMove_Then_MoveMastered()
-  {
-    MoveId leafage = MoveId.NewId();
-    _hedwidge.LearnMove(leafage, new PowerPoints(40));
-
-    ActorId actorId = ActorId.NewId();
-    Assert.True(_hedwidge.MasterMove(leafage, actorId));
-    Assert.True(_hedwidge.AllMoves[leafage].IsMastered);
-    Assert.Contains(_hedwidge.Changes, change => change is PokemonMoveMastered mastered && mastered.ActorId == actorId && mastered.MoveId == leafage);
-
-    _hedwidge.ClearChanges();
-    Assert.True(_hedwidge.MasterMove(leafage));
-    Assert.False(_hedwidge.HasChanges);
-  }
-
-  [Fact(DisplayName = "MasterMove: it should return false when the Pokémon has not learned the move yet.")]
-  public void Given_NotLearned_When_MasterMove_Then_FalseReturned()
-  {
-    Assert.False(_hedwidge.MasterMove(MoveId.NewId()));
-  }
-
-  [Fact(DisplayName = "RelearnMove: it should return false when the Pokémon has never learned the move.")]
-  public void Given_NeverLearned_When_RelearnMove_Then_FalseReturned()
-  {
-    MoveId moveId = MoveId.NewId();
-    Assert.False(_hedwidge.RelearnMove(moveId, position: 0));
-  }
-
-  [Fact(DisplayName = "RelearnMove: it should return false when the Pokémon has not forgot the move.")]
-  public void Given_CurrentlyLearned_When_RelearnMove_Then_FalseReturned()
-  {
-    MoveId moveId = MoveId.NewId();
-    _hedwidge.LearnMove(moveId, new PowerPoints(40));
-    Assert.False(_hedwidge.RelearnMove(moveId, position: 0));
-  }
-
-  [Fact(DisplayName = "RelearnMove: it should relearn the specified move and return true.")]
+  [Fact(DisplayName = "RelearnMove: it should relearn a forgotten move and return true.")]
   public void Given_ForgottenMove_When_RelearnMove_Then_MoveRelearned()
   {
     ActorId actorId = ActorId.NewId();
 
-    MoveId tackle = MoveId.NewId();
-    MoveId growl = MoveId.NewId();
-    MoveId leafage = MoveId.NewId();
-    MoveId astonish = MoveId.NewId();
-    MoveId peck = MoveId.NewId();
+    Move tackle = new(PokemonType.Normal, MoveCategory.Physical, new UniqueName(_uniqueNameSettings, "tackle"), new PowerPoints(35), new Accuracy(100), new Power(40));
+    Move tailWhip = new(PokemonType.Normal, MoveCategory.Status, new UniqueName(_uniqueNameSettings, "tail-whip"), new PowerPoints(30), new Accuracy(100));
+    Move ember = new(PokemonType.Fire, MoveCategory.Special, new UniqueName(_uniqueNameSettings, "ember"), new PowerPoints(25), new Accuracy(100), new Power(40));
+    Move endure = new(PokemonType.Normal, MoveCategory.Status, new UniqueName(_uniqueNameSettings, "endure"), new PowerPoints(10));
+    Move defenseCurl = new(PokemonType.Normal, MoveCategory.Status, new UniqueName(_uniqueNameSettings, "defense-curl"), new PowerPoints(40));
+    _pokemon.LearnMove(tackle);
+    _pokemon.LearnMove(tailWhip);
+    _pokemon.LearnMove(ember);
+    _pokemon.LearnMove(endure);
+    _pokemon.LearnMove(defenseCurl);
 
-    _hedwidge.LearnMove(tackle, new PowerPoints(35), actorId);
-    _hedwidge.LearnMove(growl, new PowerPoints(40), actorId);
-    _hedwidge.LearnMove(leafage, new PowerPoints(40), actorId);
-    _hedwidge.LearnMove(astonish, new PowerPoints(15), actorId);
-    _hedwidge.LearnMove(peck, new PowerPoints(35), position: 3, actorId);
+    int position = 1;
+    Assert.True(_pokemon.RelearnMove(defenseCurl, position, actorId));
+    KeyValuePair<MoveId, PokemonMove2> move = _pokemon.CurrentMoves.ElementAt(position);
+    Assert.Equal(defenseCurl.Id, move.Key);
 
-    Assert.True(_hedwidge.RelearnMove(astonish, position: 1, actorId));
-    Assert.Contains(_hedwidge.Changes, change => change is PokemonMoveRelearned relearned && relearned.ActorId == actorId
-      && relearned.MoveId == astonish && relearned.Position == 1);
+    Assert.True(_pokemon.HasChanges);
+    Assert.Contains(_pokemon.Changes, change => change is PokemonMoveRelearned relearned && relearned.MoveId == defenseCurl.Id && relearned.Position == position);
+  }
 
-    Assert.Equal(tackle, _hedwidge.Moves.ElementAt(0).MoveId);
-    Assert.Equal(astonish, _hedwidge.Moves.ElementAt(1).MoveId);
-    Assert.Equal(leafage, _hedwidge.Moves.ElementAt(2).MoveId);
-    Assert.Equal(peck, _hedwidge.Moves.ElementAt(3).MoveId);
+  [Fact(DisplayName = "RelearnMove: it should return false when the move is currently learned.")]
+  public void Given_AlreadyLearned_When_RelearnMove_Then_FalseReturned()
+  {
+    Move ember = new(PokemonType.Fire, MoveCategory.Special, new UniqueName(_uniqueNameSettings, "ember"), new PowerPoints(25), new Accuracy(100), new Power(40));
+    _pokemon.LearnMove(ember, position: null, new Level(6));
+    Assert.False(_pokemon.RelearnMove(ember, position: 0));
+  }
+
+  [Fact(DisplayName = "RelearnMove: it should return false when the Pokémon has not learned the move.")]
+  public void Given_MoveNeverLearned_When_RelearnMove_Then_FalseReturned()
+  {
+    Move ember = new(PokemonType.Fire, MoveCategory.Special, new UniqueName(_uniqueNameSettings, "ember"), new PowerPoints(25), new Accuracy(100), new Power(40));
+    Assert.False(_pokemon.RelearnMove(ember, position: 0));
   }
 
   [Theory(DisplayName = "RelearnMove: it should throw ArgumentOutOfRangeException when the position is out of bounds.")]
@@ -200,174 +161,18 @@ public class PokemonMovesTests
   [InlineData(4)]
   public void Given_PositionOutOfBounds_When_RelearnMove_Then_ArgumentOutOfRangeException(int position)
   {
-    MoveId moveId = MoveId.NewId();
-    PowerPoints powerPoints = new(35);
-    var exception = Assert.Throws<ArgumentOutOfRangeException>(() => _hedwidge.RelearnMove(moveId, position));
-    Assert.Equal("position", exception.ParamName);
-  }
+    Move tackle = new(PokemonType.Normal, MoveCategory.Physical, new UniqueName(_uniqueNameSettings, "tackle"), new PowerPoints(35), new Accuracy(100), new Power(40));
+    Move tailWhip = new(PokemonType.Normal, MoveCategory.Status, new UniqueName(_uniqueNameSettings, "tail-whip"), new PowerPoints(30), new Accuracy(100));
+    Move ember = new(PokemonType.Fire, MoveCategory.Special, new UniqueName(_uniqueNameSettings, "ember"), new PowerPoints(25), new Accuracy(100), new Power(40));
+    Move endure = new(PokemonType.Normal, MoveCategory.Status, new UniqueName(_uniqueNameSettings, "endure"), new PowerPoints(10));
+    Move defenseCurl = new(PokemonType.Normal, MoveCategory.Status, new UniqueName(_uniqueNameSettings, "defense-curl"), new PowerPoints(40));
+    _pokemon.LearnMove(tackle);
+    _pokemon.LearnMove(tailWhip);
+    _pokemon.LearnMove(ember);
+    _pokemon.LearnMove(endure);
+    _pokemon.LearnMove(defenseCurl);
 
-  [Fact(DisplayName = "SwitchMoves: it should exchange two moves position.")]
-  public void Given_Moves_When_SwitchMoves_Then_PositionExchanged()
-  {
-    MoveId tackle = MoveId.NewId();
-    MoveId growl = MoveId.NewId();
-    MoveId leafage = MoveId.NewId();
-
-    _hedwidge.LearnMove(tackle, new PowerPoints(35));
-    _hedwidge.LearnMove(growl, new PowerPoints(40));
-    _hedwidge.LearnMove(leafage, new PowerPoints(40));
-
-    ActorId actorId = ActorId.NewId();
-    _hedwidge.SwitchMoves(1, 2, actorId);
-    Assert.Equal(tackle, _hedwidge.Moves.ElementAt(0).MoveId);
-    Assert.Equal(leafage, _hedwidge.Moves.ElementAt(1).MoveId);
-    Assert.Equal(growl, _hedwidge.Moves.ElementAt(2).MoveId);
-    Assert.Contains(_hedwidge.Changes, change => change is PokemonMovesSwitched switched
-      && switched.ActorId == actorId && switched.Source == 1 && switched.Destination == 2);
-  }
-
-  [Fact(DisplayName = "SwitchMoves: it should not do anything when source and destination moves are the same.")]
-  public void Given_SamePosition_When_SwitchMoves_Then_Nothing()
-  {
-    _hedwidge.ClearChanges();
-    _hedwidge.SwitchMoves(1, 1);
-    Assert.False(_hedwidge.HasChanges);
-  }
-
-  [Fact(DisplayName = "SwitchMoves: it should not do anything when the destination move is empty.")]
-  public void Given_DestinationEmpty_When_SwitchMoves_Then_Nothing()
-  {
-    _hedwidge.LearnMove(MoveId.NewId(), new PowerPoints(35));
-    _hedwidge.ClearChanges();
-
-    _hedwidge.SwitchMoves(source: 0, destination: 3);
-    Assert.False(_hedwidge.HasChanges);
-  }
-
-  [Fact(DisplayName = "SwitchMoves: it should not do anything when the source move is empty.")]
-  public void Given_SourceEmpty_When_SwitchMoves_Then_Nothing()
-  {
-    _hedwidge.LearnMove(MoveId.NewId(), new PowerPoints(35));
-    _hedwidge.ClearChanges();
-
-    _hedwidge.SwitchMoves(source: 2, destination: 0);
-    Assert.False(_hedwidge.HasChanges);
-  }
-
-  [Theory(DisplayName = "SwitchMoves: it should throw ArgumentOutOfRangeException when the destination is out of bounds.")]
-  [InlineData(-1)]
-  [InlineData(4)]
-  public void Given_DestinationOutOfBounds_When_SwitchMoves_Then_ArgumentOutOfRangeException(int destination)
-  {
-    MoveId moveId = MoveId.NewId();
-    PowerPoints powerPoints = new(35);
-    var exception = Assert.Throws<ArgumentOutOfRangeException>(() => _hedwidge.SwitchMoves(source: 0, destination));
-    Assert.Equal("destination", exception.ParamName);
-  }
-
-  [Theory(DisplayName = "SwitchMoves: it should throw ArgumentOutOfRangeException when the source is out of bounds.")]
-  [InlineData(-1)]
-  [InlineData(4)]
-  public void Given_SourceOutOfBounds_When_SwitchMoves_Then_ArgumentOutOfRangeException(int source)
-  {
-    MoveId moveId = MoveId.NewId();
-    PowerPoints powerPoints = new(35);
-    var exception = Assert.Throws<ArgumentOutOfRangeException>(() => _hedwidge.SwitchMoves(source, destination: 0));
-    Assert.Equal("source", exception.ParamName);
-  }
-
-  [Theory(DisplayName = "UseTechnicalMachine: it should add the move to the list when the Pokémon has not reached the move limit.")]
-  [InlineData(null)]
-  [InlineData(0)]
-  [InlineData(1)]
-  [InlineData(2)]
-  [InlineData(3)]
-  public void Given_MoveLimitNotReached_When_UseTechnicalMachine_Then_MoveAdded(int? position)
-  {
-    _hedwidge.LearnMove(MoveId.NewId(), new PowerPoints(35)); // NOTE(fpion): Tackle
-    _hedwidge.LearnMove(MoveId.NewId(), new PowerPoints(40)); // NOTE(fpion): Growl
-    _hedwidge.LearnMove(MoveId.NewId(), new PowerPoints(40)); // NOTE(fpion): Leafage
-
-    MoveId moveId = MoveId.NewId(); // NOTE(fpion): Astonish
-    PowerPoints powerPoints = new(15);
-    ActorId actorId = ActorId.NewId();
-    Assert.True(_hedwidge.UseTechnicalMachine(moveId, powerPoints, position, actorId));
-
-    Assert.Contains(_hedwidge.Changes, change => change is PokemonTechnicalMachineUsed learned && learned.ActorId == actorId
-      && learned.PowerPoints == powerPoints && learned.Position is null);
-
-    PokemonMove move = new(moveId, powerPoints.Value, powerPoints.Value, powerPoints, IsMastered: false, _hedwidge.Level, TechnicalMachine: true);
-    Assert.Equal(move, _hedwidge.AllMoves[move.MoveId]);
-    Assert.Equal(Pokemon.MoveLimit, _hedwidge.Moves.Count);
-    Assert.Equal(move, _hedwidge.Moves.Last());
-  }
-
-  [Theory(DisplayName = "UseTechnicalMachine: it should replace a move in the list when the Pokémon has reached the move limit.")]
-  [InlineData(0)]
-  [InlineData(1)]
-  [InlineData(2)]
-  [InlineData(3)]
-  public void Given_MoveLimitReached_When_UseTechnicalMachine_Then_MoveReplaced(int position)
-  {
-    MoveId tackle = MoveId.NewId();
-    MoveId growl = MoveId.NewId();
-    MoveId leafage = MoveId.NewId();
-    MoveId astonish = MoveId.NewId();
-    MoveId peck = MoveId.NewId();
-
-    _hedwidge.LearnMove(tackle, new PowerPoints(35));
-    _hedwidge.LearnMove(growl, new PowerPoints(40));
-    _hedwidge.LearnMove(leafage, new PowerPoints(40));
-    _hedwidge.LearnMove(astonish, new PowerPoints(15));
-
-    PowerPoints powerPoints = new(40);
-    ActorId actorId = ActorId.NewId();
-    Assert.True(_hedwidge.UseTechnicalMachine(peck, powerPoints, position, actorId));
-
-    Assert.Contains(_hedwidge.Changes, change => change is PokemonTechnicalMachineUsed learned && learned.ActorId == actorId
-      && learned.PowerPoints == powerPoints && learned.Position == position);
-
-    PokemonMove move = new(peck, powerPoints.Value, powerPoints.Value, powerPoints, IsMastered: false, _hedwidge.Level, TechnicalMachine: true);
-    Assert.Equal(move, _hedwidge.AllMoves[move.MoveId]);
-    Assert.Equal(Pokemon.MoveLimit, _hedwidge.Moves.Count);
-    Assert.Equal(move, _hedwidge.Moves.ElementAt(position));
-
-    Assert.Equal(5, _hedwidge.AllMoves.Count);
-    Assert.True(_hedwidge.AllMoves.ContainsKey(tackle));
-    Assert.True(_hedwidge.AllMoves.ContainsKey(growl));
-    Assert.True(_hedwidge.AllMoves.ContainsKey(leafage));
-    Assert.True(_hedwidge.AllMoves.ContainsKey(astonish));
-    Assert.True(_hedwidge.AllMoves.ContainsKey(peck));
-  }
-
-  [Fact(DisplayName = "UseTechnicalMachine: it should return false when the Pokémon has already learned the move.")]
-  public void Given_MoveAlreadyLearned_When_UseTechnicalMachine_Then_FalseReturned()
-  {
-    MoveId moveId = MoveId.NewId();
-    PowerPoints powerPoints = new(35);
-    _hedwidge.LearnMove(moveId, powerPoints);
-    Assert.False(_hedwidge.UseTechnicalMachine(moveId, powerPoints));
-  }
-
-  [Fact(DisplayName = "UseTechnicalMachine: it should throw ArgumentNullException when the position is null and the Pokémon has reached the move limit.")]
-  public void Given_MoveLimitReachedPositionNull_When_UseTechnicalMachine_Then_ArgumentNullException()
-  {
-    _hedwidge.LearnMove(MoveId.NewId(), new PowerPoints(35)); // NOTE(fpion): Tackle
-    _hedwidge.LearnMove(MoveId.NewId(), new PowerPoints(40)); // NOTE(fpion): Growl
-    _hedwidge.LearnMove(MoveId.NewId(), new PowerPoints(40)); // NOTE(fpion): Leafage
-    _hedwidge.LearnMove(MoveId.NewId(), new PowerPoints(15)); // NOTE(fpion): Astonish
-    var exception = Assert.Throws<ArgumentNullException>(() => _hedwidge.UseTechnicalMachine(MoveId.NewId(), new PowerPoints(35))); // NOTE(fpion): Peck
-    Assert.Equal("position", exception.ParamName);
-  }
-
-  [Theory(DisplayName = "UseTechnicalMachine: it should throw ArgumentOutOfRangeException when the position is out of bounds.")]
-  [InlineData(-1)]
-  [InlineData(4)]
-  public void Given_PositionOutOfBounds_When_UseTechnicalMachine_Then_ArgumentOutOfRangeException(int position)
-  {
-    MoveId moveId = MoveId.NewId();
-    PowerPoints powerPoints = new(35);
-    var exception = Assert.Throws<ArgumentOutOfRangeException>(() => _hedwidge.UseTechnicalMachine(moveId, powerPoints, position));
+    var exception = Assert.Throws<ArgumentOutOfRangeException>(() => _pokemon.RelearnMove(defenseCurl, position));
     Assert.Equal("position", exception.ParamName);
   }
 }

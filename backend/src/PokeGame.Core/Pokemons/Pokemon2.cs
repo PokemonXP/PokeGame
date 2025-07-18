@@ -3,6 +3,7 @@ using Logitar.EventSourcing;
 using PokeGame.Core.Abilities;
 using PokeGame.Core.Forms;
 using PokeGame.Core.Items;
+using PokeGame.Core.Moves;
 using PokeGame.Core.Pokemons.Events;
 using PokeGame.Core.Species;
 using PokeGame.Core.Varieties;
@@ -11,6 +12,8 @@ namespace PokeGame.Core.Pokemons;
 
 public class Pokemon2 : AggregateRoot
 {
+  public const int MoveLimit = 4;
+
   private PokemonUpdated2 _updated = new();
   private bool HasUpdates => _updated.Sprite is not null || _updated.Url is not null || _updated.Notes is not null;
 
@@ -93,6 +96,12 @@ public class Pokemon2 : AggregateRoot
       }
     }
   }
+
+  private readonly Dictionary<MoveId, PokemonMove2> _learnedMoves = [];
+  public IReadOnlyDictionary<MoveId, PokemonMove2> LearnedMoves => _learnedMoves.AsReadOnly();
+  private readonly List<MoveId> _currentMoves = new(capacity: MoveLimit);
+  public IReadOnlyCollection<KeyValuePair<MoveId, PokemonMove2>> CurrentMoves
+    => _currentMoves.Select(id => new KeyValuePair<MoveId, PokemonMove2>(id, _learnedMoves[id])).ToList().AsReadOnly();
 
   public Pokemon2() : base()
   {
@@ -244,6 +253,67 @@ public class Pokemon2 : AggregateRoot
     HeldItemId = @event.ItemId;
   }
 
+  public bool LearnMove(Move move, int? position = null, Level? level = null, Notes? notes = null, ActorId? actorId = null)
+  {
+    if (_learnedMoves.ContainsKey(move.Id))
+    {
+      return false;
+    }
+
+    if (position.HasValue)
+    {
+      ArgumentOutOfRangeException.ThrowIfNegative(position.Value, nameof(position));
+      ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(position.Value, MoveLimit, nameof(position));
+    }
+    if (_currentMoves.Count < MoveLimit)
+    {
+      position = _currentMoves.Count;
+    }
+
+    byte powerPoints = move.PowerPoints.Value;
+    MoveLearningMethod method = level is null ? MoveLearningMethod.Evolving : MoveLearningMethod.LevelingUp;
+    level ??= new(Level);
+    PokemonMove2 pokemonMove = new(powerPoints, powerPoints, move.PowerPoints, IsMastered: false, level, method, ItemId: null, notes);
+    Raise(new PokemonMoveLearned2(move.Id, pokemonMove, position), actorId);
+
+    return true;
+  }
+  protected virtual void Handle(PokemonMoveLearned2 @event)
+  {
+    _learnedMoves[@event.MoveId] = @event.Move;
+
+    if (@event.Position.HasValue)
+    {
+      if (@event.Position.Value == _currentMoves.Count)
+      {
+        _currentMoves.Add(@event.MoveId);
+      }
+      else
+      {
+        _currentMoves[@event.Position.Value] = @event.MoveId;
+      }
+    }
+  }
+
+  public bool RelearnMove(Move move, int position, ActorId? actorId = null) => RelearnMove(move.Id, position, actorId);
+  public bool RelearnMove(MoveId moveId, int position, ActorId? actorId = null)
+  {
+    ArgumentOutOfRangeException.ThrowIfNegative(position, nameof(position));
+    ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(position, MoveLimit, nameof(position));
+
+    if (!_learnedMoves.ContainsKey(moveId) || _currentMoves.Contains(moveId))
+    {
+      return false;
+    }
+
+    Raise(new PokemonMoveRelearned(moveId, position), actorId);
+    return true;
+  }
+  protected virtual void Handle(PokemonMoveRelearned @event)
+  {
+    _currentMoves[@event.Position] = @event.MoveId;
+  }
+
   public void RemoveItem(ActorId? actorId = null)
   {
     if (HeldItemId.HasValue)
@@ -293,28 +363,6 @@ public class Pokemon2 : AggregateRoot
 }
 
 // TODO(fpion): add EggCycle byte
-
-/* Move Learning Methods:
- * Leveling-up
- * Evolving
- * HM (item)
- * TM (item)
- * Breeding
- * Tutoring
- */
-
-/* Pokémon Move Properties:
- * MoveId: MoveId
- * Position: Byte?
- * CurrentPowerPoints: Byte
- * MaximumPowerPoints: Byte
- * (ReferencePowerPoints: Byte)
- * IsMastered: Boolean
- * LearnedAtLevel: Int32
- * Method: MoveLearningMethod
- * (ItemId: ItemId?)
- * Notes: String?
- */
 
 /* Ownership Kinds:
  * Caught

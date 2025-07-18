@@ -2,7 +2,6 @@
 using Krakenar.Core;
 using PokeGame.Core.Moves;
 using PokeGame.Core.Pokemons.Models;
-using PokeGame.Core.Pokemons.Validators;
 
 namespace PokeGame.Core.Pokemons.Commands;
 
@@ -32,15 +31,15 @@ internal class RelearnPokemonMoveHandler : ICommandHandler<RelearnPokemonMove, P
 
   public async Task<PokemonModel?> HandleAsync(RelearnPokemonMove command, CancellationToken cancellationToken)
   {
-    RelearnPokemonMovePayload payload = command.Payload;
-    new RelearnPokemonMoveValidator().ValidateAndThrow(payload);
+    //RelearnPokemonMovePayload payload = command.Payload;
+    //new RelearnPokemonMoveValidator().ValidateAndThrow(payload);
 
-    PokemonId pokemonId = new(command.Id);
-    Pokemon? pokemon = await _pokemonRepository.LoadAsync(pokemonId, cancellationToken);
-    if (pokemon is null)
-    {
-      return null;
-    }
+    //PokemonId pokemonId = new(command.Id);
+    //Pokemon? pokemon = await _pokemonRepository.LoadAsync(pokemonId, cancellationToken);
+    //if (pokemon is null)
+    //{
+    //  return null;
+    //}
 
     //MoveModel move = await _moveManager.FindAsync(payload.Move, nameof(payload.Move), cancellationToken);
     //MoveId moveId = move.GetMoveId(_applicationContext.RealmId);
@@ -50,6 +49,9 @@ internal class RelearnPokemonMoveHandler : ICommandHandler<RelearnPokemonMove, P
     //}
     //await _pokemonRepository.SaveAsync(pokemon, cancellationToken);
 
-    return await _pokemonQuerier.ReadAsync(pokemon, cancellationToken);
+    //return await _pokemonQuerier.ReadAsync(pokemon, cancellationToken);
+
+    await Task.Delay(1000, cancellationToken);
+    return null;
   }
 }
