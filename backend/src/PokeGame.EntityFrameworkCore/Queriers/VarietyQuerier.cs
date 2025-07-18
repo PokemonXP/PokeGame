@@ -47,25 +47,17 @@ internal class VarietyQuerier : IVarietyQuerier
   {
     VarietyEntity? variety = await _varieties.AsNoTracking()
       .Include(x => x.Moves).ThenInclude(x => x.Move)
+      .Include(x => x.Species).ThenInclude(x => x!.RegionalNumbers).ThenInclude(x => x.Region)
       .SingleOrDefaultAsync(x => x.StreamId == id.Value, cancellationToken);
-    if (variety is null)
-    {
-      return null;
-    }
-    await FillAsync(variety, cancellationToken);
-    return await MapAsync(variety, cancellationToken);
+    return variety is null ? null : await MapAsync(variety, cancellationToken);
   }
   public async Task<VarietyModel?> ReadAsync(Guid id, CancellationToken cancellationToken)
   {
     VarietyEntity? variety = await _varieties.AsNoTracking()
       .Include(x => x.Moves).ThenInclude(x => x.Move)
+      .Include(x => x.Species).ThenInclude(x => x!.RegionalNumbers).ThenInclude(x => x.Region)
       .SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
-    if (variety is null)
-    {
-      return null;
-    }
-    await FillAsync(variety, cancellationToken);
-    return await MapAsync(variety, cancellationToken);
+    return variety is null ? null : await MapAsync(variety, cancellationToken);
   }
   public async Task<VarietyModel?> ReadAsync(string uniqueName, CancellationToken cancellationToken)
   {
@@ -73,13 +65,9 @@ internal class VarietyQuerier : IVarietyQuerier
 
     VarietyEntity? variety = await _varieties.AsNoTracking()
       .Include(x => x.Moves).ThenInclude(x => x.Move)
+      .Include(x => x.Species).ThenInclude(x => x!.RegionalNumbers).ThenInclude(x => x.Region)
       .SingleOrDefaultAsync(x => x.UniqueNameNormalized == uniqueNameNormalized, cancellationToken);
-    if (variety is null)
-    {
-      return null;
-    }
-    await FillAsync(variety, cancellationToken);
-    return await MapAsync(variety, cancellationToken);
+    return variety is null ? null : await MapAsync(variety, cancellationToken);
   }
 
   public async Task<SearchResults<VarietyModel>> SearchAsync(SearchVarietiesPayload payload, CancellationToken cancellationToken)
@@ -94,7 +82,8 @@ internal class VarietyQuerier : IVarietyQuerier
     }
 
     IQueryable<VarietyEntity> query = _varieties.FromQuery(builder).AsNoTracking()
-      .Include(x => x.Moves).ThenInclude(x => x.Move);
+      .Include(x => x.Moves).ThenInclude(x => x.Move)
+      .Include(x => x.Species).ThenInclude(x => x!.RegionalNumbers).ThenInclude(x => x.Region);
     long total = await query.LongCountAsync(cancellationToken);
 
     IOrderedQueryable<VarietyEntity>? ordered = null;
@@ -129,29 +118,9 @@ internal class VarietyQuerier : IVarietyQuerier
     query = query.ApplyPaging(payload);
 
     VarietyEntity[] entities = await query.ToArrayAsync(cancellationToken);
-    await FillAsync(entities, cancellationToken);
     IReadOnlyCollection<VarietyModel> varieties = await MapAsync(entities, cancellationToken);
 
     return new SearchResults<VarietyModel>(varieties, total);
-  }
-  private async Task FillAsync(VarietyEntity variety, CancellationToken cancellationToken)
-  {
-    SpeciesEntity? species = await _species.AsNoTracking()
-      .Include(x => x.RegionalNumbers).ThenInclude(x => x.Region)
-      .SingleOrDefaultAsync(x => x.SpeciesId == variety.SpeciesId, cancellationToken);
-    variety.Species = species;
-  }
-  private async Task FillAsync(IEnumerable<VarietyEntity> varieties, CancellationToken cancellationToken)
-  {
-    HashSet<int> speciesIds = varieties.Select(x => x.SpeciesId).ToHashSet();
-    Dictionary<int, SpeciesEntity> species = await _species.AsNoTracking()
-      .Include(x => x.RegionalNumbers).ThenInclude(x => x.Region)
-      .Where(x => speciesIds.Contains(x.SpeciesId))
-      .ToDictionaryAsync(x => x.SpeciesId, x => x, cancellationToken);
-    foreach (VarietyEntity variety in varieties)
-    {
-      variety.Species = species[variety.SpeciesId];
-    }
   }
 
   private async Task<VarietyModel> MapAsync(VarietyEntity variety, CancellationToken cancellationToken)

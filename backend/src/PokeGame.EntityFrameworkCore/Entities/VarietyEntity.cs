@@ -10,7 +10,7 @@ internal class VarietyEntity : AggregateEntity
   public int VarietyId { get; private set; }
   public Guid Id { get; private set; }
 
-  public SpeciesEntity? Species { get; set; }
+  public SpeciesEntity? Species { get; private set; }
   public int SpeciesId { get; private set; }
   public Guid SpeciesUid { get; private set; }
   public bool IsDefault { get; private set; }
