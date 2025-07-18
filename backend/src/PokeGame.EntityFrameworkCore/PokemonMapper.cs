@@ -340,6 +340,15 @@ internal class PokemonMapper
       Notes = source.Notes
     };
 
+    foreach (VarietyMoveEntity varietyMove in source.Moves)
+    {
+      if (varietyMove.Move is null)
+      {
+        throw new ArgumentException("The move is required.", nameof(source));
+      }
+      destination.Moves.Add(new VarietyMoveModel(ToMove(varietyMove.Move), varietyMove.Level));
+    }
+
     MapAggregate(source, destination);
 
     return destination;

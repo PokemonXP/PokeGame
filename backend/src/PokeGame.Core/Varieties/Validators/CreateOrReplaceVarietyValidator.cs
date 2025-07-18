@@ -21,5 +21,7 @@ internal class CreateOrReplaceVarietyValidator : AbstractValidator<CreateOrRepla
 
     When(x => !string.IsNullOrWhiteSpace(x.Url), () => RuleFor(x => x.Url!).Url());
     When(x => !string.IsNullOrWhiteSpace(x.Notes), () => RuleFor(x => x.Notes!).Notes());
+
+    RuleForEach(x => x.Moves).SetValidator(new VarietyMoveValidator());
   }
 }

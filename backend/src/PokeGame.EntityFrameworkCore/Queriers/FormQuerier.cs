@@ -45,6 +45,7 @@ internal class FormQuerier : IFormQuerier
   {
     FormEntity form = await _forms.AsNoTracking()
       .Include(x => x.Abilities).ThenInclude(x => x.Ability)
+      .Include(x => x.Variety).ThenInclude(x => x!.Moves).ThenInclude(x => x.Move)
       .Include(x => x.Variety).ThenInclude(x => x!.Species).ThenInclude(x => x!.RegionalNumbers).ThenInclude(x => x.Region)
       .SingleOrDefaultAsync(x => x.StreamId == id.Value, cancellationToken)
       ?? throw new InvalidOperationException($"The form entity 'StreamId={id}' was not found.");
@@ -54,6 +55,7 @@ internal class FormQuerier : IFormQuerier
   {
     FormEntity? form = await _forms.AsNoTracking()
       .Include(x => x.Abilities).ThenInclude(x => x.Ability)
+      .Include(x => x.Variety).ThenInclude(x => x!.Moves).ThenInclude(x => x.Move)
       .Include(x => x.Variety).ThenInclude(x => x!.Species).ThenInclude(x => x!.RegionalNumbers).ThenInclude(x => x.Region)
       .SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
     return form is null ? null : await MapAsync(form, cancellationToken);
@@ -64,6 +66,7 @@ internal class FormQuerier : IFormQuerier
 
     FormEntity? form = await _forms.AsNoTracking()
       .Include(x => x.Abilities).ThenInclude(x => x.Ability)
+      .Include(x => x.Variety).ThenInclude(x => x!.Moves).ThenInclude(x => x.Move)
       .Include(x => x.Variety).ThenInclude(x => x!.Species).ThenInclude(x => x!.RegionalNumbers).ThenInclude(x => x.Region)
       .SingleOrDefaultAsync(x => x.UniqueNameNormalized == uniqueNameNormalized, cancellationToken);
     return form is null ? null : await MapAsync(form, cancellationToken);
@@ -93,6 +96,7 @@ internal class FormQuerier : IFormQuerier
 
     IQueryable<FormEntity> query = _forms.FromQuery(builder).AsNoTracking()
       .Include(x => x.Abilities).ThenInclude(x => x.Ability)
+      .Include(x => x.Variety).ThenInclude(x => x!.Moves).ThenInclude(x => x.Move)
       .Include(x => x.Variety).ThenInclude(x => x!.Species).ThenInclude(x => x!.RegionalNumbers).ThenInclude(x => x.Region);
     long total = await query.LongCountAsync(cancellationToken);
 

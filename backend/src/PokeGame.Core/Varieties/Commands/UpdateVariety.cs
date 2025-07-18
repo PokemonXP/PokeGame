@@ -2,6 +2,8 @@
 using Krakenar.Contracts.Settings;
 using Krakenar.Core;
 using Logitar.EventSourcing;
+using PokeGame.Core.Moves;
+using PokeGame.Core.Pokemons;
 using PokeGame.Core.Varieties.Models;
 using PokeGame.Core.Varieties.Validators;
 
@@ -9,6 +11,7 @@ namespace PokeGame.Core.Varieties.Commands;
 
 internal record UpdateVariety(Guid Id, UpdateVarietyPayload Payload) : ICommand<VarietyModel?>;
 
+/// <exception cref="MovesNotFoundException"></exception>
 /// <exception cref="UniqueNameAlreadyUsedException"></exception>
 /// <exception cref="ValidationException"></exception>
 internal class UpdateVarietyHandler : ICommandHandler<UpdateVariety, VarietyModel?>
@@ -81,6 +84,27 @@ internal class UpdateVarietyHandler : ICommandHandler<UpdateVariety, VarietyMode
     if (payload.Notes is not null)
     {
       variety.Notes = Notes.TryCreate(payload.Notes.Value);
+    }
+
+    IReadOnlyDictionary<MoveId, int?> moves = await _varietyManager.FindMovesAsync(payload.Moves, nameof(payload.Moves), cancellationToken);
+    foreach (KeyValuePair<MoveId, int?> move in moves)
+    {
+      if (move.Value.HasValue)
+      {
+        if (move.Value.Value == 0)
+        {
+          variety.SetEvolutionMove(move.Key, actorId);
+        }
+        else
+        {
+          Level level = new(move.Value.Value);
+          variety.SetLevelMove(move.Key, level, actorId);
+        }
+      }
+      else
+      {
+        variety.RemoveMove(move.Key, actorId);
+      }
     }
 
     variety.Update(_applicationContext.ActorId);

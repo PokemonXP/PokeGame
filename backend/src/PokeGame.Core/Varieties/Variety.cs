@@ -1,5 +1,7 @@
 ﻿using Krakenar.Core;
 using Logitar.EventSourcing;
+using PokeGame.Core.Moves;
+using PokeGame.Core.Pokemons;
 using PokeGame.Core.Species;
 using PokeGame.Core.Varieties.Events;
 
@@ -116,6 +118,11 @@ public class Variety : AggregateRoot
     }
   }
 
+  private readonly Dictionary<MoveId, Level?> _moves = [];
+  public IReadOnlyDictionary<MoveId, Level?> Moves => _moves.AsReadOnly();
+  public IReadOnlyCollection<MoveId> EvolutionMoves => _moves.Where(x => x.Value is null).Select(x => x.Key).ToList().AsReadOnly();
+  public IReadOnlyDictionary<MoveId, Level> LevelMoves => _moves.Where(x => x.Value is not null).ToDictionary(x => x.Key, x => x.Value!).AsReadOnly();
+
   public Variety() : base()
   {
   }
@@ -149,6 +156,48 @@ public class Variety : AggregateRoot
     {
       Raise(new VarietyDeleted(), actorId);
     }
+  }
+
+  public bool RemoveMove(Move move, ActorId? actorId = null) => RemoveMove(move.Id, actorId);
+  public bool RemoveMove(MoveId moveId, ActorId? actorId = null)
+  {
+    if (!_moves.ContainsKey(moveId))
+    {
+      return false;
+    }
+
+    Raise(new VarietyMoveRemoved(moveId), actorId);
+    return true;
+  }
+  protected virtual void Handle(VarietyMoveRemoved @event)
+  {
+    _moves.Remove(@event.MoveId);
+  }
+
+  public void SetEvolutionMove(Move move, ActorId? actorId = null) => SetEvolutionMove(move.Id, actorId);
+  public void SetEvolutionMove(MoveId moveId, ActorId? actorId = null)
+  {
+    if (!_moves.TryGetValue(moveId, out Level? level) || level is not null)
+    {
+      Raise(new VarietyEvolutionMoveChanged(moveId), actorId);
+    }
+  }
+  protected virtual void Handle(VarietyEvolutionMoveChanged @event)
+  {
+    _moves[@event.MoveId] = null;
+  }
+
+  public void SetLevelMove(Move move, Level level, ActorId? actorId = null) => SetLevelMove(move.Id, level, actorId);
+  public void SetLevelMove(MoveId moveId, Level level, ActorId? actorId = null)
+  {
+    if (!_moves.TryGetValue(moveId, out Level? existingLevel) || existingLevel != level)
+    {
+      Raise(new VarietyLevelMoveChanged(moveId, level), actorId);
+    }
+  }
+  protected virtual void Handle(VarietyLevelMoveChanged @event)
+  {
+    _moves[@event.MoveId] = @event.Level;
   }
 
   public void SetUniqueName(UniqueName uniqueName, ActorId? actorId = null)

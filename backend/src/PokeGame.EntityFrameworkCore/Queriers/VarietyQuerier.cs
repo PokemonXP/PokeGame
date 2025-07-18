@@ -16,12 +16,14 @@ namespace PokeGame.EntityFrameworkCore.Queriers;
 internal class VarietyQuerier : IVarietyQuerier
 {
   private readonly IActorService _actorService;
+  private readonly DbSet<SpeciesEntity> _species;
   private readonly ISqlHelper _sqlHelper;
   private readonly DbSet<VarietyEntity> _varieties;
 
   public VarietyQuerier(IActorService actorService, PokemonContext context, ISqlHelper sqlHelper)
   {
     _actorService = actorService;
+    _species = context.Species;
     _sqlHelper = sqlHelper;
     _varieties = context.Varieties;
   }
@@ -44,6 +46,7 @@ internal class VarietyQuerier : IVarietyQuerier
   public async Task<VarietyModel?> ReadAsync(VarietyId id, CancellationToken cancellationToken)
   {
     VarietyEntity? variety = await _varieties.AsNoTracking()
+      .Include(x => x.Moves).ThenInclude(x => x.Move)
       .Include(x => x.Species).ThenInclude(x => x!.RegionalNumbers).ThenInclude(x => x.Region)
       .SingleOrDefaultAsync(x => x.StreamId == id.Value, cancellationToken);
     return variety is null ? null : await MapAsync(variety, cancellationToken);
@@ -51,6 +54,7 @@ internal class VarietyQuerier : IVarietyQuerier
   public async Task<VarietyModel?> ReadAsync(Guid id, CancellationToken cancellationToken)
   {
     VarietyEntity? variety = await _varieties.AsNoTracking()
+      .Include(x => x.Moves).ThenInclude(x => x.Move)
       .Include(x => x.Species).ThenInclude(x => x!.RegionalNumbers).ThenInclude(x => x.Region)
       .SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
     return variety is null ? null : await MapAsync(variety, cancellationToken);
@@ -60,6 +64,7 @@ internal class VarietyQuerier : IVarietyQuerier
     string uniqueNameNormalized = Helper.Normalize(uniqueName);
 
     VarietyEntity? variety = await _varieties.AsNoTracking()
+      .Include(x => x.Moves).ThenInclude(x => x.Move)
       .Include(x => x.Species).ThenInclude(x => x!.RegionalNumbers).ThenInclude(x => x.Region)
       .SingleOrDefaultAsync(x => x.UniqueNameNormalized == uniqueNameNormalized, cancellationToken);
     return variety is null ? null : await MapAsync(variety, cancellationToken);
@@ -77,6 +82,7 @@ internal class VarietyQuerier : IVarietyQuerier
     }
 
     IQueryable<VarietyEntity> query = _varieties.FromQuery(builder).AsNoTracking()
+      .Include(x => x.Moves).ThenInclude(x => x.Move)
       .Include(x => x.Species).ThenInclude(x => x!.RegionalNumbers).ThenInclude(x => x.Region);
     long total = await query.LongCountAsync(cancellationToken);
 

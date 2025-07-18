@@ -55,7 +55,7 @@ internal class FormManager : IFormManager
     string propertyName)
   {
     if ((Guid.TryParse(idOrUniqueName, out Guid id) && ids.TryGetValue(id, out AbilityId abilityId))
-      || (uniqueNames.TryGetValue(Normalize(idOrUniqueName), out abilityId)))
+      || uniqueNames.TryGetValue(Normalize(idOrUniqueName), out abilityId))
     {
       return abilityId;
     }
