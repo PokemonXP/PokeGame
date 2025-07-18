@@ -4,7 +4,7 @@ namespace PokeGame.Core.Pokemons;
 
 internal interface IPokemonManager
 {
-  Task SaveAsync(Pokemon pokemon, CancellationToken cancellationToken = default);
+  Task SaveAsync(Pokemon2 pokemon, CancellationToken cancellationToken = default);
 }
 
 internal class PokemonManager : IPokemonManager
@@ -18,7 +18,7 @@ internal class PokemonManager : IPokemonManager
     _pokemonRepository = pokemonRepository;
   }
 
-  public async Task SaveAsync(Pokemon pokemon, CancellationToken cancellationToken)
+  public async Task SaveAsync(Pokemon2 pokemon, CancellationToken cancellationToken)
   {
     bool hasUniqueNameChanged = pokemon.Changes.Any(change => change is PokemonCreated || change is PokemonUniqueNameChanged);
     if (hasUniqueNameChanged)
@@ -26,7 +26,7 @@ internal class PokemonManager : IPokemonManager
       PokemonId? conflictId = await _pokemonQuerier.FindIdAsync(pokemon.UniqueName, cancellationToken);
       if (conflictId.HasValue && !conflictId.Value.Equals(pokemon.Id))
       {
-        throw new PokemonUniqueNameAlreadyUsedException(pokemon, conflictId.Value);
+        throw new UniqueNameAlreadyUsedException(pokemon, conflictId.Value);
       }
     }
 

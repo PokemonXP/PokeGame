@@ -1,10 +1,7 @@
 ﻿using FluentValidation;
-using Krakenar.Contracts.Settings;
 using Krakenar.Core;
-using Logitar.EventSourcing;
 using PokeGame.Core.Forms;
 using PokeGame.Core.Pokemons.Models;
-using PokeGame.Core.Pokemons.Validators;
 
 namespace PokeGame.Core.Pokemons.Commands;
 
@@ -36,71 +33,74 @@ internal class UpdatePokemonHandler : ICommandHandler<UpdatePokemon, PokemonMode
 
   public async Task<PokemonModel?> HandleAsync(UpdatePokemon command, CancellationToken cancellationToken)
   {
-    ActorId? actorId = _applicationContext.ActorId;
-    IUniqueNameSettings uniqueNameSettings = _applicationContext.UniqueNameSettings;
+    //ActorId? actorId = _applicationContext.ActorId;
+    //IUniqueNameSettings uniqueNameSettings = _applicationContext.UniqueNameSettings;
 
-    UpdatePokemonPayload payload = command.Payload;
-    new UpdatePokemonValidator(uniqueNameSettings).ValidateAndThrow(payload);
+    //UpdatePokemonPayload payload = command.Payload;
+    //new UpdatePokemonValidator(uniqueNameSettings).ValidateAndThrow(payload);
 
-    PokemonId pokemonId = new(command.Id);
-    Pokemon? pokemon = await _pokemonRepository.LoadAsync(pokemonId, cancellationToken);
-    if (pokemon is null)
-    {
-      return null;
-    }
+    //PokemonId pokemonId = new(command.Id);
+    //Pokemon? pokemon = await _pokemonRepository.LoadAsync(pokemonId, cancellationToken);
+    //if (pokemon is null)
+    //{
+    //  return null;
+    //}
 
-    if (!string.IsNullOrWhiteSpace(payload.UniqueName))
-    {
-      UniqueName uniqueName = new(uniqueNameSettings, payload.UniqueName);
-      pokemon.SetUniqueName(uniqueName, actorId);
-    }
-    if (payload.Nickname is not null)
-    {
-      DisplayName? nickname = DisplayName.TryCreate(payload.Nickname.Value);
-      pokemon.SetNickname(nickname, actorId);
-    }
-    if (payload.Gender.HasValue)
-    {
-      //FormModel form = await _formQuerier.ReadAsync(pokemon.FormId, cancellationToken);
-      //new UpdatePokemonValidator(uniqueNameSettings, form).ValidateAndThrow(payload);
+    //if (!string.IsNullOrWhiteSpace(payload.UniqueName))
+    //{
+    //  UniqueName uniqueName = new(uniqueNameSettings, payload.UniqueName);
+    //  pokemon.SetUniqueName(uniqueName, actorId);
+    //}
+    //if (payload.Nickname is not null)
+    //{
+    //  DisplayName? nickname = DisplayName.TryCreate(payload.Nickname.Value);
+    //  pokemon.SetNickname(nickname, actorId);
+    //}
+    //if (payload.Gender.HasValue)
+    //{
+    //  FormModel form = await _formQuerier.ReadAsync(pokemon.FormId, cancellationToken);
+    //  new UpdatePokemonValidator(uniqueNameSettings, form).ValidateAndThrow(payload);
 
-      pokemon.Gender = payload.Gender.Value;
-    }
+    //  pokemon.Gender = payload.Gender.Value;
+    //}
 
-    if (payload.Vitality.HasValue)
-    {
-      pokemon.Vitality = payload.Vitality.Value;
-    }
-    if (payload.Stamina.HasValue)
-    {
-      pokemon.Stamina = payload.Stamina.Value;
-    }
-    if (payload.StatusCondition is not null)
-    {
-      pokemon.StatusCondition = payload.StatusCondition.Value;
-    }
+    //if (payload.Vitality.HasValue)
+    //{
+    //  pokemon.Vitality = payload.Vitality.Value;
+    //}
+    //if (payload.Stamina.HasValue)
+    //{
+    //  pokemon.Stamina = payload.Stamina.Value;
+    //}
+    //if (payload.StatusCondition is not null)
+    //{
+    //  pokemon.StatusCondition = payload.StatusCondition.Value;
+    //}
 
-    if (payload.Friendship.HasValue)
-    {
-      pokemon.Friendship = payload.Friendship.Value;
-    }
+    //if (payload.Friendship.HasValue)
+    //{
+    //  pokemon.Friendship = payload.Friendship.Value;
+    //}
 
-    if (payload.Sprite is not null)
-    {
-      pokemon.Sprite = Url.TryCreate(payload.Sprite.Value);
-    }
-    if (payload.Url is not null)
-    {
-      pokemon.Url = Url.TryCreate(payload.Url.Value);
-    }
-    if (payload.Notes is not null)
-    {
-      pokemon.Notes = Description.TryCreate(payload.Notes.Value);
-    }
+    //if (payload.Sprite is not null)
+    //{
+    //  pokemon.Sprite = Url.TryCreate(payload.Sprite.Value);
+    //}
+    //if (payload.Url is not null)
+    //{
+    //  pokemon.Url = Url.TryCreate(payload.Url.Value);
+    //}
+    //if (payload.Notes is not null)
+    //{
+    //  pokemon.Notes = Description.TryCreate(payload.Notes.Value);
+    //}
 
-    pokemon.Update(actorId);
-    await _pokemonManager.SaveAsync(pokemon, cancellationToken);
+    //pokemon.Update(actorId);
+    //await _pokemonManager.SaveAsync(pokemon, cancellationToken);
 
-    return await _pokemonQuerier.ReadAsync(pokemon, cancellationToken);
+    //return await _pokemonQuerier.ReadAsync(pokemon, cancellationToken);
+
+    await Task.Delay(1000, cancellationToken);
+    return null;
   }
 }

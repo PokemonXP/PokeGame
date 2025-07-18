@@ -20,17 +20,20 @@ internal class DeletePokemonHandler : ICommandHandler<DeletePokemon, PokemonMode
 
   public async Task<PokemonModel?> HandleAsync(DeletePokemon command, CancellationToken cancellationToken)
   {
-    PokemonId pokemonId = new(command.Id);
-    Pokemon? pokemon = await _pokemonRepository.LoadAsync(pokemonId, cancellationToken);
-    if (pokemon is null)
-    {
-      return null;
-    }
-    PokemonModel model = await _pokemonQuerier.ReadAsync(pokemon, cancellationToken);
+    //PokemonId pokemonId = new(command.Id);
+    //Pokemon? pokemon = await _pokemonRepository.LoadAsync(pokemonId, cancellationToken);
+    //if (pokemon is null)
+    //{
+    //  return null;
+    //}
+    //PokemonModel model = await _pokemonQuerier.ReadAsync(pokemon, cancellationToken);
 
-    pokemon.Delete(_applicationContext.ActorId);
-    await _pokemonRepository.SaveAsync(pokemon, cancellationToken);
+    //pokemon.Delete(_applicationContext.ActorId);
+    //await _pokemonRepository.SaveAsync(pokemon, cancellationToken);
 
-    return model;
+    //return model;
+
+    await Task.Delay(1000, cancellationToken);
+    return null;
   }
 }

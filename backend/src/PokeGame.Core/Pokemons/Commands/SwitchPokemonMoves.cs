@@ -1,7 +1,6 @@
 ﻿using FluentValidation;
 using Krakenar.Core;
 using PokeGame.Core.Pokemons.Models;
-using PokeGame.Core.Pokemons.Validators;
 
 namespace PokeGame.Core.Pokemons.Commands;
 
@@ -23,19 +22,22 @@ internal class SwitchPokemonMovesHandler : ICommandHandler<SwitchPokemonMoves, P
 
   public async Task<PokemonModel?> HandleAsync(SwitchPokemonMoves command, CancellationToken cancellationToken)
   {
-    SwitchPokemonMovesPayload payload = command.Payload;
-    new SwitchPokemonMovesValidator().ValidateAndThrow(payload);
+    //SwitchPokemonMovesPayload payload = command.Payload;
+    //new SwitchPokemonMovesValidator().ValidateAndThrow(payload);
 
-    PokemonId pokemonId = new(command.Id);
-    Pokemon? pokemon = await _pokemonRepository.LoadAsync(pokemonId, cancellationToken);
-    if (pokemon is null)
-    {
-      return null;
-    }
+    //PokemonId pokemonId = new(command.Id);
+    //Pokemon? pokemon = await _pokemonRepository.LoadAsync(pokemonId, cancellationToken);
+    //if (pokemon is null)
+    //{
+    //  return null;
+    //}
 
-    pokemon.SwitchMoves(payload.Source, payload.Destination, _applicationContext.ActorId);
-    await _pokemonRepository.SaveAsync(pokemon, cancellationToken);
+    //pokemon.SwitchMoves(payload.Source, payload.Destination, _applicationContext.ActorId);
+    //await _pokemonRepository.SaveAsync(pokemon, cancellationToken);
 
-    return await _pokemonQuerier.ReadAsync(pokemon, cancellationToken);
+    //return await _pokemonQuerier.ReadAsync(pokemon, cancellationToken);
+
+    await Task.Delay(1000, cancellationToken);
+    return null;
   }
 }
