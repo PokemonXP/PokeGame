@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using Krakenar.Contracts.Settings;
 using Krakenar.Core;
+using PokeGame.Core.Abilities;
 using PokeGame.Core.Forms;
 using PokeGame.Core.Pokemons.Models;
 using PokeGame.Core.Varieties;

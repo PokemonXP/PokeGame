@@ -1,6 +1,7 @@
 ﻿using Krakenar.EntityFrameworkCore.Relational.KrakenarDb;
 using Logitar;
 using PokeGame.Core;
+using PokeGame.Core.Abilities;
 using PokeGame.Core.Forms;
 using PokeGame.Core.Pokemons;
 using PokeGame.Core.Pokemons.Events;

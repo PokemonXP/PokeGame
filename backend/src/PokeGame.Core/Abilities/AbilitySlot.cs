@@ -1,4 +1,4 @@
-﻿namespace PokeGame.Core;
+﻿namespace PokeGame.Core.Abilities;
 
 public enum AbilitySlot
 {

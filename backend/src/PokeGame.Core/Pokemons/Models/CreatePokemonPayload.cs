@@ -1,4 +1,6 @@
-﻿namespace PokeGame.Core.Pokemons.Models;
+﻿using PokeGame.Core.Abilities;
+
+namespace PokeGame.Core.Pokemons.Models;
 
 public record CreatePokemonPayload
 {

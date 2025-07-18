@@ -1,7 +1,7 @@
 ﻿using Krakenar.Contracts.Actors;
 using Logitar;
 using Logitar.EventSourcing;
-using PokeGame.Core;
+using PokeGame.Core.Abilities;
 using PokeGame.Core.Abilities.Models;
 using PokeGame.Core.Forms.Models;
 using PokeGame.Core.Items.Models;
