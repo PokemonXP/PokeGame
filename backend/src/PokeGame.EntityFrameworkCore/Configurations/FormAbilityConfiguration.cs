@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using PokeGame.Core;
+using PokeGame.Core.Abilities;
 using PokeGame.EntityFrameworkCore.Entities;
 
 namespace PokeGame.EntityFrameworkCore.Configurations;

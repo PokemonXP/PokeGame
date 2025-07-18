@@ -1,4 +1,5 @@
-﻿using PokeGame.Core.Forms;
+﻿using PokeGame.Core.Abilities;
+using PokeGame.Core.Forms;
 using PokeGame.Core.Pokemons;
 using PokeGame.Core.Varieties;
 
@@ -35,15 +36,15 @@ public class PokemonRandomizer : IPokemonRandomizer
   {
     List<AbilitySlot> slots = new(capacity: 3)
     {
-      Core.AbilitySlot.Primary
+      Abilities.AbilitySlot.Primary
     };
     if (abilities.Secondary is not null)
     {
-      slots.Add(Core.AbilitySlot.Secondary);
+      slots.Add(Abilities.AbilitySlot.Secondary);
     }
     if (abilities.Hidden is not null)
     {
-      slots.Add(Core.AbilitySlot.Hidden);
+      slots.Add(Abilities.AbilitySlot.Hidden);
     }
     return _random.Pick(slots);
   }

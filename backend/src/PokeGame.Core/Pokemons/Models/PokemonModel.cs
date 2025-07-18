@@ -1,4 +1,5 @@
-﻿using PokeGame.Core.Forms.Models;
+﻿using PokeGame.Core.Abilities;
+using PokeGame.Core.Forms.Models;
 using PokeGame.Core.Items.Models;
 using PokeGame.Core.Species;
 using PokeGame.Core.Trainers.Models;

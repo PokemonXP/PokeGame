@@ -3,7 +3,7 @@ using Krakenar.EntityFrameworkCore.Relational.Handlers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using PokeGame.Core;
+using PokeGame.Core.Abilities;
 using PokeGame.Core.Forms;
 using PokeGame.Core.Forms.Events;
 using PokeGame.EntityFrameworkCore.Entities;

@@ -1,4 +1,4 @@
-﻿using PokeGame.Core;
+﻿using PokeGame.Core.Abilities;
 
 namespace PokeGame.EntityFrameworkCore.Entities;
 
