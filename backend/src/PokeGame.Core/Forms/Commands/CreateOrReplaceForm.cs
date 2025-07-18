@@ -54,7 +54,7 @@ internal class CreateOrReplaceFormHandler : ICommandHandler<CreateOrReplaceForm,
     Height height = new(payload.Height);
     Weight weight = new(payload.Weight);
     FormTypes types = new(payload.Types);
-    FormAbilities abilities = null!; // TODO(fpion): implement
+    FormAbilities abilities = await _formManager.FindAbilitiesAsync(payload.Abilities, nameof(payload.Abilities), cancellationToken);
     BaseStatistics baseStatistics = new(payload.BaseStatistics);
     Yield yield = new(payload.Yield);
     Sprites sprites = new(

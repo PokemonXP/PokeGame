@@ -92,7 +92,8 @@ internal class UpdateFormHandler : ICommandHandler<UpdateForm, FormModel?>
     }
     if (payload.Abilities is not null)
     {
-      form.Abilities = null!; // TODO(fpion): implement
+      FormAbilities abilities = await _formManager.FindAbilitiesAsync(payload.Abilities, nameof(payload.Abilities), cancellationToken);
+      form.Abilities = abilities;
     }
     if (payload.BaseStatistics is not null)
     {
