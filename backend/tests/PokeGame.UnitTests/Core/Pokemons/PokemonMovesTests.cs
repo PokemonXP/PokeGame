@@ -55,11 +55,11 @@ public class PokemonMovesTests
     Move armThrust = new(PokemonType.Fighting, MoveCategory.Physical, new UniqueName(_uniqueNameSettings, "arm-thrust"), new PowerPoints(20), new Accuracy(100), new Power(15));
     int position = 3;
     Notes notes = new("Learned by evolving from Tepig to Pignite.");
-    _pokemon.LearnMove(armThrust, position, level: null, notes, actorId);
+    Assert.True(_pokemon.LearnMove(armThrust, position, level: null, notes, actorId));
     Assert.True(_pokemon.HasChanges);
     Assert.Contains(_pokemon.Changes, change => change is PokemonMoveLearned2 learned && learned.ActorId == actorId && learned.MoveId == armThrust.Id && learned.Position == position);
 
-    KeyValuePair<MoveId, PokemonMove2> move = _pokemon.Moves.ElementAt(position);
+    KeyValuePair<MoveId, PokemonMove2> move = _pokemon.CurrentMoves.ElementAt(position);
     Assert.Equal(armThrust.Id, move.Key);
     Assert.Equal(armThrust.PowerPoints.Value, move.Value.CurrentPowerPoints);
     Assert.Equal(armThrust.PowerPoints.Value, move.Value.MaximumPowerPoints);
@@ -82,11 +82,11 @@ public class PokemonMovesTests
     _pokemon.LearnMove(tailWhip, position: 1, new Level(1));
 
     Move ember = new(PokemonType.Fire, MoveCategory.Special, new UniqueName(_uniqueNameSettings, "ember"), new PowerPoints(25), new Accuracy(100), new Power(40));
-    _pokemon.LearnMove(ember, position, new Level(1));
+    Assert.True(_pokemon.LearnMove(ember, position, new Level(1)));
     Assert.True(_pokemon.HasChanges);
     Assert.Contains(_pokemon.Changes, change => change is PokemonMoveLearned2 learned && learned.MoveId == ember.Id && learned.Position == 2);
 
-    KeyValuePair<MoveId, PokemonMove2> move = _pokemon.Moves.ElementAt(2);
+    KeyValuePair<MoveId, PokemonMove2> move = _pokemon.CurrentMoves.ElementAt(2);
     Assert.Equal(ember.Id, move.Key);
     Assert.Equal(ember.PowerPoints.Value, move.Value.CurrentPowerPoints);
     Assert.Equal(ember.PowerPoints.Value, move.Value.MaximumPowerPoints);
@@ -113,6 +113,66 @@ public class PokemonMovesTests
   {
     Move move = new(PokemonType.Normal, MoveCategory.Physical, new UniqueName(_uniqueNameSettings, "tackle"), new PowerPoints(35), new Accuracy(100), new Power(40));
     var exception = Assert.Throws<ArgumentOutOfRangeException>(() => _pokemon.LearnMove(move, position));
+    Assert.Equal("position", exception.ParamName);
+  }
+
+  [Fact(DisplayName = "RelearnMove: it should relearn a forgotten move and return true.")]
+  public void Given_ForgottenMove_When_RelearnMove_Then_MoveRelearned()
+  {
+    ActorId actorId = ActorId.NewId();
+
+    Move tackle = new(PokemonType.Normal, MoveCategory.Physical, new UniqueName(_uniqueNameSettings, "tackle"), new PowerPoints(35), new Accuracy(100), new Power(40));
+    Move tailWhip = new(PokemonType.Normal, MoveCategory.Status, new UniqueName(_uniqueNameSettings, "tail-whip"), new PowerPoints(30), new Accuracy(100));
+    Move ember = new(PokemonType.Fire, MoveCategory.Special, new UniqueName(_uniqueNameSettings, "ember"), new PowerPoints(25), new Accuracy(100), new Power(40));
+    Move endure = new(PokemonType.Normal, MoveCategory.Status, new UniqueName(_uniqueNameSettings, "endure"), new PowerPoints(10));
+    Move defenseCurl = new(PokemonType.Normal, MoveCategory.Status, new UniqueName(_uniqueNameSettings, "defense-curl"), new PowerPoints(40));
+    _pokemon.LearnMove(tackle);
+    _pokemon.LearnMove(tailWhip);
+    _pokemon.LearnMove(ember);
+    _pokemon.LearnMove(endure);
+    _pokemon.LearnMove(defenseCurl);
+
+    int position = 1;
+    Assert.True(_pokemon.RelearnMove(defenseCurl, position, actorId));
+    KeyValuePair<MoveId, PokemonMove2> move = _pokemon.CurrentMoves.ElementAt(position);
+    Assert.Equal(defenseCurl.Id, move.Key);
+
+    Assert.True(_pokemon.HasChanges);
+    Assert.Contains(_pokemon.Changes, change => change is PokemonMoveRelearned relearned && relearned.MoveId == defenseCurl.Id && relearned.Position == position);
+  }
+
+  [Fact(DisplayName = "RelearnMove: it should return false when the move is currently learned.")]
+  public void Given_AlreadyLearned_When_RelearnMove_Then_FalseReturned()
+  {
+    Move ember = new(PokemonType.Fire, MoveCategory.Special, new UniqueName(_uniqueNameSettings, "ember"), new PowerPoints(25), new Accuracy(100), new Power(40));
+    _pokemon.LearnMove(ember, position: null, new Level(6));
+    Assert.False(_pokemon.RelearnMove(ember, position: 0));
+  }
+
+  [Fact(DisplayName = "RelearnMove: it should return false when the Pokémon has not learned the move.")]
+  public void Given_MoveNeverLearned_When_RelearnMove_Then_FalseReturned()
+  {
+    Move ember = new(PokemonType.Fire, MoveCategory.Special, new UniqueName(_uniqueNameSettings, "ember"), new PowerPoints(25), new Accuracy(100), new Power(40));
+    Assert.False(_pokemon.RelearnMove(ember, position: 0));
+  }
+
+  [Theory(DisplayName = "RelearnMove: it should throw ArgumentOutOfRangeException when the position is out of bounds.")]
+  [InlineData(-1)]
+  [InlineData(4)]
+  public void Given_PositionOutOfBounds_When_RelearnMove_Then_ArgumentOutOfRangeException(int position)
+  {
+    Move tackle = new(PokemonType.Normal, MoveCategory.Physical, new UniqueName(_uniqueNameSettings, "tackle"), new PowerPoints(35), new Accuracy(100), new Power(40));
+    Move tailWhip = new(PokemonType.Normal, MoveCategory.Status, new UniqueName(_uniqueNameSettings, "tail-whip"), new PowerPoints(30), new Accuracy(100));
+    Move ember = new(PokemonType.Fire, MoveCategory.Special, new UniqueName(_uniqueNameSettings, "ember"), new PowerPoints(25), new Accuracy(100), new Power(40));
+    Move endure = new(PokemonType.Normal, MoveCategory.Status, new UniqueName(_uniqueNameSettings, "endure"), new PowerPoints(10));
+    Move defenseCurl = new(PokemonType.Normal, MoveCategory.Status, new UniqueName(_uniqueNameSettings, "defense-curl"), new PowerPoints(40));
+    _pokemon.LearnMove(tackle);
+    _pokemon.LearnMove(tailWhip);
+    _pokemon.LearnMove(ember);
+    _pokemon.LearnMove(endure);
+    _pokemon.LearnMove(defenseCurl);
+
+    var exception = Assert.Throws<ArgumentOutOfRangeException>(() => _pokemon.RelearnMove(defenseCurl, position));
     Assert.Equal("position", exception.ParamName);
   }
 }

@@ -129,12 +129,30 @@ internal class CreatePokemonHandler : ICommandHandler<CreatePokemon, PokemonMode
         learnedMoves.Add(new LearnedMove(move, level, order));
       }
     }
-    foreach (LearnedMove learned in learnedMoves.OrderBy(x => x.Order))
+    learnedMoves = learnedMoves.OrderBy(x => x.Order).ToList();
+    for (int i = 0; i < learnedMoves.Count; i++)
     {
-      pokemon.LearnMove(learned.Move, position: null, learned.Level, notes: null, actorId);
+      LearnedMove learned = learnedMoves[i];
+      int position = Math.Max(i + Pokemon2.MoveLimit - learnedMoves.Count, 0);
+      pokemon.LearnMove(learned.Move, position, learned.Level, notes: null, actorId);
+      i++;
     }
 
-    // TODO(fpion): the 4 lowest moves will be learned instead of the 4 highest.
+    if (learnedMoves.Count == 5)
+    {
+      pokemon.RelearnMove(learnedMoves[1].Move, position: 0, actorId);
+      pokemon.RelearnMove(learnedMoves[2].Move, position: 1, actorId);
+      pokemon.RelearnMove(learnedMoves[3].Move, position: 2, actorId);
+    }
+    else if (learnedMoves.Count == 6)
+    {
+      pokemon.RelearnMove(learnedMoves[2].Move, position: 0, actorId);
+      pokemon.RelearnMove(learnedMoves[3].Move, position: 1, actorId);
+    }
+    else if (learnedMoves.Count == 7)
+    {
+      pokemon.RelearnMove(learnedMoves[3].Move, position: 0, actorId);
+    }
 
     pokemon.Update(actorId);
     await _pokemonManager.SaveAsync(pokemon, cancellationToken);

@@ -97,10 +97,11 @@ public class Pokemon2 : AggregateRoot
     }
   }
 
-  private readonly Dictionary<MoveId, PokemonMove2> _allMoves = [];
-  public IReadOnlyDictionary<MoveId, PokemonMove2> AllMoves => _allMoves.AsReadOnly();
-  private readonly List<MoveId> _moves = new(capacity: MoveLimit);
-  public IReadOnlyCollection<KeyValuePair<MoveId, PokemonMove2>> Moves => _moves.Select(id => new KeyValuePair<MoveId, PokemonMove2>(id, _allMoves[id])).ToList().AsReadOnly();
+  private readonly Dictionary<MoveId, PokemonMove2> _learnedMoves = [];
+  public IReadOnlyDictionary<MoveId, PokemonMove2> LearnedMoves => _learnedMoves.AsReadOnly();
+  private readonly List<MoveId> _currentMoves = new(capacity: MoveLimit);
+  public IReadOnlyCollection<KeyValuePair<MoveId, PokemonMove2>> CurrentMoves
+    => _currentMoves.Select(id => new KeyValuePair<MoveId, PokemonMove2>(id, _learnedMoves[id])).ToList().AsReadOnly();
 
   public Pokemon2() : base()
   {
@@ -254,7 +255,7 @@ public class Pokemon2 : AggregateRoot
 
   public bool LearnMove(Move move, int? position = null, Level? level = null, Notes? notes = null, ActorId? actorId = null)
   {
-    if (_allMoves.ContainsKey(move.Id))
+    if (_learnedMoves.ContainsKey(move.Id))
     {
       return false;
     }
@@ -264,9 +265,9 @@ public class Pokemon2 : AggregateRoot
       ArgumentOutOfRangeException.ThrowIfNegative(position.Value, nameof(position));
       ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(position.Value, MoveLimit, nameof(position));
     }
-    if (_moves.Count < MoveLimit)
+    if (_currentMoves.Count < MoveLimit)
     {
-      position = _moves.Count;
+      position = _currentMoves.Count;
     }
 
     byte powerPoints = move.PowerPoints.Value;
@@ -279,19 +280,38 @@ public class Pokemon2 : AggregateRoot
   }
   protected virtual void Handle(PokemonMoveLearned2 @event)
   {
-    _allMoves[@event.MoveId] = @event.Move;
+    _learnedMoves[@event.MoveId] = @event.Move;
 
     if (@event.Position.HasValue)
     {
-      if (@event.Position.Value == _moves.Count)
+      if (@event.Position.Value == _currentMoves.Count)
       {
-        _moves.Add(@event.MoveId);
+        _currentMoves.Add(@event.MoveId);
       }
       else
       {
-        _moves[@event.Position.Value] = @event.MoveId;
+        _currentMoves[@event.Position.Value] = @event.MoveId;
       }
     }
+  }
+
+  public bool RelearnMove(Move move, int position, ActorId? actorId = null) => RelearnMove(move.Id, position, actorId);
+  public bool RelearnMove(MoveId moveId, int position, ActorId? actorId = null)
+  {
+    ArgumentOutOfRangeException.ThrowIfNegative(position, nameof(position));
+    ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(position, MoveLimit, nameof(position));
+
+    if (!_learnedMoves.ContainsKey(moveId) || _currentMoves.Contains(moveId))
+    {
+      return false;
+    }
+
+    Raise(new PokemonMoveRelearned(moveId, position), actorId);
+    return true;
+  }
+  protected virtual void Handle(PokemonMoveRelearned @event)
+  {
+    _currentMoves[@event.Position] = @event.MoveId;
   }
 
   public void RemoveItem(ActorId? actorId = null)
