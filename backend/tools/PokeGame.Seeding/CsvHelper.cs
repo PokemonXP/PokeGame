@@ -15,18 +15,20 @@ internal static class CsvHelper
     using CsvReader csv = new(reader, culture);
 
     csv.Context.RegisterClassMap<SeedAbilityPayload.Map>();
-    csv.Context.RegisterClassMap<BattleItemPayload.Map>();
-    csv.Context.RegisterClassMap<BerryPayload.Map>();
     csv.Context.RegisterClassMap<SeedFormPayload.Map>();
-    csv.Context.RegisterClassMap<ItemPayload.Map>();
-    csv.Context.RegisterClassMap<MedicinePayload.Map>();
     csv.Context.RegisterClassMap<SeedMovePayload.Map>();
-    csv.Context.RegisterClassMap<PokeBallPayload.Map>();
     csv.Context.RegisterClassMap<SeedRegionPayload.Map>();
     csv.Context.RegisterClassMap<SeedSpeciesPayload.Map>();
-    csv.Context.RegisterClassMap<TechnicalMachinePayload.Map>();
     csv.Context.RegisterClassMap<SeedTrainerPayload.Map>();
+    csv.Context.RegisterClassMap<SeedVarietyMovePayload.Map>();
     csv.Context.RegisterClassMap<SeedVarietyPayload.Map>();
+
+    csv.Context.RegisterClassMap<BattleItemPayload.Map>();
+    csv.Context.RegisterClassMap<BerryPayload.Map>();
+    csv.Context.RegisterClassMap<ItemPayload.Map>();
+    csv.Context.RegisterClassMap<MedicinePayload.Map>();
+    csv.Context.RegisterClassMap<PokeBallPayload.Map>();
+    csv.Context.RegisterClassMap<TechnicalMachinePayload.Map>();
 
     IAsyncEnumerable<T> records = csv.GetRecordsAsync<T>(cancellationToken);
 
