@@ -2,6 +2,7 @@
 using Krakenar.Contracts.Settings;
 using Krakenar.Core;
 using Logitar.EventSourcing;
+using PokeGame.Core.Abilities;
 using PokeGame.Core.Forms.Models;
 using PokeGame.Core.Forms.Validators;
 
@@ -9,6 +10,7 @@ namespace PokeGame.Core.Forms.Commands;
 
 internal record UpdateForm(Guid Id, UpdateFormPayload Payload) : ICommand<FormModel?>;
 
+/// <exception cref="AbilityNotFoundException"></exception>
 /// <exception cref="UniqueNameAlreadyUsedException"></exception>
 /// <exception cref="ValidationException"></exception>
 internal class UpdateFormHandler : ICommandHandler<UpdateForm, FormModel?>

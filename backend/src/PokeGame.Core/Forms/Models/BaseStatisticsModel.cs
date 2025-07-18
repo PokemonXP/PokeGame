@@ -11,7 +11,6 @@ public record BaseStatisticsModel : IBaseStatistics
 
   public BaseStatisticsModel()
   {
-
   }
 
   public BaseStatisticsModel(byte hp, byte attack, byte defense, byte specialAttack, byte specialDefense, byte speed)

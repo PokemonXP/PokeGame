@@ -2,6 +2,7 @@
 using Krakenar.Contracts.Settings;
 using Krakenar.Core;
 using Logitar.EventSourcing;
+using PokeGame.Core.Abilities;
 using PokeGame.Core.Forms.Models;
 using PokeGame.Core.Forms.Validators;
 using PokeGame.Core.Varieties;
@@ -10,8 +11,10 @@ namespace PokeGame.Core.Forms.Commands;
 
 internal record CreateOrReplaceForm(CreateOrReplaceFormPayload Payload, Guid? Id) : ICommand<CreateOrReplaceFormResult>;
 
+/// <exception cref="AbilityNotFoundException"></exception>
 /// <exception cref="UniqueNameAlreadyUsedException"></exception>
 /// <exception cref="ValidationException"></exception>
+/// <exception cref="VarietyNotFoundException"></exception>
 internal class CreateOrReplaceFormHandler : ICommandHandler<CreateOrReplaceForm, CreateOrReplaceFormResult>
 {
   private readonly IApplicationContext _applicationContext;
