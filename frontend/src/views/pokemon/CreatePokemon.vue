@@ -318,7 +318,7 @@ watch(
         <AbilitySlotSelect :abilities="form.abilities" v-model="abilitySlot" />
         <template v-if="variety">
           <h2 class="h3">{{ t("pokemon.move.title") }}</h2>
-          <VarietyMoveTable :moves="variety.moves" />
+          <VarietyMoveTable :level="level" :moves="variety.moves" />
         </template>
         <h2 class="h3">{{ t("metadata") }}</h2>
         <div class="row">

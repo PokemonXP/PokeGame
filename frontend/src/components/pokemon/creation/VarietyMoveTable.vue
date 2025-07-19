@@ -12,12 +12,15 @@ const { n, t } = useI18n();
 const { orderBy } = arrayUtils;
 
 const props = defineProps<{
+  level: number;
   moves: VarietyMove[];
 }>();
 
 const sortedMoves = computed<VarietyMove[]>(() =>
   orderBy(
-    props.moves.map((item) => ({ ...item, sort: [item.level.toString().padStart(3, "0"), item.move.displayName ?? item.move.uniqueName].join("_") })),
+    props.moves
+      .filter((item) => !item.level || item.level <= props.level)
+      .map((item) => ({ ...item, sort: [item.level.toString().padStart(3, "0"), item.move.displayName ?? item.move.uniqueName].join("_") })),
     "sort",
   ),
 );
