@@ -152,7 +152,7 @@ async function submit(): Promise<void> {
           size: size.value,
           abilitySlot: abilitySlot.value,
           nature: nature.value?.name,
-          eggCycles: 0, // TODO(fpion): add
+          eggCycles: eggCycles.value,
           experience: experience.value,
           individualValues: individualValues.value,
           effortValues: effortValues.value,
