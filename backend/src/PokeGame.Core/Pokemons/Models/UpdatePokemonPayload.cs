@@ -1,4 +1,5 @@
 ﻿using Krakenar.Contracts;
+using PokeGame.Core.Pokemon;
 
 namespace PokeGame.Core.Pokemons.Models;
 

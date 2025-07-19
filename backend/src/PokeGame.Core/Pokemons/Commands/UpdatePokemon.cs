@@ -1,6 +1,8 @@
 ﻿using FluentValidation;
 using Krakenar.Core;
 using PokeGame.Core.Forms;
+using PokeGame.Core.Pokemon;
+using PokeGame.Core.Pokemon.Models;
 using PokeGame.Core.Pokemons.Models;
 
 namespace PokeGame.Core.Pokemons.Commands;

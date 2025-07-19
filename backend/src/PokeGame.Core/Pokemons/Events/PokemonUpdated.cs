@@ -1,5 +1,6 @@
 ﻿using Krakenar.Core;
 using Logitar.EventSourcing;
+using PokeGame.Core.Pokemon;
 
 namespace PokeGame.Core.Pokemons.Events;
 

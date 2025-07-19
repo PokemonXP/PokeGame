@@ -4,9 +4,13 @@ using PokeGame.Core.Abilities;
 using PokeGame.Core.Forms;
 using PokeGame.Core.Items;
 using PokeGame.Core.Moves;
+using PokeGame.Core.Pokemon;
+using PokeGame.Core.Pokemon.Events;
 using PokeGame.Core.Pokemons.Events;
 using PokeGame.Core.Species;
 using PokeGame.Core.Trainers;
+using PokemonCreated = PokeGame.Core.Pokemons.Events.PokemonCreated;
+using PokemonUpdated = PokeGame.Core.Pokemons.Events.PokemonUpdated;
 
 namespace PokeGame.Core.Pokemons;
 
@@ -62,7 +66,7 @@ public class Pokemon : AggregateRoot
   public IndividualValues IndividualValues => _individualValues ?? throw new InvalidOperationException("The Pokémon has not been initialized.");
   private EffortValues? _effortValues = null;
   public EffortValues EffortValues => _effortValues ?? throw new InvalidOperationException("The Pokémon has not been initialized.");
-  public PokemonStatistics Statistics => new(this);
+  public PokemonStatistics Statistics => throw new NotSupportedException();
   private int _vitality = 0;
   public int Vitality
   {
@@ -306,33 +310,6 @@ public class Pokemon : AggregateRoot
     HeldItemId = @event.ItemId;
   }
 
-  public bool LearnMove(MoveId moveId, PowerPoints powerPoints, ActorId? actorId = null) => LearnMove(moveId, powerPoints, position: null, actorId);
-  public bool LearnMove(MoveId moveId, PowerPoints powerPoints, int? position, ActorId? actorId = null)
-  {
-    if (position < 0 || position >= MoveLimit)
-    {
-      throw new ArgumentOutOfRangeException(nameof(position));
-    }
-    if (position is null && _moves.Count == MoveLimit)
-    {
-      throw new ArgumentNullException(nameof(position));
-    }
-    if (_allMoves.ContainsKey(moveId))
-    {
-      return false;
-    }
-
-    position = _moves.Count < MoveLimit ? null : position;
-    Raise(new PokemonMoveLearned(moveId, powerPoints, position), actorId);
-
-    return true;
-  }
-  protected virtual void Handle(PokemonMoveLearned @event)
-  {
-    PokemonMove move = new(@event.MoveId, @event.PowerPoints.Value, @event.PowerPoints.Value, @event.PowerPoints, IsMastered: false, Level, TechnicalMachine: false);
-    SetMove(move, @event.Position);
-  }
-
   public bool MasterMove(MoveId moveId, ActorId? actorId = null)
   {
     if (!_allMoves.TryGetValue(moveId, out PokemonMove? move))
@@ -411,18 +388,6 @@ public class Pokemon : AggregateRoot
   protected virtual void Handle(PokemonItemRemoved _)
   {
     HeldItemId = null;
-  }
-
-  public void SetNickname(DisplayName? nickname, ActorId? actorId = null)
-  {
-    if (Nickname != nickname)
-    {
-      Raise(new PokemonNicknamed(nickname), actorId);
-    }
-  }
-  protected virtual void Handle(PokemonNicknamed @event)
-  {
-    Nickname = @event.Nickname;
   }
 
   public void SetUniqueName(UniqueName uniqueName, ActorId? actorId = null)

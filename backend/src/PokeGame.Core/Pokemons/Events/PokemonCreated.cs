@@ -2,6 +2,7 @@
 using Logitar.EventSourcing;
 using PokeGame.Core.Abilities;
 using PokeGame.Core.Forms;
+using PokeGame.Core.Pokemon;
 using PokeGame.Core.Species;
 
 namespace PokeGame.Core.Pokemons.Events;

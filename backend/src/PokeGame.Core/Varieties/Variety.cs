@@ -1,7 +1,7 @@
 ﻿using Krakenar.Core;
 using Logitar.EventSourcing;
 using PokeGame.Core.Moves;
-using PokeGame.Core.Pokemons;
+using PokeGame.Core.Pokemon;
 using PokeGame.Core.Species;
 using PokeGame.Core.Varieties.Events;
 

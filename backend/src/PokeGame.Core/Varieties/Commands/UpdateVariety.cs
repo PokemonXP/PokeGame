@@ -3,7 +3,7 @@ using Krakenar.Contracts.Settings;
 using Krakenar.Core;
 using Logitar.EventSourcing;
 using PokeGame.Core.Moves;
-using PokeGame.Core.Pokemons;
+using PokeGame.Core.Pokemon;
 using PokeGame.Core.Varieties.Models;
 using PokeGame.Core.Varieties.Validators;
 

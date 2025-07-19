@@ -36,21 +36,21 @@ export type BaseStatistics = {
 export type CreatePokemonPayload = {
   id?: string;
   form: string;
-  uniqueName: string;
+  uniqueName?: string;
   nickname?: string;
   gender?: PokemonGender;
+  isShiny: boolean;
   teraType?: PokemonType;
   size?: PokemonSizePayload;
   abilitySlot?: AbilitySlot;
   nature?: string;
   experience: number;
-  individualValues: IndividualValues;
-  effortValues: EffortValues;
-  vitality: number;
-  stamina: number;
+  individualValues?: IndividualValues;
+  effortValues?: EffortValues;
+  vitality?: number;
+  stamina?: number;
   friendship?: number;
   heldItem?: string;
-  moves: string[];
   sprite?: string;
   url?: string;
   notes?: string;
