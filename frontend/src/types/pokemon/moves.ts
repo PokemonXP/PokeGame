@@ -25,6 +25,8 @@ export type Move = Aggregate & {
 
 export type MoveCategory = "Status" | "Physical" | "Special";
 
+export type MoveLearningMethod = "LevelingUp" | "Evolving";
+
 export type MoveSort = "Accuracy" | "CreatedOn" | "DisplayName" | "Power" | "PowerPoints" | "UniqueName" | "UpdatedOn";
 
 export type MoveSortOption = SortOption & {

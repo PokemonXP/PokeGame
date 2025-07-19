@@ -72,11 +72,12 @@ watch(
         const payload: SearchVarietiesPayload = {
           ids: [],
           search: { terms: [], operator: "And" },
+          speciesId: species.id,
           sort: [],
           limit: 0,
           skip: 0,
         };
-        const results: SearchResults<Variety> = await searchVarieties(species.id, payload);
+        const results: SearchResults<Variety> = await searchVarieties(payload);
         varieties.value = [...results.items];
 
         const defaultVariety: Variety | undefined = varieties.value.find(({ isDefault }) => isDefault);

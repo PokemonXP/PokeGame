@@ -72,11 +72,12 @@ watch(
         const payload: SearchFormsPayload = {
           ids: [],
           search: { terms: [], operator: "And" },
+          varietyId: variety.id,
           sort: [],
           limit: 0,
           skip: 0,
         };
-        const results: SearchResults<Form> = await searchForms(variety.id, payload);
+        const results: SearchResults<Form> = await searchForms(payload);
         forms.value = [...results.items];
 
         const defaultForm: Form | undefined = forms.value.find(({ isDefault }) => isDefault);

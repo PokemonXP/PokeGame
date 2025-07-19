@@ -135,7 +135,6 @@ watch(
       <RouterLink :to="{ name: 'CreatePokemon' }" class="btn btn-success ms-1"><font-awesome-icon icon="fas fa-plus" /> {{ t("actions.create") }}</RouterLink>
     </div>
     <div class="mb-3 row">
-      <!-- TODO(fpion): TrainerSelect -->
       <SearchInput class="col" :model-value="search" @update:model-value="setQuery('search', $event)" />
       <SortSelect
         class="col"

@@ -7,5 +7,6 @@ export type VarietySortOption = SortOption & {
 };
 
 export type SearchVarietiesPayload = SearchPayload & {
+  speciesId?: string;
   sort: VarietySortOption[];
 };

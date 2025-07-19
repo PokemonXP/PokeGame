@@ -1,13 +1,14 @@
 import { urlUtils } from "logitar-js";
 
 import type { SearchResults } from "@/types/search";
+import type { SearchSpeciesPayload } from "@/types/pokemon/species";
 import type { Species } from "@/types/pokemon";
 import { get } from "..";
-import type { SearchSpeciesPayload } from "@/types/pokemon/species";
 
 export async function searchSpecies(payload: SearchSpeciesPayload): Promise<SearchResults<Species>> {
   const url: string = new urlUtils.UrlBuilder({ path: "/species" })
     .setQuery("category", payload.category ?? "")
+    .setQuery("egg", payload.eggGroup ?? "")
     .setQuery("growth", payload.growthRate ?? "")
     .setQuery("region", payload.regionId ?? "")
     .setQuery("ids", payload.ids)

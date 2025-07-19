@@ -272,6 +272,10 @@
     "types": "Types"
   },
   "uniqueName": {
+    "alreadyUsed": {
+      "help": "Please enter a different unique name.",
+      "lead": "The unique name is already used."
+    },
     "label": "Unique Name"
   },
   "updated": "The Pokémon has been updated.",
