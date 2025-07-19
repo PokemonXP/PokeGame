@@ -3,7 +3,7 @@ using PokeGame.EntityFrameworkCore.Entities;
 
 namespace PokeGame.EntityFrameworkCore.PokemonDb;
 
-internal static class Pokemons
+internal static class Pokemon
 {
   public static readonly TableId Table = new(PokemonContext.Schema, nameof(PokemonContext.Pokemon), alias: null);
 
@@ -18,6 +18,7 @@ internal static class Pokemons
   public static readonly ColumnId Characteristic = new(nameof(PokemonEntity.Characteristic), Table);
   public static readonly ColumnId CurrentTrainerId = new(nameof(PokemonEntity.CurrentTrainerId), Table);
   public static readonly ColumnId CurrentTrainerUid = new(nameof(PokemonEntity.CurrentTrainerUid), Table);
+  public static readonly ColumnId EggCycles = new(nameof(PokemonEntity.EggCycles), Table);
   public static readonly ColumnId Experience = new(nameof(PokemonEntity.Experience), Table);
   public static readonly ColumnId FormId = new(nameof(PokemonEntity.FormId), Table);
   public static readonly ColumnId FormUid = new(nameof(PokemonEntity.FormUid), Table);
@@ -28,6 +29,7 @@ internal static class Pokemons
   public static readonly ColumnId HeldItemId = new(nameof(PokemonEntity.HeldItemId), Table);
   public static readonly ColumnId HeldItemUid = new(nameof(PokemonEntity.HeldItemUid), Table);
   public static readonly ColumnId Id = new(nameof(PokemonEntity.Id), Table);
+  public static readonly ColumnId IsShiny = new(nameof(PokemonEntity.IsShiny), Table);
   public static readonly ColumnId Level = new(nameof(PokemonEntity.Level), Table);
   public static readonly ColumnId MaximumExperience = new(nameof(PokemonEntity.MaximumExperience), Table);
   public static readonly ColumnId MetAtLevel = new(nameof(PokemonEntity.MetAtLevel), Table);

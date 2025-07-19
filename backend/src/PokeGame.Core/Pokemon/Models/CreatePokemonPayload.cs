@@ -18,6 +18,7 @@ public record CreatePokemonPayload
   public AbilitySlot? AbilitySlot { get; set; }
   public string? Nature { get; set; }
 
+  public byte EggCycles { get; set; }
   public int Experience { get; set; }
 
   public IndividualValuesModel? IndividualValues { get; set; }

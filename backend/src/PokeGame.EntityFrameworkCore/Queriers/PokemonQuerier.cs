@@ -7,8 +7,8 @@ using Krakenar.EntityFrameworkCore.Relational.KrakenarDb;
 using Logitar.Data;
 using Logitar.EventSourcing;
 using Microsoft.EntityFrameworkCore;
-using PokeGame.Core.Pokemons;
-using PokeGame.Core.Pokemons.Models;
+using PokeGame.Core.Pokemon;
+using PokeGame.Core.Pokemon.Models;
 using PokeGame.EntityFrameworkCore.Entities;
 
 namespace PokeGame.EntityFrameworkCore.Queriers;
@@ -103,14 +103,9 @@ internal class PokemonQuerier : IPokemonQuerier
 
   public async Task<SearchResults<PokemonModel>> SearchAsync(SearchPokemonPayload payload, CancellationToken cancellationToken)
   {
-    IQueryBuilder builder = _sqlHelper.Query(PokemonDb.Pokemons.Table).SelectAll(PokemonDb.Pokemons.Table)
-      .ApplyIdFilter(PokemonDb.Pokemons.Id, payload.Ids);
-    _sqlHelper.ApplyTextSearch(builder, payload.Search, PokemonDb.Pokemons.UniqueName, PokemonDb.Pokemons.Nickname);
-
-    if (payload.TrainerId.HasValue)
-    {
-      builder.Where(PokemonDb.Pokemons.CurrentTrainerUid, Operators.IsEqualTo(payload.TrainerId.Value));
-    }
+    IQueryBuilder builder = _sqlHelper.Query(PokemonDb.Pokemon.Table).SelectAll(PokemonDb.Pokemon.Table)
+      .ApplyIdFilter(PokemonDb.Pokemon.Id, payload.Ids);
+    _sqlHelper.ApplyTextSearch(builder, payload.Search, PokemonDb.Pokemon.UniqueName, PokemonDb.Pokemon.Nickname);
 
     IQueryable<PokemonEntity> query = _pokemon.FromQuery(builder).AsNoTracking()
       .Include(x => x.CurrentTrainer)
@@ -129,21 +124,6 @@ internal class PokemonQuerier : IPokemonQuerier
           ordered = ordered is null
             ? (sort.IsDescending ? query.OrderByDescending(x => x.CreatedOn) : query.OrderBy(x => x.CreatedOn))
             : (sort.IsDescending ? ordered.ThenByDescending(x => x.CreatedOn) : ordered.ThenBy(x => x.CreatedOn));
-          break;
-        case PokemonSort.Experience:
-          ordered = ordered is null
-            ? (sort.IsDescending ? query.OrderByDescending(x => x.Experience) : query.OrderBy(x => x.Experience))
-            : (sort.IsDescending ? ordered.ThenByDescending(x => x.Experience) : ordered.ThenBy(x => x.Experience));
-          break;
-        case PokemonSort.Friendship:
-          ordered = ordered is null
-            ? (sort.IsDescending ? query.OrderByDescending(x => x.Friendship) : query.OrderBy(x => x.Friendship))
-            : (sort.IsDescending ? ordered.ThenByDescending(x => x.Friendship) : ordered.ThenBy(x => x.Friendship));
-          break;
-        case PokemonSort.Level:
-          ordered = ordered is null
-            ? (sort.IsDescending ? query.OrderByDescending(x => x.Level) : query.OrderBy(x => x.Level))
-            : (sort.IsDescending ? ordered.ThenByDescending(x => x.Level) : ordered.ThenBy(x => x.Level));
           break;
         case PokemonSort.Nickname:
           ordered = ordered is null
@@ -211,4 +191,6 @@ internal class PokemonQuerier : IPokemonQuerier
 
     return pokemon.Select(mapper.ToPokemon).ToList().AsReadOnly();
   }
+
+  // TODO(fpion): missing relations
 }

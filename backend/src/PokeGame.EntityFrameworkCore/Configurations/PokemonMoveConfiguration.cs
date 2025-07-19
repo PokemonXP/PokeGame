@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using PokeGame.Core.Moves;
 using PokeGame.EntityFrameworkCore.Entities;
 
 namespace PokeGame.EntityFrameworkCore.Configurations;
@@ -13,8 +15,12 @@ internal class PokemonMoveConfiguration : IEntityTypeConfiguration<PokemonMoveEn
 
     builder.HasIndex(x => x.PokemonUid);
     builder.HasIndex(x => x.MoveUid);
+    builder.HasIndex(x => x.ItemUid);
+
+    builder.Property(x => x.Method).HasMaxLength(byte.MaxValue).HasConversion(new EnumToStringConverter<MoveLearningMethod>());
 
     builder.HasOne(x => x.Pokemon).WithMany(x => x.Moves).OnDelete(DeleteBehavior.Cascade);
     builder.HasOne(x => x.Move).WithMany(x => x.Pokemon).OnDelete(DeleteBehavior.Cascade);
+    builder.HasOne(x => x.Item).WithMany(x => x.LearnedMoves).OnDelete(DeleteBehavior.Restrict);
   }
 }

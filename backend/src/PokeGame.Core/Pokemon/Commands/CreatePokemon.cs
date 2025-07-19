@@ -83,7 +83,7 @@ internal class CreatePokemonHandler : ICommandHandler<CreatePokemon, PokemonMode
       ?? throw new InvalidOperationException($"The variety 'Id={form.VarietyId}' was not loaded.");
     PokemonSpecies species = await _speciesRepository.LoadAsync(variety.SpeciesId, cancellationToken)
       ?? throw new InvalidOperationException($"The species 'Id={variety.SpeciesId}' was not loaded.");
-    new CreatePokemonValidator(variety, form).ValidateAndThrow(payload);
+    new CreatePokemonValidator(species, variety, form).ValidateAndThrow(payload);
 
     UniqueName uniqueName = string.IsNullOrWhiteSpace(payload.UniqueName) ? species.UniqueName : new(uniqueNameSettings, payload.UniqueName);
     PokemonSize size = payload.Size is null ? _randomizer.PokemonSize() : new(payload.Size);
@@ -96,10 +96,11 @@ internal class CreatePokemonHandler : ICommandHandler<CreatePokemon, PokemonMode
       gender = _randomizer.PokemonGender(variety.GenderRatio);
     }
     AbilitySlot abilitySlot = payload.AbilitySlot ?? _randomizer.AbilitySlot(form.Abilities);
+    EggCycles? eggCycles = payload.EggCycles == 0 ? null : new(payload.EggCycles);
     Friendship? friendship = payload.Friendship.HasValue ? new(payload.Friendship.Value) : null;
 
     pokemon = new(species, variety, form, uniqueName, size, nature, individualValues, gender, payload.IsShiny, payload.TeraType,
-      abilitySlot, payload.Experience, effortValues, payload.Vitality, payload.Stamina, friendship, actorId, pokemonId)
+      abilitySlot, eggCycles, payload.Experience, effortValues, payload.Vitality, payload.Stamina, friendship, actorId, pokemonId)
     {
       Sprite = Url.TryCreate(payload.Sprite),
       Url = Url.TryCreate(payload.Url),

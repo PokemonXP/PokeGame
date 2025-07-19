@@ -5,7 +5,6 @@ using PokeGame.Core.Forms;
 using PokeGame.Core.Items;
 using PokeGame.Core.Moves;
 using PokeGame.Core.Pokemon.Events;
-using PokeGame.Core.Pokemons;
 using PokeGame.Core.Species;
 using PokeGame.Core.Varieties;
 
@@ -37,6 +36,7 @@ public class Pokemon2 : AggregateRoot // TODO(fpion): rename this class, Pokemon
   private PokemonNature? _nature = null;
   public PokemonNature Nature => _nature ?? throw new InvalidOperationException("The Pokémon has not been initialized.");
 
+  public EggCycles? EggCycles { get; private set; }
   public GrowthRate GrowthRate { get; private set; }
   public int Experience { get; private set; }
   public int Level => ExperienceTable.Instance.GetLevel(GrowthRate, Experience);
@@ -120,6 +120,7 @@ public class Pokemon2 : AggregateRoot // TODO(fpion): rename this class, Pokemon
     bool isShiny = false,
     PokemonType? teraType = null,
     AbilitySlot abilitySlot = AbilitySlot.Primary,
+    EggCycles? eggCycles = null,
     int experience = 0,
     EffortValues? effortValues = null,
     int? vitality = null,
@@ -177,6 +178,10 @@ public class Pokemon2 : AggregateRoot // TODO(fpion): rename this class, Pokemon
     }
 
     ArgumentOutOfRangeException.ThrowIfNegative(experience, nameof(experience));
+    if (eggCycles is not null && experience > 0)
+    {
+      // TODO(fpion): implement
+    }
 
     effortValues ??= new();
 
@@ -204,7 +209,7 @@ public class Pokemon2 : AggregateRoot // TODO(fpion): rename this class, Pokemon
     friendship ??= species.BaseFriendship;
 
     PokemonCreated created = new(species.Id, variety.Id, form.Id, uniqueName, gender, isShiny, teraType.Value, size, abilitySlot, nature,
-      species.GrowthRate, experience, form.BaseStatistics, individualValues, effortValues, vitality.Value, stamina.Value, friendship);
+      species.GrowthRate, eggCycles, experience, form.BaseStatistics, individualValues, effortValues, vitality.Value, stamina.Value, friendship);
     Raise(created, actorId);
   }
   protected virtual void Handle(PokemonCreated @event)
@@ -222,6 +227,7 @@ public class Pokemon2 : AggregateRoot // TODO(fpion): rename this class, Pokemon
     AbilitySlot = @event.AbilitySlot;
     _nature = @event.Nature;
 
+    EggCycles = @event.EggCycles;
     GrowthRate = @event.GrowthRate;
     Experience = @event.Experience;
 
@@ -362,8 +368,6 @@ public class Pokemon2 : AggregateRoot // TODO(fpion): rename this class, Pokemon
 
   public override string ToString() => $"{Nickname?.Value ?? UniqueName.Value} | {base.ToString()}";
 }
-
-// TODO(fpion): add EggCycle byte
 
 /* Ownership Kinds:
  * Caught

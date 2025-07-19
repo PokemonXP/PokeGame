@@ -1,5 +1,5 @@
 ﻿using Logitar.EventSourcing;
-using PokeGame.Core.Pokemons;
+using PokeGame.Core.Pokemon;
 
 namespace PokeGame.EntityFrameworkCore.Repositories;
 

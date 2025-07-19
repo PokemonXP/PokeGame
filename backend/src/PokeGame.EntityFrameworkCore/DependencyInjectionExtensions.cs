@@ -7,8 +7,7 @@ using PokeGame.Core.Abilities;
 using PokeGame.Core.Forms;
 using PokeGame.Core.Items;
 using PokeGame.Core.Moves;
-using PokeGame.Core.Pokemons;
-using PokeGame.Core.Pokemons.Events;
+using PokeGame.Core.Pokemon;
 using PokeGame.Core.Regions;
 using PokeGame.Core.Species;
 using PokeGame.Core.Trainers;
@@ -37,6 +36,7 @@ public static class DependencyInjectionExtensions
     AbilityEvents.Register(services);
     FormEvents.Register(services);
     MoveEvents.Register(services);
+    PokemonEvents.Register(services);
     RegionEvents.Register(services);
     SpeciesEvents.Register(services);
     TrainerEvents.Register(services);
@@ -44,22 +44,7 @@ public static class DependencyInjectionExtensions
 
     return services
       .AddScoped<IEventHandler<ContentLocalePublished>, PokemonContentEvents>()
-      .AddScoped<IEventHandler<ContentLocaleUnpublished>, PokemonContentEvents>()
-      .AddScoped<IEventHandler<PokemonCaught>, PokemonEvents>()
-      .AddScoped<IEventHandler<PokemonCreated>, PokemonEvents>()
-      .AddScoped<IEventHandler<PokemonDeleted>, PokemonEvents>()
-      .AddScoped<IEventHandler<PokemonItemHeld>, PokemonEvents>()
-      .AddScoped<IEventHandler<PokemonItemRemoved>, PokemonEvents>()
-      .AddScoped<IEventHandler<PokemonMoveLearned>, PokemonEvents>()
-      .AddScoped<IEventHandler<PokemonMoveRelearned>, PokemonEvents>()
-      .AddScoped<IEventHandler<PokemonMoveMastered>, PokemonEvents>()
-      .AddScoped<IEventHandler<PokemonMovesSwitched>, PokemonEvents>()
-      .AddScoped<IEventHandler<PokemonNicknamed>, PokemonEvents>()
-      .AddScoped<IEventHandler<PokemonReceived>, PokemonEvents>()
-      .AddScoped<IEventHandler<PokemonReleased>, PokemonEvents>()
-      .AddScoped<IEventHandler<PokemonTechnicalMachineUsed>, PokemonEvents>()
-      .AddScoped<IEventHandler<PokemonUniqueNameChanged>, PokemonEvents>()
-      .AddScoped<IEventHandler<PokemonUpdated>, PokemonEvents>();
+      .AddScoped<IEventHandler<ContentLocaleUnpublished>, PokemonContentEvents>();
   }
 
   private static IServiceCollection AddQueriers(this IServiceCollection services)

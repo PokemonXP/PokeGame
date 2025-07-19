@@ -2,7 +2,6 @@
 using Logitar.EventSourcing;
 using PokeGame.Core.Abilities;
 using PokeGame.Core.Forms;
-using PokeGame.Core.Pokemons;
 using PokeGame.Core.Species;
 using PokeGame.Core.Varieties;
 
@@ -20,6 +19,7 @@ public record PokemonCreated(
   AbilitySlot AbilitySlot,
   PokemonNature Nature,
   GrowthRate GrowthRate,
+  EggCycles? EggCycles,
   int Experience,
   BaseStatistics BaseStatistics,
   IndividualValues IndividualValues,

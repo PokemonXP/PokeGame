@@ -4,6 +4,7 @@ using Krakenar.Core;
 using PokeGame.Core.Abilities;
 using PokeGame.Core.Forms;
 using PokeGame.Core.Pokemon.Models;
+using PokeGame.Core.Species;
 using PokeGame.Core.Varieties;
 
 namespace PokeGame.Core.Pokemon.Validators;
@@ -21,6 +22,7 @@ internal class CreatePokemonValidator : AbstractValidator<CreatePokemonPayload>
     RuleFor(x => x.AbilitySlot).IsInEnum();
     When(x => !string.IsNullOrWhiteSpace(x.Nature), () => RuleFor(x => x.Nature!).PokemonNature());
 
+    When(x => x.EggCycles > 0, () => RuleFor(x => x.Experience).Equal(0));
     RuleFor(x => x.Experience).GreaterThanOrEqualTo(0);
 
     When(x => x.IndividualValues is not null, () => RuleFor(x => x.IndividualValues!).SetValidator(new IndividualValuesValidator()));
@@ -32,8 +34,10 @@ internal class CreatePokemonValidator : AbstractValidator<CreatePokemonPayload>
     When(x => !string.IsNullOrWhiteSpace(x.Url), () => RuleFor(x => x.Url!).Url());
   }
 
-  public CreatePokemonValidator(Variety variety, Form form)
+  public CreatePokemonValidator(PokemonSpecies species, Variety variety, Form form)
   {
+    RuleFor(x => x.EggCycles).LessThanOrEqualTo(species.EggCycles.Value);
+
     int? genderRatio = variety.GenderRatio?.Value;
     switch (genderRatio)
     {

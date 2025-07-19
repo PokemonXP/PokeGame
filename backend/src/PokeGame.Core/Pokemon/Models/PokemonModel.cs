@@ -20,6 +20,7 @@ public class PokemonModel : AggregateModel
   public AbilitySlot AbilitySlot { get; set; }
   public PokemonNatureModel Nature { get; set; } = new();
 
+  public byte EggCycles { get; set; }
   public GrowthRate GrowthRate { get; set; }
   public int Level { get; set; }
   public int Experience { get; set; }
@@ -39,7 +40,6 @@ public class PokemonModel : AggregateModel
   public List<PokemonMoveModel> Moves { get; set; } = [];
 
   // TODO(fpion): Ownership
-  // TODO(fpion): EggCycles
 
   public string? Sprite { get; set; }
   public string? Url { get; set; }
