@@ -17,6 +17,10 @@
     "title": "Delete Pokémon"
   },
   "deleted": "The Pokémon has been deleted.",
+  "egg": {
+    "cycles": "Egg Cycles",
+    "label": "Is Egg"
+  },
   "empty": "This list is empty.",
   "experience": {
     "format": "XP: {experience}",

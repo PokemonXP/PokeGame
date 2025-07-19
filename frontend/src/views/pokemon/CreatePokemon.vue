@@ -8,6 +8,8 @@ import AbilitySlotSelect from "@/components/pokemon/creation/AbilitySlotSelect.v
 import AdminBreadcrumb from "@/components/admin/AdminBreadcrumb.vue";
 import BaseStatisticsView from "@/components/pokemon/creation/BaseStatisticsView.vue";
 import EffortValuesEdit from "@/components/pokemon/creation/EffortValuesEdit.vue";
+import EggCheckbox from "@/components/pokemon/creation/EggCheckbox.vue";
+import EggCyclesInput from "@/components/pokemon/EggCyclesInput.vue";
 import ExperienceInput from "@/components/pokemon/creation/ExperienceInput.vue";
 import ExperienceTableModal from "@/components/pokemon/ExperienceTableModal.vue";
 import FormSelect from "@/components/pokemon/creation/FormSelect.vue";
@@ -71,12 +73,14 @@ const { t } = useI18n();
 
 const abilitySlot = ref<AbilitySlot>("Primary");
 const effortValues = ref<EffortValues>({ hp: 0, attack: 0, defense: 0, specialAttack: 0, specialDefense: 0, speed: 0 });
+const eggCycles = ref<number>(0);
 const experience = ref<number>(0);
 const form = ref<Form>();
 const friendship = ref<number>(0);
 const gender = ref<string>("");
 const heldItem = ref<Item>();
 const individualValues = ref<IndividualValues>({ hp: 0, attack: 0, defense: 0, specialAttack: 0, specialDefense: 0, speed: 0 });
+const isEgg = ref<boolean>(false);
 const isLoading = ref<boolean>(false);
 const isShiny = ref<boolean>(false);
 const level = ref<number>(1);
@@ -223,6 +227,18 @@ function onFormSelected(selectedForm: Form | undefined): void {
   }
 }
 
+function onEggUpdate(value: boolean): void {
+  isEgg.value = value;
+  if (value) {
+    eggCycles.value = species.value?.eggCycles ?? 0;
+    level.value = 1;
+    experience.value = 0;
+  } else {
+    eggCycles.value = 0;
+    level.value = 1;
+    experience.value = 0;
+  }
+}
 function onLevelUpdate(value: number): void {
   level.value = value;
   if (experience.value < minimumExperience.value || experience.value >= maximumExperience.value) {
@@ -278,6 +294,7 @@ watch(
         <h2 class="h3">{{ t("pokemon.size.title") }}</h2>
         <SizeEdit v-model="size" />
         <h2 class="h3">{{ t("pokemon.progress.title") }}</h2>
+        <EggCheckbox :model-value="isEgg" @update:model-value="onEggUpdate" />
         <div class="row">
           <GrowthRateSelect class="col" :model-value="growthRate">
             <template #append>
@@ -290,8 +307,9 @@ watch(
               />
             </template>
           </GrowthRateSelect>
-          <LevelInput class="col" :model-value="level" @update:model-value="onLevelUpdate" />
-          <ExperienceInput class="col" :model-value="experience" @update:model-value="onExperienceUpdate" />
+          <EggCyclesInput v-if="isEgg" class="col" :max="species?.eggCycles" v-model="eggCycles" />
+          <LevelInput v-else class="col" :model-value="level" @update:model-value="onLevelUpdate" />
+          <ExperienceInput class="col" :disabled="isEgg" :model-value="experience" @update:model-value="onExperienceUpdate" />
         </div>
         <ExperienceTableModal :growth-rate="growthRate" />
         <ProgressTable :experience="experience" :growth-rate="growthRate" />
