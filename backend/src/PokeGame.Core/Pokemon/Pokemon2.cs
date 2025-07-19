@@ -178,9 +178,16 @@ public class Pokemon2 : AggregateRoot // TODO(fpion): rename this class, Pokemon
     }
 
     ArgumentOutOfRangeException.ThrowIfNegative(experience, nameof(experience));
-    if (eggCycles is not null && experience > 0)
+    if (eggCycles is not null)
     {
-      // TODO(fpion): implement
+      if (eggCycles.Value > species.EggCycles.Value)
+      {
+        throw new ArgumentOutOfRangeException(nameof(eggCycles));
+      }
+      if (experience > 0)
+      {
+        throw new ArgumentException("An egg Pokémon cannot have experience.", nameof(experience));
+      }
     }
 
     effortValues ??= new();

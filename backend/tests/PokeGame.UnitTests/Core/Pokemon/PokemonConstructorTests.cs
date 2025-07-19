@@ -32,6 +32,41 @@ public class PokemonConstructorTests
       new Yield(146, 0, 2, 0, 0, 0, 0), sprites, isDefault: true, height: new Height(10), weight: new Weight(555));
   }
 
+  [Fact(DisplayName = "It should create an egg Pokémon.")]
+  public void Given_EggCycles_When_ctor_Then_EggPokemon()
+  {
+    Pokemon2 pokemon = new(
+      _species,
+      _variety,
+      _form,
+      _form.UniqueName,
+      _randomizer.PokemonSize(),
+      _randomizer.PokemonNature(),
+      _randomizer.IndividualValues(),
+      PokemonGender.Male,
+      eggCycles: _species.EggCycles);
+
+    Assert.False(pokemon.IsShiny);
+    Assert.Equal(PokemonType.Fire, pokemon.TeraType);
+    Assert.Equal(AbilitySlot.Primary, pokemon.AbilitySlot);
+
+    Assert.Equal(_species.EggCycles, pokemon.EggCycles);
+    Assert.Equal(_species.GrowthRate, pokemon.GrowthRate);
+    Assert.Equal(1, pokemon.Level);
+    Assert.Equal(0, pokemon.Experience);
+
+    Assert.Equal(pokemon.Statistics.HP, pokemon.Vitality);
+    Assert.Equal(pokemon.Statistics.HP, pokemon.Stamina);
+    Assert.Equal(_species.BaseFriendship, pokemon.Friendship);
+
+    Assert.Equal(0, pokemon.EffortValues.HP);
+    Assert.Equal(0, pokemon.EffortValues.Attack);
+    Assert.Equal(0, pokemon.EffortValues.Defense);
+    Assert.Equal(0, pokemon.EffortValues.SpecialAttack);
+    Assert.Equal(0, pokemon.EffortValues.SpecialDefense);
+    Assert.Equal(0, pokemon.EffortValues.Speed);
+  }
+
   [Theory(DisplayName = "It should create the correct Pokémon from arguments.")]
   [InlineData(false, 10, 5)]
   [InlineData(true, 999, 999)]
@@ -140,6 +175,15 @@ public class PokemonConstructorTests
     Assert.Equal(0, pokemon.EffortValues.Speed);
   }
 
+  [Fact(DisplayName = "It should throw ArgumentException when an egg Pokémon has experience.")]
+  public void Given_EggCyclesWithExperience_When_ctor_Then_ArgumentException()
+  {
+    var exception = Assert.Throws<ArgumentException>(
+      () => new Pokemon2(_species, _variety, _form, new UniqueName(_uniqueNameSettings, "briquet"), _randomizer.PokemonSize(), _randomizer.PokemonNature(), _randomizer.IndividualValues(), PokemonGender.Male, eggCycles: _species.EggCycles, experience: 10));
+    Assert.Equal("experience", exception.ParamName);
+    Assert.StartsWith("An egg Pokémon cannot have experience.", exception.Message);
+  }
+
   [Fact(DisplayName = "It should throw ArgumentException when the ability slot is not valid.")]
   public void Given_InvalidAbilitySlot_When_ctor_Then_ArgumentException()
   {
@@ -207,6 +251,15 @@ public class PokemonConstructorTests
     var exception = Assert.Throws<ArgumentOutOfRangeException>(
       () => new Pokemon2(_species, _variety, _form, new(_uniqueNameSettings, "briquet"), _randomizer.PokemonSize(), _randomizer.PokemonNature(), _randomizer.IndividualValues(), PokemonGender.Male, abilitySlot: abilitySlot));
     Assert.Equal("abilitySlot", exception.ParamName);
+  }
+
+  [Fact(DisplayName = "It should throw ArgumentOutOfRangeException when the egg cycles exceed species cycles.")]
+  public void Given_EggCyclesExceedSpecies_When_ctor_Then_ArgumentOutOfRangeException()
+  {
+    EggCycles eggCycles = new((byte)(_species.EggCycles.Value * 2));
+    var exception = Assert.Throws<ArgumentOutOfRangeException>(
+      () => new Pokemon2(_species, _variety, _form, new UniqueName(_uniqueNameSettings, "briquet"), _randomizer.PokemonSize(), _randomizer.PokemonNature(), _randomizer.IndividualValues(), PokemonGender.Male, eggCycles: eggCycles));
+    Assert.Equal("eggCycles", exception.ParamName);
   }
 
   [Fact(DisplayName = "It should throw ArgumentOutOfRangeException when the experience is negative.")]
@@ -291,7 +344,4 @@ public class PokemonConstructorTests
       () => new Pokemon2(_species, _variety, _form, new UniqueName(_uniqueNameSettings, "briquet"), _randomizer.PokemonSize(), _randomizer.PokemonNature(), _randomizer.IndividualValues(), PokemonGender.Male, vitality: vitality));
     Assert.Equal("vitality", exception.ParamName);
   }
-
-  // TODO(fpion): error when EggCycles & Experience
-  // TODO(fpion): egg Pokémon
 }
