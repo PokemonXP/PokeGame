@@ -22,6 +22,7 @@ import NatureTable from "@/components/pokemon/creation/NatureTable.vue";
 import NicknameInput from "@/components/pokemon/NicknameInput.vue";
 import NotesTextarea from "@/components/pokemon/NotesTextarea.vue";
 import ProgressTable from "@/components/pokemon/creation/ProgressTable.vue";
+import ShinyCheckbox from "@/components/pokemon/creation/ShinyCheckbox.vue";
 import SizeEdit from "@/components/pokemon/creation/SizeEdit.vue";
 import SpeciesSelect from "@/components/pokemon/creation/SpeciesSelect.vue";
 import StaminaInput from "@/components/pokemon/StaminaInput.vue";
@@ -76,6 +77,7 @@ const gender = ref<string>("");
 const heldItem = ref<Item>();
 const individualValues = ref<IndividualValues>({ hp: 0, attack: 0, defense: 0, specialAttack: 0, specialDefense: 0, speed: 0 });
 const isLoading = ref<boolean>(false);
+const isShiny = ref<boolean>(false);
 const level = ref<number>(1);
 const nature = ref<PokemonNature>();
 const nickname = ref<string>("");
@@ -109,7 +111,11 @@ const spriteAlt = computed<string>(() => `${nickname.value || uniqueName.value}'
 const spriteUrl = computed<string>(() => {
   let spriteUrl: string | undefined = sprite.value.trim();
   if (!spriteUrl) {
-    spriteUrl = form.value?.sprites.alternative && gender.value === "Female" ? form.value.sprites.alternative : form.value?.sprites.default;
+    if (isShiny.value) {
+      spriteUrl = (gender.value === "Female" ? form.value?.sprites.alternativeShiny : undefined) ?? form.value?.sprites.shiny;
+    } else {
+      spriteUrl = (gender.value === "Female" ? form.value?.sprites.alternative : undefined) ?? form.value?.sprites.default;
+    }
   }
   return spriteUrl ?? "";
 });
@@ -136,7 +142,7 @@ async function submit(): Promise<void> {
           uniqueName: uniqueName.value,
           nickname: nickname.value,
           gender: (gender.value || undefined) as PokemonGender,
-          isShiny: false, // TODO(fpion): add
+          isShiny: isShiny.value,
           teraType: teraType.value,
           size: size.value,
           abilitySlot: abilitySlot.value,
@@ -254,6 +260,7 @@ watch(
           <NicknameInput class="col" v-model="nickname" />
           <GenderSelect class="col" :disabled="isGenderDisabled" :required="isGenderRequired" v-model="gender" />
         </div>
+        <ShinyCheckbox v-model="isShiny" />
         <h2 class="h3">{{ t("pokemon.type.types") }}</h2>
         <div class="row">
           <TypeSelect class="col" disabled id="primary-type" label="pokemon.type.primary" :model-value="form.types.primary" />

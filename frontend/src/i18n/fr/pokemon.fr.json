@@ -147,6 +147,9 @@
   "progress": {
     "title": "Progress"
   },
+  "shiny": {
+    "label": "Is Shiny"
+  },
   "size": {
     "category": {
       "label": "Category",

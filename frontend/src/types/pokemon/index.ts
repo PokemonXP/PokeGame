@@ -82,8 +82,8 @@ export type Form = Aggregate & {
   types: FormTypes;
   abilities: FormAbilities;
   baseStatistics: BaseStatistics;
-  yield: FormYield;
-  sprites: FormSprites;
+  yield: Yield;
+  sprites: Sprites;
   url?: string | null;
   notes?: string | null;
 };
@@ -94,26 +94,9 @@ export type FormAbilities = {
   hidden?: Ability | null;
 };
 
-export type FormSprites = {
-  default: string;
-  defaultShiny: string;
-  alternative?: string | null;
-  alternativeShiny?: string | null;
-};
-
 export type FormTypes = {
   primary: PokemonType;
   secondary?: PokemonType | null;
-};
-
-export type FormYield = {
-  experience: number;
-  hp: number;
-  attack: number;
-  defense: number;
-  specialAttack: number;
-  specialDefense: number;
-  speed: number;
 };
 
 export type GrowthRate = "Erratic" | "Slow" | "MediumSlow" | "MediumFast" | "Fast" | "Fluctuating";
@@ -290,6 +273,13 @@ export type Species = Aggregate & {
   varieties: Variety[];
 };
 
+export type Sprites = {
+  default: string;
+  shiny: string;
+  alternative?: string | null;
+  alternativeShiny?: string | null;
+};
+
 export type StatisticChanges = {
   hp: number;
   attack: number;
@@ -349,10 +339,27 @@ export type Variety = Aggregate & {
   isDefault: boolean;
   uniqueName: string;
   displayName?: string | null;
+  genus?: string | null;
   description?: string | null;
-  canChangeForm: boolean;
   genderRatio?: number | null;
-  genus: string;
   url?: string | null;
   notes?: string | null;
+  canChangeForm: boolean;
+  forms: Form[];
+  moves: VarietyMove[];
+};
+
+export type VarietyMove = {
+  move: Move;
+  level: number;
+};
+
+export type Yield = {
+  experience: number;
+  hp: number;
+  attack: number;
+  defense: number;
+  specialAttack: number;
+  specialDefense: number;
+  speed: number;
 };
