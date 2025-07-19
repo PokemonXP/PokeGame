@@ -107,6 +107,12 @@
       "label": "Learned",
       "technicalMachine": "TM"
     },
+    "learningMethod": {
+      "options": {
+        "Evolving": "Evolving",
+        "LevelingUp": "Leveling-Up"
+      }
+    },
     "name": "Name",
     "other": "Other Moves",
     "power": "Power",

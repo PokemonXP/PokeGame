@@ -32,6 +32,7 @@ import TypeSelect from "@/components/pokemon/creation/TypeSelect.vue";
 import UniqueNameAlreadyUsed from "@/components/pokemon/UniqueNameAlreadyUsed.vue";
 import UniqueNameInput from "@/components/pokemon/UniqueNameInput.vue";
 import UrlInput from "@/components/pokemon/UrlInput.vue";
+import VarietyMoveTable from "@/components/pokemon/creation/VarietyMoveTable.vue";
 import VarietySelect from "@/components/pokemon/creation/VarietySelect.vue";
 import VitalityInput from "@/components/pokemon/VitalityInput.vue";
 import type {
@@ -315,15 +316,10 @@ watch(
         <ItemSelect id="held-item" :model-value="heldItem?.id" @selected="heldItem = $event" />
         <h2 class="h3">{{ t("pokemon.ability.title") }}</h2>
         <AbilitySlotSelect :abilities="form.abilities" v-model="abilitySlot" />
-        <h2 class="h3">{{ t("pokemon.move.title") }}</h2>
-        <!-- TODO(fpion): display Pokémon variety moves (POKEGAME-75)
-        <MoveSelect :exclude="excludedMoves" :model-value="move?.id" @selected="move = $event">
-          <template #append>
-            <TarButton :disabled="!move" icon="fas fa-plus" :text="t('pokemon.move.learn')" variant="success" @click="addMove" />
-          </template>
-        </MoveSelect>
-        <MoveInfoTable v-if="moves.length" :moves="moves" @down="onMoveDown" @removed="onMoveRemoved" @up="onMoveUp" />
-        -->
+        <template v-if="variety">
+          <h2 class="h3">{{ t("pokemon.move.title") }}</h2>
+          <VarietyMoveTable :moves="variety.moves" />
+        </template>
         <h2 class="h3">{{ t("metadata") }}</h2>
         <div class="row">
           <UrlInput class="col" v-model="url" />
