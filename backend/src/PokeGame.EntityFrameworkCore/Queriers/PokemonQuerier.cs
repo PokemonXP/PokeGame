@@ -7,8 +7,8 @@ using Krakenar.EntityFrameworkCore.Relational.KrakenarDb;
 using Logitar.Data;
 using Logitar.EventSourcing;
 using Microsoft.EntityFrameworkCore;
-using PokeGame.Core.Pokemons;
-using PokeGame.Core.Pokemons.Models;
+using PokeGame.Core.Pokemon;
+using PokeGame.Core.Pokemon.Models;
 using PokeGame.EntityFrameworkCore.Entities;
 
 namespace PokeGame.EntityFrameworkCore.Queriers;
@@ -40,7 +40,7 @@ internal class PokemonQuerier : IPokemonQuerier
     return streamId is null ? null : new PokemonId(streamId);
   }
 
-  public async Task<PokemonModel> ReadAsync(Pokemon2 pokemon, CancellationToken cancellationToken)
+  public async Task<PokemonModel> ReadAsync(Specimen pokemon, CancellationToken cancellationToken)
   {
     return await ReadAsync(pokemon.Id, cancellationToken) ?? throw new InvalidOperationException($"The Pokémon entity 'StreamId={pokemon.Id}' was not found.");
   }
@@ -49,6 +49,7 @@ internal class PokemonQuerier : IPokemonQuerier
     PokemonEntity? pokemon = await _pokemon.AsNoTracking()
       .Include(x => x.CurrentTrainer)
       .Include(x => x.HeldItem).ThenInclude(x => x!.Move)
+      .Include(x => x.Moves).ThenInclude(x => x.Item)
       .Include(x => x.Moves).ThenInclude(x => x.Move)
       .Include(x => x.OriginalTrainer)
       .Include(x => x.PokeBall)
@@ -67,6 +68,7 @@ internal class PokemonQuerier : IPokemonQuerier
     PokemonEntity? pokemon = await _pokemon.AsNoTracking()
       .Include(x => x.CurrentTrainer)
       .Include(x => x.HeldItem).ThenInclude(x => x!.Move)
+      .Include(x => x.Moves).ThenInclude(x => x.Item)
       .Include(x => x.Moves).ThenInclude(x => x.Move)
       .Include(x => x.OriginalTrainer)
       .Include(x => x.PokeBall)
@@ -87,6 +89,7 @@ internal class PokemonQuerier : IPokemonQuerier
     PokemonEntity? pokemon = await _pokemon.AsNoTracking()
       .Include(x => x.CurrentTrainer)
       .Include(x => x.HeldItem).ThenInclude(x => x!.Move)
+      .Include(x => x.Moves).ThenInclude(x => x.Item)
       .Include(x => x.Moves).ThenInclude(x => x.Move)
       .Include(x => x.OriginalTrainer)
       .Include(x => x.PokeBall)
@@ -103,18 +106,14 @@ internal class PokemonQuerier : IPokemonQuerier
 
   public async Task<SearchResults<PokemonModel>> SearchAsync(SearchPokemonPayload payload, CancellationToken cancellationToken)
   {
-    IQueryBuilder builder = _sqlHelper.Query(PokemonDb.Pokemons.Table).SelectAll(PokemonDb.Pokemons.Table)
-      .ApplyIdFilter(PokemonDb.Pokemons.Id, payload.Ids);
-    _sqlHelper.ApplyTextSearch(builder, payload.Search, PokemonDb.Pokemons.UniqueName, PokemonDb.Pokemons.Nickname);
-
-    if (payload.TrainerId.HasValue)
-    {
-      builder.Where(PokemonDb.Pokemons.CurrentTrainerUid, Operators.IsEqualTo(payload.TrainerId.Value));
-    }
+    IQueryBuilder builder = _sqlHelper.Query(PokemonDb.Pokemon.Table).SelectAll(PokemonDb.Pokemon.Table)
+      .ApplyIdFilter(PokemonDb.Pokemon.Id, payload.Ids);
+    _sqlHelper.ApplyTextSearch(builder, payload.Search, PokemonDb.Pokemon.UniqueName, PokemonDb.Pokemon.Nickname);
 
     IQueryable<PokemonEntity> query = _pokemon.FromQuery(builder).AsNoTracking()
       .Include(x => x.CurrentTrainer)
       .Include(x => x.HeldItem).ThenInclude(x => x!.Move)
+      .Include(x => x.Moves).ThenInclude(x => x.Item)
       .Include(x => x.Moves).ThenInclude(x => x.Move)
       .Include(x => x.OriginalTrainer)
       .Include(x => x.PokeBall);
@@ -129,21 +128,6 @@ internal class PokemonQuerier : IPokemonQuerier
           ordered = ordered is null
             ? (sort.IsDescending ? query.OrderByDescending(x => x.CreatedOn) : query.OrderBy(x => x.CreatedOn))
             : (sort.IsDescending ? ordered.ThenByDescending(x => x.CreatedOn) : ordered.ThenBy(x => x.CreatedOn));
-          break;
-        case PokemonSort.Experience:
-          ordered = ordered is null
-            ? (sort.IsDescending ? query.OrderByDescending(x => x.Experience) : query.OrderBy(x => x.Experience))
-            : (sort.IsDescending ? ordered.ThenByDescending(x => x.Experience) : ordered.ThenBy(x => x.Experience));
-          break;
-        case PokemonSort.Friendship:
-          ordered = ordered is null
-            ? (sort.IsDescending ? query.OrderByDescending(x => x.Friendship) : query.OrderBy(x => x.Friendship))
-            : (sort.IsDescending ? ordered.ThenByDescending(x => x.Friendship) : ordered.ThenBy(x => x.Friendship));
-          break;
-        case PokemonSort.Level:
-          ordered = ordered is null
-            ? (sort.IsDescending ? query.OrderByDescending(x => x.Level) : query.OrderBy(x => x.Level))
-            : (sort.IsDescending ? ordered.ThenByDescending(x => x.Level) : ordered.ThenBy(x => x.Level));
           break;
         case PokemonSort.Nickname:
           ordered = ordered is null
@@ -177,6 +161,7 @@ internal class PokemonQuerier : IPokemonQuerier
   {
     FormEntity form = await _forms.AsNoTracking()
       .Include(x => x.Abilities).ThenInclude(x => x.Ability)
+      .Include(x => x.Variety).ThenInclude(x => x!.Moves).ThenInclude(x => x.Move)
       .Include(x => x.Variety).ThenInclude(x => x!.Species).ThenInclude(x => x!.RegionalNumbers).ThenInclude(x => x.Region)
       .SingleOrDefaultAsync(x => x.FormId == pokemon.FormId, cancellationToken)
       ?? throw new InvalidOperationException($"The Pokémon form entity 'FormId={pokemon.FormId}' was not found.");
@@ -187,6 +172,7 @@ internal class PokemonQuerier : IPokemonQuerier
     IEnumerable<int> formIds = pokemonList.Select(x => x.FormId).Distinct();
     Dictionary<int, FormEntity> forms = await _forms.AsNoTracking()
       .Include(x => x.Abilities).ThenInclude(x => x.Ability)
+      .Include(x => x.Variety).ThenInclude(x => x!.Moves).ThenInclude(x => x.Move)
       .Include(x => x.Variety).ThenInclude(x => x!.Species).ThenInclude(x => x!.RegionalNumbers).ThenInclude(x => x.Region)
       .Where(x => formIds.Contains(x.FormId))
       .ToDictionaryAsync(x => x.FormId, x => x, cancellationToken);

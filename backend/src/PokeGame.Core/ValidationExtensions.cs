@@ -47,7 +47,7 @@ public static class ValidationExtensions
 
   public static IRuleBuilderOptions<T, string> Nickname<T>(this IRuleBuilder<T, string> ruleBuilder)
   {
-    return ruleBuilder.NotEmpty().MaximumLength(Pokemons.Nickname.MaximumLength);
+    return ruleBuilder.NotEmpty().MaximumLength(Pokemon.Nickname.MaximumLength);
   }
 
   public static IRuleBuilderOptions<T, string> Notes<T>(this IRuleBuilder<T, string> ruleBuilder)

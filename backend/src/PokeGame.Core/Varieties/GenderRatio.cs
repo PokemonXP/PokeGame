@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using PokeGame.Core.Pokemons;
+using PokeGame.Core.Pokemon;
 
 namespace PokeGame.Core.Varieties;
 

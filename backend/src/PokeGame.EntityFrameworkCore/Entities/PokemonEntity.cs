@@ -1,11 +1,10 @@
 ﻿using Krakenar.EntityFrameworkCore.Relational.KrakenarDb;
-using Logitar;
 using PokeGame.Core;
 using PokeGame.Core.Abilities;
 using PokeGame.Core.Forms;
-using PokeGame.Core.Pokemons;
-using PokeGame.Core.Pokemons.Events;
-using PokeGame.Core.Pokemons.Models;
+using PokeGame.Core.Pokemon;
+using PokeGame.Core.Pokemon.Events;
+using PokeGame.Core.Pokemon.Models;
 using PokeGame.Core.Species;
 using AggregateEntity = Krakenar.EntityFrameworkCore.Relational.Entities.Aggregate;
 
@@ -36,6 +35,7 @@ internal class PokemonEntity : AggregateEntity
   }
   public string? Nickname { get; private set; }
   public PokemonGender? Gender { get; private set; }
+  public bool IsShiny { get; private set; }
 
   public PokemonType TeraType { get; private set; }
   public byte Height { get; private set; }
@@ -43,6 +43,7 @@ internal class PokemonEntity : AggregateEntity
   public AbilitySlot AbilitySlot { get; private set; }
   public string Nature { get; private set; } = string.Empty;
 
+  public byte EggCycles { get; private set; }
   public GrowthRate GrowthRate { get; private set; }
   public int Level { get; private set; }
   public int Experience { get; private set; }
@@ -53,9 +54,9 @@ internal class PokemonEntity : AggregateEntity
   public int Vitality { get; private set; }
   public int Stamina { get; private set; }
   public StatusCondition? StatusCondition { get; private set; }
-  public string Characteristic { get; private set; } = string.Empty;
-
   public byte Friendship { get; private set; }
+
+  public string Characteristic { get; private set; } = string.Empty;
 
   public ItemEntity? HeldItem { get; private set; }
   public int? HeldItemId { get; private set; }
@@ -78,6 +79,8 @@ internal class PokemonEntity : AggregateEntity
   public string? MetLocation { get; private set; }
   public DateTime? MetOn { get; private set; }
   public string? MetDescription { get; private set; }
+  public int? Position { get; private set; }
+  public int? Box { get; private set; }
 
   public string? Sprite { get; private set; }
   public string? Url { get; private set; }
@@ -106,6 +109,7 @@ internal class PokemonEntity : AggregateEntity
 
     UniqueName = @event.UniqueName.Value;
     Gender = @event.Gender;
+    IsShiny = @event.IsShiny;
 
     TeraType = @event.TeraType;
     Height = @event.Size.Height;
@@ -113,6 +117,7 @@ internal class PokemonEntity : AggregateEntity
     AbilitySlot = @event.AbilitySlot;
     Nature = @event.Nature.Name;
 
+    EggCycles = @event.EggCycles?.Value ?? 0;
     GrowthRate = @event.GrowthRate;
     Experience = @event.Experience;
     Level = ExperienceTable.Instance.GetLevel(GrowthRate, Experience);
@@ -122,23 +127,13 @@ internal class PokemonEntity : AggregateEntity
     SetStatistics(@event.BaseStatistics, @event.IndividualValues, @event.EffortValues);
     Vitality = @event.Vitality;
     Stamina = @event.Stamina;
-    Characteristic = @event.Characteristic.Text;
+    Friendship = @event.Friendship.Value;
 
-    Friendship = @event.Friendship;
+    Characteristic = PokemonCharacteristics.Instance.Find(@event.IndividualValues, @event.Size).Text;
   }
 
   private PokemonEntity()
   {
-  }
-
-  public void Catch(TrainerEntity trainer, ItemEntity pokeBall, PokemonCaught @event)
-  {
-    Update(@event);
-
-    SetOriginalTrainer(trainer);
-    SetCurrentTrainer(trainer);
-    SetPokeBall(pokeBall);
-    SetOwnership(@event);
   }
 
   public void HoldItem(ItemEntity item, PokemonItemHeld @event)
@@ -158,34 +153,6 @@ internal class PokemonEntity : AggregateEntity
     Moves.Add(new PokemonMoveEntity(this, move, @event));
   }
 
-  public bool MasterMove(PokemonMoveMastered @event)
-  {
-    Update(@event);
-
-    PokemonMoveEntity? move = Moves.SingleOrDefault(move => move.MoveUid == @event.MoveId.ToGuid());
-    if (move is null)
-    {
-      return false;
-    }
-
-    move.Master(@event);
-    return true;
-  }
-
-  public void Receive(TrainerEntity trainer, ItemEntity pokeBall, PokemonReceived @event)
-  {
-    Update(@event);
-
-    if (!OriginalTrainerId.HasValue)
-    {
-      SetOriginalTrainer(trainer);
-    }
-
-    SetCurrentTrainer(trainer);
-    SetPokeBall(pokeBall);
-    SetOwnership(@event);
-  }
-
   public bool RelearnMove(PokemonMoveRelearned @event)
   {
     Update(@event);
@@ -200,21 +167,6 @@ internal class PokemonEntity : AggregateEntity
 
     move.Relearn(@event);
     return true;
-  }
-
-  public void Release(PokemonReleased @event)
-  {
-    Update(@event);
-
-    SetOriginalTrainer(null);
-    SetCurrentTrainer(null);
-    SetPokeBall(null);
-
-    OwnershipKind = null;
-    MetAtLevel = null;
-    MetLocation = null;
-    MetOn = null;
-    MetDescription = null;
   }
 
   public void RemoveItem(PokemonItemRemoved @event)
@@ -240,59 +192,9 @@ internal class PokemonEntity : AggregateEntity
     UniqueName = @event.UniqueName.Value;
   }
 
-  public bool SwitchMoves(PokemonMovesSwitched @event)
-  {
-    Update(@event);
-
-    PokemonMoveEntity? source = null;
-    PokemonMoveEntity? destination = null;
-    foreach (PokemonMoveEntity move in Moves)
-    {
-      if (move.Position == @event.Source)
-      {
-        source = move;
-      }
-      else if (move.Position == @event.Destination)
-      {
-        destination = move;
-      }
-    }
-
-    if (source is null || destination is null)
-    {
-      return false;
-    }
-
-    source.Switch(destination);
-    return true;
-  }
-
   public void Update(PokemonUpdated @event)
   {
     base.Update(@event);
-
-    if (@event.Gender is not null)
-    {
-      Gender = @event.Gender.Value;
-    }
-
-    if (@event.Vitality.HasValue)
-    {
-      Vitality = @event.Vitality.Value;
-    }
-    if (@event.Stamina.HasValue)
-    {
-      Stamina = @event.Stamina.Value;
-    }
-    if (@event.StatusCondition is not null)
-    {
-      StatusCondition = @event.StatusCondition.Value;
-    }
-
-    if (@event.Friendship.HasValue)
-    {
-      Friendship = @event.Friendship.Value;
-    }
 
     if (@event.Sprite is not null)
     {
@@ -308,14 +210,6 @@ internal class PokemonEntity : AggregateEntity
     }
   }
 
-  public void UseTechnicalMachine(MoveEntity move, PokemonTechnicalMachineUsed @event)
-  {
-    Update(@event);
-
-    RemoveMove(@event.Position);
-    Moves.Add(new PokemonMoveEntity(this, move, @event));
-  }
-
   private void RemoveMove(int? position)
   {
     if (position.HasValue)
@@ -323,33 +217,6 @@ internal class PokemonEntity : AggregateEntity
       PokemonMoveEntity? pokemonMove = Moves.SingleOrDefault(move => move.Position == position.Value);
       pokemonMove?.Remove();
     }
-  }
-
-  private void SetCurrentTrainer(TrainerEntity? trainer)
-  {
-    CurrentTrainer = trainer;
-    CurrentTrainerId = trainer?.TrainerId;
-    CurrentTrainerUid = trainer?.Id;
-  }
-  private void SetOriginalTrainer(TrainerEntity? trainer)
-  {
-    OriginalTrainer = trainer;
-    OriginalTrainerId = trainer?.TrainerId;
-    OriginalTrainerUid = trainer?.Id;
-  }
-  private void SetOwnership(IOwnershipEvent @event)
-  {
-    OwnershipKind = @event.Kind;
-    MetAtLevel = @event.Level;
-    MetLocation = @event.Location.Value;
-    MetOn = @event.OccurredOn.AsUniversalTime();
-    MetDescription = @event.Description?.Value;
-  }
-  private void SetPokeBall(ItemEntity? pokeBall)
-  {
-    PokeBall = pokeBall;
-    PokeBallId = pokeBall?.ItemId;
-    PokeBallUid = pokeBall?.Id;
   }
 
   public PokemonStatisticsModel GetStatistics()

@@ -4,7 +4,7 @@ using Logitar;
 using PokeGame.Core.Abilities;
 using PokeGame.Core.Forms;
 using PokeGame.Core.Moves;
-using PokeGame.Core.Pokemons;
+using PokeGame.Core.Pokemon;
 using PokeGame.Core.Regions;
 using PokeGame.Core.Species;
 using PokeGame.Core.Trainers;
@@ -68,7 +68,7 @@ public class UniqueNameAlreadyUsedException : ConflictException
     : this("Move", move.Id.ToGuid(), conflictId.ToGuid(), move.UniqueName, nameof(move.UniqueName))
   {
   }
-  public UniqueNameAlreadyUsedException(Pokemon2 pokemon, PokemonId conflictId)
+  public UniqueNameAlreadyUsedException(Specimen pokemon, PokemonId conflictId)
     : this("Pokemon", pokemon.Id.ToGuid(), conflictId.ToGuid(), pokemon.UniqueName, nameof(pokemon.UniqueName))
   {
   }

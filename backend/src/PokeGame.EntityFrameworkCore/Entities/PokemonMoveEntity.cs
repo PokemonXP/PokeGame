@@ -1,5 +1,5 @@
 ﻿using PokeGame.Core.Moves;
-using PokeGame.Core.Pokemons.Events;
+using PokeGame.Core.Pokemon.Events;
 
 namespace PokeGame.EntityFrameworkCore.Entities;
 
@@ -15,25 +15,21 @@ internal class PokemonMoveEntity
 
   public int? Position { get; private set; }
 
-  public int CurrentPowerPoints { get; private set; }
-  public int MaximumPowerPoints { get; private set; }
-  public int ReferencePowerPoints { get; private set; }
+  public byte CurrentPowerPoints { get; private set; }
+  public byte MaximumPowerPoints { get; private set; }
+  public byte ReferencePowerPoints { get; private set; }
 
   public bool IsMastered { get; private set; }
 
   public int Level { get; private set; }
-  public bool TechnicalMachine { get; private set; }
+  public MoveLearningMethod Method { get; private set; }
+  public ItemEntity? Item { get; private set; }
+  public int? ItemId { get; private set; }
+  public Guid? ItemUid { get; private set; }
+
+  public string? Notes { get; private set; }
 
   public PokemonMoveEntity(PokemonEntity pokemon, MoveEntity move, PokemonMoveLearned @event)
-    : this(pokemon, move, @event.Position, @event.PowerPoints)
-  {
-  }
-  public PokemonMoveEntity(PokemonEntity pokemon, MoveEntity move, PokemonTechnicalMachineUsed @event)
-    : this(pokemon, move, @event.Position, @event.PowerPoints)
-  {
-    TechnicalMachine = true;
-  }
-  private PokemonMoveEntity(PokemonEntity pokemon, MoveEntity move, int? position, PowerPoints powerPoints)
   {
     Pokemon = pokemon;
     PokemonId = pokemon.PokemonId;
@@ -43,23 +39,22 @@ internal class PokemonMoveEntity
     MoveId = move.MoveId;
     MoveUid = move.Id;
 
-    Position = position ?? pokemon.Moves.Count;
+    Position = @event.Position;
 
-    int powerPointsValue = powerPoints.Value;
-    CurrentPowerPoints = powerPointsValue;
-    MaximumPowerPoints = powerPointsValue;
-    ReferencePowerPoints = powerPointsValue;
+    CurrentPowerPoints = @event.Move.CurrentPowerPoints;
+    MaximumPowerPoints = @event.Move.MaximumPowerPoints;
+    ReferencePowerPoints = @event.Move.ReferencePowerPoints.Value;
+
+    IsMastered = @event.Move.IsMastered;
 
     Level = pokemon.Level;
+    Method = @event.Move.Method;
+
+    Notes = @event.Move.Notes?.Value;
   }
 
   private PokemonMoveEntity()
   {
-  }
-
-  public void Master(PokemonMoveMastered _)
-  {
-    IsMastered = true;
   }
 
   public void Relearn(PokemonMoveRelearned @event)

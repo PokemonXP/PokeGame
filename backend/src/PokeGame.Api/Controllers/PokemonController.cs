@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PokeGame.Api.Constants;
 using PokeGame.Api.Models.Pokemon;
-using PokeGame.Core.Pokemons;
-using PokeGame.Core.Pokemons.Models;
+using PokeGame.Core.Pokemon;
+using PokeGame.Core.Pokemon.Models;
 
 namespace PokeGame.Api.Controllers;
 
@@ -49,32 +49,11 @@ public class PokemonController : ControllerBase
     return pokemon is null ? NotFound() : Ok(pokemon);
   }
 
-  [HttpPut("{id}/moves/relearn")]
-  public async Task<ActionResult<PokemonModel>> RelearnMoveAsync(Guid id, [FromBody] RelearnPokemonMovePayload payload, CancellationToken cancellationToken)
-  {
-    PokemonModel? pokemon = await _pokemonService.RelearnMoveAsync(id, payload, cancellationToken);
-    return pokemon is null ? NotFound() : Ok(pokemon);
-  }
-
-  [HttpPut("{id}/moves/switch")]
-  public async Task<ActionResult<PokemonModel>> SwitchMovesAsync(Guid id, [FromBody] SwitchPokemonMovesPayload payload, CancellationToken cancellationToken)
-  {
-    PokemonModel? pokemon = await _pokemonService.SwitchMovesAsync(id, payload, cancellationToken);
-    return pokemon is null ? NotFound() : Ok(pokemon);
-  }
-
   [HttpGet]
   public async Task<ActionResult<SearchResults<PokemonModel>>> SearchAsync([FromQuery] SearchPokemonParameters parameters, CancellationToken cancellationToken)
   {
     SearchPokemonPayload payload = parameters.ToPayload();
     SearchResults<PokemonModel> regions = await _pokemonService.SearchAsync(payload, cancellationToken);
     return Ok(regions);
-  }
-
-  [HttpPatch("{id}")]
-  public async Task<ActionResult<PokemonModel>> UpdateAsync(Guid id, [FromBody] UpdatePokemonPayload payload, CancellationToken cancellationToken)
-  {
-    PokemonModel? pokemon = await _pokemonService.UpdateAsync(id, payload, cancellationToken);
-    return pokemon is null ? NotFound() : Ok(pokemon);
   }
 }

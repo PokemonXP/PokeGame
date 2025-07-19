@@ -137,6 +137,7 @@ async function submit(): Promise<void> {
           uniqueName: uniqueName.value,
           nickname: nickname.value,
           gender: (gender.value || undefined) as PokemonGender,
+          isShiny: false, // TODO(fpion): add
           teraType: teraType.value,
           size: size.value,
           abilitySlot: abilitySlot.value,
@@ -148,7 +149,7 @@ async function submit(): Promise<void> {
           stamina: stamina.value,
           friendship: friendship.value,
           heldItem: heldItem.value?.id,
-          moves: moves.value.map(({ id }) => id),
+          // moves: moves.value.map(({ id }) => id), // TODO(fpion): remove
           sprite: sprite.value,
           url: url.value,
           notes: notes.value,

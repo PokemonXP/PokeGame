@@ -6,8 +6,8 @@ using PokeGame.Core.Abilities.Models;
 using PokeGame.Core.Forms.Models;
 using PokeGame.Core.Items.Models;
 using PokeGame.Core.Moves.Models;
-using PokeGame.Core.Pokemons;
-using PokeGame.Core.Pokemons.Models;
+using PokeGame.Core.Pokemon;
+using PokeGame.Core.Pokemon.Models;
 using PokeGame.Core.Regions.Models;
 using PokeGame.Core.Species.Models;
 using PokeGame.Core.Trainers.Models;
@@ -109,7 +109,7 @@ internal class PokemonMapper
 
   public ItemModel ToItem(ItemEntity source)
   {
-    if (source.MoveId.HasValue && source.Move is null)
+    if (source.Move is null && source.MoveId.HasValue)
     {
       throw new ArgumentException("The move is required.", nameof(source));
     }
@@ -169,10 +169,6 @@ internal class PokemonMapper
     {
       throw new ArgumentException("The form is required.", nameof(source));
     }
-    if (source.HeldItemId.HasValue && source.HeldItem is null)
-    {
-      throw new ArgumentException("The held item is required.", nameof(source));
-    }
 
     PokemonModel destination = new()
     {
@@ -181,10 +177,12 @@ internal class PokemonMapper
       UniqueName = source.UniqueName,
       Nickname = source.Nickname,
       Gender = source.Gender,
+      IsShiny = source.IsShiny,
       TeraType = source.TeraType,
       Size = new PokemonSizeModel(source.Height, source.Weight),
       AbilitySlot = source.AbilitySlot,
       Nature = new PokemonNatureModel(PokemonNatures.Instance.Find(source.Nature)),
+      EggCycles = source.EggCycles,
       GrowthRate = source.GrowthRate,
       Level = source.Level,
       Experience = source.Experience,
@@ -194,34 +192,20 @@ internal class PokemonMapper
       Vitality = source.Vitality,
       Stamina = source.Stamina,
       StatusCondition = source.StatusCondition,
-      Characteristic = source.Characteristic,
       Friendship = source.Friendship,
+      Characteristic = source.Characteristic,
       Sprite = source.Sprite,
       Url = source.Url,
       Notes = source.Notes
     };
 
-    if (source.HeldItem is not null)
+    if (source.HeldItem is null && source.HeldItemId.HasValue)
+    {
+      throw new ArgumentException("The held item is required.", nameof(source));
+    }
+    else if (source.HeldItem is not null)
     {
       destination.HeldItem = ToItem(source.HeldItem);
-    }
-    if (source.OriginalTrainer is not null)
-    {
-      destination.OriginalTrainer = ToTrainer(source.OriginalTrainer);
-    }
-    if (source.OwnershipKind.HasValue && source.CurrentTrainer is not null && source.PokeBall is not null
-      && source.MetAtLevel.HasValue && source.MetLocation is not null && source.MetOn.HasValue)
-    {
-      destination.Ownership = new PokemonOwnershipModel
-      {
-        Kind = source.OwnershipKind.Value,
-        Trainer = ToTrainer(source.CurrentTrainer),
-        PokeBall = ToItem(source.PokeBall),
-        Level = source.MetAtLevel.Value,
-        Location = source.MetLocation,
-        MetOn = source.MetOn.Value.AsUniversalTime(),
-        Description = source.MetDescription
-      };
     }
 
     foreach (PokemonMoveEntity entity in source.Moves)
@@ -230,6 +214,11 @@ internal class PokemonMapper
       {
         throw new ArgumentException("The moves are required.", nameof(source));
       }
+      else if (entity.Item is null && entity.ItemId.HasValue)
+      {
+        throw new ArgumentException("The move item is required.", nameof(source));
+      }
+
       PokemonMoveModel move = new()
       {
         Move = ToMove(entity.Move),
@@ -237,9 +226,46 @@ internal class PokemonMapper
         PowerPoints = new PowerPointsModel(entity.CurrentPowerPoints, entity.MaximumPowerPoints, entity.ReferencePowerPoints),
         IsMastered = entity.IsMastered,
         Level = entity.Level,
-        TechnicalMachine = entity.TechnicalMachine
+        Method = entity.Method,
+        Notes = entity.Notes
       };
+      if (entity.Item is not null)
+      {
+        move.Item = ToItem(entity.Item);
+      }
       destination.Moves.Add(move);
+    }
+
+    if (source.OriginalTrainerId.HasValue && source.CurrentTrainerId.HasValue && source.PokeBallId.HasValue
+      && source.OwnershipKind.HasValue && source.MetAtLevel.HasValue && source.MetLocation is not null
+      && source.MetOn.HasValue && source.Position.HasValue)
+    {
+      if (source.OriginalTrainer is null)
+      {
+        throw new ArgumentException("The original trainer is required.", nameof(source));
+      }
+      if (source.CurrentTrainer is null)
+      {
+        throw new ArgumentException("The current trainer is required.", nameof(source));
+      }
+      if (source.PokeBall is null)
+      {
+        throw new ArgumentException("The Poké Ball is required.", nameof(source));
+      }
+
+      destination.Ownership = new OwnershipModel
+      {
+        OriginalTrainer = ToTrainer(source.OriginalTrainer),
+        CurrentTrainer = ToTrainer(source.CurrentTrainer),
+        PokeBall = ToItem(source.PokeBall),
+        Kind = source.OwnershipKind.Value,
+        Level = source.MetAtLevel.Value,
+        Location = source.MetLocation,
+        MetOn = source.MetOn.Value,
+        Description = source.MetDescription,
+        Position = source.Position.Value,
+        Box = source.Box
+      };
     }
 
     MapAggregate(source, destination);

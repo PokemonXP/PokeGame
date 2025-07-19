@@ -5,7 +5,8 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PokeGame.Core;
 using PokeGame.Core.Abilities;
-using PokeGame.Core.Pokemons;
+using PokeGame.Core.Pokemon;
+using PokeGame.Core.Regions;
 using PokeGame.Core.Species;
 using PokeGame.EntityFrameworkCore.Entities;
 
@@ -13,11 +14,13 @@ namespace PokeGame.EntityFrameworkCore.Configurations;
 
 internal class PokemonConfiguration : AggregateConfiguration<PokemonEntity>, IEntityTypeConfiguration<PokemonEntity>
 {
+  private const int StatisticsMaximumLength = 100;
+
   public override void Configure(EntityTypeBuilder<PokemonEntity> builder)
   {
     base.Configure(builder);
 
-    builder.ToTable(PokemonDb.Pokemons.Table.Table!, PokemonDb.Pokemons.Table.Schema);
+    builder.ToTable(PokemonDb.Pokemon.Table.Table!, PokemonDb.Pokemon.Table.Schema);
     builder.HasKey(x => x.PokemonId);
 
     builder.HasIndex(x => x.Id).IsUnique();
@@ -27,13 +30,6 @@ internal class PokemonConfiguration : AggregateConfiguration<PokemonEntity>, IEn
     builder.HasIndex(x => x.UniqueName);
     builder.HasIndex(x => x.UniqueNameNormalized).IsUnique();
     builder.HasIndex(x => x.Nickname);
-    builder.HasIndex(x => x.Gender);
-    builder.HasIndex(x => x.TeraType);
-    builder.HasIndex(x => x.Nature);
-    builder.HasIndex(x => x.Level);
-    builder.HasIndex(x => x.Experience);
-    builder.HasIndex(x => x.StatusCondition);
-    builder.HasIndex(x => x.Friendship);
     builder.HasIndex(x => x.HeldItemUid);
     builder.HasIndex(x => x.OriginalTrainerUid);
     builder.HasIndex(x => x.CurrentTrainerUid);
@@ -47,11 +43,11 @@ internal class PokemonConfiguration : AggregateConfiguration<PokemonEntity>, IEn
     builder.Property(x => x.AbilitySlot).HasMaxLength(byte.MaxValue).HasConversion(new EnumToStringConverter<AbilitySlot>());
     builder.Property(x => x.Nature).HasMaxLength(PokemonNature.MaximumLength);
     builder.Property(x => x.GrowthRate).HasMaxLength(byte.MaxValue).HasConversion(new EnumToStringConverter<GrowthRate>());
-    builder.Property(x => x.Statistics).HasMaxLength(Constants.StatisticsMaximumLength);
+    builder.Property(x => x.Statistics).HasMaxLength(StatisticsMaximumLength);
     builder.Property(x => x.StatusCondition).HasMaxLength(byte.MaxValue).HasConversion(new EnumToStringConverter<StatusCondition>());
     builder.Property(x => x.Characteristic).HasMaxLength(PokemonCharacteristic.MaximumLength);
     builder.Property(x => x.OwnershipKind).HasMaxLength(byte.MaxValue).HasConversion(new EnumToStringConverter<OwnershipKind>());
-    builder.Property(x => x.MetLocation).HasMaxLength(GameLocation.MaximumLength);
+    builder.Property(x => x.MetLocation).HasMaxLength(Location.MaximumLength);
     builder.Property(x => x.Sprite).HasMaxLength(Url.MaximumLength);
     builder.Property(x => x.Url).HasMaxLength(Url.MaximumLength);
 

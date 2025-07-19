@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using PokeGame.Core.Pokemons;
+using PokeGame.Core.Pokemon;
 using PokeGame.Core.Varieties.Models;
 
 namespace PokeGame.Core.Varieties.Validators;
