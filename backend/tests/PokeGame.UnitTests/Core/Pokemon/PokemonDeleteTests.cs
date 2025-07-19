@@ -3,24 +3,21 @@ using Krakenar.Core.Settings;
 using Logitar.EventSourcing;
 using PokeGame.Core.Abilities;
 using PokeGame.Core.Forms;
-using PokeGame.Core.Items;
-using PokeGame.Core.Items.Properties;
-using PokeGame.Core.Pokemons.Events;
+using PokeGame.Core.Pokemon.Events;
 using PokeGame.Core.Species;
 using PokeGame.Core.Varieties;
 
-namespace PokeGame.Core.Pokemons;
+namespace PokeGame.Core.Pokemon;
 
 [Trait(Traits.Category, Categories.Unit)]
-public class PokemonItemTests
+public class PokemonDeleteTests
 {
   private readonly PokemonSpecies _species;
   private readonly Variety _variety;
   private readonly Form _form;
   private readonly Pokemon2 _pokemon;
-  private readonly Item _item;
 
-  public PokemonItemTests()
+  public PokemonDeleteTests()
   {
     UniqueNameSettings uniqueNameSettings = new();
 
@@ -44,49 +41,22 @@ public class PokemonItemTests
       PokemonNatures.Instance.Find("careful"),
       new IndividualValues(),
       PokemonGender.Male);
-
-    _item = new(new UniqueName(uniqueNameSettings, "leftovers"), new OtherItemProperties());
   }
 
-  [Fact(DisplayName = "HoldItem: it should handle held item changes correctly.")]
-  public void Given_Item_When_HoldItem_Then_ItemHeld()
+  [Fact(DisplayName = "It should delete the Pokémon.")]
+  public void Given_Pokemon_When_Delete_Then_IsDeleted()
   {
     ActorId actorId = ActorId.NewId();
-    Assert.Null(_pokemon.HeldItemId);
+    Assert.False(_pokemon.IsDeleted);
 
-    _pokemon.ClearChanges();
-    _pokemon.RemoveItem();
-    Assert.Null(_pokemon.HeldItemId);
-    Assert.False(_pokemon.HasChanges);
-    Assert.Empty(_pokemon.Changes);
-
-    _pokemon.HoldItem(_item, actorId);
-    Assert.Equal(_item.Id, _pokemon.HeldItemId);
+    _pokemon.Delete(actorId);
+    Assert.True(_pokemon.IsDeleted);
     Assert.True(_pokemon.HasChanges);
-    Assert.Contains(_pokemon.Changes, change => change is PokemonItemHeld held && held.ItemId == _item.Id && held.ActorId == actorId);
+    Assert.Contains(_pokemon.Changes, change => change is PokemonDeleted deleted && deleted.ActorId == actorId);
 
     _pokemon.ClearChanges();
-    _pokemon.HoldItem(_item.Id, actorId);
-    Assert.Equal(_item.Id, _pokemon.HeldItemId);
-    Assert.False(_pokemon.HasChanges);
-    Assert.Empty(_pokemon.Changes);
-  }
-
-  [Fact(DisplayName = "RemoveItem: it should remove the held item.")]
-  public void Given_Item_When_RemoveItem_Then_Removed()
-  {
-    ActorId actorId = ActorId.NewId();
-
-    _pokemon.HoldItem(_item);
-    Assert.NotNull(_pokemon.HeldItemId);
-
-    _pokemon.RemoveItem(actorId);
-    Assert.Null(_pokemon.HeldItemId);
-    Assert.True(_pokemon.HasChanges);
-    Assert.Contains(_pokemon.Changes, change => change is PokemonItemRemoved removed && removed.ActorId == actorId);
-
-    _pokemon.ClearChanges();
-    _pokemon.RemoveItem();
+    _pokemon.Delete();
+    Assert.True(_pokemon.IsDeleted);
     Assert.False(_pokemon.HasChanges);
     Assert.Empty(_pokemon.Changes);
   }

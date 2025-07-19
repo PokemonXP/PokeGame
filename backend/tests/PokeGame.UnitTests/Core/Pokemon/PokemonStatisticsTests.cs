@@ -1,6 +1,6 @@
 ﻿using PokeGame.Core.Forms;
 
-namespace PokeGame.Core.Pokemons;
+namespace PokeGame.Core.Pokemon;
 
 [Trait(Traits.Category, Categories.Unit)]
 public class PokemonStatisticsTests

@@ -3,11 +3,11 @@ using Krakenar.Core.Settings;
 using Logitar.EventSourcing;
 using PokeGame.Core.Abilities;
 using PokeGame.Core.Forms;
-using PokeGame.Core.Pokemons.Events;
+using PokeGame.Core.Pokemon.Events;
 using PokeGame.Core.Species;
 using PokeGame.Core.Varieties;
 
-namespace PokeGame.Core.Pokemons;
+namespace PokeGame.Core.Pokemon;
 
 [Trait(Traits.Category, Categories.Unit)]
 public class PokemonNameTests
@@ -53,7 +53,7 @@ public class PokemonNameTests
     _pokemon.SetNickname(nickname, actorId);
     Assert.Equal(nickname, _pokemon.Nickname);
     Assert.True(_pokemon.HasChanges);
-    Assert.Contains(_pokemon.Changes, change => change is PokemonNicknamed2 nicknamed && nicknamed.ActorId == actorId && nicknamed.Nickname == nickname);
+    Assert.Contains(_pokemon.Changes, change => change is PokemonNicknamed nicknamed && nicknamed.ActorId == actorId && nicknamed.Nickname == nickname);
 
     _pokemon.ClearChanges();
     _pokemon.SetNickname(nickname);
@@ -64,7 +64,7 @@ public class PokemonNameTests
     _pokemon.SetNickname(nickname: null, actorId);
     Assert.Null(_pokemon.Nickname);
     Assert.True(_pokemon.HasChanges);
-    Assert.Contains(_pokemon.Changes, change => change is PokemonNicknamed2 nicknamed && nicknamed.ActorId == actorId && nicknamed.Nickname is null);
+    Assert.Contains(_pokemon.Changes, change => change is PokemonNicknamed nicknamed && nicknamed.ActorId == actorId && nicknamed.Nickname is null);
   }
 
   [Fact(DisplayName = "SetUniqueName: it should handle unique name changes correctly.")]

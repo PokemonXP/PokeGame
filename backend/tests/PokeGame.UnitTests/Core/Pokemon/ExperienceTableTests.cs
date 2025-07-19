@@ -1,7 +1,7 @@
 ﻿using CsvHelper;
 using PokeGame.Core.Species;
 
-namespace PokeGame.Core.Pokemons;
+namespace PokeGame.Core.Pokemon;
 
 [Trait(Traits.Category, Categories.Unit)]
 public class ExperienceTableTests : IAsyncLifetime

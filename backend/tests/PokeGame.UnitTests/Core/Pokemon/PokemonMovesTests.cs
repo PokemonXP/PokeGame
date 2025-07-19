@@ -4,11 +4,11 @@ using Logitar.EventSourcing;
 using PokeGame.Core.Abilities;
 using PokeGame.Core.Forms;
 using PokeGame.Core.Moves;
-using PokeGame.Core.Pokemons.Events;
+using PokeGame.Core.Pokemon.Events;
 using PokeGame.Core.Species;
 using PokeGame.Core.Varieties;
 
-namespace PokeGame.Core.Pokemons;
+namespace PokeGame.Core.Pokemon;
 
 [Trait(Traits.Category, Categories.Unit)]
 public class PokemonMovesTests
@@ -35,7 +35,7 @@ public class PokemonMovesTests
 
     _pokemon = new Pokemon2(_species, _variety, _form, new UniqueName(_uniqueNameSettings, "briquet"), new PokemonSize(128, 128),
       PokemonNatures.Instance.Find("careful"), new IndividualValues(27, 27, 25, 22, 25, 26), PokemonGender.Male, isShiny: false, PokemonType.Fire,
-      AbilitySlot.Primary, experience: 7028, new EffortValues(4, 0, 16, 0, 0, 16), vitality: 64, stamina: 55, new Friendship(91));
+      AbilitySlot.Primary, eggCycles: null, experience: 7028, new EffortValues(4, 0, 16, 0, 0, 16), vitality: 64, stamina: 55, new Friendship(91));
   }
 
   [Fact(DisplayName = "LearnMove: it should learn a move by evolving.")]
@@ -57,9 +57,9 @@ public class PokemonMovesTests
     Notes notes = new("Learned by evolving from Tepig to Pignite.");
     Assert.True(_pokemon.LearnMove(armThrust, position, level: null, notes, actorId));
     Assert.True(_pokemon.HasChanges);
-    Assert.Contains(_pokemon.Changes, change => change is PokemonMoveLearned2 learned && learned.ActorId == actorId && learned.MoveId == armThrust.Id && learned.Position == position);
+    Assert.Contains(_pokemon.Changes, change => change is PokemonMoveLearned learned && learned.ActorId == actorId && learned.MoveId == armThrust.Id && learned.Position == position);
 
-    KeyValuePair<MoveId, PokemonMove2> move = _pokemon.CurrentMoves.ElementAt(position);
+    KeyValuePair<MoveId, PokemonMove> move = _pokemon.CurrentMoves.ElementAt(position);
     Assert.Equal(armThrust.Id, move.Key);
     Assert.Equal(armThrust.PowerPoints.Value, move.Value.CurrentPowerPoints);
     Assert.Equal(armThrust.PowerPoints.Value, move.Value.MaximumPowerPoints);
@@ -84,9 +84,9 @@ public class PokemonMovesTests
     Move ember = new(PokemonType.Fire, MoveCategory.Special, new UniqueName(_uniqueNameSettings, "ember"), new PowerPoints(25), new Accuracy(100), new Power(40));
     Assert.True(_pokemon.LearnMove(ember, position, new Level(1)));
     Assert.True(_pokemon.HasChanges);
-    Assert.Contains(_pokemon.Changes, change => change is PokemonMoveLearned2 learned && learned.MoveId == ember.Id && learned.Position == 2);
+    Assert.Contains(_pokemon.Changes, change => change is PokemonMoveLearned learned && learned.MoveId == ember.Id && learned.Position == 2);
 
-    KeyValuePair<MoveId, PokemonMove2> move = _pokemon.CurrentMoves.ElementAt(2);
+    KeyValuePair<MoveId, PokemonMove> move = _pokemon.CurrentMoves.ElementAt(2);
     Assert.Equal(ember.Id, move.Key);
     Assert.Equal(ember.PowerPoints.Value, move.Value.CurrentPowerPoints);
     Assert.Equal(ember.PowerPoints.Value, move.Value.MaximumPowerPoints);
@@ -134,7 +134,7 @@ public class PokemonMovesTests
 
     int position = 1;
     Assert.True(_pokemon.RelearnMove(defenseCurl, position, actorId));
-    KeyValuePair<MoveId, PokemonMove2> move = _pokemon.CurrentMoves.ElementAt(position);
+    KeyValuePair<MoveId, PokemonMove> move = _pokemon.CurrentMoves.ElementAt(position);
     Assert.Equal(defenseCurl.Id, move.Key);
 
     Assert.True(_pokemon.HasChanges);

@@ -6,7 +6,7 @@ using PokeGame.Core.Forms;
 using PokeGame.Core.Species;
 using PokeGame.Core.Varieties;
 
-namespace PokeGame.Core.Pokemons;
+namespace PokeGame.Core.Pokemon;
 
 [Trait(Traits.Category, Categories.Unit)]
 public class PokemonConstructorTests
@@ -63,6 +63,7 @@ public class PokemonConstructorTests
       isShiny,
       teraType,
       abilitySlot,
+      eggCycles: null,
       experience,
       effortValues,
       vitality,
@@ -87,6 +88,7 @@ public class PokemonConstructorTests
     Assert.Equal(abilitySlot, pokemon.AbilitySlot);
     Assert.Equal(nature, pokemon.Nature);
 
+    Assert.Null(pokemon.EggCycles);
     Assert.Equal(_species.GrowthRate, pokemon.GrowthRate);
     Assert.Equal(21, pokemon.Level);
     Assert.Equal(experience, pokemon.Experience);
@@ -289,4 +291,7 @@ public class PokemonConstructorTests
       () => new Pokemon2(_species, _variety, _form, new UniqueName(_uniqueNameSettings, "briquet"), _randomizer.PokemonSize(), _randomizer.PokemonNature(), _randomizer.IndividualValues(), PokemonGender.Male, vitality: vitality));
     Assert.Equal("vitality", exception.ParamName);
   }
+
+  // TODO(fpion): error when EggCycles & Experience
+  // TODO(fpion): egg Pokémon
 }

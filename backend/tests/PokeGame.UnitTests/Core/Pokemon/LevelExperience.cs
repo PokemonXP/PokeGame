@@ -1,6 +1,6 @@
 ﻿using CsvHelper.Configuration;
 
-namespace PokeGame.Core.Pokemons;
+namespace PokeGame.Core.Pokemon;
 
 internal record LevelExperience
 {

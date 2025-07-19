@@ -3,11 +3,11 @@ using Krakenar.Core.Settings;
 using Logitar.EventSourcing;
 using PokeGame.Core.Abilities;
 using PokeGame.Core.Forms;
-using PokeGame.Core.Pokemons.Events;
+using PokeGame.Core.Pokemon.Events;
 using PokeGame.Core.Species;
 using PokeGame.Core.Varieties;
 
-namespace PokeGame.Core.Pokemons;
+namespace PokeGame.Core.Pokemon;
 
 [Trait(Traits.Category, Categories.Unit)]
 public class PokemonUpdateTests
@@ -53,7 +53,7 @@ public class PokemonUpdateTests
     Assert.Equal(notes, _pokemon.Notes);
     _pokemon.Update(actorId);
     Assert.True(_pokemon.HasChanges);
-    Assert.Contains(_pokemon.Changes, change => change is PokemonUpdated2 updated && updated.ActorId == actorId && updated.Notes == new Change<Notes>(notes));
+    Assert.Contains(_pokemon.Changes, change => change is PokemonUpdated updated && updated.ActorId == actorId && updated.Notes == new Change<Notes>(notes));
 
     _pokemon.ClearChanges();
     _pokemon.Notes = notes;
@@ -66,7 +66,7 @@ public class PokemonUpdateTests
     Assert.Null(_pokemon.Notes);
     _pokemon.Update(actorId);
     Assert.True(_pokemon.HasChanges);
-    Assert.Contains(_pokemon.Changes, change => change is PokemonUpdated2 updated && updated.ActorId == actorId && updated.Notes == new Change<Notes>(null));
+    Assert.Contains(_pokemon.Changes, change => change is PokemonUpdated updated && updated.ActorId == actorId && updated.Notes == new Change<Notes>(null));
   }
 
   [Fact(DisplayName = "It should handle Sprite changes correctly.")]
@@ -79,7 +79,7 @@ public class PokemonUpdateTests
     Assert.Equal(sprite, _pokemon.Sprite);
     _pokemon.Update(actorId);
     Assert.True(_pokemon.HasChanges);
-    Assert.Contains(_pokemon.Changes, change => change is PokemonUpdated2 updated && updated.ActorId == actorId && updated.Sprite == new Change<Url>(sprite));
+    Assert.Contains(_pokemon.Changes, change => change is PokemonUpdated updated && updated.ActorId == actorId && updated.Sprite == new Change<Url>(sprite));
 
     _pokemon.ClearChanges();
     _pokemon.Sprite = sprite;
@@ -92,7 +92,7 @@ public class PokemonUpdateTests
     Assert.Null(_pokemon.Sprite);
     _pokemon.Update(actorId);
     Assert.True(_pokemon.HasChanges);
-    Assert.Contains(_pokemon.Changes, change => change is PokemonUpdated2 updated && updated.ActorId == actorId && updated.Sprite == new Change<Url>(null));
+    Assert.Contains(_pokemon.Changes, change => change is PokemonUpdated updated && updated.ActorId == actorId && updated.Sprite == new Change<Url>(null));
   }
 
   [Fact(DisplayName = "It should handle Url changes correctly.")]
@@ -104,7 +104,7 @@ public class PokemonUpdateTests
     _pokemon.Url = url;
     Assert.Equal(url, _pokemon.Url);
     _pokemon.Update(actorId);
-    Assert.Contains(_pokemon.Changes, change => change is PokemonUpdated2 updated && updated.ActorId == actorId && updated.Url == new Change<Url>(url));
+    Assert.Contains(_pokemon.Changes, change => change is PokemonUpdated updated && updated.ActorId == actorId && updated.Url == new Change<Url>(url));
 
     _pokemon.ClearChanges();
     _pokemon.Url = url;
@@ -115,6 +115,6 @@ public class PokemonUpdateTests
     _pokemon.Url = null;
     Assert.Null(_pokemon.Url);
     _pokemon.Update(actorId);
-    Assert.Contains(_pokemon.Changes, change => change is PokemonUpdated2 updated && updated.ActorId == actorId && updated.Url == new Change<Url>(null));
+    Assert.Contains(_pokemon.Changes, change => change is PokemonUpdated updated && updated.ActorId == actorId && updated.Url == new Change<Url>(null));
   }
 }
