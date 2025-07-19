@@ -1,5 +1,4 @@
 ﻿using PokeGame.Core.Forms;
-using PokeGame.Core.Pokemons;
 
 namespace PokeGame.Core.Pokemon;
 
