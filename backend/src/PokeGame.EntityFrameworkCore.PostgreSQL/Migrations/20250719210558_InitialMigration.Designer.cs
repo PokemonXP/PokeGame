@@ -11,8 +11,8 @@ using PokeGame.EntityFrameworkCore;
 namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
 {
     [DbContext(typeof(PokemonContext))]
-    [Migration("20250717003357_AddMissingIndices")]
-    partial class AddMissingIndices
+    [Migration("20250719210558_InitialMigration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -111,20 +111,14 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
 
             modelBuilder.Entity("PokeGame.EntityFrameworkCore.Entities.FormAbilityEntity", b =>
                 {
-                    b.Property<int>("FormAbilityId")
-                        .ValueGeneratedOnAdd()
+                    b.Property<int>("FormId")
                         .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("FormAbilityId"));
 
                     b.Property<int>("AbilityId")
                         .HasColumnType("integer");
 
                     b.Property<Guid>("AbilityUid")
                         .HasColumnType("uuid");
-
-                    b.Property<int>("FormId")
-                        .HasColumnType("integer");
 
                     b.Property<Guid>("FormUid")
                         .HasColumnType("uuid");
@@ -134,16 +128,13 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
 
-                    b.HasKey("FormAbilityId");
+                    b.HasKey("FormId", "AbilityId");
 
                     b.HasIndex("AbilityId");
 
                     b.HasIndex("AbilityUid");
 
                     b.HasIndex("FormUid");
-
-                    b.HasIndex("FormId", "AbilityId")
-                        .IsUnique();
 
                     b.HasIndex("FormId", "Slot")
                         .IsUnique();
@@ -159,19 +150,23 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("FormId"));
 
-                    b.Property<string>("AlternativeSprite")
-                        .HasMaxLength(2048)
-                        .HasColumnType("character varying(2048)");
+                    b.Property<byte>("BaseAttack")
+                        .HasColumnType("smallint");
 
-                    b.Property<string>("AlternativeSpriteShiny")
-                        .HasMaxLength(2048)
-                        .HasColumnType("character varying(2048)");
+                    b.Property<byte>("BaseDefense")
+                        .HasColumnType("smallint");
 
-                    b.Property<int>("AttackBase")
-                        .HasColumnType("integer");
+                    b.Property<byte>("BaseHP")
+                        .HasColumnType("smallint");
 
-                    b.Property<int>("AttackYield")
-                        .HasColumnType("integer");
+                    b.Property<byte>("BaseSpecialAttack")
+                        .HasColumnType("smallint");
+
+                    b.Property<byte>("BaseSpecialDefense")
+                        .HasColumnType("smallint");
+
+                    b.Property<byte>("BaseSpeed")
+                        .HasColumnType("smallint");
 
                     b.Property<string>("CreatedBy")
                         .HasMaxLength(255)
@@ -180,37 +175,12 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("DefaultSprite")
-                        .IsRequired()
-                        .HasMaxLength(2048)
-                        .HasColumnType("character varying(2048)");
-
-                    b.Property<string>("DefaultSpriteShiny")
-                        .IsRequired()
-                        .HasMaxLength(2048)
-                        .HasColumnType("character varying(2048)");
-
-                    b.Property<int>("DefenseBase")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("DefenseYield")
-                        .HasColumnType("integer");
-
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
                     b.Property<string>("DisplayName")
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
-
-                    b.Property<int>("ExperienceYield")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("HPBase")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("HPYield")
-                        .HasColumnType("integer");
 
                     b.Property<int>("Height")
                         .HasColumnType("integer");
@@ -239,23 +209,29 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
 
-                    b.Property<int>("SpecialAttackBase")
+                    b.Property<int>("SpeciesId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("SpecialAttackYield")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("SpeciesUid")
+                        .HasColumnType("uuid");
 
-                    b.Property<int>("SpecialDefenseBase")
-                        .HasColumnType("integer");
+                    b.Property<string>("SpriteAlternative")
+                        .HasMaxLength(2048)
+                        .HasColumnType("character varying(2048)");
 
-                    b.Property<int>("SpecialDefenseYield")
-                        .HasColumnType("integer");
+                    b.Property<string>("SpriteAlternativeShiny")
+                        .HasMaxLength(2048)
+                        .HasColumnType("character varying(2048)");
 
-                    b.Property<int>("SpeedBase")
-                        .HasColumnType("integer");
+                    b.Property<string>("SpriteDefault")
+                        .IsRequired()
+                        .HasMaxLength(2048)
+                        .HasColumnType("character varying(2048)");
 
-                    b.Property<int>("SpeedYield")
-                        .HasColumnType("integer");
+                    b.Property<string>("SpriteShiny")
+                        .IsRequired()
+                        .HasMaxLength(2048)
+                        .HasColumnType("character varying(2048)");
 
                     b.Property<string>("StreamId")
                         .IsRequired()
@@ -295,6 +271,27 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
                     b.Property<int>("Weight")
                         .HasColumnType("integer");
 
+                    b.Property<int>("YieldAttack")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("YieldDefense")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("YieldExperience")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("YieldHP")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("YieldSpecialAttack")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("YieldSpecialDefense")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("YieldSpeed")
+                        .HasColumnType("integer");
+
                     b.HasKey("FormId");
 
                     b.HasIndex("CreatedBy");
@@ -303,12 +300,14 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
 
                     b.HasIndex("DisplayName");
 
-                    b.HasIndex("ExperienceYield");
-
                     b.HasIndex("Height");
 
                     b.HasIndex("Id")
                         .IsUnique();
+
+                    b.HasIndex("SpeciesId");
+
+                    b.HasIndex("SpeciesUid");
 
                     b.HasIndex("StreamId")
                         .IsUnique();
@@ -327,6 +326,8 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
                     b.HasIndex("Version");
 
                     b.HasIndex("Weight");
+
+                    b.HasIndex("YieldExperience");
 
                     b.HasIndex("VarietyId", "IsDefault");
 
@@ -465,14 +466,8 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("MoveId"));
 
-                    b.Property<int>("Accuracy")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("AccuracyChange")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("AttackChange")
-                        .HasColumnType("integer");
+                    b.Property<byte?>("Accuracy")
+                        .HasColumnType("smallint");
 
                     b.Property<string>("Category")
                         .IsRequired()
@@ -486,12 +481,6 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("CriticalChange")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("DefenseChange")
-                        .HasColumnType("integer");
-
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
@@ -499,36 +488,17 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
 
-                    b.Property<int>("EvasionChange")
-                        .HasColumnType("integer");
-
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid");
 
                     b.Property<string>("Notes")
                         .HasColumnType("text");
 
-                    b.Property<int>("Power")
-                        .HasColumnType("integer");
+                    b.Property<byte?>("Power")
+                        .HasColumnType("smallint");
 
-                    b.Property<int>("PowerPoints")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("SpecialAttackChange")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("SpecialDefenseChange")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("SpeedChange")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("StatusChance")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("StatusCondition")
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
+                    b.Property<byte>("PowerPoints")
+                        .HasColumnType("smallint");
 
                     b.Property<string>("StreamId")
                         .IsRequired()
@@ -564,9 +534,6 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
                     b.Property<long>("Version")
                         .HasColumnType("bigint");
 
-                    b.Property<string>("VolatileConditions")
-                        .HasColumnType("text");
-
                     b.HasKey("MoveId");
 
                     b.HasIndex("Accuracy");
@@ -585,8 +552,6 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
                     b.HasIndex("Power");
 
                     b.HasIndex("PowerPoints");
-
-                    b.HasIndex("StatusCondition");
 
                     b.HasIndex("StreamId")
                         .IsUnique();
@@ -620,6 +585,9 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
 
+                    b.Property<int?>("Box")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Characteristic")
                         .IsRequired()
                         .HasMaxLength(32)
@@ -637,6 +605,9 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
 
                     b.Property<Guid?>("CurrentTrainerUid")
                         .HasColumnType("uuid");
+
+                    b.Property<byte>("EggCycles")
+                        .HasColumnType("smallint");
 
                     b.Property<int>("Experience")
                         .HasColumnType("integer");
@@ -670,6 +641,9 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
 
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid");
+
+                    b.Property<bool>("IsShiny")
+                        .HasColumnType("boolean");
 
                     b.Property<int>("Level")
                         .HasColumnType("integer");
@@ -717,6 +691,9 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
 
                     b.Property<Guid?>("PokeBallUid")
                         .HasColumnType("uuid");
+
+                    b.Property<int?>("Position")
+                        .HasColumnType("integer");
 
                     b.Property<int>("SpeciesId")
                         .HasColumnType("integer");
@@ -799,15 +776,9 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
 
                     b.HasIndex("CurrentTrainerUid");
 
-                    b.HasIndex("Experience");
-
                     b.HasIndex("FormId");
 
                     b.HasIndex("FormUid");
-
-                    b.HasIndex("Friendship");
-
-                    b.HasIndex("Gender");
 
                     b.HasIndex("HeldItemId");
 
@@ -815,10 +786,6 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
 
                     b.HasIndex("Id")
                         .IsUnique();
-
-                    b.HasIndex("Level");
-
-                    b.HasIndex("Nature");
 
                     b.HasIndex("Nickname");
 
@@ -834,12 +801,8 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
 
                     b.HasIndex("SpeciesUid");
 
-                    b.HasIndex("StatusCondition");
-
                     b.HasIndex("StreamId")
                         .IsUnique();
-
-                    b.HasIndex("TeraType");
 
                     b.HasIndex("UniqueName");
 
@@ -867,20 +830,34 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
                     b.Property<int>("MoveId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("CurrentPowerPoints")
-                        .HasColumnType("integer");
+                    b.Property<byte>("CurrentPowerPoints")
+                        .HasColumnType("smallint");
 
                     b.Property<bool>("IsMastered")
                         .HasColumnType("boolean");
 
+                    b.Property<int?>("ItemId")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid?>("ItemUid")
+                        .HasColumnType("uuid");
+
                     b.Property<int>("Level")
                         .HasColumnType("integer");
 
-                    b.Property<int>("MaximumPowerPoints")
-                        .HasColumnType("integer");
+                    b.Property<byte>("MaximumPowerPoints")
+                        .HasColumnType("smallint");
+
+                    b.Property<string>("Method")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
                     b.Property<Guid>("MoveUid")
                         .HasColumnType("uuid");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("text");
 
                     b.Property<Guid>("PokemonUid")
                         .HasColumnType("uuid");
@@ -888,13 +865,14 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
                     b.Property<int?>("Position")
                         .HasColumnType("integer");
 
-                    b.Property<int>("ReferencePowerPoints")
-                        .HasColumnType("integer");
-
-                    b.Property<bool>("TechnicalMachine")
-                        .HasColumnType("boolean");
+                    b.Property<byte>("ReferencePowerPoints")
+                        .HasColumnType("smallint");
 
                     b.HasKey("PokemonId", "MoveId");
+
+                    b.HasIndex("ItemId");
+
+                    b.HasIndex("ItemUid");
 
                     b.HasIndex("MoveId");
 
@@ -992,37 +970,28 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
 
             modelBuilder.Entity("PokeGame.EntityFrameworkCore.Entities.RegionalNumberEntity", b =>
                 {
-                    b.Property<int>("RegionalNumberId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("RegionalNumberId"));
-
-                    b.Property<int>("Number")
+                    b.Property<int>("SpeciesId")
                         .HasColumnType("integer");
 
                     b.Property<int>("RegionId")
                         .HasColumnType("integer");
 
+                    b.Property<int>("Number")
+                        .HasColumnType("integer");
+
                     b.Property<Guid>("RegionUid")
                         .HasColumnType("uuid");
-
-                    b.Property<int>("SpeciesId")
-                        .HasColumnType("integer");
 
                     b.Property<Guid>("SpeciesUid")
                         .HasColumnType("uuid");
 
-                    b.HasKey("RegionalNumberId");
+                    b.HasKey("SpeciesId", "RegionId");
 
                     b.HasIndex("RegionUid");
 
                     b.HasIndex("SpeciesUid");
 
                     b.HasIndex("RegionId", "Number")
-                        .IsUnique();
-
-                    b.HasIndex("SpeciesId", "RegionId")
                         .IsUnique();
 
                     b.ToTable("RegionalNumbers", "Pokemon");
@@ -1058,6 +1027,9 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
 
+                    b.Property<byte>("EggCycles")
+                        .HasColumnType("smallint");
+
                     b.Property<string>("GrowthRate")
                         .IsRequired()
                         .HasMaxLength(255)
@@ -1071,6 +1043,15 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
 
                     b.Property<int>("Number")
                         .HasColumnType("integer");
+
+                    b.Property<string>("PrimaryEggGroup")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<string>("SecondaryEggGroup")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
                     b.Property<string>("StreamId")
                         .IsRequired()
@@ -1115,6 +1096,8 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
 
                     b.HasIndex("DisplayName");
 
+                    b.HasIndex("EggCycles");
+
                     b.HasIndex("GrowthRate");
 
                     b.HasIndex("Id")
@@ -1122,6 +1105,10 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
 
                     b.HasIndex("Number")
                         .IsUnique();
+
+                    b.HasIndex("PrimaryEggGroup");
+
+                    b.HasIndex("SecondaryEggGroup");
 
                     b.HasIndex("StreamId")
                         .IsUnique();
@@ -1216,7 +1203,11 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
                         .HasMaxLength(2048)
                         .HasColumnType("character varying(2048)");
 
-                    b.Property<Guid?>("UserId")
+                    b.Property<string>("UserId")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<Guid?>("UserUid")
                         .HasColumnType("uuid");
 
                     b.Property<long>("Version")
@@ -1256,6 +1247,8 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
 
                     b.HasIndex("UserId");
 
+                    b.HasIndex("UserUid");
+
                     b.HasIndex("Version");
 
                     b.ToTable("Trainers", "Pokemon");
@@ -1290,7 +1283,6 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("Genus")
-                        .IsRequired()
                         .HasMaxLength(16)
                         .HasColumnType("character varying(16)");
 
@@ -1372,6 +1364,36 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
                     b.ToTable("Varieties", "Pokemon");
                 });
 
+            modelBuilder.Entity("PokeGame.EntityFrameworkCore.Entities.VarietyMoveEntity", b =>
+                {
+                    b.Property<int>("VarietyId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("MoveId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Level")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("MoveUid")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("VarietyUid")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("VarietyId", "MoveId");
+
+                    b.HasIndex("Level");
+
+                    b.HasIndex("MoveId");
+
+                    b.HasIndex("MoveUid");
+
+                    b.HasIndex("VarietyUid");
+
+                    b.ToTable("VarietyMoves", "Pokemon");
+                });
+
             modelBuilder.Entity("PokeGame.EntityFrameworkCore.Entities.FormAbilityEntity", b =>
                 {
                     b.HasOne("PokeGame.EntityFrameworkCore.Entities.AbilityEntity", "Ability")
@@ -1393,11 +1415,19 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
 
             modelBuilder.Entity("PokeGame.EntityFrameworkCore.Entities.FormEntity", b =>
                 {
+                    b.HasOne("PokeGame.EntityFrameworkCore.Entities.SpeciesEntity", "Species")
+                        .WithMany()
+                        .HasForeignKey("SpeciesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("PokeGame.EntityFrameworkCore.Entities.VarietyEntity", "Variety")
                         .WithMany("Forms")
                         .HasForeignKey("VarietyId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("Species");
 
                     b.Navigation("Variety");
                 });
@@ -1469,6 +1499,11 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
 
             modelBuilder.Entity("PokeGame.EntityFrameworkCore.Entities.PokemonMoveEntity", b =>
                 {
+                    b.HasOne("PokeGame.EntityFrameworkCore.Entities.ItemEntity", "Item")
+                        .WithMany("LearnedMoves")
+                        .HasForeignKey("ItemId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("PokeGame.EntityFrameworkCore.Entities.MoveEntity", "Move")
                         .WithMany("Pokemon")
                         .HasForeignKey("MoveId")
@@ -1480,6 +1515,8 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
                         .HasForeignKey("PokemonId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Item");
 
                     b.Navigation("Move");
 
@@ -1516,6 +1553,25 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
                     b.Navigation("Species");
                 });
 
+            modelBuilder.Entity("PokeGame.EntityFrameworkCore.Entities.VarietyMoveEntity", b =>
+                {
+                    b.HasOne("PokeGame.EntityFrameworkCore.Entities.MoveEntity", "Move")
+                        .WithMany("Varieties")
+                        .HasForeignKey("MoveId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("PokeGame.EntityFrameworkCore.Entities.VarietyEntity", "Variety")
+                        .WithMany("Moves")
+                        .HasForeignKey("VarietyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Move");
+
+                    b.Navigation("Variety");
+                });
+
             modelBuilder.Entity("PokeGame.EntityFrameworkCore.Entities.AbilityEntity", b =>
                 {
                     b.Navigation("Forms");
@@ -1533,6 +1589,8 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
                     b.Navigation("ContainedPokemon");
 
                     b.Navigation("HoldingPokemon");
+
+                    b.Navigation("LearnedMoves");
                 });
 
             modelBuilder.Entity("PokeGame.EntityFrameworkCore.Entities.MoveEntity", b =>
@@ -1540,6 +1598,8 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
                     b.Navigation("Pokemon");
 
                     b.Navigation("TechnicalMachines");
+
+                    b.Navigation("Varieties");
                 });
 
             modelBuilder.Entity("PokeGame.EntityFrameworkCore.Entities.PokemonEntity", b =>
@@ -1571,6 +1631,8 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
             modelBuilder.Entity("PokeGame.EntityFrameworkCore.Entities.VarietyEntity", b =>
                 {
                     b.Navigation("Forms");
+
+                    b.Navigation("Moves");
 
                     b.Navigation("Pokemon");
                 });
