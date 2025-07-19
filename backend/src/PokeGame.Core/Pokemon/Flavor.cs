@@ -1,4 +1,4 @@
-﻿namespace PokeGame.Core;
+﻿namespace PokeGame.Core.Pokemon;
 
 public enum Flavor
 {

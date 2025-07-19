@@ -35,7 +35,7 @@ public class PokemonConstructorTests
   [Fact(DisplayName = "It should create an egg Pokémon.")]
   public void Given_EggCycles_When_ctor_Then_EggPokemon()
   {
-    Pokemon2 pokemon = new(
+    Specimen pokemon = new(
       _species,
       _variety,
       _form,
@@ -86,7 +86,7 @@ public class PokemonConstructorTests
     EffortValues effortValues = new(4, 0, 16, 0, 0, 16);
     Friendship friendship = new(91);
 
-    Pokemon2 pokemon = new(
+    Specimen pokemon = new(
       _species,
       _variety,
       _form,
@@ -145,7 +145,7 @@ public class PokemonConstructorTests
   [Fact(DisplayName = "It should create the correct Pokémon from default arguments.")]
   public void Given_DefaultArguments_When_ctor_Then_CorrectPokemon()
   {
-    Pokemon2 pokemon = new(
+    Specimen pokemon = new(
       _species,
       _variety,
       _form,
@@ -179,7 +179,7 @@ public class PokemonConstructorTests
   public void Given_EggCyclesWithExperience_When_ctor_Then_ArgumentException()
   {
     var exception = Assert.Throws<ArgumentException>(
-      () => new Pokemon2(_species, _variety, _form, new UniqueName(_uniqueNameSettings, "briquet"), _randomizer.PokemonSize(), _randomizer.PokemonNature(), _randomizer.IndividualValues(), PokemonGender.Male, eggCycles: _species.EggCycles, experience: 10));
+      () => new Specimen(_species, _variety, _form, new UniqueName(_uniqueNameSettings, "briquet"), _randomizer.PokemonSize(), _randomizer.PokemonNature(), _randomizer.IndividualValues(), PokemonGender.Male, eggCycles: _species.EggCycles, experience: 10));
     Assert.Equal("experience", exception.ParamName);
     Assert.StartsWith("An egg Pokémon cannot have experience.", exception.Message);
   }
@@ -188,7 +188,7 @@ public class PokemonConstructorTests
   public void Given_InvalidAbilitySlot_When_ctor_Then_ArgumentException()
   {
     var exception = Assert.Throws<ArgumentException>(
-      () => new Pokemon2(_species, _variety, _form, new UniqueName(_uniqueNameSettings, "briquet"), _randomizer.PokemonSize(), _randomizer.PokemonNature(), _randomizer.IndividualValues(), PokemonGender.Male, abilitySlot: AbilitySlot.Secondary));
+      () => new Specimen(_species, _variety, _form, new UniqueName(_uniqueNameSettings, "briquet"), _randomizer.PokemonSize(), _randomizer.PokemonNature(), _randomizer.IndividualValues(), PokemonGender.Male, abilitySlot: AbilitySlot.Secondary));
     Assert.Equal("abilitySlot", exception.ParamName);
   }
 
@@ -202,7 +202,7 @@ public class PokemonConstructorTests
       new Yield(62, 1, 0, 0, 0, 0, 0), sprites, isDefault: true, height: new Height(5), weight: new Weight(99));
 
     var exception = Assert.Throws<ArgumentException>(
-      () => new Pokemon2(_species, _variety, form, new(_uniqueNameSettings, "briquet"), _randomizer.PokemonSize(), _randomizer.PokemonNature(), _randomizer.IndividualValues()));
+      () => new Specimen(_species, _variety, form, new(_uniqueNameSettings, "briquet"), _randomizer.PokemonSize(), _randomizer.PokemonNature(), _randomizer.IndividualValues()));
     Assert.Equal("form", exception.ParamName);
   }
 
@@ -219,7 +219,7 @@ public class PokemonConstructorTests
       new Yield(101, 1, 0, 0, 0, 0, 0), sprites, isDefault: true, height: new Height(3), weight: new Weight(40));
 
     var exception = Assert.Throws<ArgumentException>(
-      () => new Pokemon2(species, variety, form, form.UniqueName, _randomizer.PokemonSize(), _randomizer.PokemonNature(), _randomizer.IndividualValues(), PokemonGender.Male));
+      () => new Specimen(species, variety, form, form.UniqueName, _randomizer.PokemonSize(), _randomizer.PokemonNature(), _randomizer.IndividualValues(), PokemonGender.Male));
     Assert.Equal("gender", exception.ParamName);
     Assert.StartsWith("The Pokémon should not have a gender (unknown).", exception.Message);
   }
@@ -231,7 +231,7 @@ public class PokemonConstructorTests
     Variety variety = new(species, species.UniqueName, isDefault: true, new GenderRatio(7));
 
     var exception = Assert.Throws<ArgumentException>(
-      () => new Pokemon2(_species, variety, _form, new(_uniqueNameSettings, "briquet"), _randomizer.PokemonSize(), _randomizer.PokemonNature(), _randomizer.IndividualValues()));
+      () => new Specimen(_species, variety, _form, new(_uniqueNameSettings, "briquet"), _randomizer.PokemonSize(), _randomizer.PokemonNature(), _randomizer.IndividualValues()));
     Assert.Equal("variety", exception.ParamName);
   }
 
@@ -239,7 +239,7 @@ public class PokemonConstructorTests
   public void Given_GenderIsMissing_When_ctor_Then_ArgumentNullException()
   {
     var exception = Assert.Throws<ArgumentNullException>(
-      () => new Pokemon2(_species, _variety, _form, new(_uniqueNameSettings, "briquet"), _randomizer.PokemonSize(), _randomizer.PokemonNature(), _randomizer.IndividualValues()));
+      () => new Specimen(_species, _variety, _form, new(_uniqueNameSettings, "briquet"), _randomizer.PokemonSize(), _randomizer.PokemonNature(), _randomizer.IndividualValues()));
     Assert.Equal("gender", exception.ParamName);
     Assert.StartsWith("The Pokémon should have a gender.", exception.Message);
   }
@@ -249,7 +249,7 @@ public class PokemonConstructorTests
   {
     AbilitySlot abilitySlot = (AbilitySlot)(-1);
     var exception = Assert.Throws<ArgumentOutOfRangeException>(
-      () => new Pokemon2(_species, _variety, _form, new(_uniqueNameSettings, "briquet"), _randomizer.PokemonSize(), _randomizer.PokemonNature(), _randomizer.IndividualValues(), PokemonGender.Male, abilitySlot: abilitySlot));
+      () => new Specimen(_species, _variety, _form, new(_uniqueNameSettings, "briquet"), _randomizer.PokemonSize(), _randomizer.PokemonNature(), _randomizer.IndividualValues(), PokemonGender.Male, abilitySlot: abilitySlot));
     Assert.Equal("abilitySlot", exception.ParamName);
   }
 
@@ -258,7 +258,7 @@ public class PokemonConstructorTests
   {
     EggCycles eggCycles = new((byte)(_species.EggCycles.Value * 2));
     var exception = Assert.Throws<ArgumentOutOfRangeException>(
-      () => new Pokemon2(_species, _variety, _form, new UniqueName(_uniqueNameSettings, "briquet"), _randomizer.PokemonSize(), _randomizer.PokemonNature(), _randomizer.IndividualValues(), PokemonGender.Male, eggCycles: eggCycles));
+      () => new Specimen(_species, _variety, _form, new UniqueName(_uniqueNameSettings, "briquet"), _randomizer.PokemonSize(), _randomizer.PokemonNature(), _randomizer.IndividualValues(), PokemonGender.Male, eggCycles: eggCycles));
     Assert.Equal("eggCycles", exception.ParamName);
   }
 
@@ -267,7 +267,7 @@ public class PokemonConstructorTests
   {
     int experience = -100;
     var exception = Assert.Throws<ArgumentOutOfRangeException>(
-      () => new Pokemon2(_species, _variety, _form, new UniqueName(_uniqueNameSettings, "briquet"), _randomizer.PokemonSize(), _randomizer.PokemonNature(), _randomizer.IndividualValues(), PokemonGender.Male, experience: experience));
+      () => new Specimen(_species, _variety, _form, new UniqueName(_uniqueNameSettings, "briquet"), _randomizer.PokemonSize(), _randomizer.PokemonNature(), _randomizer.IndividualValues(), PokemonGender.Male, experience: experience));
     Assert.Equal("experience", exception.ParamName);
   }
 
@@ -276,7 +276,7 @@ public class PokemonConstructorTests
   {
     PokemonGender gender = (PokemonGender)(-1);
     var exception = Assert.Throws<ArgumentOutOfRangeException>(
-      () => new Pokemon2(_species, _variety, _form, new(_uniqueNameSettings, "briquet"), _randomizer.PokemonSize(), _randomizer.PokemonNature(), _randomizer.IndividualValues(), gender));
+      () => new Specimen(_species, _variety, _form, new(_uniqueNameSettings, "briquet"), _randomizer.PokemonSize(), _randomizer.PokemonNature(), _randomizer.IndividualValues(), gender));
     Assert.Equal("gender", exception.ParamName);
   }
 
@@ -294,7 +294,7 @@ public class PokemonConstructorTests
       new Yield(172, 0, 0, 2, 0, 0, 0), sprites, isDefault: true, height: new Height(12), weight: new Weight(755));
 
     var exception = Assert.Throws<ArgumentOutOfRangeException>(
-      () => new Pokemon2(species, variety, form, form.UniqueName, _randomizer.PokemonSize(), _randomizer.PokemonNature(), _randomizer.IndividualValues(), PokemonGender.Male));
+      () => new Specimen(species, variety, form, form.UniqueName, _randomizer.PokemonSize(), _randomizer.PokemonNature(), _randomizer.IndividualValues(), PokemonGender.Male));
     Assert.Equal("gender", exception.ParamName);
     Assert.StartsWith("The gender 'Male' is not valid for ratio '0'.", exception.Message);
   }
@@ -313,7 +313,7 @@ public class PokemonConstructorTests
       new Yield(172, 0, 1, 0, 0, 0, 1), sprites, isDefault: true, height: new Height(14), weight: new Weight(884));
 
     var exception = Assert.Throws<ArgumentOutOfRangeException>(
-      () => new Pokemon2(species, variety, form, form.UniqueName, _randomizer.PokemonSize(), _randomizer.PokemonNature(), _randomizer.IndividualValues(), PokemonGender.Female));
+      () => new Specimen(species, variety, form, form.UniqueName, _randomizer.PokemonSize(), _randomizer.PokemonNature(), _randomizer.IndividualValues(), PokemonGender.Female));
     Assert.Equal("gender", exception.ParamName);
     Assert.StartsWith("The gender 'Female' is not valid for ratio '8'.", exception.Message);
   }
@@ -323,7 +323,7 @@ public class PokemonConstructorTests
   {
     int stamina = -10;
     var exception = Assert.Throws<ArgumentOutOfRangeException>(
-      () => new Pokemon2(_species, _variety, _form, new UniqueName(_uniqueNameSettings, "briquet"), _randomizer.PokemonSize(), _randomizer.PokemonNature(), _randomizer.IndividualValues(), PokemonGender.Male, stamina: stamina));
+      () => new Specimen(_species, _variety, _form, new UniqueName(_uniqueNameSettings, "briquet"), _randomizer.PokemonSize(), _randomizer.PokemonNature(), _randomizer.IndividualValues(), PokemonGender.Male, stamina: stamina));
     Assert.Equal("stamina", exception.ParamName);
   }
 
@@ -332,7 +332,7 @@ public class PokemonConstructorTests
   {
     PokemonType teraType = (PokemonType)(-1);
     var exception = Assert.Throws<ArgumentOutOfRangeException>(
-      () => new Pokemon2(_species, _variety, _form, new(_uniqueNameSettings, "briquet"), _randomizer.PokemonSize(), _randomizer.PokemonNature(), _randomizer.IndividualValues(), PokemonGender.Male, teraType: teraType));
+      () => new Specimen(_species, _variety, _form, new(_uniqueNameSettings, "briquet"), _randomizer.PokemonSize(), _randomizer.PokemonNature(), _randomizer.IndividualValues(), PokemonGender.Male, teraType: teraType));
     Assert.Equal("teraType", exception.ParamName);
   }
 
@@ -341,7 +341,7 @@ public class PokemonConstructorTests
   {
     int vitality = -1;
     var exception = Assert.Throws<ArgumentOutOfRangeException>(
-      () => new Pokemon2(_species, _variety, _form, new UniqueName(_uniqueNameSettings, "briquet"), _randomizer.PokemonSize(), _randomizer.PokemonNature(), _randomizer.IndividualValues(), PokemonGender.Male, vitality: vitality));
+      () => new Specimen(_species, _variety, _form, new UniqueName(_uniqueNameSettings, "briquet"), _randomizer.PokemonSize(), _randomizer.PokemonNature(), _randomizer.IndividualValues(), PokemonGender.Male, vitality: vitality));
     Assert.Equal("vitality", exception.ParamName);
   }
 }

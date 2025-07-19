@@ -21,7 +21,7 @@ internal class DeletePokemonHandler : ICommandHandler<DeletePokemon, PokemonMode
   public async Task<PokemonModel?> HandleAsync(DeletePokemon command, CancellationToken cancellationToken)
   {
     PokemonId pokemonId = new(command.Id);
-    Pokemon2? pokemon = await _pokemonRepository.LoadAsync(pokemonId, cancellationToken);
+    Specimen? pokemon = await _pokemonRepository.LoadAsync(pokemonId, cancellationToken);
     if (pokemon is null)
     {
       return null;

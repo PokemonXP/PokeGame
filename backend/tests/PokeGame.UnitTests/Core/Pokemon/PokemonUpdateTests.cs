@@ -15,7 +15,7 @@ public class PokemonUpdateTests
   private readonly PokemonSpecies _species;
   private readonly Variety _variety;
   private readonly Form _form;
-  private readonly Pokemon2 _pokemon;
+  private readonly Specimen _pokemon;
 
   public PokemonUpdateTests()
   {
@@ -32,7 +32,7 @@ public class PokemonUpdateTests
       new FormAbilities(blaze, secondary: null, thickFat), new BaseStatistics(90, 93, 55, 70, 55, 55),
       new Yield(146, 0, 2, 0, 0, 0, 0), sprites, isDefault: true, height: new Height(10), weight: new Weight(555));
 
-    _pokemon = new Pokemon2(
+    _pokemon = new Specimen(
       _species,
       _variety,
       _form,

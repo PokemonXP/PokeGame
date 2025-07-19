@@ -4,7 +4,7 @@ namespace PokeGame.Core.Pokemon;
 
 internal interface IPokemonManager
 {
-  Task SaveAsync(Pokemon2 pokemon, CancellationToken cancellationToken = default);
+  Task SaveAsync(Specimen pokemon, CancellationToken cancellationToken = default);
 }
 
 internal class PokemonManager : IPokemonManager
@@ -18,7 +18,7 @@ internal class PokemonManager : IPokemonManager
     _pokemonRepository = pokemonRepository;
   }
 
-  public async Task SaveAsync(Pokemon2 pokemon, CancellationToken cancellationToken)
+  public async Task SaveAsync(Specimen pokemon, CancellationToken cancellationToken)
   {
     bool hasUniqueNameChanged = pokemon.Changes.Any(change => change is PokemonCreated || change is PokemonUniqueNameChanged);
     if (hasUniqueNameChanged)

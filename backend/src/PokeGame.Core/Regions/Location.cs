@@ -1,14 +1,14 @@
 ﻿using FluentValidation;
 
-namespace PokeGame.Core;
+namespace PokeGame.Core.Regions;
 
-public record GameLocation
+public record Location
 {
   public const int MaximumLength = byte.MaxValue;
 
   public string Value { get; }
 
-  public GameLocation(string value)
+  public Location(string value)
   {
     Value = value.Trim();
     new Validator().ValidateAndThrow(this);
@@ -16,7 +16,7 @@ public record GameLocation
 
   public override string ToString() => Value;
 
-  private class Validator : AbstractValidator<GameLocation>
+  private class Validator : AbstractValidator<Location>
   {
     public Validator()
     {

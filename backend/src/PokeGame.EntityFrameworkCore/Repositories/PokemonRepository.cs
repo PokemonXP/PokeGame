@@ -9,18 +9,18 @@ internal class PokemonRepository : Repository, IPokemonRepository
   {
   }
 
-  public async Task<Pokemon2?> LoadAsync(PokemonId id, CancellationToken cancellationToken)
+  public async Task<Specimen?> LoadAsync(PokemonId id, CancellationToken cancellationToken)
   {
-    return await LoadAsync<Pokemon2>(id.StreamId, cancellationToken);
+    return await LoadAsync<Specimen>(id.StreamId, cancellationToken);
   }
 
-  public async Task SaveAsync(Pokemon2 pokemon, CancellationToken cancellationToken)
+  public async Task SaveAsync(Specimen pokemon, CancellationToken cancellationToken)
   {
     await base.SaveAsync(pokemon, cancellationToken);
   }
 
-  public async Task SaveAsync(IEnumerable<Pokemon2> pokemon, CancellationToken cancellationToken)
+  public async Task SaveAsync(IEnumerable<Specimen> specimens, CancellationToken cancellationToken)
   {
-    await base.SaveAsync(pokemon, cancellationToken);
+    await base.SaveAsync(specimens, cancellationToken);
   }
 }

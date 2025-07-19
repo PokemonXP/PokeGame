@@ -18,7 +18,7 @@ public class PokemonMovesTests
   private readonly PokemonSpecies _species;
   private readonly Variety _variety;
   private readonly Form _form;
-  private readonly Pokemon2 _pokemon;
+  private readonly Specimen _pokemon;
 
   public PokemonMovesTests()
   {
@@ -33,7 +33,7 @@ public class PokemonMovesTests
       new FormAbilities(blaze, secondary: null, thickFat), new BaseStatistics(90, 93, 55, 70, 55, 55),
       new Yield(146, 0, 2, 0, 0, 0, 0), sprites, isDefault: true, height: new Height(10), weight: new Weight(555));
 
-    _pokemon = new Pokemon2(_species, _variety, _form, new UniqueName(_uniqueNameSettings, "briquet"), new PokemonSize(128, 128),
+    _pokemon = new Specimen(_species, _variety, _form, new UniqueName(_uniqueNameSettings, "briquet"), new PokemonSize(128, 128),
       PokemonNatures.Instance.Find("careful"), new IndividualValues(27, 27, 25, 22, 25, 26), PokemonGender.Male, isShiny: false, PokemonType.Fire,
       AbilitySlot.Primary, eggCycles: null, experience: 7028, new EffortValues(4, 0, 16, 0, 0, 16), vitality: 64, stamina: 55, new Friendship(91));
   }

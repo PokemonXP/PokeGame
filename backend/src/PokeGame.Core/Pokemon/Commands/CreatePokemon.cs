@@ -66,14 +66,14 @@ internal class CreatePokemonHandler : ICommandHandler<CreatePokemon, PokemonMode
     new CreatePokemonValidator(uniqueNameSettings).ValidateAndThrow(payload);
 
     PokemonId pokemonId = PokemonId.NewId();
-    Pokemon2? pokemon;
+    Specimen? pokemon;
     if (payload.Id.HasValue)
     {
       pokemonId = new(payload.Id.Value);
       pokemon = await _pokemonRepository.LoadAsync(pokemonId, cancellationToken);
       if (pokemon is not null)
       {
-        throw new IdAlreadyUsedException<Pokemon2>(realmId, payload.Id.Value, nameof(payload.Id));
+        throw new IdAlreadyUsedException<Specimen>(realmId, payload.Id.Value, nameof(payload.Id));
       }
     }
 
@@ -134,7 +134,7 @@ internal class CreatePokemonHandler : ICommandHandler<CreatePokemon, PokemonMode
     for (int i = 0; i < learnedMoves.Count; i++)
     {
       LearnedMove learned = learnedMoves[i];
-      int position = Math.Max(i + Pokemon2.MoveLimit - learnedMoves.Count, 0);
+      int position = Math.Max(i + Specimen.MoveLimit - learnedMoves.Count, 0);
       pokemon.LearnMove(learned.Move, position, learned.Level, notes: null, actorId);
       i++;
     }

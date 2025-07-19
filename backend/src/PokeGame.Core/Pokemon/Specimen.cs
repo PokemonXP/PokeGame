@@ -10,7 +10,7 @@ using PokeGame.Core.Varieties;
 
 namespace PokeGame.Core.Pokemon;
 
-public class Pokemon2 : AggregateRoot // TODO(fpion): rename this class, PokemonSpecimen?
+public class Specimen : AggregateRoot
 {
   public const int MoveLimit = 4;
 
@@ -104,11 +104,11 @@ public class Pokemon2 : AggregateRoot // TODO(fpion): rename this class, Pokemon
   public IReadOnlyCollection<KeyValuePair<MoveId, PokemonMove>> CurrentMoves
     => _currentMoves.Select(id => new KeyValuePair<MoveId, PokemonMove>(id, _learnedMoves[id])).ToList().AsReadOnly();
 
-  public Pokemon2() : base()
+  public Specimen() : base()
   {
   }
 
-  public Pokemon2(
+  public Specimen(
     PokemonSpecies species,
     Variety variety,
     Form form,
