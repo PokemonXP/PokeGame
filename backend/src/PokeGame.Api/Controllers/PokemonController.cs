@@ -49,20 +49,6 @@ public class PokemonController : ControllerBase
     return pokemon is null ? NotFound() : Ok(pokemon);
   }
 
-  //[HttpPut("{id}/moves/relearn")]
-  //public async Task<ActionResult<PokemonModel>> RelearnMoveAsync(Guid id, [FromBody] RelearnPokemonMovePayload payload, CancellationToken cancellationToken)
-  //{
-  //  PokemonModel? pokemon = await _pokemonService.RelearnMoveAsync(id, payload, cancellationToken);
-  //  return pokemon is null ? NotFound() : Ok(pokemon);
-  //}
-
-  //[HttpPut("{id}/moves/switch")]
-  //public async Task<ActionResult<PokemonModel>> SwitchMovesAsync(Guid id, [FromBody] SwitchPokemonMovesPayload payload, CancellationToken cancellationToken)
-  //{
-  //  PokemonModel? pokemon = await _pokemonService.SwitchMovesAsync(id, payload, cancellationToken);
-  //  return pokemon is null ? NotFound() : Ok(pokemon);
-  //}
-
   [HttpGet]
   public async Task<ActionResult<SearchResults<PokemonModel>>> SearchAsync([FromQuery] SearchPokemonParameters parameters, CancellationToken cancellationToken)
   {
@@ -70,11 +56,4 @@ public class PokemonController : ControllerBase
     SearchResults<PokemonModel> regions = await _pokemonService.SearchAsync(payload, cancellationToken);
     return Ok(regions);
   }
-
-  //[HttpPatch("{id}")]
-  //public async Task<ActionResult<PokemonModel>> UpdateAsync(Guid id, [FromBody] UpdatePokemonPayload payload, CancellationToken cancellationToken)
-  //{
-  //  PokemonModel? pokemon = await _pokemonService.UpdateAsync(id, payload, cancellationToken);
-  //  return pokemon is null ? NotFound() : Ok(pokemon);
-  //}
 }
