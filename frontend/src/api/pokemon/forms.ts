@@ -5,9 +5,9 @@ import type { Form } from "@/types/pokemon";
 import { get } from "..";
 import type { SearchFormsPayload } from "@/types/pokemon/forms";
 
-export async function searchForms(varietyId: string, payload: SearchFormsPayload): Promise<SearchResults<Form>> {
-  const url: string = new urlUtils.UrlBuilder({ path: "/varieties/{varietyId}/forms" })
-    .setParameter("varietyId", varietyId)
+export async function searchForms(payload: SearchFormsPayload): Promise<SearchResults<Form>> {
+  const url: string = new urlUtils.UrlBuilder({ path: "/forms" })
+    .setQuery("variety", payload.varietyId ?? "")
     .setQuery("type", payload.type ?? "")
     .setQuery("ability", payload.abilityId ?? "")
     .setQuery("ids", payload.ids)

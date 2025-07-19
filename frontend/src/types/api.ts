@@ -21,7 +21,7 @@ export type ApiVersion = {
 
 export enum ErrorCodes {
   InvalidCredentials = "InvalidCredentials",
-  PokemonUniqueNameAlreadyUsed = "PokemonUniqueNameAlreadyUsed",
+  UniqueNameAlreadyUsed = "UniqueNameAlreadyUsed",
 }
 
 export type ProblemDetails = {

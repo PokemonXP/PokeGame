@@ -1,71 +1,73 @@
 <script setup lang="ts">
-import { TarButton } from "logitar-vue3-ui";
+import { arrayUtils } from "logitar-js";
+import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 
 import MoveCategoryBadge from "@/components/moves/MoveCategoryBadge.vue";
 import PokemonTypeImage from "@/components/pokemon/PokemonTypeImage.vue";
-import type { Move } from "@/types/pokemon/moves";
+import type { VarietyMove } from "@/types/pokemon";
 import { getMoveUrl } from "@/helpers/cms";
 
 const { n, t } = useI18n();
+const { orderBy } = arrayUtils;
 
-defineProps<{
-  moves: Move[];
+const props = defineProps<{
+  level: number;
+  moves: VarietyMove[];
 }>();
 
-defineEmits<{
-  (e: "down", index: number): void;
-  (e: "removed", index: number): void;
-  (e: "up", index: number): void;
-}>();
+const sortedMoves = computed<VarietyMove[]>(() =>
+  orderBy(
+    props.moves
+      .filter((item) => !item.level || item.level <= props.level)
+      .map((item) => ({ ...item, sort: [item.level.toString().padStart(3, "0"), item.move.displayName ?? item.move.uniqueName].join("_") })),
+    "sort",
+  ),
+);
 </script>
 
 <template>
   <table class="table table-striped">
     <thead>
       <tr>
+        <th scope="col">{{ t("pokemon.level.label") }}</th>
         <th scope="col">{{ t("pokemon.move.name") }}</th>
         <th scope="col">{{ t("pokemon.move.typeAndCategory") }}</th>
         <th scope="col">{{ t("pokemon.move.accuracy") }}</th>
         <th scope="col">{{ t("pokemon.move.power") }}</th>
         <th scope="col">{{ t("pokemon.move.powerPoints.label") }}</th>
         <th scope="col">{{ t("pokemon.move.description") }}</th>
-        <th scope="col"></th>
       </tr>
     </thead>
     <tbody>
-      <tr v-for="(move, index) in moves" :key="move.id">
+      <tr v-for="item in sortedMoves" :key="item.move.id">
+        <td>{{ item.level || t("pokemon.move.learningMethod.options.Evolving") }}</td>
         <td>
-          <a :href="getMoveUrl(move)" target="_blank">
-            <template v-if="move.displayName">
-              {{ move.displayName }}
+          <a :href="getMoveUrl(item.move)" target="_blank">
+            <template v-if="item.move.displayName">
+              {{ item.move.displayName }}
               <br />
             </template>
-            {{ move.uniqueName }}
+            {{ item.move.uniqueName }}
           </a>
         </td>
         <td>
-          <PokemonTypeImage :type="move.type" />
+          <PokemonTypeImage :type="item.move.type" />
           <br />
-          <MoveCategoryBadge :category="move.category" />
+          <MoveCategoryBadge :category="item.move.category" />
         </td>
         <td>
-          <template v-if="move.accuracy">{{ n(move.accuracy / 100, "integer_percent") }}</template>
+          <template v-if="item.move.accuracy">{{ n(item.move.accuracy / 100, "integer_percent") }}</template>
           <span v-else class="text-muted">{{ "—" }}</span>
         </td>
         <td>
-          <template v-if="move.power">{{ move.power }}</template>
+          <template v-if="item.move.power">{{ item.move.power }}</template>
           <span v-else class="text-muted">{{ "—" }}</span>
         </td>
-        <td>{{ move.powerPoints }}</td>
+        <td>{{ item.move.powerPoints }}</td>
         <td class="description">
-          <template v-if="move.description">{{ move.description }}</template>
+          <template v-if="item.move.description">{{ item.move.description }}</template>
           <span v-else class="text-muted">{{ "—" }}</span>
-        </td>
-        <td>
-          <TarButton class="me-1" :disabled="index === 0" icon="fas fa-arrow-up" @click="$emit('up', index)" />
-          <TarButton class="mx-1" :disabled="index === moves.length - 1" icon="fas fa-arrow-down" @click="$emit('down', index)" />
-          <TarButton class="ms-1" icon="fas fa-times" variant="danger" @click="$emit('removed', index)" />
         </td>
       </tr>
     </tbody>

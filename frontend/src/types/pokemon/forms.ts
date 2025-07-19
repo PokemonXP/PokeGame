@@ -8,6 +8,7 @@ export type FormSortOption = SortOption & {
 };
 
 export type SearchFormsPayload = SearchPayload & {
+  varietyId?: string;
   type?: PokemonType;
   abilityId?: string;
   sort: FormSortOption[];

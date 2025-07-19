@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { TarBadge, TarButton } from "logitar-vue3-ui";
+import { TarButton } from "logitar-vue3-ui";
 import { computed } from "vue";
 import { parsingUtils } from "logitar-js";
 import { useI18n } from "vue-i18n";
@@ -92,10 +92,10 @@ defineEmits<{
           </td>
           <td>
             {{ t("pokemon.level.format", { level: move.level }) }}
-            <template v-if="move.technicalMachine">
+            <!-- <template v-if="move.technicalMachine">
               <br />
               <TarBadge>{{ t("pokemon.move.learned.technicalMachine") }}</TarBadge>
-            </template>
+            </template> -->
           </td>
           <td>
             <TarButton

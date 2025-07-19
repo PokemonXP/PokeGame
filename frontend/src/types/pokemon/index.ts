@@ -1,7 +1,8 @@
 import type { Aggregate, Change } from "../aggregate";
+import type { EggGroups } from "./species";
 import type { Item } from "../items";
+import type { Move, MoveLearningMethod } from "./moves";
 import type { SearchPayload, SortOption } from "../search";
-import type { Move } from "./moves";
 
 export const EFFORT_VALUE_MAXIMUM: number = 255;
 export const EFFORT_VALUE_MINIMUM: number = 0;
@@ -44,6 +45,7 @@ export type CreatePokemonPayload = {
   size?: PokemonSizePayload;
   abilitySlot?: AbilitySlot;
   nature?: string;
+  eggCycles: number;
   experience: number;
   individualValues?: IndividualValues;
   effortValues?: EffortValues;
@@ -80,8 +82,8 @@ export type Form = Aggregate & {
   types: FormTypes;
   abilities: FormAbilities;
   baseStatistics: BaseStatistics;
-  yield: FormYield;
-  sprites: FormSprites;
+  yield: Yield;
+  sprites: Sprites;
   url?: string | null;
   notes?: string | null;
 };
@@ -92,26 +94,9 @@ export type FormAbilities = {
   hidden?: Ability | null;
 };
 
-export type FormSprites = {
-  default: string;
-  defaultShiny: string;
-  alternative?: string | null;
-  alternativeShiny?: string | null;
-};
-
 export type FormTypes = {
   primary: PokemonType;
   secondary?: PokemonType | null;
-};
-
-export type FormYield = {
-  experience: number;
-  hp: number;
-  attack: number;
-  defense: number;
-  specialAttack: number;
-  specialDefense: number;
-  speed: number;
 };
 
 export type GrowthRate = "Erratic" | "Slow" | "MediumSlow" | "MediumFast" | "Fast" | "Fluctuating";
@@ -125,6 +110,19 @@ export type IndividualValues = {
   speed: number;
 };
 
+export type Ownership = {
+  originalTrainer: Trainer;
+  currentTrainer: Trainer;
+  pokeBall: Item;
+  kind: OwnershipKind;
+  level: number;
+  location: string;
+  metOn: string;
+  description?: string | null;
+  position: number;
+  box?: number | null;
+};
+
 export type OwnershipKind = "Caught" | "Received";
 
 export type Pokemon = Aggregate & {
@@ -132,10 +130,12 @@ export type Pokemon = Aggregate & {
   uniqueName: string;
   nickname?: string | null;
   gender?: PokemonGender | null;
+  isShiny: boolean;
   teraType: PokemonType;
   size: PokemonSize;
   abilitySlot: AbilitySlot;
   nature: PokemonNature;
+  eggCycles: number;
   growthRate: GrowthRate;
   level: number;
   experience: number;
@@ -145,12 +145,11 @@ export type Pokemon = Aggregate & {
   vitality: number;
   stamina: number;
   statusCondition?: StatusCondition | null;
-  characteristic?: string | null;
   friendship: number;
+  characteristic: string;
   heldItem?: Item | null;
   moves: PokemonMove[];
-  originalTrainer?: Trainer | null;
-  ownership?: PokemonOwnership | null;
+  ownership?: Ownership | null;
   sprite?: string | null;
   url?: string | null;
   notes?: string | null;
@@ -166,7 +165,9 @@ export type PokemonMove = {
   powerPoints: PowerPoints;
   isMastered: boolean;
   level: number;
-  technicalMachine: boolean;
+  method: MoveLearningMethod;
+  item?: Item | null;
+  notes?: string;
 };
 
 export type PokemonNature = {
@@ -175,16 +176,6 @@ export type PokemonNature = {
   decreasedStatistic?: PokemonStatistic | null;
   favoriteFlavor?: Flavor | null;
   dislikedFlavor?: Flavor | null;
-};
-
-export type PokemonOwnership = {
-  kind: OwnershipKind;
-  trainer: Trainer;
-  pokeBall: Item;
-  level: number;
-  location: string;
-  metOn: string;
-  description?: string | null;
 };
 
 export type PokemonSize = {
@@ -274,10 +265,19 @@ export type Species = Aggregate & {
   baseFriendship: number;
   catchRate: number;
   growthRate: GrowthRate;
-  regionalNumbers: RegionalNumber[];
-  varieties: Variety[];
+  eggCycles: number;
+  eggGroups: EggGroups;
   url?: string | null;
   notes?: string | null;
+  regionalNumbers: RegionalNumber[];
+  varieties: Variety[];
+};
+
+export type Sprites = {
+  default: string;
+  shiny: string;
+  alternative?: string | null;
+  alternativeShiny?: string | null;
 };
 
 export type StatisticChanges = {
@@ -339,10 +339,27 @@ export type Variety = Aggregate & {
   isDefault: boolean;
   uniqueName: string;
   displayName?: string | null;
+  genus?: string | null;
   description?: string | null;
-  canChangeForm: boolean;
   genderRatio?: number | null;
-  genus: string;
   url?: string | null;
   notes?: string | null;
+  canChangeForm: boolean;
+  forms: Form[];
+  moves: VarietyMove[];
+};
+
+export type VarietyMove = {
+  move: Move;
+  level: number;
+};
+
+export type Yield = {
+  experience: number;
+  hp: number;
+  attack: number;
+  defense: number;
+  specialAttack: number;
+  specialDefense: number;
+  speed: number;
 };

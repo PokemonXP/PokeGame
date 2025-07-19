@@ -25,7 +25,7 @@ describe("isError", () => {
       data: {
         title: "Pokemon Unique Name Already Used",
         status: StatusCodes.Conflict,
-        error: { code: ErrorCodes.PokemonUniqueNameAlreadyUsed } as ApiError,
+        error: { code: ErrorCodes.UniqueNameAlreadyUsed } as ApiError,
       } as ProblemDetails,
     };
     expect(isError(failure, StatusCodes.BadRequest)).toBe(false);
@@ -37,7 +37,7 @@ describe("isError", () => {
       data: {
         title: "Pokemon Unique Name Already Used",
         status: StatusCodes.Conflict,
-        error: { code: ErrorCodes.PokemonUniqueNameAlreadyUsed } as ApiError,
+        error: { code: ErrorCodes.UniqueNameAlreadyUsed } as ApiError,
       } as ProblemDetails,
     };
     expect(isError(failure, undefined, ErrorCodes.InvalidCredentials)).toBe(false);

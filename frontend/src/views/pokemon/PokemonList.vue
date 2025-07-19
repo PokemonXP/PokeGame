@@ -135,7 +135,6 @@ watch(
       <RouterLink :to="{ name: 'CreatePokemon' }" class="btn btn-success ms-1"><font-awesome-icon icon="fas fa-plus" /> {{ t("actions.create") }}</RouterLink>
     </div>
     <div class="mb-3 row">
-      <!-- TODO(fpion): TrainerSelect -->
       <SearchInput class="col" :model-value="search" @update:model-value="setQuery('search', $event)" />
       <SortSelect
         class="col"
@@ -190,14 +189,15 @@ watch(
               {{ t("pokemon.experience.format", { experience: pokemon.experience }) }}
             </td>
             <td>
-              <a v-if="pokemon.ownership?.trainer" :href="getTrainerUrl(pokemon.ownership.trainer)" target="_blank">
+              <!-- <a v-if="pokemon.ownership?.trainer" :href="getTrainerUrl(pokemon.ownership.trainer)" target="_blank">
                 <template v-if="pokemon.ownership.trainer.displayName">
                   {{ pokemon.ownership.trainer.displayName }}
                   <br />
                 </template>
                 {{ pokemon.ownership.trainer.uniqueName }}
               </a>
-              <span v-else class="text-muted">{{ "—" }}</span>
+              <span v-else class="text-muted">{{ "—" }}</span> -->
+              <span class="text-muted">{{ "—" }}</span>
             </td>
             <td><StatusBlock :actor="pokemon.updatedBy" :date="pokemon.updatedOn" /></td>
           </tr>

@@ -5,9 +5,9 @@ import type { SearchVarietiesPayload } from "@/types/pokemon/varieties";
 import type { Variety } from "@/types/pokemon";
 import { get } from "..";
 
-export async function searchVarieties(speciesId: string, payload: SearchVarietiesPayload): Promise<SearchResults<Variety>> {
-  const url: string = new urlUtils.UrlBuilder({ path: "/species/{speciesId}/varieties" })
-    .setParameter("speciesId", speciesId)
+export async function searchVarieties(payload: SearchVarietiesPayload): Promise<SearchResults<Variety>> {
+  const url: string = new urlUtils.UrlBuilder({ path: "/varieties" })
+    .setQuery("species", payload.speciesId ?? "")
     .setQuery("ids", payload.ids)
     .setQuery(
       "search",
