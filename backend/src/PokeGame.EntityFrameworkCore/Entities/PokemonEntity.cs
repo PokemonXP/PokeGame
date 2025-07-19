@@ -78,9 +78,9 @@ internal class PokemonEntity : AggregateEntity
   public int? MetAtLevel { get; private set; }
   public string? MetLocation { get; private set; }
   public DateTime? MetOn { get; private set; }
-  public string? MetDescription { get; private set; } // TODO(fpion): Text+Notes
-  // TODO(fpion): Position
-  // TODO(fpion): Box
+  public string? MetDescription { get; private set; }
+  public int? Position { get; private set; }
+  public int? Box { get; private set; }
 
   public string? Sprite { get; private set; }
   public string? Url { get; private set; }

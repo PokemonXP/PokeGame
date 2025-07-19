@@ -39,7 +39,7 @@ public class PokemonModel : AggregateModel
 
   public List<PokemonMoveModel> Moves { get; set; } = [];
 
-  // TODO(fpion): Ownership
+  public OwnershipModel? Ownership { get; set; }
 
   public string? Sprite { get; set; }
   public string? Url { get; set; }

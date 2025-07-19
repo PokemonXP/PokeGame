@@ -49,6 +49,7 @@ internal class PokemonQuerier : IPokemonQuerier
     PokemonEntity? pokemon = await _pokemon.AsNoTracking()
       .Include(x => x.CurrentTrainer)
       .Include(x => x.HeldItem).ThenInclude(x => x!.Move)
+      .Include(x => x.Moves).ThenInclude(x => x.Item)
       .Include(x => x.Moves).ThenInclude(x => x.Move)
       .Include(x => x.OriginalTrainer)
       .Include(x => x.PokeBall)
@@ -67,6 +68,7 @@ internal class PokemonQuerier : IPokemonQuerier
     PokemonEntity? pokemon = await _pokemon.AsNoTracking()
       .Include(x => x.CurrentTrainer)
       .Include(x => x.HeldItem).ThenInclude(x => x!.Move)
+      .Include(x => x.Moves).ThenInclude(x => x.Item)
       .Include(x => x.Moves).ThenInclude(x => x.Move)
       .Include(x => x.OriginalTrainer)
       .Include(x => x.PokeBall)
@@ -87,6 +89,7 @@ internal class PokemonQuerier : IPokemonQuerier
     PokemonEntity? pokemon = await _pokemon.AsNoTracking()
       .Include(x => x.CurrentTrainer)
       .Include(x => x.HeldItem).ThenInclude(x => x!.Move)
+      .Include(x => x.Moves).ThenInclude(x => x.Item)
       .Include(x => x.Moves).ThenInclude(x => x.Move)
       .Include(x => x.OriginalTrainer)
       .Include(x => x.PokeBall)
@@ -110,6 +113,7 @@ internal class PokemonQuerier : IPokemonQuerier
     IQueryable<PokemonEntity> query = _pokemon.FromQuery(builder).AsNoTracking()
       .Include(x => x.CurrentTrainer)
       .Include(x => x.HeldItem).ThenInclude(x => x!.Move)
+      .Include(x => x.Moves).ThenInclude(x => x.Item)
       .Include(x => x.Moves).ThenInclude(x => x.Move)
       .Include(x => x.OriginalTrainer)
       .Include(x => x.PokeBall);
@@ -157,6 +161,7 @@ internal class PokemonQuerier : IPokemonQuerier
   {
     FormEntity form = await _forms.AsNoTracking()
       .Include(x => x.Abilities).ThenInclude(x => x.Ability)
+      .Include(x => x.Variety).ThenInclude(x => x!.Moves).ThenInclude(x => x.Move)
       .Include(x => x.Variety).ThenInclude(x => x!.Species).ThenInclude(x => x!.RegionalNumbers).ThenInclude(x => x.Region)
       .SingleOrDefaultAsync(x => x.FormId == pokemon.FormId, cancellationToken)
       ?? throw new InvalidOperationException($"The Pokémon form entity 'FormId={pokemon.FormId}' was not found.");
@@ -167,6 +172,7 @@ internal class PokemonQuerier : IPokemonQuerier
     IEnumerable<int> formIds = pokemonList.Select(x => x.FormId).Distinct();
     Dictionary<int, FormEntity> forms = await _forms.AsNoTracking()
       .Include(x => x.Abilities).ThenInclude(x => x.Ability)
+      .Include(x => x.Variety).ThenInclude(x => x!.Moves).ThenInclude(x => x.Move)
       .Include(x => x.Variety).ThenInclude(x => x!.Species).ThenInclude(x => x!.RegionalNumbers).ThenInclude(x => x.Region)
       .Where(x => formIds.Contains(x.FormId))
       .ToDictionaryAsync(x => x.FormId, x => x, cancellationToken);
@@ -191,6 +197,4 @@ internal class PokemonQuerier : IPokemonQuerier
 
     return pokemon.Select(mapper.ToPokemon).ToList().AsReadOnly();
   }
-
-  // TODO(fpion): missing relations
 }

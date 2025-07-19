@@ -15,6 +15,7 @@ internal static class Pokemon
   public static readonly ColumnId Version = new(nameof(PokemonEntity.Version), Table);
 
   public static readonly ColumnId AbilitySlot = new(nameof(PokemonEntity.AbilitySlot), Table);
+  public static readonly ColumnId Box = new(nameof(PokemonEntity.Box), Table);
   public static readonly ColumnId Characteristic = new(nameof(PokemonEntity.Characteristic), Table);
   public static readonly ColumnId CurrentTrainerId = new(nameof(PokemonEntity.CurrentTrainerId), Table);
   public static readonly ColumnId CurrentTrainerUid = new(nameof(PokemonEntity.CurrentTrainerUid), Table);
@@ -45,6 +46,7 @@ internal static class Pokemon
   public static readonly ColumnId PokeBallId = new(nameof(PokemonEntity.PokeBallId), Table);
   public static readonly ColumnId PokeBallUid = new(nameof(PokemonEntity.PokeBallUid), Table);
   public static readonly ColumnId PokemonId = new(nameof(PokemonEntity.PokemonId), Table);
+  public static readonly ColumnId Position = new(nameof(PokemonEntity.Position), Table);
   public static readonly ColumnId SpeciesId = new(nameof(PokemonEntity.SpeciesId), Table);
   public static readonly ColumnId SpeciesUid = new(nameof(PokemonEntity.SpeciesUid), Table);
   public static readonly ColumnId Sprite = new(nameof(PokemonEntity.Sprite), Table);
