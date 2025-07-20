@@ -19,6 +19,7 @@ internal class FormRepository : Repository, IFormRepository
   {
     return await LoadAsync<Form>(id.StreamId, cancellationToken);
   }
+
   public async Task<Form?> LoadAsync(string idOrUniqueName, CancellationToken cancellationToken)
   {
     FormId formId;
