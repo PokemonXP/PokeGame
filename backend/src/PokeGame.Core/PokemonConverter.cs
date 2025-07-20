@@ -71,22 +71,22 @@ public class PokemonConverter : IPokemonConverter
   {
     ItemCategory.BattleItem => "battle",
     ItemCategory.KeyItem => "key",
+    ItemCategory.Material => "material",
     ItemCategory.OtherItem => "other",
     ItemCategory.PicnicItem => "picnic",
     ItemCategory.PokeBall => "poke-ball",
     ItemCategory.TechnicalMachine => "tm",
-    ItemCategory.TechnicalMachineMaterial => "tm-material",
     _ => category.ToString().ToLowerInvariant(),
   };
   public ItemCategory ToItemCategory(string value) => value switch
   {
     "battle" => ItemCategory.BattleItem,
     "key" => ItemCategory.KeyItem,
+    "material" => ItemCategory.Material,
     "other" => ItemCategory.OtherItem,
     "picnic" => ItemCategory.PicnicItem,
     "poke-ball" => ItemCategory.PokeBall,
     "tm" => ItemCategory.TechnicalMachine,
-    "tm-material" => ItemCategory.TechnicalMachineMaterial,
     _ => Enum.Parse<ItemCategory>(value.Capitalize()),
   };
 

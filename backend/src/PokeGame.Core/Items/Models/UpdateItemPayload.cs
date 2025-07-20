@@ -8,7 +8,7 @@ public record UpdateItemPayload
   public Change<string>? DisplayName { get; set; }
   public Change<string>? Description { get; set; }
 
-  public Change<int?>? Price { get; set; }
+  public int? Price { get; set; }
 
   public BattleItemPropertiesModel? BattleItem { get; set; }
   public BerryPropertiesModel? Berry { get; set; }
@@ -18,7 +18,7 @@ public record UpdateItemPayload
   public PicnicItemPropertiesModel? PicnicItem { get; set; }
   public PokeBallPropertiesModel? PokeBall { get; set; }
   public TechnicalMachinePropertiesPayload? TechnicalMachine { get; set; }
-  public TechnicalMachineMaterialPropertiesModel? TechnicalMachineMaterial { get; set; }
+  public MaterialPropertiesModel? TechnicalMachineMaterial { get; set; }
   public TreasurePropertiesModel? Treasure { get; set; }
 
   public Change<string>? Sprite { get; set; }

@@ -3,4 +3,4 @@ using Logitar.EventSourcing;
 
 namespace PokeGame.Core.Items.Events;
 
-public record ItemCreated(ItemCategory Category, UniqueName UniqueName) : DomainEvent;
+public record ItemCreated(ItemCategory Category, UniqueName UniqueName, Price? Price) : DomainEvent;

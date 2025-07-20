@@ -106,7 +106,7 @@ public class Item : AggregateRoot
   {
   }
 
-  public Item(UniqueName uniqueName, ItemProperties properties, ActorId? actorId = null, ItemId? itemId = null)
+  public Item(UniqueName uniqueName, ItemProperties properties, Price? price = null, ActorId? actorId = null, ItemId? itemId = null)
     : base((itemId ?? ItemId.NewId()).StreamId)
   {
     if (!Enum.IsDefined(properties.Category))
@@ -114,7 +114,7 @@ public class Item : AggregateRoot
       throw new ArgumentOutOfRangeException(nameof(properties), "The item category is not defined.");
     }
 
-    Raise(new ItemCreated(properties.Category, uniqueName), actorId);
+    Raise(new ItemCreated(properties.Category, uniqueName, price), actorId);
 
     switch (properties.Category)
     {
@@ -126,6 +126,9 @@ public class Item : AggregateRoot
         break;
       case ItemCategory.KeyItem:
         SetProperties((KeyItemProperties)properties, actorId);
+        break;
+      case ItemCategory.Material:
+        SetProperties((MaterialProperties)properties, actorId);
         break;
       case ItemCategory.Medicine:
         SetProperties((MedicineProperties)properties, actorId);
@@ -142,9 +145,6 @@ public class Item : AggregateRoot
       case ItemCategory.TechnicalMachine:
         SetProperties((TechnicalMachineProperties)properties, actorId);
         break;
-      case ItemCategory.TechnicalMachineMaterial:
-        SetProperties((TechnicalMachineMaterialProperties)properties, actorId);
-        break;
       case ItemCategory.Treasure:
         SetProperties((TreasureProperties)properties, actorId);
         break;
@@ -157,6 +157,8 @@ public class Item : AggregateRoot
     Category = @event.Category;
 
     _uniqueName = @event.UniqueName;
+
+    _price = @event.Price;
   }
 
   public void Delete(ActorId? actorId = null)
@@ -214,6 +216,23 @@ public class Item : AggregateRoot
     }
   }
   protected virtual void Handle(KeyItemPropertiesChanged @event)
+  {
+    _properties = @event.Properties;
+  }
+
+  public void SetProperties(MaterialProperties properties, ActorId? actorId = null)
+  {
+    if (Category != properties.Category)
+    {
+      throw new ArgumentException($"Cannot set properties of category '{properties.Category}' on an item in category '{Category}'.", nameof(properties));
+    }
+
+    if (_properties != properties)
+    {
+      Raise(new MaterialPropertiesChanged(properties), actorId);
+    }
+  }
+  protected virtual void Handle(MaterialPropertiesChanged @event)
   {
     _properties = @event.Properties;
   }
@@ -299,23 +318,6 @@ public class Item : AggregateRoot
     }
   }
   protected virtual void Handle(TechnicalMachinePropertiesChanged @event)
-  {
-    _properties = @event.Properties;
-  }
-
-  public void SetProperties(TechnicalMachineMaterialProperties properties, ActorId? actorId = null)
-  {
-    if (Category != properties.Category)
-    {
-      throw new ArgumentException($"Cannot set properties of category '{properties.Category}' on an item in category '{Category}'.", nameof(properties));
-    }
-
-    if (_properties != properties)
-    {
-      Raise(new TechnicalMachineMaterialPropertiesChanged(properties), actorId);
-    }
-  }
-  protected virtual void Handle(TechnicalMachineMaterialPropertiesChanged @event)
   {
     _properties = @event.Properties;
   }

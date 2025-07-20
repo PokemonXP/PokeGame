@@ -10,7 +10,7 @@ public class ItemModel : AggregateModel
   public string? DisplayName { get; set; }
   public string? Description { get; set; }
 
-  public int? Price { get; set; }
+  public int Price { get; set; }
 
   public BattleItemPropertiesModel? BattleItem { get; set; }
   public BerryPropertiesModel? Berry { get; set; }
@@ -20,7 +20,7 @@ public class ItemModel : AggregateModel
   public PicnicItemPropertiesModel? PicnicItem { get; set; }
   public PokeBallPropertiesModel? PokeBall { get; set; }
   public TechnicalMachinePropertiesModel? TechnicalMachine { get; set; }
-  public TechnicalMachineMaterialPropertiesModel? TechnicalMachineMaterial { get; set; }
+  public MaterialPropertiesModel? TechnicalMachineMaterial { get; set; }
   public TreasurePropertiesModel? Treasure { get; set; }
 
   public string? Sprite { get; set; }

@@ -6,10 +6,10 @@ public enum ItemCategory
   BattleItem,
   Berry,
   KeyItem,
+  Material,
   Medicine,
   PicnicItem,
   PokeBall,
   TechnicalMachine,
-  TechnicalMachineMaterial,
   Treasure
 }
