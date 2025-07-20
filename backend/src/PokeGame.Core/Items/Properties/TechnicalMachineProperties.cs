@@ -9,8 +9,13 @@ public record TechnicalMachineProperties : ItemProperties
 
   public MoveId MoveId { get; }
 
+  [JsonConstructor]
   public TechnicalMachineProperties(MoveId moveId)
   {
     MoveId = moveId;
+  }
+
+  public TechnicalMachineProperties(Move move) : this(move.Id)
+  {
   }
 }

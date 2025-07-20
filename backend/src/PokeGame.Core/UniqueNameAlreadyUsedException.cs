@@ -3,6 +3,7 @@ using Krakenar.Core;
 using Logitar;
 using PokeGame.Core.Abilities;
 using PokeGame.Core.Forms;
+using PokeGame.Core.Items;
 using PokeGame.Core.Moves;
 using PokeGame.Core.Pokemon;
 using PokeGame.Core.Regions;
@@ -62,6 +63,10 @@ public class UniqueNameAlreadyUsedException : ConflictException
   }
   public UniqueNameAlreadyUsedException(Form form, FormId conflictId)
     : this("Form", form.Id.ToGuid(), conflictId.ToGuid(), form.UniqueName, nameof(form.UniqueName))
+  {
+  }
+  public UniqueNameAlreadyUsedException(Item item, ItemId conflictId)
+    : this("Item", item.Id.ToGuid(), conflictId.ToGuid(), item.UniqueName, nameof(item.UniqueName))
   {
   }
   public UniqueNameAlreadyUsedException(Move move, MoveId conflictId)
