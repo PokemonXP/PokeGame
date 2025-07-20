@@ -24,7 +24,7 @@ import NatureTable from "@/components/pokemon/creation/NatureTable.vue";
 import NicknameInput from "@/components/pokemon/NicknameInput.vue";
 import NotesTextarea from "@/components/pokemon/NotesTextarea.vue";
 import ProgressTable from "@/components/pokemon/creation/ProgressTable.vue";
-import ShinyCheckbox from "@/components/pokemon/creation/ShinyCheckbox.vue";
+import ShinyCheckbox from "@/components/pokemon/ShinyCheckbox.vue";
 import SizeEdit from "@/components/pokemon/creation/SizeEdit.vue";
 import SpeciesSelect from "@/components/pokemon/creation/SpeciesSelect.vue";
 import StaminaInput from "@/components/pokemon/StaminaInput.vue";
@@ -115,11 +115,11 @@ const minimumExperience = computed<number>(() => (level.value <= 1 ? 0 : getMaxi
 const spriteAlt = computed<string>(() => `${nickname.value || uniqueName.value}'s Sprite`);
 const spriteUrl = computed<string>(() => {
   let spriteUrl: string | undefined = sprite.value.trim();
-  if (!spriteUrl) {
+  if (!spriteUrl && form.value) {
     if (isShiny.value) {
-      spriteUrl = (gender.value === "Female" ? form.value?.sprites.alternativeShiny : undefined) ?? form.value?.sprites.shiny;
+      spriteUrl = form.value.sprites.alternativeShiny && gender.value === "Female" ? form.value.sprites.alternativeShiny : form.value.sprites.shiny;
     } else {
-      spriteUrl = (gender.value === "Female" ? form.value?.sprites.alternative : undefined) ?? form.value?.sprites.default;
+      spriteUrl = form.value.sprites.alternative && gender.value === "Female" ? form.value.sprites.alternative : form.value.sprites.default;
     }
   }
   return spriteUrl ?? "";
