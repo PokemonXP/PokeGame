@@ -192,6 +192,18 @@ internal class PokemonEntity : AggregateEntity
     UniqueName = @event.UniqueName.Value;
   }
 
+  public void SwitchMoves(PokemonMoveSwitched @event)
+  {
+    Update(@event);
+
+    PokemonMoveEntity? source = Moves.SingleOrDefault(x => x.Position == @event.Source);
+    PokemonMoveEntity? destination = Moves.SingleOrDefault(x => x.Position == @event.Destination);
+    if (source is not null && destination is not null)
+    {
+      source.Switch(destination);
+    }
+  }
+
   public void Update(PokemonUpdated @event)
   {
     base.Update(@event);

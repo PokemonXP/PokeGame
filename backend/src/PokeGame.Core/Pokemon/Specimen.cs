@@ -429,6 +429,28 @@ public class Specimen : AggregateRoot
     _uniqueName = @event.UniqueName;
   }
 
+  public void SwitchMoves(int source, int destination, ActorId? actorId = null)
+  {
+    ArgumentOutOfRangeException.ThrowIfNegative(source, nameof(source));
+    ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(source, MoveLimit, nameof(source));
+
+    ArgumentOutOfRangeException.ThrowIfNegative(destination, nameof(destination));
+    ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(destination, MoveLimit, nameof(destination));
+
+    if (source != destination && source < _currentMoves.Count && destination < _currentMoves.Count)
+    {
+      Raise(new PokemonMoveSwitched(source, destination), actorId);
+    }
+  }
+  protected virtual void Handle(PokemonMoveSwitched @event)
+  {
+    MoveId source = _currentMoves[@event.Source];
+    MoveId destination = _currentMoves[@event.Destination];
+
+    _currentMoves[@event.Source] = destination;
+    _currentMoves[@event.Destination] = source;
+  }
+
   public void Update(ActorId? actorId = null)
   {
     if (HasUpdates)
