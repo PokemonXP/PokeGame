@@ -11,6 +11,7 @@ import PokemonGeneral from "@/components/pokemon/PokemonGeneral.vue";
 import PokemonMetadata from "@/components/pokemon/PokemonMetadata.vue";
 import PokemonMoves from "@/components/pokemon/PokemonMoves.vue";
 import PokemonStatistics from "@/components/pokemon/PokemonStatistics.vue";
+import PokemonSummary from "@/components/pokemon/PokemonSummary.vue";
 import StatusDetail from "@/components/shared/StatusDetail.vue";
 import type { Breadcrumb } from "@/types/components";
 import type { Pokemon } from "@/types/pokemon";
@@ -114,13 +115,16 @@ onMounted(async () => {
         <DeletePokemon :pokemon="pokemon" @deleted="onDeleted" @error="handleError" />
       </div>
       <TarTabs>
+        <TarTab active id="summary" :title="t('pokemon.summary.title')">
+          <PokemonSummary :pokemon="pokemon" />
+        </TarTab>
         <TarTab id="general" :title="t('general')">
           <PokemonGeneral :pokemon="pokemon" @error="handleError" @saved="onGeneralUpdated" />
         </TarTab>
         <TarTab id="statistics" :title="t('pokemon.statistic.title')">
           <PokemonStatistics :pokemon="pokemon" @error="handleError" @saved="onStatisticsUpdated" />
         </TarTab>
-        <TarTab active id="moves" :title="t('pokemon.move.title')">
+        <TarTab id="moves" :title="t('pokemon.move.title')">
           <PokemonMoves :pokemon="pokemon" @error="handleError" @saved="onMovesUpdated" />
         </TarTab>
         <TarTab id="metadata" :title="t('metadata')">
