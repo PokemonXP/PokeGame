@@ -116,8 +116,8 @@ public class PokemonMovesTests
     Assert.Equal("position", exception.ParamName);
   }
 
-  [Fact(DisplayName = "RememberMove: it should relearn a forgotten move and return true.")]
-  public void Given_ForgottenMove_When_RememberMove_Then_MoveRelearned()
+  [Fact(DisplayName = "RememberMove: it should remember a forgotten move and return true.")]
+  public void Given_ForgottenMove_When_RememberMove_Then_MoveRemembered()
   {
     ActorId actorId = ActorId.NewId();
 
@@ -138,7 +138,7 @@ public class PokemonMovesTests
     Assert.Equal(defenseCurl.Id, move.Key);
 
     Assert.True(_pokemon.HasChanges);
-    Assert.Contains(_pokemon.Changes, change => change is PokemonMoveRemembered relearned && relearned.MoveId == defenseCurl.Id && relearned.Position == position);
+    Assert.Contains(_pokemon.Changes, change => change is PokemonMoveRemembered remembered && remembered.MoveId == defenseCurl.Id && remembered.Position == position);
   }
 
   [Fact(DisplayName = "RememberMove: it should return true when the move is currently learned.")]
