@@ -326,7 +326,6 @@ export type TrainerGender = "Female" | "Male";
 export type UpdatePokemonPayload = {
   uniqueName?: string;
   nickname?: Change<string>;
-  gender?: PokemonGender;
   isShiny?: boolean;
   sprite?: Change<string>;
   url?: Change<string>;
