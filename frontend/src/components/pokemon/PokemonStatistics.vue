@@ -7,7 +7,7 @@ import StaminaInput from "./StaminaInput.vue";
 import StatusConditionSelect from "./StatusConditionSelect.vue";
 import SubmitButton from "@/components/shared/SubmitButton.vue";
 import VitalityInput from "./VitalityInput.vue";
-import type { BaseStatistics, Pokemon, StatusCondition, UpdatePokemonPayload } from "@/types/pokemon";
+import type { BaseStatistics, Pokemon, UpdatePokemonPayload } from "@/types/pokemon";
 import { useForm } from "@/forms";
 import { updatePokemon } from "@/api/pokemon";
 
@@ -37,13 +37,13 @@ async function submit(): Promise<void> {
       validate();
       if (isValid.value) {
         const payload: UpdatePokemonPayload = {
-          vitality: vitality.value !== props.pokemon.vitality ? vitality.value : undefined,
-          stamina: stamina.value !== props.pokemon.stamina ? stamina.value : undefined,
-          statusCondition:
-            statusCondition.value !== (props.pokemon.statusCondition ?? "")
-              ? { value: statusCondition.value ? (statusCondition.value as StatusCondition) : undefined }
-              : undefined,
-          friendship: friendship.value !== props.pokemon.friendship ? friendship.value : undefined,
+          // vitality: vitality.value !== props.pokemon.vitality ? vitality.value : undefined,
+          // stamina: stamina.value !== props.pokemon.stamina ? stamina.value : undefined,
+          // statusCondition:
+          //   statusCondition.value !== (props.pokemon.statusCondition ?? "")
+          //     ? { value: statusCondition.value ? (statusCondition.value as StatusCondition) : undefined }
+          //     : undefined,
+          // friendship: friendship.value !== props.pokemon.friendship ? friendship.value : undefined,
         };
         const pokemon: Pokemon = await updatePokemon(props.pokemon.id, payload);
         reinitialize();

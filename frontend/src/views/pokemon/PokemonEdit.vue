@@ -106,7 +106,7 @@ onMounted(async () => {
         <DeletePokemon :pokemon="pokemon" @deleted="onDeleted" @error="handleError" />
       </div>
       <TarTabs>
-        <TarTab id="summary" :title="t('pokemon.summary.title')">
+        <TarTab active id="summary" :title="t('pokemon.summary.title')">
           <PokemonSummary :pokemon="pokemon" />
         </TarTab>
         <TarTab id="statistics" :title="t('pokemon.statistic.title')">
@@ -115,7 +115,7 @@ onMounted(async () => {
         <TarTab id="moves" :title="t('pokemon.move.title')">
           <PokemonMoves :pokemon="pokemon" @error="handleError" @saved="onMovesUpdated" />
         </TarTab>
-        <TarTab active id="metadata" :title="t('metadata')">
+        <TarTab id="metadata" :title="t('metadata')">
           <PokemonMetadata :pokemon="pokemon" @error="handleError" @saved="onMetadataUpdated" />
         </TarTab>
       </TarTabs>
