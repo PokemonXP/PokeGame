@@ -175,4 +175,6 @@ public class PokemonMovesTests
     var exception = Assert.Throws<ArgumentOutOfRangeException>(() => _pokemon.RelearnMove(defenseCurl, position));
     Assert.Equal("position", exception.ParamName);
   }
+
+  // TODO(fpion): SwitchMoves
 }

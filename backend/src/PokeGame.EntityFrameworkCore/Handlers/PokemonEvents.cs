@@ -14,6 +14,7 @@ internal class PokemonEvents : IEventHandler<PokemonCreated>,
   IEventHandler<PokemonItemRemoved>,
   IEventHandler<PokemonMoveLearned>,
   IEventHandler<PokemonMoveRelearned>,
+  IEventHandler<PokemonMoveSwitched>,
   IEventHandler<PokemonNicknamed>,
   IEventHandler<PokemonUniqueNameChanged>,
   IEventHandler<PokemonUpdated>
@@ -26,6 +27,7 @@ internal class PokemonEvents : IEventHandler<PokemonCreated>,
     services.AddScoped<IEventHandler<PokemonItemRemoved>, PokemonEvents>();
     services.AddScoped<IEventHandler<PokemonMoveLearned>, PokemonEvents>();
     services.AddScoped<IEventHandler<PokemonMoveRelearned>, PokemonEvents>();
+    services.AddScoped<IEventHandler<PokemonMoveSwitched>, PokemonEvents>();
     services.AddScoped<IEventHandler<PokemonNicknamed>, PokemonEvents>();
     services.AddScoped<IEventHandler<PokemonUniqueNameChanged>, PokemonEvents>();
     services.AddScoped<IEventHandler<PokemonUpdated>, PokemonEvents>();
@@ -146,6 +148,22 @@ internal class PokemonEvents : IEventHandler<PokemonCreated>,
     {
       _logger.LogError("The move (StreamId={MoveId}) was not found on Pokémon (StreamId={PokemonId}).", @event.MoveId, pokemon.StreamId);
     }
+  }
+
+  public async Task HandleAsync(PokemonMoveSwitched @event, CancellationToken cancellationToken)
+  {
+    PokemonEntity? pokemon = await _context.Pokemon
+      .Include(x => x.Moves).ThenInclude(x => x.Move)
+      .SingleOrDefaultAsync(x => x.StreamId == @event.StreamId.Value, cancellationToken);
+    if (pokemon is null || pokemon.Version != (@event.Version - 1))
+    {
+      _logger.LogUnexpectedVersion(@event, pokemon);
+      return;
+    }
+
+    pokemon.SwitchMoves(@event);
+
+    await _context.SaveChangesAsync(cancellationToken);
   }
 
   public async Task HandleAsync(PokemonNicknamed @event, CancellationToken cancellationToken)
