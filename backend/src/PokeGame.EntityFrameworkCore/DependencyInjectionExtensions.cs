@@ -1,5 +1,4 @@
 ﻿using Krakenar.Core;
-using Krakenar.Core.Contents.Events;
 using Krakenar.EntityFrameworkCore.Relational;
 using Krakenar.Infrastructure.Commands;
 using Microsoft.Extensions.DependencyInjection;
@@ -41,10 +40,7 @@ public static class DependencyInjectionExtensions
     SpeciesEvents.Register(services);
     TrainerEvents.Register(services);
     VarietyEvents.Register(services);
-
-    return services
-      .AddScoped<IEventHandler<ContentLocalePublished>, PokemonContentEvents>()
-      .AddScoped<IEventHandler<ContentLocaleUnpublished>, PokemonContentEvents>();
+    return services;
   }
 
   private static IServiceCollection AddQueriers(this IServiceCollection services)

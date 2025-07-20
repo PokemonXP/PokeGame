@@ -13,12 +13,11 @@ public record UpdateItemPayload
   public BattleItemPropertiesModel? BattleItem { get; set; }
   public BerryPropertiesModel? Berry { get; set; }
   public KeyItemPropertiesModel? KeyItem { get; set; }
+  public MaterialPropertiesModel? Material { get; set; }
   public MedicinePropertiesModel? Medicine { get; set; }
   public OtherItemPropertiesModel? OtherItem { get; set; }
-  public PicnicItemPropertiesModel? PicnicItem { get; set; }
   public PokeBallPropertiesModel? PokeBall { get; set; }
   public TechnicalMachinePropertiesPayload? TechnicalMachine { get; set; }
-  public MaterialPropertiesModel? TechnicalMachineMaterial { get; set; }
   public TreasurePropertiesModel? Treasure { get; set; }
 
   public Change<string>? Sprite { get; set; }

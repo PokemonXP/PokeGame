@@ -8,7 +8,6 @@ public enum ItemCategory
   KeyItem,
   Material,
   Medicine,
-  PicnicItem,
   PokeBall,
   TechnicalMachine,
   Treasure

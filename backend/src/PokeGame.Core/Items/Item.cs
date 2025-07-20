@@ -136,9 +136,6 @@ public class Item : AggregateRoot
       case ItemCategory.OtherItem:
         SetProperties((OtherItemProperties)properties, actorId);
         break;
-      case ItemCategory.PicnicItem:
-        SetProperties((PicnicItemProperties)properties, actorId);
-        break;
       case ItemCategory.PokeBall:
         SetProperties((PokeBallProperties)properties, actorId);
         break;
@@ -267,23 +264,6 @@ public class Item : AggregateRoot
     }
   }
   protected virtual void Handle(OtherItemPropertiesChanged @event)
-  {
-    _properties = @event.Properties;
-  }
-
-  public void SetProperties(PicnicItemProperties properties, ActorId? actorId = null)
-  {
-    if (Category != properties.Category)
-    {
-      throw new ArgumentException($"Cannot set properties of category '{properties.Category}' on an item in category '{Category}'.", nameof(properties));
-    }
-
-    if (_properties != properties)
-    {
-      Raise(new PicnicItemPropertiesChanged(properties), actorId);
-    }
-  }
-  protected virtual void Handle(PicnicItemPropertiesChanged @event)
   {
     _properties = @event.Properties;
   }

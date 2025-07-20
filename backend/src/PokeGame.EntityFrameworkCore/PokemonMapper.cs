@@ -109,11 +109,6 @@ internal class PokemonMapper
 
   public ItemModel ToItem(ItemEntity source)
   {
-    if (source.Move is null && source.MoveId.HasValue)
-    {
-      throw new ArgumentException("The move is required.", nameof(source));
-    }
-
     ItemModel destination = new()
     {
       Id = source.Id,
@@ -122,19 +117,10 @@ internal class PokemonMapper
       DisplayName = source.DisplayName,
       Description = source.Description,
       Price = source.Price,
-      BattleItem = source.GetBattleItem(),
-      Berry = source.GetBerry(),
-      Medicine = source.GetMedicine(),
-      PokeBall = source.GetPokeBall(),
       Sprite = source.Sprite,
       Url = source.Url,
       Notes = source.Notes,
     };
-
-    if (source.Move is not null)
-    {
-      destination.TechnicalMachine = new TechnicalMachineModel(ToMove(source.Move));
-    }
 
     MapAggregate(source, destination);
 
