@@ -96,6 +96,7 @@
   },
   "move": {
     "accuracy": "Accuracy",
+    "actions": "Actions",
     "category": {
       "options": {
         "Physical": "Physical",
@@ -118,6 +119,7 @@
       }
     },
     "name": "Name",
+    "notes": "Notes",
     "other": "Other Moves",
     "power": "Power",
     "powerPoints": {

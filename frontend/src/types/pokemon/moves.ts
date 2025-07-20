@@ -1,11 +1,6 @@
-import type { PokemonType, StatisticChanges, StatusCondition } from ".";
+import type { PokemonType, StatusCondition } from ".";
 import type { Aggregate } from "../aggregate";
 import type { SearchPayload, SortOption } from "../search";
-
-export type InflictedStatus = {
-  condition: StatusCondition;
-  chance: number;
-};
 
 export type Move = Aggregate & {
   type: PokemonType;
@@ -16,9 +11,6 @@ export type Move = Aggregate & {
   accuracy: number;
   power: number;
   powerPoints: number;
-  status?: InflictedStatus | null;
-  volatileConditions: string[];
-  statisticChanges: StatisticChanges;
   url?: string | null;
   notes?: string | null;
 };

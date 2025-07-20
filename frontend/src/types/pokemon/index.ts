@@ -110,6 +110,8 @@ export type IndividualValues = {
   speed: number;
 };
 
+export type MoveDisplayMove = "actions" | "description" | "notes";
+
 export type Ownership = {
   originalTrainer: Trainer;
   currentTrainer: Trainer;
