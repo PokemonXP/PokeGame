@@ -47,7 +47,7 @@ internal class PokemonMoveEntity
 
     IsMastered = @event.Move.IsMastered;
 
-    Level = pokemon.Level;
+    Level = @event.Move.Level.Value;
     Method = @event.Move.Method;
 
     Notes = @event.Move.Notes?.Value;
