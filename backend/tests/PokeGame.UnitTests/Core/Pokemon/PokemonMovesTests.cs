@@ -141,12 +141,16 @@ public class PokemonMovesTests
     Assert.Contains(_pokemon.Changes, change => change is PokemonMoveRemembered relearned && relearned.MoveId == defenseCurl.Id && relearned.Position == position);
   }
 
-  [Fact(DisplayName = "RememberMove: it should return false when the move is currently learned.")]
+  [Fact(DisplayName = "RememberMove: it should return true when the move is currently learned.")]
   public void Given_AlreadyLearned_When_RememberMove_Then_FalseReturned()
   {
     Move ember = new(PokemonType.Fire, MoveCategory.Special, new UniqueName(_uniqueNameSettings, "ember"), new PowerPoints(25), new Accuracy(100), new Power(40));
     _pokemon.LearnMove(ember, position: null, new Level(6));
-    Assert.False(_pokemon.RememberMove(ember, position: 0));
+    _pokemon.ClearChanges();
+
+    Assert.True(_pokemon.RememberMove(ember, position: 0));
+    Assert.False(_pokemon.HasChanges);
+    Assert.Empty(_pokemon.Changes);
   }
 
   [Fact(DisplayName = "RememberMove: it should return false when the Pokémon has not learned the move.")]
