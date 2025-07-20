@@ -44,10 +44,6 @@ function updateAggregate(updated: Pokemon): void {
 function onMetadataUpdated(updated: Pokemon): void {
   updateAggregate(updated);
   if (pokemon.value) {
-    pokemon.value.uniqueName = updated.uniqueName;
-    pokemon.value.nickname = updated.nickname;
-    pokemon.value.gender = updated.gender;
-    pokemon.value.isShiny = updated.isShiny;
     pokemon.value.sprite = updated.sprite;
     pokemon.value.url = updated.url;
     pokemon.value.notes = updated.notes;
@@ -68,6 +64,15 @@ function onStatisticsUpdated(updated: Pokemon): void {
     pokemon.value.stamina = updated.stamina;
     pokemon.value.statusCondition = updated.statusCondition;
     pokemon.value.friendship = updated.friendship;
+  }
+  toasts.success("pokemon.updated");
+}
+function onSummaryUpdated(updated: Pokemon): void {
+  updateAggregate(updated);
+  if (pokemon.value) {
+    pokemon.value.uniqueName = updated.uniqueName;
+    pokemon.value.nickname = updated.nickname;
+    pokemon.value.isShiny = updated.isShiny;
   }
   toasts.success("pokemon.updated");
 }
@@ -107,7 +112,7 @@ onMounted(async () => {
       </div>
       <TarTabs>
         <TarTab active id="summary" :title="t('pokemon.summary.title')">
-          <PokemonSummary :pokemon="pokemon" />
+          <PokemonSummary :pokemon="pokemon" @error="handleError" @saved="onSummaryUpdated" />
         </TarTab>
         <TarTab id="statistics" :title="t('pokemon.statistic.title')">
           <PokemonStatistics :pokemon="pokemon" @error="handleError" @saved="onStatisticsUpdated" />

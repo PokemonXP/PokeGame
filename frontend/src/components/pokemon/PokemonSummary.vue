@@ -1,17 +1,23 @@
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 
 import ExperienceTableModal from "./ExperienceTableModal.vue";
 import FormIcon from "@/components/icons/FormIcon.vue";
+import GenderSelect from "@/components/pokemon/GenderSelect.vue";
 import ItemSelect from "@/components/items/ItemSelect.vue";
+import NicknameInput from "@/components/pokemon/NicknameInput.vue";
 import PokemonTypeImage from "./PokemonTypeImage.vue";
+import ShinyCheckbox from "./ShinyCheckbox.vue";
 import SpeciesIcon from "@/components/icons/SpeciesIcon.vue";
+import SubmitButton from "@/components/shared/SubmitButton.vue";
+import UniqueNameInput from "@/components/pokemon/UniqueNameInput.vue";
 import VarietyIcon from "@/components/icons/VarietyIcon.vue";
-import type { Form, Pokemon, PokemonSize, Species, Variety } from "@/types/pokemon";
+import type { Form, Pokemon, PokemonSize, Species, UpdatePokemonPayload, Variety } from "@/types/pokemon";
 import { calculateSize, getMaximumExperience } from "@/helpers/pokemon";
 import { formatForm, formatSpecies, formatVariety } from "@/helpers/format";
 import { getFormUrl, getSpeciesUrl, getVarietyUrl } from "@/helpers/cms";
+import { updatePokemon } from "@/api/pokemon";
 import { useForm } from "@/forms";
 
 const { n, t } = useI18n();
@@ -19,6 +25,11 @@ const { n, t } = useI18n();
 const props = defineProps<{
   pokemon: Pokemon;
 }>();
+
+const isLoading = ref<boolean>(false);
+const isShiny = ref<boolean>(false);
+const nickname = ref<string>("");
+const uniqueName = ref<string>("");
 
 const form = computed<Form>(() => props.pokemon.form);
 const variety = computed<Variety>(() => form.value.variety);
@@ -31,7 +42,44 @@ const experiencePercentage = computed<number>(() =>
     : (props.pokemon.experience - minimumExperience.value) / (props.pokemon.maximumExperience - minimumExperience.value),
 );
 
-useForm();
+const emit = defineEmits<{
+  (e: "error", error: unknown): void;
+  (e: "saved", pokemon: Pokemon): void;
+}>();
+
+const { isValid, reinitialize, validate } = useForm();
+async function submit(): Promise<void> {
+  if (!isLoading.value) {
+    isLoading.value = true;
+    try {
+      validate();
+      if (isValid.value) {
+        const payload: UpdatePokemonPayload = {
+          uniqueName: uniqueName.value !== props.pokemon.uniqueName ? uniqueName.value : undefined,
+          nickname: nickname.value !== (props.pokemon.nickname ?? "") ? { value: nickname.value } : undefined,
+          isShiny: isShiny.value !== props.pokemon.isShiny ? isShiny.value : undefined,
+        };
+        const pokemon: Pokemon = await updatePokemon(props.pokemon.id, payload);
+        reinitialize();
+        emit("saved", pokemon);
+      }
+    } catch (e: unknown) {
+      emit("error", e);
+    } finally {
+      isLoading.value = false;
+    }
+  }
+}
+
+watch(
+  () => props.pokemon,
+  (pokemon) => {
+    isShiny.value = pokemon.isShiny;
+    nickname.value = pokemon.nickname ?? "";
+    uniqueName.value = pokemon.uniqueName;
+  },
+  { deep: true, immediate: true },
+);
 </script>
 
 <template>
@@ -101,8 +149,17 @@ useForm();
         </tr>
       </tbody>
     </table>
-    <form>
+    <form @submit.prevent="submit">
+      <div class="row">
+        <UniqueNameInput class="col" v-model="uniqueName" />
+        <NicknameInput class="col" v-model="nickname" />
+        <GenderSelect class="col" disabled :model-value="pokemon.gender ?? ''" />
+      </div>
+      <ShinyCheckbox v-model="isShiny" />
       <ItemSelect :model-value="pokemon.heldItem?.id" />
+      <div class="mb-3">
+        <SubmitButton :loading="isLoading" />
+      </div>
     </form>
   </section>
 </template>
