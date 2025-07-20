@@ -13,4 +13,40 @@ public record BattleItemPropertiesModel : IBattleItemProperties
   public int Evasion { get; set; }
   public int Critical { get; set; }
   public int GuardTurns { get; set; }
+
+  [JsonConstructor]
+  public BattleItemPropertiesModel(
+    int attack = 0,
+    int defense = 0,
+    int specialAttack = 0,
+    int specialDefense = 0,
+    int speed = 0,
+    int accuracy = 0,
+    int evasion = 0,
+    int critical = 0,
+    int guardTurns = 0)
+  {
+    Attack = attack;
+    Defense = defense;
+    SpecialAttack = specialAttack;
+    SpecialDefense = specialDefense;
+    Speed = speed;
+    Accuracy = accuracy;
+    Evasion = evasion;
+    Critical = critical;
+    GuardTurns = guardTurns;
+  }
+
+  public BattleItemPropertiesModel(IBattleItemProperties battleItem) : this(
+    battleItem.Attack,
+    battleItem.Defense,
+    battleItem.SpecialAttack,
+    battleItem.SpecialDefense,
+    battleItem.Speed,
+    battleItem.Accuracy,
+    battleItem.Evasion,
+    battleItem.Critical,
+    battleItem.GuardTurns)
+  {
+  }
 }

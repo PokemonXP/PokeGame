@@ -19,8 +19,11 @@ internal static class Items
   public static readonly ColumnId DisplayName = new(nameof(ItemEntity.DisplayName), Table);
   public static readonly ColumnId Id = new(nameof(ItemEntity.Id), Table);
   public static readonly ColumnId ItemId = new(nameof(ItemEntity.ItemId), Table);
+  public static readonly ColumnId MoveId = new(nameof(ItemEntity.MoveId), Table);
+  public static readonly ColumnId MoveUid = new(nameof(ItemEntity.MoveUid), Table);
   public static readonly ColumnId Notes = new(nameof(ItemEntity.Notes), Table);
   public static readonly ColumnId Price = new(nameof(ItemEntity.Price), Table);
+  public static readonly ColumnId Properties = new(nameof(ItemEntity.Properties), Table);
   public static readonly ColumnId Sprite = new(nameof(ItemEntity.Sprite), Table);
   public static readonly ColumnId UniqueName = new(nameof(ItemEntity.UniqueName), Table);
   public static readonly ColumnId UniqueNameNormalized = new(nameof(ItemEntity.UniqueNameNormalized), Table);

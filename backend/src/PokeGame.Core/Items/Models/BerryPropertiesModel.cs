@@ -2,4 +2,14 @@
 
 namespace PokeGame.Core.Items.Models;
 
-public record BerryPropertiesModel : IBerryProperties;
+public record BerryPropertiesModel : IBerryProperties
+{
+  [JsonConstructor]
+  public BerryPropertiesModel()
+  {
+  }
+
+  public BerryPropertiesModel(IBerryProperties _) : this()
+  {
+  }
+}

@@ -23,6 +23,7 @@ internal class ItemConfiguration : AggregateConfiguration<ItemEntity>, IEntityTy
     builder.HasIndex(x => x.UniqueNameNormalized).IsUnique();
     builder.HasIndex(x => x.DisplayName);
     builder.HasIndex(x => x.Price);
+    builder.HasIndex(x => x.MoveUid);
 
     builder.Property(x => x.Category).HasMaxLength(byte.MaxValue).HasConversion(new EnumToStringConverter<ItemCategory>());
     builder.Property(x => x.UniqueName).HasMaxLength(UniqueName.MaximumLength);
@@ -30,5 +31,7 @@ internal class ItemConfiguration : AggregateConfiguration<ItemEntity>, IEntityTy
     builder.Property(x => x.DisplayName).HasMaxLength(DisplayName.MaximumLength);
     builder.Property(x => x.Sprite).HasMaxLength(Url.MaximumLength);
     builder.Property(x => x.Url).HasMaxLength(Url.MaximumLength);
+
+    builder.HasOne(x => x.Move).WithMany(x => x.TechnicalMachines).OnDelete(DeleteBehavior.Restrict);
   }
 }

@@ -2,4 +2,14 @@
 
 namespace PokeGame.Core.Items.Models;
 
-public record KeyItemPropertiesModel : IKeyItemProperties;
+public record KeyItemPropertiesModel : IKeyItemProperties
+{
+  [JsonConstructor]
+  public KeyItemPropertiesModel()
+  {
+  }
+
+  public KeyItemPropertiesModel(IKeyItemProperties _) : this()
+  {
+  }
+}

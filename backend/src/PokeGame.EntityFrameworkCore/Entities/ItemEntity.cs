@@ -1,6 +1,7 @@
 ﻿using Krakenar.EntityFrameworkCore.Relational.KrakenarDb;
 using PokeGame.Core.Items;
 using PokeGame.Core.Items.Events;
+using PokeGame.Core.Items.Models;
 using AggregateEntity = Krakenar.EntityFrameworkCore.Relational.Entities.Aggregate;
 
 namespace PokeGame.EntityFrameworkCore.Entities;
@@ -27,12 +28,96 @@ internal class ItemEntity : AggregateEntity
   public string? Url { get; private set; }
   public string? Notes { get; private set; }
 
+  public MoveEntity? Move { get; private set; }
+  public int? MoveId { get; private set; }
+  public Guid? MoveUid { get; private set; }
+
+  public string? Properties { get; private set; }
+
   public List<PokemonEntity> ContainedPokemon { get; private set; } = [];
   public List<PokemonEntity> HoldingPokemon { get; private set; } = [];
   public List<PokemonMoveEntity> LearnedMoves { get; private set; } = [];
 
+  public ItemEntity(ItemCreated @event) : base(@event)
+  {
+    Id = new ItemId(@event.StreamId).ToGuid();
+
+    Category = @event.Category;
+
+    UniqueName = @event.UniqueName.Value;
+
+    Price = @event.Price?.Value ?? 0;
+  }
+
   private ItemEntity() : base()
   {
+  }
+
+  public void SetProperties(BattleItemPropertiesChanged @event)
+  {
+    Update(@event);
+
+    BattleItemPropertiesModel properties = new(@event.Properties);
+    Properties = PokemonSerializer.Instance.Serialize(properties);
+  }
+  public void SetProperties(BerryPropertiesChanged @event)
+  {
+    Update(@event);
+
+    BerryPropertiesModel properties = new(@event.Properties);
+    Properties = PokemonSerializer.Instance.Serialize(properties);
+  }
+  public void SetProperties(KeyItemPropertiesChanged @event)
+  {
+    Update(@event);
+
+    KeyItemPropertiesModel properties = new(@event.Properties);
+    Properties = PokemonSerializer.Instance.Serialize(properties);
+  }
+  public void SetProperties(MaterialPropertiesChanged @event)
+  {
+    Update(@event);
+
+    MaterialPropertiesModel properties = new(@event.Properties);
+    Properties = PokemonSerializer.Instance.Serialize(properties);
+  }
+  public void SetProperties(MedicinePropertiesChanged @event)
+  {
+    Update(@event);
+
+    MedicinePropertiesModel properties = new(@event.Properties);
+    Properties = PokemonSerializer.Instance.Serialize(properties);
+  }
+  public void SetProperties(OtherItemPropertiesChanged @event)
+  {
+    Update(@event);
+
+    OtherItemPropertiesModel properties = new(@event.Properties);
+    Properties = PokemonSerializer.Instance.Serialize(properties);
+  }
+  public void SetProperties(PokeBallPropertiesChanged @event)
+  {
+    Update(@event);
+
+    PokeBallPropertiesModel properties = new(@event.Properties);
+    Properties = PokemonSerializer.Instance.Serialize(properties);
+  }
+  public void SetProperties(MoveEntity move, TechnicalMachinePropertiesChanged @event)
+  {
+    Update(@event);
+
+    Move = move;
+    MoveId = move.MoveId;
+    MoveUid = move.Id;
+
+    Properties = null;
+  }
+  public void SetProperties(TreasurePropertiesChanged @event)
+  {
+    Update(@event);
+
+    TreasurePropertiesModel properties = new(@event.Properties);
+    Properties = PokemonSerializer.Instance.Serialize(properties);
   }
 
   public void SetUniqueName(ItemUniqueNameChanged @event)

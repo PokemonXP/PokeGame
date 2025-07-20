@@ -60,6 +60,5 @@ public record MedicineProperties : ItemProperties, IMedicineProperties
     medicine.IsPowerPointPercentage,
     medicine.RestoreAllMoves)
   {
-
   }
 }
