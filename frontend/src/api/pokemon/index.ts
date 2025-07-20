@@ -3,7 +3,7 @@ import { urlUtils } from "logitar-js";
 import type {
   CreatePokemonPayload,
   Pokemon,
-  RelearnPokemonMovePayload,
+  RememberPokemonMovePayload,
   SearchPokemonPayload,
   SwitchPokemonMovesPayload,
   UpdatePokemonPayload,
@@ -26,9 +26,12 @@ export async function readPokemon(id: string): Promise<Pokemon> {
   return (await get<Pokemon>(url)).data;
 }
 
-export async function relearnPokemonMove(id: string, payload: RelearnPokemonMovePayload): Promise<Pokemon> {
-  const url: string = new urlUtils.UrlBuilder({ path: "/pokemon/{id}/moves/relearn" }).setParameter("id", id).buildRelative();
-  return (await put<RelearnPokemonMovePayload, Pokemon>(url, payload)).data;
+export async function rememberPokemonMove(pokemonId: string, moveId: string, payload: RememberPokemonMovePayload): Promise<Pokemon> {
+  const url: string = new urlUtils.UrlBuilder({ path: "/pokemon/{pokemonId}/moves/{moveId}/remember" })
+    .setParameter("pokemonId", pokemonId)
+    .setParameter("moveId", moveId)
+    .buildRelative();
+  return (await put<RememberPokemonMovePayload, Pokemon>(url, payload)).data;
 }
 
 export async function searchPokemon(payload: SearchPokemonPayload): Promise<SearchResults<Pokemon>> {

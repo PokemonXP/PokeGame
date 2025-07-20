@@ -249,8 +249,7 @@ export type RegionalNumber = {
   number: number;
 };
 
-export type RelearnPokemonMovePayload = {
-  move: string;
+export type RememberPokemonMovePayload = {
   position: number;
 };
 
@@ -327,10 +326,10 @@ export type UpdatePokemonPayload = {
   uniqueName?: string;
   nickname?: Change<string>;
   isShiny?: boolean;
-  vitality?: number
-  stamina?: number
-  statusCondition?: Change<StatusCondition>
-  friendship?: number
+  vitality?: number;
+  stamina?: number;
+  statusCondition?: Change<StatusCondition>;
+  friendship?: number;
   sprite?: Change<string>;
   url?: Change<string>;
   notes?: Change<string>;

@@ -140,18 +140,18 @@ internal class CreatePokemonHandler : ICommandHandler<CreatePokemon, PokemonMode
 
     if (learnedMoves.Count == 5)
     {
-      pokemon.RelearnMove(learnedMoves[1].Move, position: 0, actorId);
-      pokemon.RelearnMove(learnedMoves[2].Move, position: 1, actorId);
-      pokemon.RelearnMove(learnedMoves[3].Move, position: 2, actorId);
+      pokemon.RememberMove(learnedMoves[1].Move, position: 0, actorId);
+      pokemon.RememberMove(learnedMoves[2].Move, position: 1, actorId);
+      pokemon.RememberMove(learnedMoves[3].Move, position: 2, actorId);
     }
     else if (learnedMoves.Count == 6)
     {
-      pokemon.RelearnMove(learnedMoves[2].Move, position: 0, actorId);
-      pokemon.RelearnMove(learnedMoves[3].Move, position: 1, actorId);
+      pokemon.RememberMove(learnedMoves[2].Move, position: 0, actorId);
+      pokemon.RememberMove(learnedMoves[3].Move, position: 1, actorId);
     }
     else if (learnedMoves.Count == 7)
     {
-      pokemon.RelearnMove(learnedMoves[3].Move, position: 0, actorId);
+      pokemon.RememberMove(learnedMoves[3].Move, position: 0, actorId);
     }
 
     pokemon.Update(actorId);

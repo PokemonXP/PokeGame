@@ -25,8 +25,8 @@ const isCurrent = computed<boolean>(() => parseBoolean(props.current) ?? false);
 const selectedPosition = computed<number | undefined>(() => parseNumber(props.selected));
 
 defineEmits<{
+  (e: "remember", move: PokemonMove): void;
   (e: "selected", position: number): void;
-  (e: "relearn", move: PokemonMove): void;
   (e: "switch", destination: number): void;
 }>();
 </script>
@@ -117,9 +117,9 @@ defineEmits<{
                 icon="fas fa-rotate"
                 :loading="loading"
                 :status="t('loading')"
-                :text="t('pokemon.move.relearn')"
+                :text="t('pokemon.move.remember')"
                 variant="warning"
-                @click="$emit('relearn', item)"
+                @click="$emit('remember', item)"
               />
             </template>
             <template v-if="mode === 'notes'">

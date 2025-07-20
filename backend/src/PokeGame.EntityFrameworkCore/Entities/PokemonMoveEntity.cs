@@ -57,7 +57,7 @@ internal class PokemonMoveEntity
   {
   }
 
-  public void Relearn(PokemonMoveRelearned @event)
+  public void Remember(PokemonMoveRemembered @event)
   {
     Position = @event.Position;
   }
