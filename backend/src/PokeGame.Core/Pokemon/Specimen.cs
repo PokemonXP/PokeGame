@@ -15,7 +15,8 @@ public class Specimen : AggregateRoot
   public const int MoveLimit = 4;
 
   private PokemonUpdated _updated = new();
-  private bool HasUpdates => _updated.Sprite is not null || _updated.Url is not null || _updated.Notes is not null;
+  private bool HasUpdates => _updated.IsShiny.HasValue
+    || _updated.Sprite is not null || _updated.Url is not null || _updated.Notes is not null;
 
   public new PokemonId Id => new(base.Id);
 
@@ -27,7 +28,19 @@ public class Specimen : AggregateRoot
   public UniqueName UniqueName => _uniqueName ?? throw new InvalidOperationException("The Pokémon has not been initialized.");
   public Nickname? Nickname { get; private set; }
   public PokemonGender? Gender { get; private set; }
-  public bool IsShiny { get; private set; }
+  private bool? _isShiny = null;
+  public bool IsShiny
+  {
+    get => _isShiny ?? throw new InvalidOperationException("The Pokémon has not been initialized.");
+    set
+    {
+      if (_isShiny != value)
+      {
+        _isShiny = value;
+        _updated.IsShiny = value;
+      }
+    }
+  }
 
   public PokemonType TeraType { get; private set; }
   private PokemonSize? _size = null;
@@ -227,7 +240,7 @@ public class Specimen : AggregateRoot
 
     _uniqueName = @event.UniqueName;
     Gender = @event.Gender;
-    IsShiny = @event.IsShiny;
+    _isShiny = @event.IsShiny;
 
     TeraType = @event.TeraType;
     _size = @event.Size;
@@ -370,6 +383,26 @@ public class Specimen : AggregateRoot
     {
       Raise(_updated, actorId, DateTime.Now);
       _updated = new();
+    }
+  }
+  protected virtual void Handle(PokemonUpdated @event)
+  {
+    if (@event.IsShiny.HasValue)
+    {
+      _isShiny = @event.IsShiny.Value;
+    }
+
+    if (@event.Sprite is not null)
+    {
+      _sprite = @event.Sprite.Value;
+    }
+    if (@event.Url is not null)
+    {
+      _url = @event.Url.Value;
+    }
+    if (@event.Notes is not null)
+    {
+      _notes = @event.Notes.Value;
     }
   }
 

@@ -196,6 +196,11 @@ internal class PokemonEntity : AggregateEntity
   {
     base.Update(@event);
 
+    if (@event.IsShiny.HasValue)
+    {
+      IsShiny = @event.IsShiny.Value;
+    }
+
     if (@event.Sprite is not null)
     {
       Sprite = @event.Sprite.Value?.Value;
