@@ -16,6 +16,7 @@ public class Specimen : AggregateRoot
 
   private PokemonUpdated _updated = new();
   private bool HasUpdates => _updated.IsShiny.HasValue
+    || _updated.Vitality.HasValue || _updated.Stamina.HasValue || _updated.StatusCondition is not null || _updated.Friendship is not null
     || _updated.Sprite is not null || _updated.Url is not null || _updated.Notes is not null;
 
   public new PokemonId Id => new(base.Id);
@@ -28,10 +29,10 @@ public class Specimen : AggregateRoot
   public UniqueName UniqueName => _uniqueName ?? throw new InvalidOperationException("The Pokémon has not been initialized.");
   public Nickname? Nickname { get; private set; }
   public PokemonGender? Gender { get; private set; }
-  private bool? _isShiny = null;
+  private bool _isShiny = false;
   public bool IsShiny
   {
-    get => _isShiny ?? throw new InvalidOperationException("The Pokémon has not been initialized.");
+    get => _isShiny;
     set
     {
       if (_isShiny != value)
@@ -61,11 +62,62 @@ public class Specimen : AggregateRoot
   private EffortValues? _effortValues = null;
   public EffortValues EffortValues => _effortValues ?? throw new InvalidOperationException("The Pokémon has not been initialized.");
   public PokemonStatistics Statistics => new(this);
-  public int Vitality { get; private set; }
-  public int Stamina { get; private set; }
-  public StatusCondition? StatusCondition { get; private set; }
+  private int _vitality = 0;
+  public int Vitality
+  {
+    get => _vitality;
+    set
+    {
+      ArgumentOutOfRangeException.ThrowIfNegative(value, nameof(Vitality));
+
+      if (_vitality != value)
+      {
+        _vitality = Math.Min(value, Statistics.HP);
+        _updated.Vitality = value;
+      }
+    }
+  }
+  private int _stamina = 0;
+  public int Stamina
+  {
+    get => _stamina;
+    set
+    {
+      ArgumentOutOfRangeException.ThrowIfNegative(value, nameof(Stamina));
+
+      if (_stamina != value)
+      {
+        _stamina = Math.Min(value, Statistics.HP);
+        _updated.Stamina = value;
+      }
+    }
+  }
+  private StatusCondition? _statusCondition = null;
+  public StatusCondition? StatusCondition
+  {
+    get => _statusCondition;
+    set
+    {
+      if (_statusCondition != value)
+      {
+        _statusCondition = value;
+        _updated.StatusCondition = new Change<StatusCondition?>(value);
+      }
+    }
+  }
   private Friendship? _friendship = null;
-  public Friendship Friendship => _friendship ?? throw new InvalidOperationException("The Pokémon has not been initialized.");
+  public Friendship Friendship
+  {
+    get => _friendship ?? throw new InvalidOperationException("The Pokémon has not been initialized.");
+    set
+    {
+      if (_friendship != value)
+      {
+        _friendship = value;
+        _updated.Friendship = value;
+      }
+    }
+  }
 
   public PokemonCharacteristic Characteristic => PokemonCharacteristics.Instance.Find(IndividualValues, Size);
 
@@ -254,8 +306,8 @@ public class Specimen : AggregateRoot
     _baseStatistics = @event.BaseStatistics;
     _individualValues = @event.IndividualValues;
     _effortValues = @event.EffortValues;
-    Vitality = @event.Vitality;
-    Stamina = @event.Stamina;
+    _vitality = @event.Vitality;
+    _stamina = @event.Stamina;
     _friendship = @event.Friendship;
   }
 
@@ -390,6 +442,23 @@ public class Specimen : AggregateRoot
     if (@event.IsShiny.HasValue)
     {
       _isShiny = @event.IsShiny.Value;
+    }
+
+    if (@event.Vitality.HasValue)
+    {
+      _vitality = @event.Vitality.Value;
+    }
+    if (@event.Stamina.HasValue)
+    {
+      _stamina = @event.Stamina.Value;
+    }
+    if (@event.StatusCondition is not null)
+    {
+      _statusCondition = @event.StatusCondition.Value;
+    }
+    if (@event.Friendship is not null)
+    {
+      _friendship = @event.Friendship;
     }
 
     if (@event.Sprite is not null)

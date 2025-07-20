@@ -201,6 +201,23 @@ internal class PokemonEntity : AggregateEntity
       IsShiny = @event.IsShiny.Value;
     }
 
+    if (@event.Vitality.HasValue)
+    {
+      Vitality = @event.Vitality.Value;
+    }
+    if (@event.Stamina.HasValue)
+    {
+      Stamina = @event.Stamina.Value;
+    }
+    if (@event.StatusCondition is not null)
+    {
+      StatusCondition = @event.StatusCondition.Value;
+    }
+    if (@event.Friendship is not null)
+    {
+      Friendship = @event.Friendship.Value;
+    }
+
     if (@event.Sprite is not null)
     {
       Sprite = @event.Sprite.Value?.Value;
