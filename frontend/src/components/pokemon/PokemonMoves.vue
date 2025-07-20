@@ -1,9 +1,10 @@
 <script setup lang="ts">
+import { TarButton } from "logitar-vue3-ui";
 import { arrayUtils } from "logitar-js";
 import { useI18n } from "vue-i18n";
 
 import MoveTable from "./MoveTable.vue";
-import type { Pokemon, PokemonMove, RelearnPokemonMovePayload, SwitchPokemonMovesPayload } from "@/types/pokemon";
+import type { MoveDisplayMove, Pokemon, PokemonMove, RelearnPokemonMovePayload, SwitchPokemonMovesPayload } from "@/types/pokemon";
 import { computed, ref } from "vue";
 import { relearnPokemonMove, switchPokemonMoves } from "@/api/pokemon";
 
@@ -15,6 +16,7 @@ const props = defineProps<{
 }>();
 
 const isLoading = ref<boolean>(false);
+const mode = ref<MoveDisplayMove>("actions");
 const selectedPosition = ref<number>();
 
 const currentMoves = computed<PokemonMove[]>(() =>
@@ -73,15 +75,30 @@ async function onSwitch(destination: number): Promise<void> {
     }
   }
 }
-
-// TODO(fpion): Learn
 </script>
 
 <template>
-  <div>
+  <section>
+    <div class="row">
+      <div class="col">
+        <div class="btn-group float-end" role="group" aria-label="Move Display Mode">
+          <TarButton :class="{ active: mode === 'actions' }" icon="fas fa-hand" :text="t('pokemon.move.actions')" @click="mode = 'actions'" />
+          <TarButton :class="{ active: mode === 'description' }" icon="fas fa-book" :text="t('pokemon.move.description')" @click="mode = 'description'" />
+          <TarButton :class="{ active: mode === 'notes' }" icon="fas fa-note-sticky" :text="t('pokemon.move.notes')" @click="mode = 'notes'" />
+        </div>
+      </div>
+    </div>
     <h2 class="h3">{{ t("pokemon.move.current") }}</h2>
-    <MoveTable current :loading="isLoading" :moves="currentMoves" :selected="selectedPosition" @selected="selectedPosition = $event" @switch="onSwitch" />
+    <MoveTable
+      current
+      :loading="isLoading"
+      :mode="mode"
+      :moves="currentMoves"
+      :selected="selectedPosition"
+      @selected="selectedPosition = $event"
+      @switch="onSwitch"
+    />
     <h2 class="h3">{{ t("pokemon.move.other") }}</h2>
-    <MoveTable :loading="isLoading" :moves="otherMoves" :selected="selectedPosition" @relearn="onRelearn" />
-  </div>
+    <MoveTable :loading="isLoading" :mode="mode" :moves="otherMoves" :selected="selectedPosition" @relearn="onRelearn" />
+  </section>
 </template>

@@ -55,13 +55,6 @@ const ability = computed<Ability>(() => {
         </td>
       </tr>
       <tr>
-        <th scope="row">{{ t("pokemon.ability.title") }}</th>
-        <!-- TODO(fpion): should not take an entire row -->
-        <td colspan="3">
-          <a :href="getAbilityUrl(ability)" target="_blank"><AbilityIcon /> {{ formatAbility(ability) }}</a>
-        </td>
-      </tr>
-      <tr>
         <th scope="row">{{ t("pokemon.characteristic.label") }}</th>
         <!-- TODO(fpion): should not take an entire row -->
         <td colspan="3">{{ pokemon.characteristic }}.</td>
