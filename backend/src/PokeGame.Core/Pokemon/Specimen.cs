@@ -374,21 +374,24 @@ public class Specimen : AggregateRoot
     }
   }
 
-  public bool RelearnMove(Move move, int position, ActorId? actorId = null) => RelearnMove(move.Id, position, actorId);
-  public bool RelearnMove(MoveId moveId, int position, ActorId? actorId = null)
+  public bool RememberMove(Move move, int position, ActorId? actorId = null) => RememberMove(move.Id, position, actorId);
+  public bool RememberMove(MoveId moveId, int position, ActorId? actorId = null)
   {
     ArgumentOutOfRangeException.ThrowIfNegative(position, nameof(position));
     ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(position, MoveLimit, nameof(position));
 
-    if (!_learnedMoves.ContainsKey(moveId) || _currentMoves.Contains(moveId))
+    if (!_learnedMoves.ContainsKey(moveId))
     {
       return false;
     }
+    else if (!_currentMoves.Contains(moveId))
+    {
+      Raise(new PokemonMoveRemembered(moveId, position), actorId);
+    }
 
-    Raise(new PokemonMoveRelearned(moveId, position), actorId);
     return true;
   }
-  protected virtual void Handle(PokemonMoveRelearned @event)
+  protected virtual void Handle(PokemonMoveRemembered @event)
   {
     _currentMoves[@event.Position] = @event.MoveId;
   }

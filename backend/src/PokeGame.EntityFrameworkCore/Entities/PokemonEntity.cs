@@ -153,7 +153,7 @@ internal class PokemonEntity : AggregateEntity
     Moves.Add(new PokemonMoveEntity(this, move, @event));
   }
 
-  public bool RelearnMove(PokemonMoveRelearned @event)
+  public bool RememberMove(PokemonMoveRemembered @event)
   {
     Update(@event);
 
@@ -165,7 +165,7 @@ internal class PokemonEntity : AggregateEntity
       return false;
     }
 
-    move.Relearn(@event);
+    move.Remember(@event);
     return true;
   }
 

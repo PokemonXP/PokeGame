@@ -4,9 +4,9 @@ import { arrayUtils } from "logitar-js";
 import { useI18n } from "vue-i18n";
 
 import MoveTable from "./MoveTable.vue";
-import type { MoveDisplayMove, Pokemon, PokemonMove, RelearnPokemonMovePayload, SwitchPokemonMovesPayload } from "@/types/pokemon";
+import type { MoveDisplayMove, Pokemon, PokemonMove, RememberPokemonMovePayload, SwitchPokemonMovesPayload } from "@/types/pokemon";
 import { computed, ref } from "vue";
-import { relearnPokemonMove, switchPokemonMoves } from "@/api/pokemon";
+import { rememberPokemonMove, switchPokemonMoves } from "@/api/pokemon";
 
 const { orderBy } = arrayUtils;
 const { t } = useI18n();
@@ -39,15 +39,14 @@ const emit = defineEmits<{
   (e: "saved", pokemon: Pokemon): void;
 }>();
 
-async function onRelearn(move: PokemonMove): Promise<void> {
+async function onRemember(move: PokemonMove): Promise<void> {
   if (!isLoading.value) {
     isLoading.value = true;
     try {
-      const payload: RelearnPokemonMovePayload = {
-        move: move.move.id,
+      const payload: RememberPokemonMovePayload = {
         position: selectedPosition.value ?? -1,
       };
-      const pokemon: Pokemon = await relearnPokemonMove(props.pokemon.id, payload);
+      const pokemon: Pokemon = await rememberPokemonMove(props.pokemon.id, move.move.id, payload);
       selectedPosition.value = undefined;
       emit("saved", pokemon);
     } catch (e: unknown) {
@@ -99,6 +98,6 @@ async function onSwitch(destination: number): Promise<void> {
       @switch="onSwitch"
     />
     <h2 class="h3">{{ t("pokemon.move.other") }}</h2>
-    <MoveTable :loading="isLoading" :mode="mode" :moves="otherMoves" :selected="selectedPosition" @relearn="onRelearn" />
+    <MoveTable :loading="isLoading" :mode="mode" :moves="otherMoves" :selected="selectedPosition" @remember="onRemember" />
   </section>
 </template>
