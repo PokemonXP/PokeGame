@@ -6,7 +6,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialMigration : Migration
+    public partial class PokeGame_1_0_0 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -171,21 +171,18 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
                     ItemId = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Category = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
                     UniqueName = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
                     UniqueNameNormalized = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
                     DisplayName = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
                     Description = table.Column<string>(type: "text", nullable: true),
                     Price = table.Column<int>(type: "integer", nullable: false),
-                    Category = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
-                    BattleItem = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: true),
-                    Berry = table.Column<string>(type: "text", nullable: true),
-                    Medicine = table.Column<string>(type: "text", nullable: true),
-                    PokeBall = table.Column<string>(type: "text", nullable: true),
-                    MoveId = table.Column<int>(type: "integer", nullable: true),
-                    MoveUid = table.Column<Guid>(type: "uuid", nullable: true),
                     Sprite = table.Column<string>(type: "character varying(2048)", maxLength: 2048, nullable: true),
                     Url = table.Column<string>(type: "character varying(2048)", maxLength: 2048, nullable: true),
                     Notes = table.Column<string>(type: "text", nullable: true),
+                    MoveId = table.Column<int>(type: "integer", nullable: true),
+                    MoveUid = table.Column<Guid>(type: "uuid", nullable: true),
+                    Properties = table.Column<string>(type: "text", nullable: true),
                     StreamId = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
                     Version = table.Column<long>(type: "bigint", nullable: false),
                     CreatedBy = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),

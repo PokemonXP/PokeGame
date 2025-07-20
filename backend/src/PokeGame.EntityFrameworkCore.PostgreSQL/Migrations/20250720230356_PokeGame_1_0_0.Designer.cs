@@ -11,8 +11,8 @@ using PokeGame.EntityFrameworkCore;
 namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
 {
     [DbContext(typeof(PokemonContext))]
-    [Migration("20250719210558_InitialMigration")]
-    partial class InitialMigration
+    [Migration("20250720230356_PokeGame_1_0_0")]
+    partial class PokeGame_1_0_0
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -342,13 +342,6 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ItemId"));
 
-                    b.Property<string>("BattleItem")
-                        .HasMaxLength(32)
-                        .HasColumnType("character varying(32)");
-
-                    b.Property<string>("Berry")
-                        .HasColumnType("text");
-
                     b.Property<string>("Category")
                         .IsRequired()
                         .HasMaxLength(255)
@@ -371,9 +364,6 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid");
 
-                    b.Property<string>("Medicine")
-                        .HasColumnType("text");
-
                     b.Property<int?>("MoveId")
                         .HasColumnType("integer");
 
@@ -383,11 +373,11 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
                     b.Property<string>("Notes")
                         .HasColumnType("text");
 
-                    b.Property<string>("PokeBall")
-                        .HasColumnType("text");
-
                     b.Property<int>("Price")
                         .HasColumnType("integer");
+
+                    b.Property<string>("Properties")
+                        .HasColumnType("text");
 
                     b.Property<string>("Sprite")
                         .HasMaxLength(2048)
