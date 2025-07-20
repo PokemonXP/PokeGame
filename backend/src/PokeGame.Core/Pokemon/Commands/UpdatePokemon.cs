@@ -59,6 +59,23 @@ internal class UpdatePokemonHandler : ICommandHandler<UpdatePokemon, PokemonMode
       pokemon.IsShiny = payload.IsShiny.Value;
     }
 
+    if (payload.Vitality.HasValue)
+    {
+      pokemon.Vitality = payload.Vitality.Value;
+    }
+    if (payload.Stamina.HasValue)
+    {
+      pokemon.Stamina = payload.Stamina.Value;
+    }
+    if (payload.StatusCondition is not null)
+    {
+      pokemon.StatusCondition = payload.StatusCondition.Value;
+    }
+    if (payload.Friendship.HasValue)
+    {
+      pokemon.Friendship = new Friendship(payload.Friendship.Value);
+    }
+
     if (payload.Sprite is not null)
     {
       pokemon.Sprite = Url.TryCreate(payload.Sprite.Value);

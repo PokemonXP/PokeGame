@@ -117,4 +117,10 @@ public class PokemonUpdateTests
     _pokemon.Update(actorId);
     Assert.Contains(_pokemon.Changes, change => change is PokemonUpdated updated && updated.ActorId == actorId && updated.Url == new Change<Url>(null));
   }
+
+  // TODO(fpion): Is Shiny
+  // TODO(fpion): Vitality
+  // TODO(fpion): Stamina
+  // TODO(fpion): Status Condition
+  // TODO(fpion): Friendship
 }
