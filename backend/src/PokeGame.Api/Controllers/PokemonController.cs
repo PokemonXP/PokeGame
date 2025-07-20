@@ -56,4 +56,11 @@ public class PokemonController : ControllerBase
     SearchResults<PokemonModel> regions = await _pokemonService.SearchAsync(payload, cancellationToken);
     return Ok(regions);
   }
+
+  [HttpPatch("{id}")]
+  public async Task<ActionResult<PokemonModel>> UpdateAsync(Guid id, UpdatePokemonPayload payload, CancellationToken cancellationToken)
+  {
+    PokemonModel? pokemon = await _pokemonService.UpdateAsync(id, payload, cancellationToken);
+    return pokemon is null ? NotFound() : Ok(pokemon);
+  }
 }
