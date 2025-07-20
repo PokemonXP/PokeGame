@@ -59,6 +59,19 @@ internal class UpdatePokemonHandler : ICommandHandler<UpdatePokemon, PokemonMode
       pokemon.IsShiny = payload.IsShiny.Value;
     }
 
+    if (payload.Sprite is not null)
+    {
+      pokemon.Sprite = Url.TryCreate(payload.Sprite.Value);
+    }
+    if (payload.Url is not null)
+    {
+      pokemon.Url = Url.TryCreate(payload.Url.Value);
+    }
+    if (payload.Notes is not null)
+    {
+      pokemon.Notes = Notes.TryCreate(payload.Notes.Value);
+    }
+
     pokemon.Update(actorId);
     await _pokemonManager.SaveAsync(pokemon, cancellationToken);
 
