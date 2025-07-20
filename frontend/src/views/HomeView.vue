@@ -11,6 +11,5 @@ const { t } = useI18n();
       {{ t("brand") }}
       <img src="@/assets/img/logo.png" :alt="`$­{t('brand')} Logo`" height="40" />
     </h1>
-    <!-- TODO(fpion): Player Character List (Cards) -->
   </main>
 </template>

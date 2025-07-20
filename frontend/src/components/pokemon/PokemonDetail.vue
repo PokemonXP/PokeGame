@@ -3,9 +3,8 @@ import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 
 import AbilityIcon from "@/components/icons/AbilityIcon.vue";
-import ItemIcon from "@/components/icons/items/ItemIcon.vue";
 import type { Ability, Pokemon } from "@/types/pokemon";
-import { formatAbility, formatItem } from "@/helpers/format";
+import { formatAbility } from "@/helpers/format";
 import { getAbilityUrl } from "@/helpers/cms";
 
 const { t } = useI18n();
@@ -66,14 +65,6 @@ const ability = computed<Ability>(() => {
         <th scope="row">{{ t("pokemon.characteristic.label") }}</th>
         <!-- TODO(fpion): should not take an entire row -->
         <td colspan="3">{{ pokemon.characteristic }}.</td>
-      </tr>
-      <tr>
-        <th scope="row">{{ t("pokemon.item.held") }}</th>
-        <!-- TODO(fpion): should not take an entire row; should be editable (update, give from inventory, take to inventory) -->
-        <td colspan="3">
-          <a v-if="pokemon.heldItem" href="#" target="_blank"><ItemIcon /> {{ formatItem(pokemon.heldItem) }}</a>
-          <span v-else class="text-muted">{{ "—" }}</span>
-        </td>
       </tr>
     </tbody>
   </table>

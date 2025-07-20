@@ -7,7 +7,6 @@ import { useRoute, useRouter } from "vue-router";
 import AdminBreadcrumb from "@/components/admin/AdminBreadcrumb.vue";
 import DeletePokemon from "@/components/pokemon/DeletePokemon.vue";
 import PokemonDetail from "@/components/pokemon/PokemonDetail.vue";
-import PokemonGeneral from "@/components/pokemon/PokemonGeneral.vue";
 import PokemonMetadata from "@/components/pokemon/PokemonMetadata.vue";
 import PokemonMoves from "@/components/pokemon/PokemonMoves.vue";
 import PokemonStatistics from "@/components/pokemon/PokemonStatistics.vue";
@@ -42,18 +41,13 @@ function updateAggregate(updated: Pokemon): void {
     pokemon.value.updatedOn = updated.updatedOn;
   }
 }
-function onGeneralUpdated(updated: Pokemon): void {
+function onMetadataUpdated(updated: Pokemon): void {
   updateAggregate(updated);
   if (pokemon.value) {
     pokemon.value.uniqueName = updated.uniqueName;
     pokemon.value.nickname = updated.nickname;
     pokemon.value.gender = updated.gender;
-  }
-  toasts.success("pokemon.updated");
-}
-function onMetadataUpdated(updated: Pokemon): void {
-  updateAggregate(updated);
-  if (pokemon.value) {
+    pokemon.value.isShiny = updated.isShiny;
     pokemon.value.sprite = updated.sprite;
     pokemon.value.url = updated.url;
     pokemon.value.notes = updated.notes;
@@ -99,9 +93,6 @@ onMounted(async () => {
     isLoading.value = false;
   }
 });
-
-// TODO(fpion): Original Trainer
-// TODO(fpion): Ownership
 </script>
 
 <template>
@@ -117,9 +108,6 @@ onMounted(async () => {
       <TarTabs>
         <TarTab active id="summary" :title="t('pokemon.summary.title')">
           <PokemonSummary :pokemon="pokemon" />
-        </TarTab>
-        <TarTab id="general" :title="t('general')">
-          <PokemonGeneral :pokemon="pokemon" @error="handleError" @saved="onGeneralUpdated" />
         </TarTab>
         <TarTab id="statistics" :title="t('pokemon.statistic.title')">
           <PokemonStatistics :pokemon="pokemon" @error="handleError" @saved="onStatisticsUpdated" />
