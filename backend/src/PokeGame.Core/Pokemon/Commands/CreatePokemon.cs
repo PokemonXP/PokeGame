@@ -136,7 +136,6 @@ internal class CreatePokemonHandler : ICommandHandler<CreatePokemon, PokemonMode
       LearnedMove learned = learnedMoves[i];
       int position = Math.Max(i + Specimen.MoveLimit - learnedMoves.Count, 0);
       pokemon.LearnMove(learned.Move, position, learned.Level, notes: null, actorId);
-      i++;
     }
 
     if (learnedMoves.Count == 5)
