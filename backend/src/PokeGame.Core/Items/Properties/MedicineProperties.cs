@@ -3,8 +3,11 @@ using PokeGame.Core.Items.Validators;
 
 namespace PokeGame.Core.Items.Properties;
 
-internal record MedicineProperties : IMedicineProperties
+public record MedicineProperties : ItemProperties, IMedicineProperties
 {
+  [JsonInclude]
+  public override ItemCategory Category { get; } = ItemCategory.Medicine;
+
   public bool IsHerbal { get; }
 
   public int Healing { get; }

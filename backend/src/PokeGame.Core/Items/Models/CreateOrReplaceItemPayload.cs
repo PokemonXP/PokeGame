@@ -1,11 +1,7 @@
-﻿using AggregateModel = Krakenar.Contracts.Aggregate;
+﻿namespace PokeGame.Core.Items.Models;
 
-namespace PokeGame.Core.Items.Models;
-
-public class ItemModel : AggregateModel
+public record CreateOrReplaceItemPayload
 {
-  public ItemCategory Category { get; set; }
-
   public string UniqueName { get; set; } = string.Empty;
   public string? DisplayName { get; set; }
   public string? Description { get; set; }
@@ -19,13 +15,11 @@ public class ItemModel : AggregateModel
   public OtherItemPropertiesModel? OtherItem { get; set; }
   public PicnicItemPropertiesModel? PicnicItem { get; set; }
   public PokeBallPropertiesModel? PokeBall { get; set; }
-  public TechnicalMachinePropertiesModel? TechnicalMachine { get; set; }
+  public TechnicalMachinePropertiesPayload? TechnicalMachine { get; set; }
   public TechnicalMachineMaterialPropertiesModel? TechnicalMachineMaterial { get; set; }
   public TreasurePropertiesModel? Treasure { get; set; }
 
   public string? Sprite { get; set; }
   public string? Url { get; set; }
   public string? Notes { get; set; }
-
-  public override string ToString() => $"{DisplayName ?? UniqueName} | {base.ToString()}";
 }
