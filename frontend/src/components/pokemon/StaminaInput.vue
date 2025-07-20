@@ -1,14 +1,15 @@
 <script setup lang="ts">
-import type { InputType } from "logitar-vue3-ui";
+import { TarProgress, type InputType } from "logitar-vue3-ui";
+import { computed } from "vue";
 import { parsingUtils } from "logitar-js";
 import { useI18n } from "vue-i18n";
 
 import FormInput from "@/components/forms/FormInput.vue";
 
 const { parseNumber } = parsingUtils;
-const { t } = useI18n();
+const { n, t } = useI18n();
 
-withDefaults(
+const props = withDefaults(
   defineProps<{
     id?: string;
     label?: string;
@@ -29,6 +30,15 @@ withDefaults(
   },
 );
 
+const percentage = computed<number | undefined>(() => {
+  const value: number = parseNumber(props.modelValue) ?? 0;
+  const max: number = parseNumber(props.max) ?? 0;
+  if (!max || value < 0 || value > max) {
+    return undefined;
+  }
+  return value / max;
+});
+
 defineEmits<{
   (e: "update:model-value", stamina: number): void;
 }>();
@@ -45,5 +55,12 @@ defineEmits<{
     :step="step"
     :type="type"
     @update:model-value="$emit('update:model-value', parseNumber($event) ?? 0)"
-  />
+  >
+    <template #append>
+      <span v-if="max" class="input-group-text">/ {{ max }}</span>
+    </template>
+    <template v-if="typeof percentage === 'number'" #after>
+      <TarProgress class="mt-1" :label="n(percentage, 'integer_percent')" min="0" max="100" :value="percentage * 100" variant="primary" />
+    </template>
+  </FormInput>
 </template>
