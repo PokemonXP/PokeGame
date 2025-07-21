@@ -120,7 +120,7 @@ onMounted(async () => {
         <DeletePokemon :pokemon="pokemon" @deleted="onDeleted" @error="handleError" />
       </div>
       <TarTabs>
-        <TarTab id="summary" :title="t('pokemon.summary.title')">
+        <TarTab active id="summary" :title="t('pokemon.summary.title')">
           <PokemonSummary :pokemon="pokemon" @error="handleError" @saved="onSummaryUpdated" />
         </TarTab>
         <TarTab id="statistics" :title="t('pokemon.statistic.title')">
@@ -129,7 +129,7 @@ onMounted(async () => {
         <TarTab id="moves" :title="t('pokemon.move.title')">
           <PokemonMoves :pokemon="pokemon" @error="handleError" @saved="onMovesUpdated" />
         </TarTab>
-        <TarTab active id="memories" :title="t('pokemon.memories.title')">
+        <TarTab id="memories" :title="t('pokemon.memories.title')">
           <PokemonMemories :pokemon="pokemon" @error="handleError" @saved="onMemoriesUpdated" />
         </TarTab>
         <TarTab id="metadata" :title="t('metadata')">
