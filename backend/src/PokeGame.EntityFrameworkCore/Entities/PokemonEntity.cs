@@ -170,9 +170,6 @@ internal class PokemonEntity : AggregateEntity
     MetLocation = @event.Location.Value;
     MetOn = @event.OccurredOn.AsUniversalTime();
     MetDescription = @event.Description?.Value;
-
-    Position = @event.Position.Value;
-    Box = @event.Box?.Value;
   }
 
   public bool RememberMove(PokemonMoveRemembered @event)
