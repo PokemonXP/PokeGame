@@ -73,6 +73,7 @@ function onSummaryUpdated(updated: Pokemon): void {
     pokemon.value.uniqueName = updated.uniqueName;
     pokemon.value.nickname = updated.nickname;
     pokemon.value.isShiny = updated.isShiny;
+    pokemon.value.heldItem = updated.heldItem;
   }
   toasts.success("pokemon.updated");
 }

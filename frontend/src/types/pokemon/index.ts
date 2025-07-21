@@ -330,6 +330,7 @@ export type UpdatePokemonPayload = {
   stamina?: number;
   statusCondition?: Change<StatusCondition>;
   friendship?: number;
+  heldItem?: Change<string>;
   sprite?: Change<string>;
   url?: Change<string>;
   notes?: Change<string>;

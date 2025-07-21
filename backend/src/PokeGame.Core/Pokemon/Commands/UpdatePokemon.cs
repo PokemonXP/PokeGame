@@ -2,6 +2,7 @@
 using Krakenar.Contracts.Settings;
 using Krakenar.Core;
 using Logitar.EventSourcing;
+using PokeGame.Core.Items;
 using PokeGame.Core.Pokemon.Models;
 using PokeGame.Core.Pokemon.Validators;
 
@@ -13,17 +14,20 @@ internal record UpdatePokemon(Guid Id, UpdatePokemonPayload Payload) : ICommand<
 internal class UpdatePokemonHandler : ICommandHandler<UpdatePokemon, PokemonModel?>
 {
   private readonly IApplicationContext _applicationContext;
+  private readonly IItemRepository _itemRepository;
   private readonly IPokemonManager _pokemonManager;
   private readonly IPokemonQuerier _pokemonQuerier;
   private readonly IPokemonRepository _pokemonRepository;
 
   public UpdatePokemonHandler(
     IApplicationContext applicationContext,
+    IItemRepository itemRepository,
     IPokemonManager pokemonManager,
     IPokemonQuerier pokemonQuerier,
     IPokemonRepository pokemonRepository)
   {
     _applicationContext = applicationContext;
+    _itemRepository = itemRepository;
     _pokemonManager = pokemonManager;
     _pokemonQuerier = pokemonQuerier;
     _pokemonRepository = pokemonRepository;
@@ -74,6 +78,20 @@ internal class UpdatePokemonHandler : ICommandHandler<UpdatePokemon, PokemonMode
     if (payload.Friendship.HasValue)
     {
       pokemon.Friendship = new Friendship(payload.Friendship.Value);
+    }
+
+    if (payload.HeldItem is not null)
+    {
+      if (string.IsNullOrWhiteSpace(payload.HeldItem.Value))
+      {
+        pokemon.RemoveItem(actorId);
+      }
+      else
+      {
+        Item item = await _itemRepository.LoadAsync(payload.HeldItem.Value, cancellationToken)
+          ?? throw new ItemNotFoundException(payload.HeldItem.Value, nameof(payload.HeldItem));
+        pokemon.HoldItem(item, actorId);
+      }
     }
 
     if (payload.Sprite is not null)
