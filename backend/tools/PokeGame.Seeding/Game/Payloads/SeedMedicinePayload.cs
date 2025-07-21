@@ -22,7 +22,6 @@ internal record SeedMedicinePayload : CreateOrReplaceItemPayload
       References<MedicinePropertiesMap>(x => x.Medicine);
 
       Map(x => x.Sprite).Index(14);
-
       Map(x => x.Url).Index(15);
       Map(x => x.Notes).Index(16);
     }

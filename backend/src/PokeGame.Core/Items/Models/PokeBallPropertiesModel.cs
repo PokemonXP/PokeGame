@@ -9,6 +9,10 @@ public record PokeBallPropertiesModel : IPokeBallProperties
   public byte BaseFriendship { get; set; }
   public double FriendshipMultiplier { get; set; }
 
+  public PokeBallPropertiesModel()
+  {
+  }
+
   [JsonConstructor]
   public PokeBallPropertiesModel(
   double catchMultiplier = 1.0,

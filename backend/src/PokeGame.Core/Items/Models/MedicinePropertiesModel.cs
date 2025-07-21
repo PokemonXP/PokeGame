@@ -23,7 +23,7 @@ public record MedicinePropertiesModel : IMedicineProperties
 
   [JsonConstructor]
   public MedicinePropertiesModel(
-    bool isHerbal,
+    bool isHerbal = false,
     int healing = 0,
     bool isHealingPercentage = false,
     bool revives = false,

@@ -21,17 +21,21 @@ public record MedicineProperties : ItemProperties, IMedicineProperties
   public bool IsPowerPointPercentage { get; }
   public bool RestoreAllMoves { get; }
 
+  public MedicineProperties()
+  {
+  }
+
   [JsonConstructor]
   public MedicineProperties(
-    bool isHerbal = false,
-    int healing = 0,
-    bool isHealingPercentage = false,
-    bool revives = false,
-    StatusCondition? statusCondition = null,
-    bool allConditions = false,
-    int powerPoints = 0,
-    bool isPowerPointPercentage = false,
-    bool restoreAllMoves = false)
+    bool isHerbal,
+    int healing,
+    bool isHealingPercentage,
+    bool revives,
+    StatusCondition? statusCondition,
+    bool allConditions,
+    int powerPoints,
+    bool isPowerPointPercentage,
+    bool restoreAllMoves)
   {
     IsHerbal = isHerbal;
 
