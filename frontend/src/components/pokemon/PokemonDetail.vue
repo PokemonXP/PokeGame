@@ -1,28 +1,15 @@
 <script setup lang="ts">
-import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 
-import AbilityIcon from "@/components/icons/AbilityIcon.vue";
-import type { Ability, Pokemon } from "@/types/pokemon";
-import { formatAbility } from "@/helpers/format";
-import { getAbilityUrl } from "@/helpers/cms";
+import type { Pokemon } from "@/types/pokemon";
 
 const { t } = useI18n();
 
-const props = defineProps<{
+defineProps<{
   pokemon: Pokemon;
 }>();
 
-const ability = computed<Ability>(() => {
-  const { abilitySlot, form } = props.pokemon;
-  let ability: Ability | undefined = form.abilities.primary;
-  if (abilitySlot === "Secondary" && form.abilities.secondary) {
-    ability = form.abilities.secondary;
-  } else if (abilitySlot === "Hidden" && form.abilities.hidden) {
-    ability = form.abilities.hidden;
-  }
-  return ability;
-});
+// TODO(fpion): remove this file
 </script>
 
 <template>
@@ -56,7 +43,6 @@ const ability = computed<Ability>(() => {
       </tr>
       <tr>
         <th scope="row">{{ t("pokemon.characteristic.label") }}</th>
-        <!-- TODO(fpion): should not take an entire row -->
         <td colspan="3">{{ pokemon.characteristic }}.</td>
       </tr>
     </tbody>

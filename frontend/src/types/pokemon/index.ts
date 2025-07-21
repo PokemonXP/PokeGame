@@ -3,6 +3,7 @@ import type { EggGroups } from "./species";
 import type { Item } from "../items";
 import type { Move, MoveLearningMethod } from "./moves";
 import type { SearchPayload, SortOption } from "../search";
+import type { Trainer } from "../trainers";
 
 export const EFFORT_VALUE_MAXIMUM: number = 255;
 export const EFFORT_VALUE_MINIMUM: number = 0;
@@ -236,6 +237,15 @@ export type PowerPoints = {
   reference: number;
 };
 
+export type ReceivePokemonPayload = {
+  trainer: string;
+  pokeBall: string;
+  level: number;
+  location: string;
+  metOn?: Date;
+  description?: string;
+};
+
 export type Region = Aggregate & {
   uniqueName: string;
   displayName?: string | null;
@@ -306,21 +316,6 @@ export type SwitchPokemonMovesPayload = {
   source: number;
   destination: number;
 };
-
-export type Trainer = Aggregate & {
-  uniqueName: string;
-  displayName?: string | null;
-  description?: string | null;
-  gender: TrainerGender;
-  license: string;
-  money: number;
-  userId?: string | null;
-  sprite?: string | null;
-  url?: string | null;
-  notes?: string | null;
-};
-
-export type TrainerGender = "Female" | "Male";
 
 export type UpdatePokemonPayload = {
   uniqueName?: string;

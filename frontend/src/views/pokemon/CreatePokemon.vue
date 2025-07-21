@@ -18,7 +18,7 @@ import GenderSelect from "@/components/pokemon/GenderSelect.vue";
 import GrowthRateSelect from "@/components/pokemon/creation/GrowthRateSelect.vue";
 import IndividualValuesEdit from "@/components/pokemon/creation/IndividualValuesEdit.vue";
 import ItemSelect from "@/components/items/ItemSelect.vue";
-import LevelInput from "@/components/pokemon/creation/LevelInput.vue";
+import LevelInput from "@/components/pokemon/LevelInput.vue";
 import NatureSelect from "@/components/pokemon/creation/NatureSelect.vue";
 import NatureTable from "@/components/pokemon/creation/NatureTable.vue";
 import NicknameInput from "@/components/pokemon/NicknameInput.vue";

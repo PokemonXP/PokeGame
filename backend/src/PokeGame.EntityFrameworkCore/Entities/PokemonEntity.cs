@@ -1,4 +1,5 @@
 ﻿using Krakenar.EntityFrameworkCore.Relational.KrakenarDb;
+using Logitar;
 using PokeGame.Core;
 using PokeGame.Core.Abilities;
 using PokeGame.Core.Forms;
@@ -153,6 +154,26 @@ internal class PokemonEntity : AggregateEntity
     Moves.Add(new PokemonMoveEntity(this, move, @event));
   }
 
+  public void Receive(TrainerEntity trainer, ItemEntity pokeBall, PokemonReceived @event)
+  {
+    Update(@event);
+
+    if (!OriginalTrainerId.HasValue)
+    {
+      SetOriginalTrainer(trainer);
+    }
+    SetCurrentTrainer(trainer);
+    SetPokeBall(pokeBall);
+
+    OwnershipKind = Core.Pokemon.OwnershipKind.Received;
+    MetAtLevel = @event.Level.Value;
+    MetLocation = @event.Location.Value;
+    MetOn = @event.OccurredOn.AsUniversalTime();
+    MetDescription = @event.Description?.Value;
+
+    SetSlot(@event.Slot);
+  }
+
   public bool RememberMove(PokemonMoveRemembered @event)
   {
     Update(@event);
@@ -251,6 +272,30 @@ internal class PokemonEntity : AggregateEntity
       PokemonMoveEntity? pokemonMove = Moves.SingleOrDefault(move => move.Position == position.Value);
       pokemonMove?.Remove();
     }
+  }
+
+  private void SetCurrentTrainer(TrainerEntity trainer)
+  {
+    CurrentTrainer = trainer;
+    CurrentTrainerId = trainer.TrainerId;
+    CurrentTrainerUid = trainer.Id;
+  }
+  private void SetOriginalTrainer(TrainerEntity trainer)
+  {
+    OriginalTrainer = trainer;
+    OriginalTrainerId = trainer.TrainerId;
+    OriginalTrainerUid = trainer.Id;
+  }
+  private void SetPokeBall(ItemEntity pokeBall)
+  {
+    PokeBall = pokeBall;
+    PokeBallId = pokeBall.ItemId;
+    PokeBallUid = pokeBall.Id;
+  }
+  private void SetSlot(PokemonSlot slot)
+  {
+    Position = slot.Position.Value;
+    Box = slot.Box?.Value;
   }
 
   public PokemonStatisticsModel GetStatistics()

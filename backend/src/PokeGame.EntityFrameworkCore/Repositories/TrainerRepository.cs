@@ -1,17 +1,50 @@
-﻿using Logitar.EventSourcing;
+﻿using Krakenar.EntityFrameworkCore.Relational.KrakenarDb;
+using Logitar.EventSourcing;
+using Microsoft.EntityFrameworkCore;
 using PokeGame.Core.Trainers;
+using PokeGame.EntityFrameworkCore.Entities;
 
 namespace PokeGame.EntityFrameworkCore.Repositories;
 
 internal class TrainerRepository : Repository, ITrainerRepository
 {
-  public TrainerRepository(IEventStore eventStore) : base(eventStore)
+  private readonly DbSet<TrainerEntity> _trainers;
+
+  public TrainerRepository(PokemonContext context, IEventStore eventStore) : base(eventStore)
   {
+    _trainers = context.Trainers;
   }
 
   public async Task<Trainer?> LoadAsync(TrainerId id, CancellationToken cancellationToken)
   {
     return await LoadAsync<Trainer>(id.StreamId, cancellationToken);
+  }
+
+  public async Task<Trainer?> LoadAsync(string idOrUniqueName, CancellationToken cancellationToken)
+  {
+    TrainerId trainerId;
+    if (Guid.TryParse(idOrUniqueName, out Guid id))
+    {
+      trainerId = new(id);
+      Trainer? trainer = await LoadAsync(trainerId, cancellationToken);
+      if (trainer is not null)
+      {
+        return trainer;
+      }
+    }
+
+    string uniqueNameNormalized = Helper.Normalize(idOrUniqueName);
+    string? streamId = await _trainers.AsNoTracking()
+      .Where(x => x.UniqueNameNormalized == uniqueNameNormalized)
+      .Select(x => x.StreamId)
+      .SingleOrDefaultAsync(cancellationToken);
+    if (string.IsNullOrWhiteSpace(streamId))
+    {
+      return null;
+    }
+
+    trainerId = new(streamId);
+    return await LoadAsync(trainerId, cancellationToken);
   }
 
   public async Task SaveAsync(Trainer trainer, CancellationToken cancellationToken)

@@ -17,6 +17,9 @@
     "title": "Delete Pokémon"
   },
   "deleted": "The Pokémon has been deleted.",
+  "description": {
+    "label": "Description"
+  },
   "egg": {
     "cycles": "Egg Cycles",
     "label": "Is Egg"
@@ -94,6 +97,15 @@
     "format": "Lv. {level}",
     "label": "Level"
   },
+  "memories": {
+    "metOn": "Met on",
+    "pokeBall": {
+      "label": "Poké Ball",
+      "placeholder": "Select a Poké Ball"
+    },
+    "receive": "Receive",
+    "title": "Memories"
+  },
   "move": {
     "accuracy": "Accuracy",
     "actions": "Actions",
@@ -158,6 +170,9 @@
   },
   "progress": {
     "title": "Progress"
+  },
+  "region": {
+    "location": "Location"
   },
   "shiny": {
     "label": "Is Shiny"
@@ -256,7 +271,8 @@
   },
   "title": "Pokémon",
   "trainer": {
-    "label": "Trainer"
+    "label": "Trainer",
+    "placeholder": "Select a trainer"
   },
   "type": {
     "none": "None",

@@ -42,17 +42,7 @@ export type Item = Aggregate & {
   notes?: string | null;
 };
 
-export type ItemCategory =
-  | "BattleItem"
-  | "Berry"
-  | "KeyItem"
-  | "Medicine"
-  | "OtherItem"
-  | "PicnicItem"
-  | "PokeBall"
-  | "TechnicalMachine"
-  | "TechnicalMachineMaterial"
-  | "Treasure";
+export type ItemCategory = "BattleItem" | "Berry" | "KeyItem" | "Material" | "Medicine" | "OtherItem" | "PokeBall" | "TechnicalMachine" | "Treasure";
 
 export type ItemSort = "CreatedOn" | "DisplayName" | "Price" | "UniqueName" | "UpdatedOn";
 
