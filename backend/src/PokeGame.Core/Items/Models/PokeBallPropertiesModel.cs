@@ -9,16 +9,12 @@ public record PokeBallPropertiesModel : IPokeBallProperties
   public byte BaseFriendship { get; set; }
   public double FriendshipMultiplier { get; set; }
 
-  public PokeBallPropertiesModel()
+  public PokeBallPropertiesModel() : this(catchMultiplier: 1.0, heal: false, baseFriendship: 0, friendshipMultiplier: 1.0)
   {
   }
 
   [JsonConstructor]
-  public PokeBallPropertiesModel(
-  double catchMultiplier = 1.0,
-  bool heal = false,
-  byte baseFriendship = 0,
-  double friendshipMultiplier = 1.0)
+  public PokeBallPropertiesModel(double catchMultiplier, bool heal, byte baseFriendship, double friendshipMultiplier)
   {
     CatchMultiplier = catchMultiplier;
     Heal = heal;

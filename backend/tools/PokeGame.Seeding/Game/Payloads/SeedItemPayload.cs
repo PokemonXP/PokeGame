@@ -1,4 +1,5 @@
 ﻿using CsvHelper.Configuration;
+using PokeGame.Core.Items;
 using PokeGame.Core.Items.Models;
 
 namespace PokeGame.Seeding.Game.Payloads;
@@ -6,6 +7,8 @@ namespace PokeGame.Seeding.Game.Payloads;
 internal record SeedItemPayload : CreateOrReplaceItemPayload
 {
   public Guid Id { get; set; }
+
+  public ItemCategory Category { get; set; }
 
   public class Map : ClassMap<SeedItemPayload>
   {
@@ -18,7 +21,7 @@ internal record SeedItemPayload : CreateOrReplaceItemPayload
       Map(x => x.Description).Index(3);
 
       Map(x => x.Price).Index(4).Default(0);
-      //Map(x => x.Category).Index(5); // TODO(fpion): implement
+      Map(x => x.Category).Index(5).Default(default(ItemCategory));
 
       Map(x => x.Sprite).Index(6);
 
