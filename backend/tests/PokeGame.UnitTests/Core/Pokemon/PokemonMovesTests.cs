@@ -54,8 +54,9 @@ public class PokemonMovesTests
 
     Move armThrust = new(PokemonType.Fighting, MoveCategory.Physical, new UniqueName(_uniqueNameSettings, "arm-thrust"), new PowerPoints(20), new Accuracy(100), new Power(15));
     int position = 3;
+    MoveLearningMethod method = MoveLearningMethod.Evolving;
     Notes notes = new("Learned by evolving from Tepig to Pignite.");
-    Assert.True(_pokemon.LearnMove(armThrust, position, level: null, notes, actorId));
+    Assert.True(_pokemon.LearnMove(armThrust, position, level: null, method, notes, actorId));
     Assert.True(_pokemon.HasChanges);
     Assert.Contains(_pokemon.Changes, change => change is PokemonMoveLearned learned && learned.ActorId == actorId && learned.MoveId == armThrust.Id && learned.Position == position);
 
@@ -66,7 +67,7 @@ public class PokemonMovesTests
     Assert.Equal(armThrust.PowerPoints, move.Value.ReferencePowerPoints);
     Assert.False(move.Value.IsMastered);
     Assert.Equal(_pokemon.Level, move.Value.Level.Value);
-    Assert.Equal(MoveLearningMethod.Evolving, move.Value.Method);
+    Assert.Equal(method, move.Value.Method);
     Assert.Null(move.Value.ItemId);
     Assert.Equal(notes, move.Value.Notes);
   }
@@ -180,5 +181,81 @@ public class PokemonMovesTests
     Assert.Equal("position", exception.ParamName);
   }
 
-  // TODO(fpion): SwitchMoves
+  [Fact(DisplayName = "SwitchMoves: it should exchange two moves.")]
+  public void Given_SourceAndDestinationMoves_When_SwitchMoves_Then_MovesExchanged()
+  {
+    ActorId actorId = ActorId.NewId();
+
+    Move tackle = new(PokemonType.Normal, MoveCategory.Physical, new UniqueName(_uniqueNameSettings, "tackle"), new PowerPoints(35), new Accuracy(100), new Power(40));
+    Move tailWhip = new(PokemonType.Normal, MoveCategory.Status, new UniqueName(_uniqueNameSettings, "tail-whip"), new PowerPoints(30), new Accuracy(100));
+    Move ember = new(PokemonType.Fire, MoveCategory.Special, new UniqueName(_uniqueNameSettings, "ember"), new PowerPoints(25), new Accuracy(100), new Power(40));
+
+    _pokemon.LearnMove(tackle);
+    _pokemon.LearnMove(tailWhip);
+    _pokemon.LearnMove(ember);
+
+    int source = 0;
+    int destination = 2;
+    _pokemon.SwitchMoves(source, destination, actorId);
+    Assert.Contains(_pokemon.Changes, change => change is PokemonMoveSwitched switched && switched.ActorId == actorId
+      && switched.Source == source && switched.Destination == destination);
+
+    Assert.Equal(ember.Id, _pokemon.CurrentMoves.ElementAt(0).Key);
+    Assert.Equal(tailWhip.Id, _pokemon.CurrentMoves.ElementAt(1).Key);
+    Assert.Equal(tackle.Id, _pokemon.CurrentMoves.ElementAt(2).Key);
+  }
+
+  [Fact(DisplayName = "SwitchMoves: it should not do anything when the destination move is empty.")]
+  public void Given_SourceEqualDestination_When_SwitchMoves_Then_NoChange()
+  {
+    Move ember = new(PokemonType.Fire, MoveCategory.Special, new UniqueName(_uniqueNameSettings, "ember"), new PowerPoints(25), new Accuracy(100), new Power(40));
+    _pokemon.LearnMove(ember);
+    _pokemon.ClearChanges();
+
+    _pokemon.SwitchMoves(source: 0, destination: 1);
+    Assert.False(_pokemon.HasChanges);
+    Assert.Empty(_pokemon.Changes);
+  }
+
+  [Fact(DisplayName = "SwitchMoves: it should not do anything when the source and destination moves are the same.")]
+  public void Given_SourceNotCurrent_When_SwitchMoves_Then_NoChange()
+  {
+    Move ember = new(PokemonType.Fire, MoveCategory.Special, new UniqueName(_uniqueNameSettings, "ember"), new PowerPoints(25), new Accuracy(100), new Power(40));
+    _pokemon.LearnMove(ember);
+    _pokemon.ClearChanges();
+
+    _pokemon.SwitchMoves(source: 0, destination: 0);
+    Assert.False(_pokemon.HasChanges);
+    Assert.Empty(_pokemon.Changes);
+  }
+
+  [Fact(DisplayName = "SwitchMoves: it should not do anything when the source move is empty.")]
+  public void Given_DestinationNotCurrent_When_SwitchMoves_Then_NoChange()
+  {
+    Move ember = new(PokemonType.Fire, MoveCategory.Special, new UniqueName(_uniqueNameSettings, "ember"), new PowerPoints(25), new Accuracy(100), new Power(40));
+    _pokemon.LearnMove(ember);
+    _pokemon.ClearChanges();
+
+    _pokemon.SwitchMoves(source: 1, destination: 0);
+    Assert.False(_pokemon.HasChanges);
+    Assert.Empty(_pokemon.Changes);
+  }
+
+  [Theory(DisplayName = "SwitchMoves: it should throw ArgumentOutOfRangeException when the destination is out of bounds.")]
+  [InlineData(-1)]
+  [InlineData(4)]
+  public void Given_DestinationOutOfBounds_When_SwitchMoves_Then_ArgumentOutOfRangeException(int destination)
+  {
+    var exception = Assert.Throws<ArgumentOutOfRangeException>(() => _pokemon.SwitchMoves(source: 0, destination));
+    Assert.Equal("destination", exception.ParamName);
+  }
+
+  [Theory(DisplayName = "SwitchMoves: it should throw ArgumentOutOfRangeException when the source is out of bounds.")]
+  [InlineData(-1)]
+  [InlineData(4)]
+  public void Given_SourceOutOfBounds_When_SwitchMoves_Then_ArgumentOutOfRangeException(int source)
+  {
+    var exception = Assert.Throws<ArgumentOutOfRangeException>(() => _pokemon.SwitchMoves(source, destination: 0));
+    Assert.Equal("source", exception.ParamName);
+  }
 }
