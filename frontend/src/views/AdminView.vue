@@ -21,7 +21,7 @@ const { t } = useI18n();
     <AdminBreadcrumb />
     <div class="d-flex flex-column justify-content-center align-items-center mt-3">
       <div class="grid">
-        <a href="#" class="tile"><RegionIcon class="icon" /> Regions</a>
+        <RouterLink :to="{ name: 'RegionList' }" class="tile"><RegionIcon class="icon" /> {{ t("regions.title") }}</RouterLink>
         <a href="#" class="tile"><TrainerIcon class="icon" /> Trainers</a>
         <a href="#" class="tile"><ItemIcon class="icon" /> Items</a>
         <a href="#" class="tile"><MoveIcon class="icon" /> Moves</a>

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from "vue";
 
-import DescriptionTextarea from "./DescriptionTextarea.vue";
+import DescriptionTextarea from "@/components/shared/DescriptionTextarea.vue";
 import ItemSelect from "@/components/items/ItemSelect.vue";
 import LevelInput from "./LevelInput.vue";
 import LocationInput from "@/components/regions/LocationInput.vue";

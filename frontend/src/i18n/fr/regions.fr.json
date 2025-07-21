@@ -1,0 +1,21 @@
+{
+  "create": "Nouvelle région",
+  "created": "Le région a été créée.",
+  "delete": {
+    "confirm": "Afin de supprimer la région, veuillez entrer son nom dans le champs suivant.",
+    "title": "Supprimer la région"
+  },
+  "deleted": "La région a été supprimée.",
+  "empty": "Cette liste est vide.",
+  "location": "Emplacement",
+  "sort": {
+    "options": {
+      "CreatedOn": "Date de création",
+      "DisplayName": "Nom d’affichage",
+      "UniqueName": "Nom unique",
+      "UpdatedOn": "Dernière modification"
+    }
+  },
+  "title": "Régions",
+  "updated": "La région a été mise à jour."
+}

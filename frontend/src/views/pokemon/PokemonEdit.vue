@@ -29,10 +29,7 @@ const { t } = useI18n();
 const isLoading = ref<boolean>(false);
 const pokemon = ref<Pokemon>();
 
-const breadcrumb = computed<Breadcrumb>(() => ({
-  to: { name: "PokemonList" },
-  text: t("pokemon.title"),
-}));
+const breadcrumb = computed<Breadcrumb>(() => ({ to: { name: "PokemonList" }, text: t("pokemon.title") }));
 const title = computed<string>(() => (pokemon.value ? (pokemon.value.nickname ?? pokemon.value.uniqueName) : ""));
 
 function updateAggregate(updated: Pokemon): void {

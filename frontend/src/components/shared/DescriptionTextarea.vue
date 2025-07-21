@@ -13,8 +13,8 @@ withDefaults(
     rows?: number;
   }>(),
   {
-    id: "notes",
-    label: "pokemon.notes.label",
+    id: "description",
+    label: "description",
     rows: 15,
   },
 );

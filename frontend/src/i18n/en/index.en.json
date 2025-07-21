@@ -12,13 +12,27 @@
   "by": "By",
   "copyright": "© PokéGame {version} {year}.",
   "count": "Count",
+  "description": "Description",
+  "general": "General",
   "loading": "Loading…",
   "metadata": "Metadata",
+  "name": {
+    "display": "Display Name",
+    "label": "Name",
+    "unique": {
+      "alreadyUsed": {
+        "help": "Please enter a different unique name.",
+        "lead": "The unique name is already used."
+      },
+      "label": "Unique Name"
+    }
+  },
   "notFound": {
     "help": "The requested page could not be found.",
     "lead": "Page Not Found",
     "link": "Go to Home"
   },
+  "notes": "Notes",
   "pagination": {
     "first": "First",
     "label": "Pagination",
@@ -49,5 +63,6 @@
       "signedOut": "You have been signed-out, please try sign-in to your account again.",
       "title": "Warning!"
     }
-  }
+  },
+  "url": "URL"
 }

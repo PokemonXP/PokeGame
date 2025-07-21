@@ -22,7 +22,7 @@ import LevelInput from "@/components/pokemon/LevelInput.vue";
 import NatureSelect from "@/components/pokemon/creation/NatureSelect.vue";
 import NatureTable from "@/components/pokemon/creation/NatureTable.vue";
 import NicknameInput from "@/components/pokemon/NicknameInput.vue";
-import NotesTextarea from "@/components/pokemon/NotesTextarea.vue";
+import NotesTextarea from "@/components/shared/NotesTextarea.vue";
 import ProgressTable from "@/components/pokemon/creation/ProgressTable.vue";
 import ShinyCheckbox from "@/components/pokemon/ShinyCheckbox.vue";
 import SizeEdit from "@/components/pokemon/creation/SizeEdit.vue";
@@ -31,9 +31,9 @@ import StaminaInput from "@/components/pokemon/StaminaInput.vue";
 import SubmitButton from "@/components/shared/SubmitButton.vue";
 import TotalStatisticsView from "@/components/pokemon/creation/TotalStatisticsView.vue";
 import TypeSelect from "@/components/pokemon/creation/TypeSelect.vue";
-import UniqueNameAlreadyUsed from "@/components/pokemon/UniqueNameAlreadyUsed.vue";
-import UniqueNameInput from "@/components/pokemon/UniqueNameInput.vue";
-import UrlInput from "@/components/pokemon/UrlInput.vue";
+import UniqueNameAlreadyUsed from "@/components/shared/UniqueNameAlreadyUsed.vue";
+import UniqueNameInput from "@/components/shared/UniqueNameInput.vue";
+import UrlInput from "@/components/shared/UrlInput.vue";
 import VarietyMoveTable from "@/components/pokemon/creation/VarietyMoveTable.vue";
 import VarietySelect from "@/components/pokemon/creation/VarietySelect.vue";
 import VitalityInput from "@/components/pokemon/VitalityInput.vue";
@@ -101,10 +101,7 @@ const vitality = ref<number>(0);
 const baseStatistics = computed<BaseStatistics>(
   () => form.value?.baseStatistics ?? { hp: 0, attack: 0, defense: 0, specialAttack: 0, specialDefense: 0, speed: 0 },
 );
-const breadcrumb = computed<Breadcrumb>(() => ({
-  to: { name: "PokemonList" },
-  text: t("pokemon.title"),
-}));
+const breadcrumb = computed<Breadcrumb>(() => ({ to: { name: "PokemonList" }, text: t("pokemon.title") }));
 const growthRate = computed<GrowthRate>(() => species.value?.growthRate ?? "MediumSlow");
 const isGenderDisabled = computed<boolean>(
   () => !variety.value || typeof variety.value.genderRatio !== "number" || variety.value.genderRatio === 0 || variety.value.genderRatio === 8,
