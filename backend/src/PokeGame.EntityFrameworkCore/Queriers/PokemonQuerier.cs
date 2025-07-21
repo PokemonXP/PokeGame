@@ -9,6 +9,7 @@ using Logitar.EventSourcing;
 using Microsoft.EntityFrameworkCore;
 using PokeGame.Core.Pokemon;
 using PokeGame.Core.Pokemon.Models;
+using PokeGame.Core.Trainers;
 using PokeGame.EntityFrameworkCore.Entities;
 
 namespace PokeGame.EntityFrameworkCore.Queriers;
@@ -38,6 +39,20 @@ internal class PokemonQuerier : IPokemonQuerier
       .SingleOrDefaultAsync(cancellationToken);
 
     return streamId is null ? null : new PokemonId(streamId);
+  }
+
+  public async Task<Storage> GetStorageAsync(TrainerId trainerId, CancellationToken cancellationToken)
+  {
+    Guid trainerUid = trainerId.ToGuid();
+    var slots = await _pokemon.AsNoTracking()
+      .Where(x => x.CurrentTrainerUid == trainerUid)
+      .Select(x => new { x.StreamId, x.Position, x.Box })
+      .ToArrayAsync(cancellationToken);
+    return new Storage(slots
+      .Where(slot => !string.IsNullOrWhiteSpace(slot.StreamId) && slot.Position.HasValue)
+      .Select(slot => new KeyValuePair<PokemonId, PokemonSlot>(
+        new PokemonId(slot.StreamId),
+        new PokemonSlot(new Position(slot.Position!.Value), slot.Box.HasValue ? new Box(slot.Box.Value) : null))));
   }
 
   public async Task<PokemonModel> ReadAsync(Specimen pokemon, CancellationToken cancellationToken)

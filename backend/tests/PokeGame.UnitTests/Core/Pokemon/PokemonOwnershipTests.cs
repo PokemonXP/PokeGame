@@ -84,9 +84,8 @@ public class PokemonOwnershipTests
     Level level = new(5);
     DateTime metOn = new DateTime(2000, 1, 1);
     Description description = new("Received at Lv.5, at Collège de l’Épervier, on January 1st, 2000.");
-    Position position = new(2);
-    Box box = new(1);
-    _pokemon.Receive(_trainer, _pokeBall, _location, level, metOn, description, position, box, actorId);
+    PokemonSlot slot = new(new Position(2), new Box(1));
+    _pokemon.Receive(_trainer, _pokeBall, _location, level, metOn, description, slot, actorId);
     Assert.True(_pokemon.HasChanges);
     Assert.Contains(_pokemon.Changes, change => change is PokemonReceived received && received.ActorId == actorId);
 
@@ -102,8 +101,7 @@ public class PokemonOwnershipTests
     Assert.Equal(metOn, ownership.MetOn);
     Assert.Equal(description, ownership.Description);
 
-    Assert.Equal(position, _pokemon.Position);
-    Assert.Equal(box, _pokemon.Box);
+    Assert.Equal(slot, _pokemon.Slot);
   }
 
   [Fact(DisplayName = "Receive: a Pokémon should be received using default values.")]
@@ -118,9 +116,9 @@ public class PokemonOwnershipTests
     Assert.Equal(metOn, ownership.MetOn);
     Assert.Null(ownership.Description);
 
-    Assert.NotNull(_pokemon.Position);
-    Assert.Equal(0, _pokemon.Position.Value);
-    Assert.Null(_pokemon.Box);
+    Assert.NotNull(_pokemon.Slot);
+    Assert.Equal(0, _pokemon.Slot.Position.Value);
+    Assert.Null(_pokemon.Slot.Box);
   }
 
   [Fact(DisplayName = "Receive: it should throw ArgumentException when the Poké Ball category is not valid.")]

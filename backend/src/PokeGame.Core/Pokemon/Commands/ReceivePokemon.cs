@@ -56,6 +56,7 @@ internal class ReceivePokemonHandler : ICommandHandler<ReceivePokemon, PokemonMo
 
     Trainer trainer = await _trainerRepository.LoadAsync(payload.Trainer, cancellationToken)
       ?? throw new TrainerNotFoundException(payload.Trainer, nameof(payload.Trainer));
+    Storage storage = await _pokemonQuerier.GetStorageAsync(trainer.Id, cancellationToken);
 
     Item pokeBall = await _itemRepository.LoadAsync(payload.PokeBall, cancellationToken)
       ?? throw new ItemNotFoundException(payload.PokeBall, nameof(payload.PokeBall));
@@ -67,13 +68,9 @@ internal class ReceivePokemonHandler : ICommandHandler<ReceivePokemon, PokemonMo
     Location location = new(payload.Location);
     Level? level = payload.Level < 1 ? null : new(payload.Level);
     Description? description = Description.TryCreate(payload.Description);
+    PokemonSlot slot = storage.GetFirstAvailable();
 
-    #region TODO(fpion): implement
-    Position? position = null;
-    Box? box = null;
-    #endregion
-
-    pokemon.Receive(trainer, pokeBall, location, level, payload.MetOn, description, position, box, actorId);
+    pokemon.Receive(trainer, pokeBall, location, level, payload.MetOn, description, slot, actorId);
 
     await _pokemonManager.SaveAsync(pokemon, cancellationToken);
 

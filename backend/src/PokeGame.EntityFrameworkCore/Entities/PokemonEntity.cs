@@ -171,8 +171,7 @@ internal class PokemonEntity : AggregateEntity
     MetOn = @event.OccurredOn.AsUniversalTime();
     MetDescription = @event.Description?.Value;
 
-    Position = @event.Position.Value;
-    Box = @event.Box?.Value;
+    SetSlot(@event.Slot);
   }
 
   public bool RememberMove(PokemonMoveRemembered @event)
@@ -292,6 +291,11 @@ internal class PokemonEntity : AggregateEntity
     PokeBall = pokeBall;
     PokeBallId = pokeBall.ItemId;
     PokeBallUid = pokeBall.Id;
+  }
+  private void SetSlot(PokemonSlot slot)
+  {
+    Position = slot.Position.Value;
+    Box = slot.Box?.Value;
   }
 
   public PokemonStatisticsModel GetStatistics()
