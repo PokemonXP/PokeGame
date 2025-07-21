@@ -332,7 +332,13 @@ public class Specimen : AggregateRoot
     HeldItemId = @event.ItemId;
   }
 
-  public bool LearnMove(Move move, int? position = null, Level? level = null, Notes? notes = null, ActorId? actorId = null)
+  public bool LearnMove(
+    Move move,
+    int? position = null,
+    Level? level = null,
+    MoveLearningMethod method = MoveLearningMethod.LevelingUp,
+    Notes? notes = null,
+    ActorId? actorId = null)
   {
     if (_learnedMoves.ContainsKey(move.Id))
     {
@@ -350,7 +356,6 @@ public class Specimen : AggregateRoot
     }
 
     byte powerPoints = move.PowerPoints.Value;
-    MoveLearningMethod method = level is null ? MoveLearningMethod.Evolving : MoveLearningMethod.LevelingUp;
     level ??= new(Level);
     PokemonMove pokemonMove = new(powerPoints, powerPoints, move.PowerPoints, IsMastered: false, level, method, ItemId: null, notes);
     Raise(new PokemonMoveLearned(move.Id, pokemonMove, position), actorId);
