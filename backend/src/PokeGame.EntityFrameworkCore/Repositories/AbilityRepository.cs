@@ -19,6 +19,7 @@ internal class AbilityRepository : Repository, IAbilityRepository
   {
     return await LoadAsync<Ability>(id.StreamId, cancellationToken);
   }
+
   public async Task<Ability?> LoadAsync(string idOrUniqueName, CancellationToken cancellationToken)
   {
     AbilityId abilityId;

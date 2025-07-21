@@ -19,6 +19,7 @@ internal class ItemRepository : Repository, IItemRepository
   {
     return await LoadAsync<Item>(id.StreamId, cancellationToken);
   }
+
   public async Task<Item?> LoadAsync(string idOrUniqueName, CancellationToken cancellationToken)
   {
     ItemId itemId;

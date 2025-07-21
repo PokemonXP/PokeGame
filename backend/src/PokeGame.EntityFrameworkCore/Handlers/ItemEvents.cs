@@ -1,56 +1,262 @@
-﻿using Krakenar.Core.Contents;
-using Krakenar.Core.Contents.Events;
-using MediatR;
+﻿using Krakenar.Core;
+using Krakenar.EntityFrameworkCore.Relational.Handlers;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using PokeGame.Core.Items.Events;
 using PokeGame.EntityFrameworkCore.Entities;
 
 namespace PokeGame.EntityFrameworkCore.Handlers;
 
-internal record ItemPublished(ContentLocalePublished Event, ContentLocale Invariant, ContentLocale Locale) : INotification;
-
-internal class ItemPublishedHandler : INotificationHandler<ItemPublished>
+internal class ItemEvents : IEventHandler<BattleItemPropertiesChanged>,
+  IEventHandler<BerryPropertiesChanged>,
+  IEventHandler<ItemCreated>,
+  IEventHandler<ItemDeleted>,
+  IEventHandler<ItemUniqueNameChanged>,
+  IEventHandler<ItemUpdated>,
+  IEventHandler<KeyItemPropertiesChanged>,
+  IEventHandler<MaterialPropertiesChanged>,
+  IEventHandler<MedicinePropertiesChanged>,
+  IEventHandler<OtherItemPropertiesChanged>,
+  IEventHandler<PokeBallPropertiesChanged>,
+  IEventHandler<TechnicalMachinePropertiesChanged>,
+  IEventHandler<TreasurePropertiesChanged>
 {
-  private readonly PokemonContext _context;
-
-  public ItemPublishedHandler(PokemonContext context)
+  public static void Register(IServiceCollection services)
   {
-    _context = context;
+    services.AddScoped<IEventHandler<BattleItemPropertiesChanged>, ItemEvents>();
+    services.AddScoped<IEventHandler<BerryPropertiesChanged>, ItemEvents>();
+    services.AddScoped<IEventHandler<ItemCreated>, ItemEvents>();
+    services.AddScoped<IEventHandler<ItemDeleted>, ItemEvents>();
+    services.AddScoped<IEventHandler<ItemUniqueNameChanged>, ItemEvents>();
+    services.AddScoped<IEventHandler<ItemUpdated>, ItemEvents>();
+    services.AddScoped<IEventHandler<KeyItemPropertiesChanged>, ItemEvents>();
+    services.AddScoped<IEventHandler<MaterialPropertiesChanged>, ItemEvents>();
+    services.AddScoped<IEventHandler<MedicinePropertiesChanged>, ItemEvents>();
+    services.AddScoped<IEventHandler<OtherItemPropertiesChanged>, ItemEvents>();
+    services.AddScoped<IEventHandler<PokeBallPropertiesChanged>, ItemEvents>();
+    services.AddScoped<IEventHandler<TechnicalMachinePropertiesChanged>, ItemEvents>();
+    services.AddScoped<IEventHandler<TreasurePropertiesChanged>, ItemEvents>();
   }
 
-  public async Task Handle(ItemPublished published, CancellationToken cancellationToken)
+  private readonly PokemonContext _context;
+  private readonly ILogger<ItemEvents> _logger;
+
+  public ItemEvents(PokemonContext context, ILogger<ItemEvents> logger)
   {
-    string streamId = published.Event.StreamId.Value;
-    ItemEntity? item = await _context.Items.SingleOrDefaultAsync(x => x.StreamId == streamId, cancellationToken);
+    _context = context;
+    _logger = logger;
+  }
 
-    if (item is null)
+  public async Task HandleAsync(BattleItemPropertiesChanged @event, CancellationToken cancellationToken)
+  {
+    ItemEntity? item = await _context.Items
+      .SingleOrDefaultAsync(x => x.StreamId == @event.StreamId.Value, cancellationToken);
+    if (item is null || (item.Version != (@event.Version - 1)))
     {
-      item = new ItemEntity(published);
+      _logger.LogUnexpectedVersion(@event, item);
+      return;
+    }
 
-      _context.Items.Add(item);
-    }
-    else
-    {
-      item.Update(published);
-    }
+    item.SetProperties(@event);
 
     await _context.SaveChangesAsync(cancellationToken);
-  }
-}
-
-internal record ItemUnpublished(ContentLocaleUnpublished Event) : INotification;
-
-internal class ItemUnpublishedHandler : INotificationHandler<ItemUnpublished>
-{
-  private readonly PokemonContext _context;
-
-  public ItemUnpublishedHandler(PokemonContext context)
-  {
-    _context = context;
+    _logger.LogSuccess(@event);
   }
 
-  public async Task Handle(ItemUnpublished unpublished, CancellationToken cancellationToken)
+  public async Task HandleAsync(BerryPropertiesChanged @event, CancellationToken cancellationToken)
   {
-    string streamId = unpublished.Event.StreamId.Value;
-    await _context.Items.Where(x => x.StreamId == streamId).ExecuteDeleteAsync(cancellationToken);
+    ItemEntity? item = await _context.Items
+      .SingleOrDefaultAsync(x => x.StreamId == @event.StreamId.Value, cancellationToken);
+    if (item is null || (item.Version != (@event.Version - 1)))
+    {
+      _logger.LogUnexpectedVersion(@event, item);
+      return;
+    }
+
+    item.SetProperties(@event);
+
+    await _context.SaveChangesAsync(cancellationToken);
+    _logger.LogSuccess(@event);
+  }
+
+  public async Task HandleAsync(ItemCreated @event, CancellationToken cancellationToken)
+  {
+    ItemEntity? item = await _context.Items.AsNoTracking()
+      .SingleOrDefaultAsync(x => x.StreamId == @event.StreamId.Value, cancellationToken);
+    if (item is not null)
+    {
+      _logger.LogUnexpectedVersion(@event, item);
+      return;
+    }
+
+    item = new ItemEntity(@event);
+    _context.Items.Add(item);
+
+    await _context.SaveChangesAsync(cancellationToken);
+    _logger.LogSuccess(@event);
+  }
+
+  public async Task HandleAsync(ItemDeleted @event, CancellationToken cancellationToken)
+  {
+    ItemEntity? item = await _context.Items
+      .SingleOrDefaultAsync(x => x.StreamId == @event.StreamId.Value, cancellationToken);
+    if (item is null)
+    {
+      _logger.LogUnexpectedVersion(@event, item);
+      return;
+    }
+
+    _context.Items.Remove(item);
+
+    await _context.SaveChangesAsync(cancellationToken);
+    _logger.LogSuccess(@event);
+  }
+
+  public async Task HandleAsync(ItemUniqueNameChanged @event, CancellationToken cancellationToken)
+  {
+    ItemEntity? item = await _context.Items
+      .SingleOrDefaultAsync(x => x.StreamId == @event.StreamId.Value, cancellationToken);
+    if (item is null || (item.Version != (@event.Version - 1)))
+    {
+      _logger.LogUnexpectedVersion(@event, item);
+      return;
+    }
+
+    item.SetUniqueName(@event);
+
+    await _context.SaveChangesAsync(cancellationToken);
+    _logger.LogSuccess(@event);
+  }
+
+  public async Task HandleAsync(ItemUpdated @event, CancellationToken cancellationToken)
+  {
+    ItemEntity? item = await _context.Items
+      .SingleOrDefaultAsync(x => x.StreamId == @event.StreamId.Value, cancellationToken);
+    if (item is null || (item.Version != (@event.Version - 1)))
+    {
+      _logger.LogUnexpectedVersion(@event, item);
+      return;
+    }
+
+    item.Update(@event);
+
+    await _context.SaveChangesAsync(cancellationToken);
+    _logger.LogSuccess(@event);
+  }
+
+  public async Task HandleAsync(KeyItemPropertiesChanged @event, CancellationToken cancellationToken)
+  {
+    ItemEntity? item = await _context.Items
+      .SingleOrDefaultAsync(x => x.StreamId == @event.StreamId.Value, cancellationToken);
+    if (item is null || (item.Version != (@event.Version - 1)))
+    {
+      _logger.LogUnexpectedVersion(@event, item);
+      return;
+    }
+
+    item.SetProperties(@event);
+
+    await _context.SaveChangesAsync(cancellationToken);
+    _logger.LogSuccess(@event);
+  }
+
+  public async Task HandleAsync(MaterialPropertiesChanged @event, CancellationToken cancellationToken)
+  {
+    ItemEntity? item = await _context.Items
+      .SingleOrDefaultAsync(x => x.StreamId == @event.StreamId.Value, cancellationToken);
+    if (item is null || (item.Version != (@event.Version - 1)))
+    {
+      _logger.LogUnexpectedVersion(@event, item);
+      return;
+    }
+
+    item.SetProperties(@event);
+
+    await _context.SaveChangesAsync(cancellationToken);
+    _logger.LogSuccess(@event);
+  }
+
+  public async Task HandleAsync(MedicinePropertiesChanged @event, CancellationToken cancellationToken)
+  {
+    ItemEntity? item = await _context.Items
+      .SingleOrDefaultAsync(x => x.StreamId == @event.StreamId.Value, cancellationToken);
+    if (item is null || (item.Version != (@event.Version - 1)))
+    {
+      _logger.LogUnexpectedVersion(@event, item);
+      return;
+    }
+
+    item.SetProperties(@event);
+
+    await _context.SaveChangesAsync(cancellationToken);
+    _logger.LogSuccess(@event);
+  }
+
+  public async Task HandleAsync(OtherItemPropertiesChanged @event, CancellationToken cancellationToken)
+  {
+    ItemEntity? item = await _context.Items
+      .SingleOrDefaultAsync(x => x.StreamId == @event.StreamId.Value, cancellationToken);
+    if (item is null || (item.Version != (@event.Version - 1)))
+    {
+      _logger.LogUnexpectedVersion(@event, item);
+      return;
+    }
+
+    item.SetProperties(@event);
+
+    await _context.SaveChangesAsync(cancellationToken);
+    _logger.LogSuccess(@event);
+  }
+
+  public async Task HandleAsync(PokeBallPropertiesChanged @event, CancellationToken cancellationToken)
+  {
+    ItemEntity? item = await _context.Items
+      .SingleOrDefaultAsync(x => x.StreamId == @event.StreamId.Value, cancellationToken);
+    if (item is null || (item.Version != (@event.Version - 1)))
+    {
+      _logger.LogUnexpectedVersion(@event, item);
+      return;
+    }
+
+    item.SetProperties(@event);
+
+    await _context.SaveChangesAsync(cancellationToken);
+    _logger.LogSuccess(@event);
+  }
+
+  public async Task HandleAsync(TechnicalMachinePropertiesChanged @event, CancellationToken cancellationToken)
+  {
+    ItemEntity? item = await _context.Items
+      .SingleOrDefaultAsync(x => x.StreamId == @event.StreamId.Value, cancellationToken);
+    if (item is null || (item.Version != (@event.Version - 1)))
+    {
+      _logger.LogUnexpectedVersion(@event, item);
+      return;
+    }
+
+    MoveEntity move = await _context.Moves.SingleOrDefaultAsync(x => x.StreamId == @event.Properties.MoveId.Value, cancellationToken)
+      ?? throw new InvalidOperationException($"The move entity 'StreamId={@event.Properties.MoveId}' was not found.");
+
+    item.SetProperties(move, @event);
+
+    await _context.SaveChangesAsync(cancellationToken);
+    _logger.LogSuccess(@event);
+  }
+
+  public async Task HandleAsync(TreasurePropertiesChanged @event, CancellationToken cancellationToken)
+  {
+    ItemEntity? item = await _context.Items
+      .SingleOrDefaultAsync(x => x.StreamId == @event.StreamId.Value, cancellationToken);
+    if (item is null || (item.Version != (@event.Version - 1)))
+    {
+      _logger.LogUnexpectedVersion(@event, item);
+      return;
+    }
+
+    item.SetProperties(@event);
+
+    await _context.SaveChangesAsync(cancellationToken);
+    _logger.LogSuccess(@event);
   }
 }

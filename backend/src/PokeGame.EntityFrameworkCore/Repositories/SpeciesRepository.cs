@@ -19,6 +19,7 @@ internal class SpeciesRepository : Repository, ISpeciesRepository
   {
     return await LoadAsync<PokemonSpecies>(id.StreamId, cancellationToken);
   }
+
   public async Task<PokemonSpecies?> LoadAsync(string idOrUniqueName, CancellationToken cancellationToken)
   {
     SpeciesId speciesId;

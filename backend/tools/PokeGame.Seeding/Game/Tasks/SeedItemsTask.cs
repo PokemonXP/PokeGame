@@ -1,114 +1,70 @@
-﻿using FluentValidation.Results;
-using Krakenar.Contracts.Contents;
-using Krakenar.Contracts.Search;
-using Krakenar.Core;
-using MediatR;
-using PokeGame.Core;
-using PokeGame.Infrastructure.Data;
+﻿using MediatR;
+using PokeGame.Core.Items;
+using PokeGame.Core.Items.Models;
 using PokeGame.Seeding.Game.Payloads;
-using PokeGame.Seeding.Game.Validators;
 
 namespace PokeGame.Seeding.Game.Tasks;
 
 internal class SeedItemsTask : SeedingTask
 {
   public override string? Description => "Seeds Item contents into Krakenar.";
-  public string Language { get; }
-
-  public SeedItemsTask(string language)
-  {
-    Language = language;
-  }
 }
 
 internal class SeedItemsTaskHandler : INotificationHandler<SeedItemsTask>
 {
-  private readonly IApplicationContext _applicationContext;
-  private readonly IContentService _contentService;
+  private readonly IItemService _itemService;
   private readonly ILogger<SeedItemsTaskHandler> _logger;
 
-  public SeedItemsTaskHandler(IApplicationContext applicationContext, IContentService contentService, ILogger<SeedItemsTaskHandler> logger)
+  public SeedItemsTaskHandler(IItemService itemService, ILogger<SeedItemsTaskHandler> logger)
   {
-    _applicationContext = applicationContext;
-    _contentService = contentService;
+    _itemService = itemService;
     _logger = logger;
   }
 
   public async Task Handle(SeedItemsTask task, CancellationToken cancellationToken)
   {
-    IReadOnlyCollection<ItemPayload> items = await CsvHelper.ExtractAsync<ItemPayload>("Game/data/items/other.csv", cancellationToken);
-
-    SearchContentLocalesPayload search = new()
+    IReadOnlyCollection<SeedItemPayload> items = await CsvHelper.ExtractAsync<SeedItemPayload>("Game/data/items/other.csv", cancellationToken);
+    foreach (SeedItemPayload item in items)
     {
-      ContentTypeId = Items.ContentTypeId
-    };
-    SearchResults<ContentLocale> results = await _contentService.SearchLocalesAsync(search, cancellationToken);
-    HashSet<Guid> existingIds = results.Items.Select(locale => locale.Content.Id).ToHashSet();
+      SetProperties(item);
+      CreateOrReplaceItemResult result = await _itemService.CreateOrReplaceAsync(item, item.Id, cancellationToken);
+      _logger.LogInformation("The item '{Item}' was {Status}.", result.Item, result.Created ? "created" : "updated");
+    }
+  }
 
-    ItemValidator validator = new(_applicationContext.UniqueNameSettings);
-    foreach (ItemPayload item in items)
+  private static void SetProperties(SeedItemPayload item)
+  {
+    switch (item.Category)
     {
-      ValidationResult result = validator.Validate(item);
-      if (!result.IsValid)
-      {
-        string errors = SeedingSerializer.Serialize(result.Errors);
-        _logger.LogError("The item '{Item}' was not seeded because there are validation errors.|Errors: {Errors}", item, errors);
-        continue;
-      }
-
-      string category = item.Category.HasValue
-        ? SeedingSerializer.Serialize<string[]>([PokemonConverter.Instance.FromItemCategory(item.Category.Value)])
-        : string.Empty;
-
-      Content content;
-      if (existingIds.Contains(item.Id))
-      {
-        SaveContentLocalePayload invariant = new()
-        {
-          UniqueName = item.UniqueName,
-          DisplayName = item.DisplayName,
-          Description = item.Description
-        };
-        invariant.FieldValues.Add(Items.Price, item.Price);
-        invariant.FieldValues.Add(Items.Category, category);
-        invariant.FieldValues.Add(Items.Sprite, item.Sprite);
-        _ = await _contentService.SaveLocaleAsync(item.Id, invariant, language: null, cancellationToken);
-
-        SaveContentLocalePayload locale = new()
-        {
-          UniqueName = item.UniqueName,
-          DisplayName = item.DisplayName,
-          Description = item.Description
-        };
-        locale.FieldValues.Add(Items.Url, item.Url);
-        locale.FieldValues.Add(Items.Notes, item.Notes);
-        content = await _contentService.SaveLocaleAsync(item.Id, locale, task.Language, cancellationToken)
-          ?? throw new InvalidOperationException($"The item content 'Id={item.Id}' was not found.");
-        _logger.LogInformation("The item content 'Id={ContentId}' was updated.", content.Id);
-      }
-      else
-      {
-        CreateContentPayload payload = new()
-        {
-          Id = item.Id,
-          ContentType = Items.ContentTypeId.ToString(),
-          Language = task.Language,
-          UniqueName = item.UniqueName,
-          DisplayName = item.DisplayName,
-          Description = item.Description
-        };
-        payload.FieldValues.Add(Items.Price, item.Price);
-        payload.FieldValues.Add(Items.Category, category);
-        payload.FieldValues.Add(Items.Sprite, item.Sprite);
-        payload.FieldValues.Add(Items.Url, item.Url);
-        payload.FieldValues.Add(Items.Notes, item.Notes);
-        content = await _contentService.CreateAsync(payload, cancellationToken);
-        _logger.LogInformation("The item content 'Id={ContentId}' was created.", content.Id);
-      }
-
-      await _contentService.PublishAsync(content.Id, language: null, cancellationToken);
-      await _contentService.PublishAsync(content.Id, task.Language, cancellationToken);
-      _logger.LogInformation("The item content 'Id={ContentId}' was published.", content.Id);
+      case ItemCategory.BattleItem:
+        item.BattleItem = new BattleItemPropertiesModel();
+        break;
+      case ItemCategory.Berry:
+        item.Berry = new BerryPropertiesModel();
+        break;
+      case ItemCategory.KeyItem:
+        item.KeyItem = new KeyItemPropertiesModel();
+        break;
+      case ItemCategory.Material:
+        item.Material = new MaterialPropertiesModel();
+        break;
+      case ItemCategory.Medicine:
+        item.Medicine = new MedicinePropertiesModel();
+        break;
+      case ItemCategory.OtherItem:
+        item.OtherItem = new OtherItemPropertiesModel();
+        break;
+      case ItemCategory.PokeBall:
+        item.PokeBall = new PokeBallPropertiesModel();
+        break;
+      case ItemCategory.TechnicalMachine:
+        item.TechnicalMachine = new TechnicalMachinePropertiesPayload();
+        break;
+      case ItemCategory.Treasure:
+        item.Treasure = new TreasurePropertiesModel();
+        break;
+      default:
+        throw new ItemCategoryNotSupportedException(item.Category);
     }
   }
 }

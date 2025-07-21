@@ -19,6 +19,7 @@ internal class VarietyRepository : Repository, IVarietyRepository
   {
     return await LoadAsync<Variety>(id.StreamId, cancellationToken);
   }
+
   public async Task<Variety?> LoadAsync(string idOrUniqueName, CancellationToken cancellationToken)
   {
     VarietyId varietyId;

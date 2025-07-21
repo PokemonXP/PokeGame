@@ -1,12 +1,7 @@
-﻿using Krakenar.Core.Contents;
-using Krakenar.EntityFrameworkCore.Relational.KrakenarDb;
-using Logitar.EventSourcing;
-using PokeGame.Core;
+﻿using Krakenar.EntityFrameworkCore.Relational.KrakenarDb;
 using PokeGame.Core.Items;
+using PokeGame.Core.Items.Events;
 using PokeGame.Core.Items.Models;
-using PokeGame.Core.Models;
-using PokeGame.EntityFrameworkCore.Handlers;
-using PokeGame.Infrastructure.Data;
 using AggregateEntity = Krakenar.EntityFrameworkCore.Relational.Entities.Aggregate;
 
 namespace PokeGame.EntityFrameworkCore.Entities;
@@ -15,6 +10,8 @@ internal class ItemEntity : AggregateEntity
 {
   public int ItemId { get; private set; }
   public Guid Id { get; private set; }
+
+  public ItemCategory Category { get; private set; }
 
   public string UniqueName { get; private set; } = string.Empty;
   public string UniqueNameNormalized
@@ -27,213 +24,139 @@ internal class ItemEntity : AggregateEntity
 
   public int Price { get; private set; }
 
-  public ItemCategory Category { get; private set; }
-
-  public string? BattleItem { get; private set; }
-  public string? Berry { get; private set; }
-  public string? Medicine { get; private set; }
-  public string? PokeBall { get; private set; }
+  public string? Sprite { get; private set; }
+  public string? Url { get; private set; }
+  public string? Notes { get; private set; }
 
   public MoveEntity? Move { get; private set; }
   public int? MoveId { get; private set; }
   public Guid? MoveUid { get; private set; }
 
-  public string? Sprite { get; private set; }
-
-  public string? Url { get; private set; }
-  public string? Notes { get; private set; }
+  public string? Properties { get; private set; }
 
   public List<PokemonEntity> ContainedPokemon { get; private set; } = [];
   public List<PokemonEntity> HoldingPokemon { get; private set; } = [];
   public List<PokemonMoveEntity> LearnedMoves { get; private set; } = [];
 
-  public ItemEntity(BattleItemPublished published) : this(published.Event)
+  public ItemEntity(ItemCreated @event) : base(@event)
   {
-    Update(published);
-  }
-  public ItemEntity(BerryPublished published) : this(published.Event)
-  {
-    Update(published);
-  }
-  public ItemEntity(ItemPublished published) : this(published.Event)
-  {
-    Update(published);
-  }
-  public ItemEntity(MedicinePublished published) : this(published.Event)
-  {
-    Update(published);
-  }
-  public ItemEntity(PokeBallPublished published) : this(published.Event)
-  {
-    Update(published);
-  }
-  public ItemEntity(TechnicalMachinePublished published) : this(published.Event)
-  {
-    Update(published);
-  }
-  private ItemEntity(DomainEvent @event) : base(@event)
-  {
-    Id = new ContentId(@event.StreamId).EntityId;
+    Id = new ItemId(@event.StreamId).ToGuid();
+
+    Category = @event.Category;
+
+    UniqueName = @event.UniqueName.Value;
+
+    Price = @event.Price?.Value ?? 0;
   }
 
   private ItemEntity() : base()
   {
   }
 
-  public BattleItemModel? GetBattleItem()
+  public void SetProperties(BattleItemPropertiesChanged @event)
   {
-    int[]? values = BattleItem?.Split(',').Select(int.Parse).ToArray();
-    return values is null
-      ? null
-      : new BattleItemModel(new StatisticChangesModel(values[0], values[1], values[2], values[3], values[4], values[5], values[6], values[7]), values[8]);
-  }
-  public BerryModel? GetBerry() => Berry is null ? null : PokemonSerializer.Instance.Deserialize<BerryModel>(Berry);
-  public MedicineModel? GetMedicine() => Medicine is null ? null : PokemonSerializer.Instance.Deserialize<MedicineModel>(Medicine);
-  public PokeBallModel? GetPokeBall() => PokeBall is null ? null : PokemonSerializer.Instance.Deserialize<PokeBallModel>(PokeBall);
+    Update(@event);
 
-  public void SetMove(MoveEntity move)
+    BattleItemPropertiesModel properties = new(@event.Properties);
+    Properties = PokemonSerializer.Instance.Serialize(properties);
+  }
+  public void SetProperties(BerryPropertiesChanged @event)
   {
-    if (Category != ItemCategory.TechnicalMachine)
-    {
-      throw new InvalidOperationException($"Cannot set the move of an item belonging to the category '{Category}'.");
-    }
+    Update(@event);
+
+    BerryPropertiesModel properties = new(@event.Properties);
+    Properties = PokemonSerializer.Instance.Serialize(properties);
+  }
+  public void SetProperties(KeyItemPropertiesChanged @event)
+  {
+    Update(@event);
+
+    KeyItemPropertiesModel properties = new(@event.Properties);
+    Properties = PokemonSerializer.Instance.Serialize(properties);
+  }
+  public void SetProperties(MaterialPropertiesChanged @event)
+  {
+    Update(@event);
+
+    MaterialPropertiesModel properties = new(@event.Properties);
+    Properties = PokemonSerializer.Instance.Serialize(properties);
+  }
+  public void SetProperties(MedicinePropertiesChanged @event)
+  {
+    Update(@event);
+
+    MedicinePropertiesModel properties = new(@event.Properties);
+    Properties = PokemonSerializer.Instance.Serialize(properties);
+  }
+  public void SetProperties(OtherItemPropertiesChanged @event)
+  {
+    Update(@event);
+
+    OtherItemPropertiesModel properties = new(@event.Properties);
+    Properties = PokemonSerializer.Instance.Serialize(properties);
+  }
+  public void SetProperties(PokeBallPropertiesChanged @event)
+  {
+    Update(@event);
+
+    PokeBallPropertiesModel properties = new(@event.Properties);
+    Properties = PokemonSerializer.Instance.Serialize(properties);
+  }
+  public void SetProperties(MoveEntity move, TechnicalMachinePropertiesChanged @event)
+  {
+    Update(@event);
 
     Move = move;
     MoveId = move.MoveId;
     MoveUid = move.Id;
+
+    Properties = null;
   }
-
-  public void Update(BattleItemPublished published)
-  {
-    Update(published.Event, published.Invariant, published.Locale, BattleItems.Price, ItemCategory.BattleItem, BattleItems.Sprite, BattleItems.Url, BattleItems.Notes);
-
-    ContentLocale invariant = published.Invariant;
-    BattleItem = string.Join(',',
-      invariant.GetNumberValue(BattleItems.AttackChange),
-      invariant.GetNumberValue(BattleItems.DefenseChange),
-      invariant.GetNumberValue(BattleItems.SpecialAttackChange),
-      invariant.GetNumberValue(BattleItems.SpecialDefenseChange),
-      invariant.GetNumberValue(BattleItems.SpeedChange),
-      invariant.GetNumberValue(BattleItems.AccuracyChange),
-      invariant.GetNumberValue(BattleItems.EvasionChange),
-      invariant.GetNumberValue(BattleItems.CriticalChange),
-      invariant.GetNumberValue(BattleItems.GuardTurns));
-  }
-  public void Update(BerryPublished published)
-  {
-    Update(published.Event, published.Invariant, published.Locale, Berries.Price, ItemCategory.Berry, Berries.Sprite, Berries.Url, Berries.Notes);
-
-    ContentLocale invariant = published.Invariant;
-
-    BerryModel berry = new()
-    {
-      Healing = (int)invariant.GetNumberValue(Berries.Healing),
-      IsHealingPercentage = invariant.GetBooleanValue(Berries.IsHealingPercentage),
-      CureConfusion = invariant.GetBooleanValue(Berries.CureConfusion),
-      CureNonVolatileConditions = invariant.GetBooleanValue(Berries.CureNonVolatileConditions),
-      PowerPoints = (int)invariant.GetNumberValue(Berries.PowerPoints),
-      StatisticChanges = new StatisticChangesModel(
-        (int)invariant.GetNumberValue(Berries.AttackChange),
-        (int)invariant.GetNumberValue(Berries.DefenseChange),
-        (int)invariant.GetNumberValue(Berries.SpecialAttackChange),
-        (int)invariant.GetNumberValue(Berries.SpecialDefenseChange),
-        (int)invariant.GetNumberValue(Berries.SpeedChange),
-        (int)invariant.GetNumberValue(Berries.AccuracyChange),
-        (int)invariant.GetNumberValue(Berries.EvasionChange),
-        (int)invariant.GetNumberValue(Berries.CriticalChange)),
-      RaiseFriendship = invariant.GetBooleanValue(Berries.RaiseFriendship)
-    };
-
-    IReadOnlyCollection<string> statusConditions = invariant.GetSelectValue(Berries.StatusCondition);
-    berry.StatusCondition = statusConditions.Count < 1 ? null : PokemonConverter.Instance.ToStatusCondition(statusConditions.Single());
-
-    IReadOnlyCollection<string> lowerEffortValues = invariant.GetSelectValue(Berries.LowerEffortValues);
-    berry.LowerEffortValues = lowerEffortValues.Count < 1 ? null : PokemonConverter.Instance.ToStatistic(lowerEffortValues.Single());
-
-    Berry = PokemonSerializer.Instance.Serialize(berry);
-  }
-  public void Update(ItemPublished published)
-  {
-    ContentLocale invariant = published.Invariant;
-
-    IReadOnlyCollection<string> categories = invariant.TryGetSelectValue(Items.Category) ?? [];
-    ItemCategory category = categories.Count < 1 ? ItemCategory.OtherItem : PokemonConverter.Instance.ToItemCategory(categories.Single());
-
-    Update(published.Event, published.Invariant, published.Locale, Items.Price, category, Items.Sprite, Items.Url, Items.Notes);
-  }
-  public void Update(MedicinePublished published)
-  {
-    Update(published.Event, published.Invariant, published.Locale, Medicines.Price, ItemCategory.Medicine, Medicines.Sprite, Medicines.Url, Medicines.Notes);
-
-    ContentLocale invariant = published.Invariant;
-
-    MedicineModel medicine = new()
-    {
-      IsHerbal = invariant.GetBooleanValue(Medicines.IsHerbal)
-    };
-
-    double? healing = invariant.TryGetNumberValue(Medicines.Healing);
-    if (healing.HasValue)
-    {
-      medicine.Healing = new HealingModel(
-        (int)healing.Value,
-        invariant.GetBooleanValue(Medicines.IsHealingPercentage),
-        invariant.GetBooleanValue(Medicines.Revive));
-    }
-
-    IReadOnlyCollection<string> statusConditions = invariant.GetSelectValue(Medicines.StatusCondition);
-    bool allConditions = invariant.GetBooleanValue(Medicines.AllConditions);
-    if (statusConditions.Count > 0 || allConditions)
-    {
-      medicine.Status = new StatusHealingModel(
-        condition: statusConditions.Count < 1 ? null : PokemonConverter.Instance.ToStatusCondition(statusConditions.Single()),
-        allConditions);
-    }
-
-    double? powerPoints = invariant.TryGetNumberValue(Medicines.PowerPoints);
-    if (powerPoints.HasValue)
-    {
-      medicine.PowerPoints = new PowerPointRestoreModel(
-        (int)powerPoints.Value,
-        invariant.GetBooleanValue(Medicines.IsPowerPointPercentage),
-        invariant.GetBooleanValue(Medicines.AllMoves));
-    }
-
-    Medicine = PokemonSerializer.Instance.Serialize(medicine);
-  }
-  public void Update(PokeBallPublished published)
-  {
-    Update(published.Event, published.Invariant, published.Locale, PokeBalls.Price, ItemCategory.PokeBall, PokeBalls.Sprite, PokeBalls.Url, PokeBalls.Notes);
-
-    ContentLocale invariant = published.Invariant;
-    PokeBallModel pokeBall = new(
-      invariant.GetNumberValue(PokeBalls.CatchMultiplier),
-      invariant.GetBooleanValue(PokeBalls.Heal),
-      (int)invariant.GetNumberValue(PokeBalls.BaseFriendship),
-      (int)invariant.GetNumberValue(PokeBalls.FriendshipMultiplier));
-    PokeBall = PokemonSerializer.Instance.Serialize(pokeBall);
-  }
-  public void Update(TechnicalMachinePublished published)
-  {
-    Update(published.Event, published.Invariant, published.Locale, TechnicalMachines.Price,
-      ItemCategory.TechnicalMachine, TechnicalMachines.Sprite, TechnicalMachines.Url, TechnicalMachines.Notes);
-  }
-  private void Update(DomainEvent @event, ContentLocale invariant, ContentLocale locale, Guid price, ItemCategory category, Guid sprite, Guid url, Guid notes)
+  public void SetProperties(TreasurePropertiesChanged @event)
   {
     Update(@event);
 
-    UniqueName = locale.UniqueName.Value;
-    DisplayName = locale.DisplayName?.Value;
-    Description = locale.Description?.Value;
+    TreasurePropertiesModel properties = new(@event.Properties);
+    Properties = PokemonSerializer.Instance.Serialize(properties);
+  }
 
-    Price = (int)invariant.GetNumberValue(price);
+  public void SetUniqueName(ItemUniqueNameChanged @event)
+  {
+    Update(@event);
 
-    Category = category;
+    UniqueName = @event.UniqueName.Value;
+  }
 
-    Sprite = invariant.TryGetStringValue(sprite);
+  public void Update(ItemUpdated @event)
+  {
+    base.Update(@event);
 
-    Url = locale.TryGetStringValue(url);
-    Notes = locale.TryGetStringValue(notes);
+    if (@event.DisplayName is not null)
+    {
+      DisplayName = @event.DisplayName.Value?.Value;
+    }
+    if (@event.Description is not null)
+    {
+      Description = @event.Description.Value?.Value;
+    }
+
+    if (@event.Price is not null)
+    {
+      Price = @event.Price.Value?.Value ?? 0;
+    }
+
+    if (@event.Sprite is not null)
+    {
+      Sprite = @event.Sprite.Value?.Value;
+    }
+    if (@event.Url is not null)
+    {
+      Url = @event.Url.Value?.Value;
+    }
+    if (@event.Notes is not null)
+    {
+      Notes = @event.Notes.Value?.Value;
+    }
   }
 
   public override string ToString() => $"{DisplayName ?? UniqueName} | {base.ToString()}";

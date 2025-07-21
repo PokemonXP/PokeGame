@@ -8,12 +8,6 @@ namespace PokeGame.Seeding.Game.Tasks;
 internal class SeedMovesTask : SeedingTask
 {
   public override string? Description => "Seeds Move contents into Krakenar.";
-  public string Language { get; }
-
-  public SeedMovesTask(string language)
-  {
-    Language = language;
-  }
 }
 
 internal class SeedMovesTaskHandler : INotificationHandler<SeedMovesTask>

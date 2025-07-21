@@ -48,7 +48,7 @@ internal class PokemonQuerier : IPokemonQuerier
   {
     PokemonEntity? pokemon = await _pokemon.AsNoTracking()
       .Include(x => x.CurrentTrainer)
-      .Include(x => x.HeldItem).ThenInclude(x => x!.Move)
+      .Include(x => x.HeldItem)
       .Include(x => x.Moves).ThenInclude(x => x.Item)
       .Include(x => x.Moves).ThenInclude(x => x.Move)
       .Include(x => x.OriginalTrainer)
@@ -67,7 +67,7 @@ internal class PokemonQuerier : IPokemonQuerier
   {
     PokemonEntity? pokemon = await _pokemon.AsNoTracking()
       .Include(x => x.CurrentTrainer)
-      .Include(x => x.HeldItem).ThenInclude(x => x!.Move)
+      .Include(x => x.HeldItem)
       .Include(x => x.Moves).ThenInclude(x => x.Item)
       .Include(x => x.Moves).ThenInclude(x => x.Move)
       .Include(x => x.OriginalTrainer)
@@ -88,7 +88,7 @@ internal class PokemonQuerier : IPokemonQuerier
 
     PokemonEntity? pokemon = await _pokemon.AsNoTracking()
       .Include(x => x.CurrentTrainer)
-      .Include(x => x.HeldItem).ThenInclude(x => x!.Move)
+      .Include(x => x.HeldItem)
       .Include(x => x.Moves).ThenInclude(x => x.Item)
       .Include(x => x.Moves).ThenInclude(x => x.Move)
       .Include(x => x.OriginalTrainer)
@@ -112,7 +112,7 @@ internal class PokemonQuerier : IPokemonQuerier
 
     IQueryable<PokemonEntity> query = _pokemon.FromQuery(builder).AsNoTracking()
       .Include(x => x.CurrentTrainer)
-      .Include(x => x.HeldItem).ThenInclude(x => x!.Move)
+      .Include(x => x.HeldItem)
       .Include(x => x.Moves).ThenInclude(x => x.Item)
       .Include(x => x.Moves).ThenInclude(x => x.Move)
       .Include(x => x.OriginalTrainer)

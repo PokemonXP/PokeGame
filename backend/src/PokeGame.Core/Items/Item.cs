@@ -106,7 +106,7 @@ public class Item : AggregateRoot
   {
   }
 
-  public Item(UniqueName uniqueName, ItemProperties properties, ActorId? actorId = null, ItemId? itemId = null)
+  public Item(UniqueName uniqueName, ItemProperties properties, Price? price = null, ActorId? actorId = null, ItemId? itemId = null)
     : base((itemId ?? ItemId.NewId()).StreamId)
   {
     if (!Enum.IsDefined(properties.Category))
@@ -114,25 +114,17 @@ public class Item : AggregateRoot
       throw new ArgumentOutOfRangeException(nameof(properties), "The item category is not defined.");
     }
 
-    Raise(new ItemCreated(properties.Category, uniqueName), actorId);
+    Raise(new ItemCreated(properties.Category, uniqueName, price), actorId);
 
-    switch (properties.Category)
-    {
-      case ItemCategory.OtherItem:
-        SetProperties((OtherItemProperties)properties, actorId);
-        break;
-      case ItemCategory.Treasure:
-        SetProperties((TreasureProperties)properties, actorId);
-        break;
-      default:
-        throw new ItemCategoryNotSupportedException(properties.Category);
-    }
+    SetProperties(properties, actorId);
   }
   protected virtual void Handle(ItemCreated @event)
   {
     Category = @event.Category;
 
     _uniqueName = @event.UniqueName;
+
+    _price = @event.Price;
   }
 
   public void Delete(ActorId? actorId = null)
@@ -143,34 +135,77 @@ public class Item : AggregateRoot
     }
   }
 
-  public void SetProperties(OtherItemProperties properties, ActorId? actorId = null)
+  public void SetProperties(ItemProperties properties, ActorId? actorId = null)
   {
     if (Category != properties.Category)
     {
       throw new ArgumentException($"Cannot set properties of category '{properties.Category}' on an item in category '{Category}'.", nameof(properties));
     }
 
-    if (_properties != properties)
+    switch (properties.Category)
     {
-      Raise(new OtherItemPropertiesChanged(properties), actorId);
+      case ItemCategory.BattleItem:
+        Raise(new BattleItemPropertiesChanged((BattleItemProperties)properties), actorId);
+        break;
+      case ItemCategory.Berry:
+        Raise(new BerryPropertiesChanged((BerryProperties)properties), actorId);
+        break;
+      case ItemCategory.KeyItem:
+        Raise(new KeyItemPropertiesChanged((KeyItemProperties)properties), actorId);
+        break;
+      case ItemCategory.Material:
+        Raise(new MaterialPropertiesChanged((MaterialProperties)properties), actorId);
+        break;
+      case ItemCategory.Medicine:
+        Raise(new MedicinePropertiesChanged((MedicineProperties)properties), actorId);
+        break;
+      case ItemCategory.OtherItem:
+        Raise(new OtherItemPropertiesChanged((OtherItemProperties)properties), actorId);
+        break;
+      case ItemCategory.PokeBall:
+        Raise(new PokeBallPropertiesChanged((PokeBallProperties)properties), actorId);
+        break;
+      case ItemCategory.TechnicalMachine:
+        Raise(new TechnicalMachinePropertiesChanged((TechnicalMachineProperties)properties), actorId);
+        break;
+      case ItemCategory.Treasure:
+        Raise(new TreasurePropertiesChanged((TreasureProperties)properties), actorId);
+        break;
+      default:
+        throw new ItemCategoryNotSupportedException(properties.Category);
     }
+  }
+  protected virtual void Handle(BattleItemPropertiesChanged @event)
+  {
+    _properties = @event.Properties;
+  }
+  protected virtual void Handle(BerryPropertiesChanged @event)
+  {
+    _properties = @event.Properties;
+  }
+  protected virtual void Handle(KeyItemPropertiesChanged @event)
+  {
+    _properties = @event.Properties;
+  }
+  protected virtual void Handle(MaterialPropertiesChanged @event)
+  {
+    _properties = @event.Properties;
+  }
+  protected virtual void Handle(MedicinePropertiesChanged @event)
+  {
+    _properties = @event.Properties;
   }
   protected virtual void Handle(OtherItemPropertiesChanged @event)
   {
     _properties = @event.Properties;
   }
-
-  public void SetProperties(TreasureProperties properties, ActorId? actorId = null)
+  protected virtual void Handle(PokeBallPropertiesChanged @event)
   {
-    if (Category != properties.Category)
-    {
-      throw new ArgumentException($"Cannot set properties of category '{properties.Category}' on an item in category '{Category}'.", nameof(properties));
-    }
-
-    if (_properties != properties)
-    {
-      Raise(new TreasurePropertiesChanged(properties), actorId);
-    }
+    _properties = @event.Properties;
+  }
+  protected virtual void Handle(TechnicalMachinePropertiesChanged @event)
+  {
+    _properties = @event.Properties;
   }
   protected virtual void Handle(TreasurePropertiesChanged @event)
   {
