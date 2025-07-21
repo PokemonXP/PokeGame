@@ -15,7 +15,7 @@ withDefaults(
   }>(),
   {
     id: "location",
-    label: "pokemon.region.location",
+    label: "regions.location",
     max: 255,
   },
 );

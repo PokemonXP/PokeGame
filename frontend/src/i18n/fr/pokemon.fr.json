@@ -165,9 +165,6 @@
   "progress": {
     "title": "Progress"
   },
-  "region": {
-    "location": "Location"
-  },
   "shiny": {
     "label": "Is Shiny"
   },

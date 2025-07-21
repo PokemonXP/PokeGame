@@ -7,6 +7,7 @@
   },
   "deleted": "La région a été supprimée.",
   "empty": "Cette liste est vide.",
+  "location": "Emplacement",
   "sort": {
     "options": {
       "CreatedOn": "Date de création",
