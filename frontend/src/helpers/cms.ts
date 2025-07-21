@@ -1,8 +1,9 @@
 import { stringUtils } from "logitar-js";
 
-import type { Ability, Form, Species, Trainer, Variety } from "@/types/pokemon";
+import type { Ability, Form, Species, Variety } from "@/types/pokemon";
 import type { Item } from "@/types/items";
 import type { Move } from "@/types/pokemon/moves";
+import type { Trainer } from "@/types/trainers";
 
 const cmsBaseUrl: string = import.meta.env.VITE_APP_CMS_BASE_URL ?? "";
 const { trimEnd } = stringUtils;
