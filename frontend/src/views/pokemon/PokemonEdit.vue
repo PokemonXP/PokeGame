@@ -7,6 +7,7 @@ import { useRoute, useRouter } from "vue-router";
 import AdminBreadcrumb from "@/components/admin/AdminBreadcrumb.vue";
 import DeletePokemon from "@/components/pokemon/DeletePokemon.vue";
 import PokemonDetail from "@/components/pokemon/PokemonDetail.vue";
+import PokemonMemories from "@/components/pokemon/PokemonMemories.vue";
 import PokemonMetadata from "@/components/pokemon/PokemonMetadata.vue";
 import PokemonMoves from "@/components/pokemon/PokemonMoves.vue";
 import PokemonStatistics from "@/components/pokemon/PokemonStatistics.vue";
@@ -47,6 +48,13 @@ function onMetadataUpdated(updated: Pokemon): void {
     pokemon.value.sprite = updated.sprite;
     pokemon.value.url = updated.url;
     pokemon.value.notes = updated.notes;
+  }
+  toasts.success("pokemon.updated");
+}
+function onMemoriesUpdated(updated: Pokemon): void {
+  updateAggregate(updated);
+  if (pokemon.value) {
+    pokemon.value.ownership = updated.ownership;
   }
   toasts.success("pokemon.updated");
 }
@@ -112,7 +120,7 @@ onMounted(async () => {
         <DeletePokemon :pokemon="pokemon" @deleted="onDeleted" @error="handleError" />
       </div>
       <TarTabs>
-        <TarTab active id="summary" :title="t('pokemon.summary.title')">
+        <TarTab id="summary" :title="t('pokemon.summary.title')">
           <PokemonSummary :pokemon="pokemon" @error="handleError" @saved="onSummaryUpdated" />
         </TarTab>
         <TarTab id="statistics" :title="t('pokemon.statistic.title')">
@@ -120,6 +128,9 @@ onMounted(async () => {
         </TarTab>
         <TarTab id="moves" :title="t('pokemon.move.title')">
           <PokemonMoves :pokemon="pokemon" @error="handleError" @saved="onMovesUpdated" />
+        </TarTab>
+        <TarTab active id="memories" :title="t('pokemon.memories.title')">
+          <PokemonMemories :pokemon="pokemon" @error="handleError" @saved="onMemoriesUpdated" />
         </TarTab>
         <TarTab id="metadata" :title="t('metadata')">
           <PokemonMetadata :pokemon="pokemon" @error="handleError" @saved="onMetadataUpdated" />

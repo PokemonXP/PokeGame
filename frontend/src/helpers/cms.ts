@@ -49,4 +49,4 @@ export function getVarietyUrl(variety: Variety): string {
   return `${trimEnd(cmsBaseUrl, "/")}/admin/contents/${variety.id}`;
 }
 
-// TODO(fpion): unit tests
+// TODO(fpion): remove this file

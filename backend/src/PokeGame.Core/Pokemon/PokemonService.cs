@@ -29,6 +29,7 @@ internal class PokemonService : IPokemonService
     services.AddTransient<IPokemonManager, PokemonManager>();
     services.AddTransient<ICommandHandler<CreatePokemon, PokemonModel>, CreatePokemonHandler>();
     services.AddTransient<ICommandHandler<DeletePokemon, PokemonModel?>, DeletePokemonHandler>();
+    services.AddTransient<ICommandHandler<ReceivePokemon, PokemonModel?>, ReceivePokemonHandler>();
     services.AddTransient<ICommandHandler<RememberPokemonMove, PokemonModel?>, RememberPokemonMoveHandler>();
     services.AddTransient<ICommandHandler<SwitchPokemonMoves, PokemonModel?>, SwitchPokemonMovesHandler>();
     services.AddTransient<ICommandHandler<UpdatePokemon, PokemonModel?>, UpdatePokemonHandler>();

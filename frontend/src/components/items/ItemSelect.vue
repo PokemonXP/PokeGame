@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import type { SelectOption } from "logitar-vue3-ui";
 import { arrayUtils } from "logitar-js";
-import { computed, onMounted, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 
 import FormSelect from "@/components/forms/FormSelect.vue";
-import type { Item, SearchItemsPayload } from "@/types/items";
+import type { Item, ItemCategory, SearchItemsPayload } from "@/types/items";
 import type { SearchResults } from "@/types/search";
 import { formatItem } from "@/helpers/format";
 import { searchItems } from "@/api/items";
@@ -13,12 +13,14 @@ import { searchItems } from "@/api/items";
 const { orderBy } = arrayUtils;
 const { t } = useI18n();
 
-withDefaults(
+const props = withDefaults(
   defineProps<{
+    category?: ItemCategory;
     id?: string;
     label?: string;
     modelValue?: string;
     placeholder?: string;
+    required?: boolean | string;
   }>(),
   {
     id: "item",
@@ -52,21 +54,26 @@ function onModelValueUpdate(id: string): void {
   emit("selected", selectedItem);
 }
 
-onMounted(async () => {
-  try {
-    const payload: SearchItemsPayload = {
-      ids: [],
-      search: { terms: [], operator: "And" },
-      sort: [],
-      limit: 0,
-      skip: 0,
-    };
-    const results: SearchResults<Item> = await searchItems(payload);
-    items.value = [...results.items];
-  } catch (e: unknown) {
-    emit("error", e);
-  }
-});
+watch(
+  () => props.category,
+  async (category) => {
+    try {
+      const payload: SearchItemsPayload = {
+        category,
+        ids: [],
+        search: { terms: [], operator: "And" },
+        sort: [],
+        limit: 0,
+        skip: 0,
+      };
+      const results: SearchResults<Item> = await searchItems(payload);
+      items.value = [...results.items];
+    } catch (e: unknown) {
+      emit("error", e);
+    }
+  },
+  { immediate: true },
+);
 </script>
 
 <template>
@@ -77,6 +84,7 @@ onMounted(async () => {
     :model-value="modelValue"
     :options="options"
     :placeholder="t(placeholder)"
+    :required="required"
     @update:model-value="onModelValueUpdate"
   />
 </template>

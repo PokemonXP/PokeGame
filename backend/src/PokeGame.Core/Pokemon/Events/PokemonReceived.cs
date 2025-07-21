@@ -7,3 +7,4 @@ using PokeGame.Core.Trainers;
 namespace PokeGame.Core.Pokemon.Events;
 
 public record PokemonReceived(TrainerId TrainerId, ItemId PokeBallId, Level Level, Location Location, Description? Description, PokemonSlot Slot) : DomainEvent;
+// TODO(fpion): MetOn date should be included in the event!
