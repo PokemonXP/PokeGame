@@ -67,9 +67,13 @@ internal class ReceivePokemonHandler : ICommandHandler<ReceivePokemon, PokemonMo
     Location location = new(payload.Location);
     Level? level = payload.Level < 1 ? null : new(payload.Level);
     Description? description = Description.TryCreate(payload.Description);
-    pokemon.Receive(trainer, pokeBall, location, level, payload.MetOn, description, actorId);
 
-    // TODO(fpion): trainer should also receive the Pokémon in party/box at position
+    #region TODO(fpion): implement
+    Position? position = null;
+    Box? box = null;
+    #endregion
+
+    pokemon.Receive(trainer, pokeBall, location, level, payload.MetOn, description, position, box, actorId);
 
     await _pokemonManager.SaveAsync(pokemon, cancellationToken);
 

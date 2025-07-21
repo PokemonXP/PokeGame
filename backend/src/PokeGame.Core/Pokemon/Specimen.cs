@@ -174,6 +174,8 @@ public class Specimen : AggregateRoot
 
   public TrainerId? OriginalTrainerId { get; private set; }
   public Ownership? Ownership { get; private set; }
+  public Position? Position { get; private set; }
+  public Box? Box { get; private set; }
 
   public Specimen() : base()
   {
@@ -385,7 +387,16 @@ public class Specimen : AggregateRoot
     }
   }
 
-  public void Receive(Trainer trainer, Item pokeBall, Location location, Level? level = null, DateTime? metOn = null, Description? description = null, ActorId? actorId = null)
+  public void Receive(
+    Trainer trainer,
+    Item pokeBall,
+    Location location,
+    Level? level = null,
+    DateTime? metOn = null,
+    Description? description = null,
+    Position? position = null,
+    Box? box = null,
+    ActorId? actorId = null)
   {
     if (pokeBall.Category != ItemCategory.PokeBall)
     {
@@ -402,12 +413,15 @@ public class Specimen : AggregateRoot
 
     ItemId pokeBallId = Ownership is null ? pokeBall.Id : Ownership.PokeBallId;
     level ??= new(Level);
-    Raise(new PokemonReceived(trainer.Id, pokeBallId, level, location, description), actorId, metOn);
+    position ??= new Position(0);
+    Raise(new PokemonReceived(trainer.Id, pokeBallId, level, location, description, position, box), actorId, metOn);
   }
   protected virtual void Handle(PokemonReceived @event)
   {
     OriginalTrainerId ??= @event.TrainerId;
     Ownership = new Ownership(OwnershipKind.Received, @event.TrainerId, @event.PokeBallId, @event.Level, @event.Location, @event.OccurredOn, @event.Description);
+    Position = @event.Position;
+    Box = @event.Box;
   }
 
   public bool RememberMove(Move move, int position, ActorId? actorId = null) => RememberMove(move.Id, position, actorId);
