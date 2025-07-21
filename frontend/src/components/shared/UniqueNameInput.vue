@@ -19,7 +19,7 @@ const props = withDefaults(
   }>(),
   {
     id: "unique-name",
-    label: "pokemon.uniqueName.label",
+    label: "name.unique.label",
     max: 255,
     required: true,
     settings: () => ({ allowedCharacters: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+" }),

@@ -15,6 +15,6 @@ defineEmits<{
 
 <template>
   <TarAlert :close="t('actions.close')" dismissible :model-value="modelValue" variant="warning" @update:model-value="$emit('update:model-value', $event)">
-    <strong>{{ t("pokemon.uniqueName.alreadyUsed.lead") }}</strong> {{ t("pokemon.uniqueName.alreadyUsed.help") }}
+    <strong>{{ t("name.unique.alreadyUsed.lead") }}</strong> {{ t("name.unique.alreadyUsed.help") }}
   </TarAlert>
 </template>

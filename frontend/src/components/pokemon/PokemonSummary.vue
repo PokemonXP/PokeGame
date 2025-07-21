@@ -11,13 +11,16 @@ import PokemonTypeImage from "./PokemonTypeImage.vue";
 import ShinyCheckbox from "./ShinyCheckbox.vue";
 import SpeciesIcon from "@/components/icons/SpeciesIcon.vue";
 import SubmitButton from "@/components/shared/SubmitButton.vue";
-import UniqueNameInput from "@/components/pokemon/UniqueNameInput.vue";
+import UniqueNameAlreadyUsed from "@/components/shared/UniqueNameAlreadyUsed.vue";
+import UniqueNameInput from "@/components/shared/UniqueNameInput.vue";
 import VarietyIcon from "@/components/icons/VarietyIcon.vue";
 import type { Form, Pokemon, PokemonSize, Species, UpdatePokemonPayload, Variety } from "@/types/pokemon";
 import type { Item } from "@/types/items";
+import { ErrorCodes, StatusCodes } from "@/types/api";
 import { calculateSize, getMaximumExperience } from "@/helpers/pokemon";
 import { formatForm, formatSpecies, formatVariety } from "@/helpers/format";
 import { getFormUrl, getSpeciesUrl, getVarietyUrl } from "@/helpers/cms";
+import { isError } from "@/helpers/error";
 import { updatePokemon } from "@/api/pokemon";
 import { useForm } from "@/forms";
 
@@ -32,6 +35,7 @@ const isLoading = ref<boolean>(false);
 const isShiny = ref<boolean>(false);
 const nickname = ref<string>("");
 const uniqueName = ref<string>("");
+const uniqueNameAlreadyUsed = ref<boolean>(false);
 
 const form = computed<Form>(() => props.pokemon.form);
 const variety = computed<Variety>(() => form.value.variety);
@@ -53,6 +57,7 @@ const { isValid, reinitialize, validate } = useForm();
 async function submit(): Promise<void> {
   if (!isLoading.value) {
     isLoading.value = true;
+    uniqueNameAlreadyUsed.value = false;
     try {
       validate();
       if (isValid.value) {
@@ -67,7 +72,11 @@ async function submit(): Promise<void> {
         emit("saved", pokemon);
       }
     } catch (e: unknown) {
-      emit("error", e);
+      if (isError(e, StatusCodes.Conflict, ErrorCodes.UniqueNameAlreadyUsed)) {
+        uniqueNameAlreadyUsed.value = true;
+      } else {
+        emit("error", e);
+      }
     } finally {
       isLoading.value = false;
     }
@@ -154,6 +163,7 @@ watch(
       </tbody>
     </table>
     <form @submit.prevent="submit">
+      <UniqueNameAlreadyUsed v-model="uniqueNameAlreadyUsed" />
       <div class="row">
         <UniqueNameInput class="col" v-model="uniqueName" />
         <NicknameInput class="col" v-model="nickname" />

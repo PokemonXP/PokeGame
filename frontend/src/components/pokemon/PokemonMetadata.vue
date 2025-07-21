@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
 
-import NotesTextarea from "./NotesTextarea.vue";
+import NotesTextarea from "@/components/shared/NotesTextarea.vue";
 import SubmitButton from "@/components/shared/SubmitButton.vue";
-import UrlInput from "./UrlInput.vue";
+import UrlInput from "@/components/shared/UrlInput.vue";
 import type { Form, Pokemon, UpdatePokemonPayload } from "@/types/pokemon";
 import { updatePokemon } from "@/api/pokemon";
 import { useForm } from "@/forms";

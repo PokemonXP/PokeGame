@@ -17,9 +17,6 @@
     "title": "Delete Pokémon"
   },
   "deleted": "The Pokémon has been deleted.",
-  "description": {
-    "label": "Description"
-  },
   "egg": {
     "cycles": "Egg Cycles",
     "label": "Is Egg"
@@ -165,9 +162,6 @@
   "nickname": {
     "label": "Nickname"
   },
-  "notes": {
-    "label": "Notes"
-  },
   "progress": {
     "title": "Progress"
   },
@@ -305,17 +299,7 @@
     "tera": "Tera",
     "types": "Types"
   },
-  "uniqueName": {
-    "alreadyUsed": {
-      "help": "Please enter a different unique name.",
-      "lead": "The unique name is already used."
-    },
-    "label": "Unique Name"
-  },
   "updated": "The Pokémon has been updated.",
-  "url": {
-    "label": "URL"
-  },
   "variety": {
     "select": {
       "default": "Default",

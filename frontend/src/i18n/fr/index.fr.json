@@ -12,13 +12,27 @@
   "by": "Par",
   "copyright": "© PokéGame {version} {year}.",
   "count": "Nombre de résultats",
+  "description": "Description",
+  "general": "Général",
   "loading": "Chargement…",
   "metadata": "Métadonnées",
+  "name": {
+    "display": "Nom d’affichage",
+    "label": "Nom",
+    "unique": {
+      "alreadyUsed": {
+        "help": "Veuillez entrer un autre nom unique.",
+        "lead": "Le nom unique est déjà utilisé."
+      },
+      "label": "Nom unique"
+    }
+  },
   "notFound": {
     "help": "La page demandée n’a pu être trouvée.",
     "lead": "Page introuvable",
     "link": "Aller à l’accueil"
   },
+  "notes": "Notes",
   "pagination": {
     "first": "Première page",
     "label": "Pagination",
@@ -49,5 +63,6 @@
       "signedOut": "Vous avez été déconnecté, veuillez vous reconnecter à votre compte.",
       "title": "Attention !"
     }
-  }
+  },
+  "url": "URL"
 }

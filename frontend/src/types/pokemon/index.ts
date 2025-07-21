@@ -2,6 +2,7 @@ import type { Aggregate, Change } from "../aggregate";
 import type { EggGroups } from "./species";
 import type { Item } from "../items";
 import type { Move, MoveLearningMethod } from "./moves";
+import type { Region } from "../regions";
 import type { SearchPayload, SortOption } from "../search";
 import type { Trainer } from "../trainers";
 
@@ -244,14 +245,6 @@ export type ReceivePokemonPayload = {
   location: string;
   metOn?: Date;
   description?: string;
-};
-
-export type Region = Aggregate & {
-  uniqueName: string;
-  displayName?: string | null;
-  description?: string | null;
-  url?: string | null;
-  notes?: string | null;
 };
 
 export type RegionalNumber = {
