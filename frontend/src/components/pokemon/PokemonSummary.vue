@@ -14,6 +14,7 @@ import SubmitButton from "@/components/shared/SubmitButton.vue";
 import UniqueNameInput from "@/components/pokemon/UniqueNameInput.vue";
 import VarietyIcon from "@/components/icons/VarietyIcon.vue";
 import type { Form, Pokemon, PokemonSize, Species, UpdatePokemonPayload, Variety } from "@/types/pokemon";
+import type { Item } from "@/types/items";
 import { calculateSize, getMaximumExperience } from "@/helpers/pokemon";
 import { formatForm, formatSpecies, formatVariety } from "@/helpers/format";
 import { getFormUrl, getSpeciesUrl, getVarietyUrl } from "@/helpers/cms";
@@ -26,6 +27,7 @@ const props = defineProps<{
   pokemon: Pokemon;
 }>();
 
+const heldItem = ref<Item>();
 const isLoading = ref<boolean>(false);
 const isShiny = ref<boolean>(false);
 const nickname = ref<string>("");
@@ -58,6 +60,7 @@ async function submit(): Promise<void> {
           uniqueName: uniqueName.value !== props.pokemon.uniqueName ? uniqueName.value : undefined,
           nickname: nickname.value !== (props.pokemon.nickname ?? "") ? { value: nickname.value } : undefined,
           isShiny: isShiny.value !== props.pokemon.isShiny ? isShiny.value : undefined,
+          heldItem: (heldItem.value?.id ?? "") !== (props.pokemon.heldItem?.id ?? "") ? { value: heldItem.value?.id } : undefined,
         };
         const pokemon: Pokemon = await updatePokemon(props.pokemon.id, payload);
         reinitialize();
@@ -74,6 +77,7 @@ async function submit(): Promise<void> {
 watch(
   () => props.pokemon,
   (pokemon) => {
+    heldItem.value = pokemon.heldItem ?? undefined;
     isShiny.value = pokemon.isShiny;
     nickname.value = pokemon.nickname ?? "";
     uniqueName.value = pokemon.uniqueName;
@@ -156,7 +160,7 @@ watch(
         <GenderSelect class="col" disabled :model-value="pokemon.gender ?? ''" />
       </div>
       <ShinyCheckbox v-model="isShiny" />
-      <ItemSelect :model-value="pokemon.heldItem?.id" />
+      <ItemSelect :model-value="heldItem?.id" @selected="heldItem = $event" />
       <div class="mb-3">
         <SubmitButton :loading="isLoading" />
       </div>
