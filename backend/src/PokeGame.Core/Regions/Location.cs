@@ -20,7 +20,7 @@ public record Location
   {
     public Validator()
     {
-      RuleFor(x => x.Value).NotEmpty().MaximumLength(MaximumLength);
+      RuleFor(x => x.Value).Location();
     }
   }
 }

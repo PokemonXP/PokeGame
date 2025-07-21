@@ -1,11 +1,14 @@
 ﻿using Krakenar.Core;
+using Logitar;
 using Logitar.EventSourcing;
 using PokeGame.Core.Abilities;
 using PokeGame.Core.Forms;
 using PokeGame.Core.Items;
 using PokeGame.Core.Moves;
 using PokeGame.Core.Pokemon.Events;
+using PokeGame.Core.Regions;
 using PokeGame.Core.Species;
+using PokeGame.Core.Trainers;
 using PokeGame.Core.Varieties;
 
 namespace PokeGame.Core.Pokemon;
@@ -168,6 +171,11 @@ public class Specimen : AggregateRoot
   private readonly List<MoveId> _currentMoves = new(capacity: MoveLimit);
   public IReadOnlyCollection<KeyValuePair<MoveId, PokemonMove>> CurrentMoves
     => _currentMoves.Select(id => new KeyValuePair<MoveId, PokemonMove>(id, _learnedMoves[id])).ToList().AsReadOnly();
+
+  public TrainerId? OriginalTrainerId { get; private set; }
+  public Ownership? Ownership { get; private set; }
+  public Position? Position { get; private set; }
+  public Box? Box { get; private set; }
 
   public Specimen() : base()
   {
@@ -379,6 +387,43 @@ public class Specimen : AggregateRoot
     }
   }
 
+  public void Receive(
+    Trainer trainer,
+    Item pokeBall,
+    Location location,
+    Level? level = null,
+    DateTime? metOn = null,
+    Description? description = null,
+    Position? position = null,
+    Box? box = null,
+    ActorId? actorId = null)
+  {
+    if (pokeBall.Category != ItemCategory.PokeBall)
+    {
+      throw new ArgumentException($"The item category should be '{ItemCategory.PokeBall}'.", nameof(pokeBall));
+    }
+    if (level is not null)
+    {
+      ArgumentOutOfRangeException.ThrowIfGreaterThan(level.Value, Level, nameof(level));
+    }
+    if (metOn?.AsUniversalTime() > DateTime.UtcNow)
+    {
+      throw new ArgumentOutOfRangeException(nameof(metOn));
+    }
+
+    ItemId pokeBallId = Ownership is null ? pokeBall.Id : Ownership.PokeBallId;
+    level ??= new(Level);
+    position ??= new Position(0);
+    Raise(new PokemonReceived(trainer.Id, pokeBallId, level, location, description, position, box), actorId, metOn);
+  }
+  protected virtual void Handle(PokemonReceived @event)
+  {
+    OriginalTrainerId ??= @event.TrainerId;
+    Ownership = new Ownership(OwnershipKind.Received, @event.TrainerId, @event.PokeBallId, @event.Level, @event.Location, @event.OccurredOn, @event.Description);
+    Position = @event.Position;
+    Box = @event.Box;
+  }
+
   public bool RememberMove(Move move, int position, ActorId? actorId = null) => RememberMove(move.Id, position, actorId);
   public bool RememberMove(MoveId moveId, int position, ActorId? actorId = null)
   {
@@ -507,25 +552,3 @@ public class Specimen : AggregateRoot
 
   public override string ToString() => $"{Nickname?.Value ?? UniqueName.Value} | {base.ToString()}";
 }
-
-/* Ownership Kinds:
- * Caught
- * Hatched
- * Bought
- * (Gifted/Received?)
- * Traded
- * (Winned?)
- */
-
-/* Ownership Properties:
- * OriginalTrainerId: TrainerId
- * CurrentTrainerId: TrainerId
- * Kind: OwnershipKind
- * MetAtLevel: Int32
- * MetLocation: String
- * MetOn: DateTime
- * (flavor_text)
- * Notes?: Notes
- * Position: Byte
- * Box: Byte?
- */

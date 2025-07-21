@@ -49,6 +49,13 @@ public class PokemonController : ControllerBase
     return pokemon is null ? NotFound() : Ok(pokemon);
   }
 
+  [HttpPut("{id}/receive")]
+  public async Task<ActionResult<PokemonModel>> ReceiveAsync(Guid id, [FromBody] ReceivePokemonPayload payload, CancellationToken cancellationToken)
+  {
+    PokemonModel? pokemon = await _pokemonService.ReceiveAsync(id, payload, cancellationToken);
+    return pokemon is null ? NotFound() : Ok(pokemon);
+  }
+
   [HttpPut("{pokemonId}/moves/{moveId}/remember")]
   public async Task<ActionResult<PokemonModel>> RememberMoveAsync(Guid pokemonId, Guid moveId, [FromBody] RememberPokemonMovePayload payload, CancellationToken cancellationToken)
   {
