@@ -54,6 +54,17 @@ const router = createRouter({
           path: "pokemon/:id",
           component: () => import("./views/pokemon/PokemonEdit.vue"),
         },
+        // Items
+        {
+          name: "ItemList",
+          path: "items",
+          component: () => import("./views/items/ItemList.vue"),
+        },
+        {
+          name: "ItemEdit",
+          path: "items/:id",
+          component: () => import("./views/items/ItemEdit.vue"),
+        },
         // Regions
         {
           name: "RegionList",
@@ -64,6 +75,17 @@ const router = createRouter({
           name: "RegionEdit",
           path: "regions/:id",
           component: () => import("./views/regions/RegionEdit.vue"),
+        },
+        // Trainers
+        {
+          name: "TrainerList",
+          path: "trainers",
+          component: () => import("./views/trainers/TrainerList.vue"),
+        },
+        {
+          name: "TrainerEdit",
+          path: "trainers/:id",
+          component: () => import("./views/trainers/TrainerEdit.vue"),
         },
       ],
       meta: { isAdmin: true },

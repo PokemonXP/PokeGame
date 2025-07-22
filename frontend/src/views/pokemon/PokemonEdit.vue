@@ -6,7 +6,6 @@ import { useRoute, useRouter } from "vue-router";
 
 import AdminBreadcrumb from "@/components/admin/AdminBreadcrumb.vue";
 import DeletePokemon from "@/components/pokemon/DeletePokemon.vue";
-import PokemonDetail from "@/components/pokemon/PokemonDetail.vue";
 import PokemonMemories from "@/components/pokemon/PokemonMemories.vue";
 import PokemonMetadata from "@/components/pokemon/PokemonMetadata.vue";
 import PokemonMoves from "@/components/pokemon/PokemonMoves.vue";
@@ -112,7 +111,6 @@ onMounted(async () => {
       <h1>{{ title }}</h1>
       <AdminBreadcrumb :current="title" :parent="breadcrumb" />
       <StatusDetail :aggregate="pokemon" />
-      <PokemonDetail :pokemon="pokemon" />
       <div class="mb-3">
         <DeletePokemon :pokemon="pokemon" @deleted="onDeleted" @error="handleError" />
       </div>
