@@ -1,0 +1,38 @@
+{
+  "create": "Nouvel entraîneur",
+  "created": "L’entraîneur a été créé.",
+  "delete": {
+    "confirm": "Afin de supprimer l’entraîneur, veuillez entrer son nom dans le champs suivant.",
+    "title": "Supprimer l’entraîneur"
+  },
+  "deleted": "L’entraîneur a été supprimé.",
+  "empty": "Cette liste est vide.",
+  "gender": {
+    "label": "Genre",
+    "options": {
+      "Female": "Femme",
+      "Male": "Homme"
+    },
+    "placeholder": "Sélectionnez un genre"
+  },
+  "license": {
+    "alreadyUsed": {
+      "help": "Veuillez entrer une autre license d’entraîneur.",
+      "lead": "La license est déjà utilisée."
+    },
+    "label": "Licence"
+  },
+  "money": "Richesse",
+  "sort": {
+    "options": {
+      "CreatedOn": "Date de création",
+      "DisplayName": "Nom d’affichage",
+      "License": "Licence",
+      "Money": "Richesse",
+      "UniqueName": "Nom unique",
+      "UpdatedOn": "Dernière modification"
+    }
+  },
+  "title": "Entraîneurs",
+  "updated": "L’entraîneur a été mis à jour."
+}

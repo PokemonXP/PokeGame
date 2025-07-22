@@ -18,7 +18,6 @@ withDefaults(
     label?: string;
     modelValue?: string;
     placeholder?: string;
-    required?: boolean | string;
   }>(),
   {
     id: "trainer",
@@ -79,7 +78,6 @@ onMounted(async () => {
     :model-value="modelValue"
     :options="options"
     :placeholder="t(placeholder)"
-    :required="required"
     @update:model-value="onModelValueUpdate"
   />
 </template>

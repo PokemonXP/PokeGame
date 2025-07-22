@@ -3,6 +3,7 @@ import type { Item } from "@/types/items";
 import type { Move } from "@/types/pokemon/moves";
 import type { Region } from "@/types/regions";
 import type { Trainer } from "@/types/trainers";
+import type { UserSummary } from "@/types/users";
 
 export function formatAbility(ability: Ability): string {
   return ability.displayName ? `${ability.displayName} (${ability.uniqueName})` : ability.uniqueName;
@@ -30,6 +31,10 @@ export function formatSpecies(species: Species): string {
 
 export function formatTrainer(trainer: Trainer): string {
   return trainer.displayName ? `${trainer.displayName} (${trainer.uniqueName})` : trainer.uniqueName;
+}
+
+export function formatUser(user: UserSummary): string {
+  return user.fullName ? `${user.fullName} (${user.uniqueName})` : user.uniqueName;
 }
 
 export function formatVariety(variety: Variety): string {

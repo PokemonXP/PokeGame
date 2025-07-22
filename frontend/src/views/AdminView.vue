@@ -22,8 +22,8 @@ const { t } = useI18n();
     <div class="d-flex flex-column justify-content-center align-items-center mt-3">
       <div class="grid">
         <RouterLink :to="{ name: 'RegionList' }" class="tile"><RegionIcon class="icon" /> {{ t("regions.title") }}</RouterLink>
-        <a href="#" class="tile"><TrainerIcon class="icon" /> Trainers</a>
-        <a href="#" class="tile"><ItemIcon class="icon" /> Items</a>
+        <RouterLink :to="{ name: 'TrainerList' }" class="tile"><TrainerIcon class="icon" /> {{ t("trainers.title") }}</RouterLink>
+        <RouterLink :to="{ name: 'ItemList' }" class="tile"><ItemIcon class="icon" /> {{ t("items.title") }}</RouterLink>
         <a href="#" class="tile"><MoveIcon class="icon" /> Moves</a>
         <a href="#" class="tile"><AbilityIcon class="icon" /> Abilities</a>
         <a href="#" class="tile"><SpeciesIcon class="icon" /> Species</a>

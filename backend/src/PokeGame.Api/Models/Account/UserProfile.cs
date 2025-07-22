@@ -1,6 +1,5 @@
 ﻿using Krakenar.Contracts.Localization;
 using Krakenar.Contracts.Sessions;
-using Krakenar.Contracts.Users;
 using PokeGame.Api.Constants;
 
 namespace PokeGame.Api.Models.Account;
@@ -38,7 +37,7 @@ public record UserProfile
     Username = username;
   }
 
-  public UserProfile(User user) : this(user.UniqueName)
+  public UserProfile(Krakenar.Contracts.Users.User user) : this(user.UniqueName)
   {
     EmailAddress = user.Email?.Address;
 

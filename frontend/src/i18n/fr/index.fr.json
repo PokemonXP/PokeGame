@@ -8,6 +8,7 @@
     "save": "Enregistrer"
   },
   "admin": "Administration",
+  "any": "Tous",
   "brand": "PokéGame",
   "by": "Par",
   "copyright": "© PokéGame {version} {year}.",
@@ -64,5 +65,9 @@
       "title": "Attention !"
     }
   },
-  "url": "URL"
+  "url": "URL",
+  "user": {
+    "label": "Utilisateur",
+    "placeholder": "Sélectionnez un utilisateur"
+  }
 }

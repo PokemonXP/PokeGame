@@ -8,6 +8,7 @@
     "save": "Save"
   },
   "admin": "Administration",
+  "any": "Any",
   "brand": "PokéGame",
   "by": "By",
   "copyright": "© PokéGame {version} {year}.",
@@ -64,5 +65,9 @@
       "title": "Warning!"
     }
   },
-  "url": "URL"
+  "url": "URL",
+  "user": {
+    "label": "User",
+    "placeholder": "Select a user"
+  }
 }

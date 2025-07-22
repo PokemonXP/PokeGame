@@ -1,5 +1,4 @@
 ﻿using Krakenar.Contracts.Sessions;
-using Krakenar.Contracts.Users;
 using PokeGame.Api.Constants;
 
 namespace PokeGame.Api.Models.Account;
@@ -21,7 +20,7 @@ public record CurrentUser
     DisplayName = displayName;
   }
 
-  public CurrentUser(User user) : this(user.FullName ?? user.UniqueName)
+  public CurrentUser(Krakenar.Contracts.Users.User user) : this(user.FullName ?? user.UniqueName)
   {
     EmailAddress = user.Email?.Address;
     PictureUrl = user.Picture;
