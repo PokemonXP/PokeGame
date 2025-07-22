@@ -8,8 +8,8 @@ import StaminaInput from "./StaminaInput.vue";
 import StatusConditionSelect from "./StatusConditionSelect.vue";
 import SubmitButton from "@/components/shared/SubmitButton.vue";
 import VitalityInput from "./VitalityInput.vue";
-import type { Ability, BaseStatistics, Form, Pokemon, StatusCondition, UpdatePokemonPayload } from "@/types/pokemon";
-import { getAbilityUrl } from "@/helpers/cms";
+import type { Ability } from "@/types/abilities";
+import type { BaseStatistics, Form, Pokemon, StatusCondition, UpdatePokemonPayload } from "@/types/pokemon";
 import { updatePokemon } from "@/api/pokemon";
 import { useForm } from "@/forms";
 
@@ -120,11 +120,11 @@ watch(
       <h2 class="h3">{{ t("pokemon.ability.title") }}</h2>
       <div class="row mb-3">
         <div class="col">
-          <a :href="getAbilityUrl(ability)" target="_blank">
+          <RouterLink :to="{ name: 'AbilityEdit', params: { id: ability.id } }">
             <TarCard class="clickable" :subtitle="t(`pokemon.ability.slots.${pokemon.abilitySlot}`)" :title="ability.displayName ?? ability.uniqueName">
               <div v-if="ability.description" class="card-text">{{ ability.description }}</div>
             </TarCard>
-          </a>
+          </RouterLink>
         </div>
       </div>
       <div class="mb-3">

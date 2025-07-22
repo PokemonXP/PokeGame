@@ -37,8 +37,8 @@ import UrlInput from "@/components/shared/UrlInput.vue";
 import VarietyMoveTable from "@/components/pokemon/creation/VarietyMoveTable.vue";
 import VarietySelect from "@/components/pokemon/creation/VarietySelect.vue";
 import VitalityInput from "@/components/pokemon/VitalityInput.vue";
+import type { AbilitySlot } from "@/types/abilities";
 import type {
-  AbilitySlot,
   BaseStatistics,
   CreatePokemonPayload,
   EffortValues,

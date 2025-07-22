@@ -1,3 +1,4 @@
+import type { Ability, AbilitySlot } from "../abilities";
 import type { Aggregate, Change } from "../aggregate";
 import type { EggGroups } from "./species";
 import type { Item } from "../items";
@@ -16,16 +17,6 @@ export const INDIVIDUAL_VALUE_LIMIT: number = 6 * INDIVIDUAL_VALUE_MAXIMUM;
 
 export const LEVEL_MAXIMUM: number = 100;
 export const LEVEL_MINIMUM: number = 1;
-
-export type Ability = Aggregate & {
-  uniqueName: string;
-  displayName?: string | null;
-  description?: string | null;
-  url?: string | null;
-  notes?: string | null;
-};
-
-export type AbilitySlot = "Primary" | "Secondary" | "Hidden";
 
 export type BaseStatistics = {
   hp: number;

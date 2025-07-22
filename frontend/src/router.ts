@@ -38,6 +38,28 @@ const router = createRouter({
           path: "",
           component: () => import("./views/AdminView.vue"),
         },
+        // Abilities
+        {
+          name: "AbilityList",
+          path: "abilities",
+          component: () => import("./views/abilities/AbilityList.vue"),
+        },
+        {
+          name: "AbilityEdit",
+          path: "abilities/:id",
+          component: () => import("./views/abilities/AbilityEdit.vue"),
+        },
+        // Items
+        {
+          name: "ItemList",
+          path: "items",
+          component: () => import("./views/items/ItemList.vue"),
+        },
+        {
+          name: "ItemEdit",
+          path: "items/:id",
+          component: () => import("./views/items/ItemEdit.vue"),
+        },
         // Pokémon
         {
           name: "PokemonList",
@@ -53,17 +75,6 @@ const router = createRouter({
           name: "PokemonEdit",
           path: "pokemon/:id",
           component: () => import("./views/pokemon/PokemonEdit.vue"),
-        },
-        // Items
-        {
-          name: "ItemList",
-          path: "items",
-          component: () => import("./views/items/ItemList.vue"),
-        },
-        {
-          name: "ItemEdit",
-          path: "items/:id",
-          component: () => import("./views/items/ItemEdit.vue"),
         },
         // Regions
         {
