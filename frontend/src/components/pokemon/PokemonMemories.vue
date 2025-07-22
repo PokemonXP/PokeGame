@@ -14,9 +14,10 @@ import type { Item } from "@/types/items";
 import type { Pokemon, ReceivePokemonPayload } from "@/types/pokemon";
 import type { Trainer } from "@/types/trainers";
 import { catchPokemon, receivePokemon, releasePokemon } from "@/api/pokemon";
+import { formatItem, formatTrainer } from "@/helpers/format";
 import { useForm } from "@/forms";
 
-const { t } = useI18n();
+const { d, t } = useI18n();
 
 const props = defineProps<{
   pokemon: Pokemon;
@@ -113,7 +114,116 @@ watch(
 
 <template>
   <section>
-    <form @submit.prevent="submit">
+    <div v-if="pokemon.ownership">
+      <table class="table table-striped">
+        <tbody>
+          <tr>
+            <th scope="row">
+              {{ t("pokemon.memories.trainer.original") }}
+              {{ "/" }}
+              {{ t("pokemon.memories.trainer.license") }}
+            </th>
+            <td colspan="2">
+              <RouterLink :to="{ name: 'TrainerEdit', params: { id: pokemon.ownership.originalTrainer.id } }">
+                {{ formatTrainer(pokemon.ownership.originalTrainer) }}
+              </RouterLink>
+            </td>
+            <td>
+              <RouterLink :to="{ name: 'TrainerEdit', params: { id: pokemon.ownership.originalTrainer.id } }">
+                {{ pokemon.ownership.originalTrainer.license }}
+              </RouterLink>
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">
+              {{ t("pokemon.memories.trainer.current") }}
+              {{ "/" }}
+              {{ t("pokemon.memories.trainer.license") }}
+            </th>
+            <td colspan="2">
+              <RouterLink :to="{ name: 'TrainerEdit', params: { id: pokemon.ownership.currentTrainer.id } }">
+                {{ formatTrainer(pokemon.ownership.currentTrainer) }}
+              </RouterLink>
+            </td>
+            <td>
+              <RouterLink :to="{ name: 'TrainerEdit', params: { id: pokemon.ownership.currentTrainer.id } }">
+                {{ pokemon.ownership.currentTrainer.license }}
+              </RouterLink>
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">
+              {{ t("pokemon.memories.pokeBall.label") }}
+              {{ "/" }}
+              {{ t("pokemon.memories.event.label") }}
+            </th>
+            <td colspan="2">
+              <RouterLink :to="{ name: 'ItemEdit', params: { id: pokemon.ownership.pokeBall.id } }">
+                {{ formatItem(pokemon.ownership.pokeBall) }}
+              </RouterLink>
+            </td>
+            <td>{{ t(`pokemon.memories.event.options.${pokemon.ownership.kind}`) }}</td>
+          </tr>
+          <tr>
+            <th scope="row">
+              {{ t("pokemon.level.label") }}
+              {{ "/" }}
+              {{ t("regions.location") }}
+              {{ "/" }}
+              {{ t("pokemon.memories.metOn") }}
+            </th>
+            <td>{{ pokemon.ownership.level }}</td>
+            <td>{{ pokemon.ownership.location }}</td>
+            <td>{{ d(pokemon.ownership.metOn, "medium") }}</td>
+          </tr>
+          <tr>
+            <th scope="row">{{ t("pokemon.nature.select.label") }}</th>
+            <td>{{ pokemon.nature.name }}</td>
+            <td>
+              <template v-if="pokemon.nature.increasedStatistic && pokemon.nature.decreasedStatistic">
+                <span class="text-primary">
+                  <font-awesome-icon icon="fas fa-plus" /> {{ t(`pokemon.statistic.select.options.${pokemon.nature.increasedStatistic}`) }}
+                </span>
+                {{ " / " }}
+                <span class="text-danger">
+                  <font-awesome-icon icon="fas fa-minus" /> {{ t(`pokemon.statistic.select.options.${pokemon.nature.decreasedStatistic}`) }}
+                </span>
+              </template>
+              <span v-else class="text-muted">{{ "—" }}</span>
+            </td>
+            <td>
+              <template v-if="pokemon.nature.favoriteFlavor && pokemon.nature.dislikedFlavor">
+                <span class="text-success">
+                  <font-awesome-icon icon="fas fa-face-smile" /> {{ t(`pokemon.flavor.options.${pokemon.nature.favoriteFlavor}`) }}
+                </span>
+                {{ " / " }}
+                <span class="text-danger">
+                  <font-awesome-icon icon="fas fa-face-frown" /> {{ t(`pokemon.flavor.options.${pokemon.nature.dislikedFlavor}`) }}
+                </span>
+              </template>
+              <span v-else class="text-muted">{{ "—" }}</span>
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">
+              {{ t("pokemon.memories.characteristic") }}
+              {{ "/" }}
+              {{ t("pokemon.memories.position") }}
+              {{ "/" }}
+              {{ t("pokemon.memories.box") }}
+            </th>
+            <td>{{ pokemon.characteristic }}.</td>
+            <td>{{ pokemon.ownership.position + 1 }}</td>
+            <td>
+              <template v-if="pokemon.ownership.box">{{ pokemon.ownership.box + 1 }}</template>
+              <span v-else class="text-muted">{{ t("pokemon.memories.party") }}</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <p v-if="pokemon.ownership.description">{{ pokemon.ownership.description }}</p>
+    </div>
+    <form v-else @submit.prevent="submit">
       <div class="row">
         <TrainerSelect class="col" :model-value="trainer?.id" required @selected="trainer = $event" />
         <ItemSelect
@@ -137,7 +247,7 @@ watch(
         <SubmitButton class="me-1" icon="fas fa-gift" :loading="isLoading" text="pokemon.memories.receive" />
         <TarButton
           class="mx-1"
-          :disabled="Boolean(pokemon.ownership) || isLoading"
+          :disabled="isLoading"
           icon="fas fa-bullseye"
           :loading="isLoading"
           :status="t('loading')"
@@ -147,7 +257,7 @@ watch(
         />
         <TarButton
           class="ms-1"
-          :disabled="!pokemon.ownership?.box || isLoading"
+          :disabled="isLoading"
           icon="fas fa-door-open"
           :loading="isLoading"
           :status="t('loading')"

@@ -7,9 +7,6 @@
     },
     "title": "Ability"
   },
-  "characteristic": {
-    "label": "Characteristic"
-  },
   "create": "Create Pokémon",
   "created": "The Pokémon has been created.",
   "delete": {
@@ -95,14 +92,30 @@
     "label": "Level"
   },
   "memories": {
+    "box": "Box",
+    "characteristic": "Characteristic",
     "catch": "Catch",
+    "event": {
+      "label": "Event",
+      "options": {
+        "Caught": "Caught",
+        "Received": "Received"
+      }
+    },
     "metOn": "Met on",
+    "party": "Party",
     "pokeBall": {
       "label": "Poké Ball",
       "placeholder": "Select a Poké Ball"
     },
+    "position": "Position",
     "receive": "Receive",
     "release": "Release",
+    "trainer": {
+      "current": "Current Trainer",
+      "license": "License",
+      "original": "Original Trainer"
+    },
     "title": "Memories"
   },
   "move": {
