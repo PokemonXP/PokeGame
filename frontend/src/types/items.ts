@@ -78,7 +78,7 @@ export type TechnicalMachineProperties = {
 
 export type TreasureProperties = {};
 
-export type UpdateRegionPayload = {
+export type UpdateItemPayload = {
   uniqueName?: string;
   displayName?: Change<string>;
   description?: Change<string>;
