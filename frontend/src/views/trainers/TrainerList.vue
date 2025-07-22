@@ -11,6 +11,7 @@ import AppPagination from "@/components/shared/AppPagination.vue";
 import CountSelect from "@/components/shared/CountSelect.vue";
 import CreateTrainer from "@/components/trainers/CreateTrainer.vue";
 import EditIcon from "@/components/icons/EditIcon.vue";
+import GenderFilter from "@/components/trainers/GenderFilter.vue";
 import PokeDollarIcon from "@/components/items/PokeDollarIcon.vue";
 import RefreshButton from "@/components/shared/RefreshButton.vue";
 import SearchInput from "@/components/shared/SearchInput.vue";
@@ -18,7 +19,7 @@ import SortSelect from "@/components/shared/SortSelect.vue";
 import StatusBlock from "@/components/shared/StatusBlock.vue";
 import TrainerGenderIcon from "@/components/trainers/TrainerGenderIcon.vue";
 import type { SearchResults } from "@/types/search";
-import type { Trainer, TrainerSort, SearchTrainersPayload } from "@/types/trainers";
+import type { Trainer, TrainerGender, TrainerSort, SearchTrainersPayload } from "@/types/trainers";
 import { handleErrorKey } from "@/inject";
 import { searchTrainers } from "@/api/trainers";
 import { useToastStore } from "@/stores/toast";
@@ -38,6 +39,7 @@ const total = ref<number>(0);
 const trainers = ref<Trainer[]>([]);
 
 const count = computed<number>(() => parseNumber(route.query.count?.toString()) || 10);
+const gender = computed<string>(() => route.query.gender?.toString() ?? "");
 const isDescending = computed<boolean>(() => parseBoolean(route.query.isDescending?.toString()) ?? false);
 const page = computed<number>(() => parseNumber(route.query.page?.toString()) || 1);
 const search = computed<string>(() => route.query.search?.toString() ?? "");
@@ -52,6 +54,7 @@ const sortOptions = computed<SelectOption[]>(() =>
 
 async function refresh(): Promise<void> {
   const payload: SearchTrainersPayload = {
+    gender: gender.value as TrainerGender,
     ids: [],
     search: {
       terms: search.value
@@ -85,6 +88,7 @@ async function refresh(): Promise<void> {
 function setQuery(key: string, value: string): void {
   const query = { ...route.query, [key]: value };
   switch (key) {
+    case "gender":
     case "search":
     case "count":
       query.page = "1";
@@ -108,6 +112,7 @@ watch(
           ...route,
           query: isEmpty(query)
             ? {
+                gender: "",
                 search: "",
                 sort: "UpdatedOn",
                 isDescending: "true",
@@ -136,6 +141,9 @@ watch(
     <div class="my-3">
       <RefreshButton class="me-1" :disabled="isLoading" :loading="isLoading" @click="refresh()" />
       <CreateTrainer class="ms-1" @created="onCreated" @error="handleError" />
+    </div>
+    <div class="row">
+      <GenderFilter class="col" :model-value="gender" placeholder="any" @update:model-value="setQuery('gender', $event)" />
     </div>
     <div class="mb-3 row">
       <SearchInput class="col" :model-value="search" @update:model-value="setQuery('search', $event)" />
