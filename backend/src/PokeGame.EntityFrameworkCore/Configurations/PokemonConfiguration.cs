@@ -30,6 +30,8 @@ internal class PokemonConfiguration : AggregateConfiguration<PokemonEntity>, IEn
     builder.HasIndex(x => x.UniqueName);
     builder.HasIndex(x => x.UniqueNameNormalized).IsUnique();
     builder.HasIndex(x => x.Nickname);
+    //builder.HasIndex(x => x.Level);
+    //builder.HasIndex(x => x.Experience); // TODO(fpion): next migration
     builder.HasIndex(x => x.HeldItemUid);
     builder.HasIndex(x => x.OriginalTrainerUid);
     builder.HasIndex(x => x.CurrentTrainerUid);

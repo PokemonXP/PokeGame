@@ -11,6 +11,7 @@ import type {
   PokemonSizeCategory,
   PokemonStatistic,
   PokemonStatistics,
+  Sprites,
   StatisticValues,
 } from "@/types/pokemon";
 
@@ -202,12 +203,16 @@ export function getSizeCategory(heightScalar: number): PokemonSizeCategory {
 }
 
 export function getSpriteUrl(pokemon: Pokemon): string {
-  if (pokemon.sprite) {
+  if (pokemon.eggCycles) {
+    return "/img/egg.png";
+  } else if (pokemon.sprite) {
     return pokemon.sprite;
-  } else if (pokemon.form.sprites.alternative && pokemon.gender === "Female") {
-    return pokemon.form.sprites.alternative;
   }
-  return pokemon.form.sprites.default;
+  const sprites: Sprites = pokemon.form.sprites;
+  if (pokemon.isShiny) {
+    return sprites.alternativeShiny && pokemon.gender === "Female" ? sprites.alternativeShiny : sprites.shiny;
+  }
+  return sprites.alternative && pokemon.gender === "Female" ? sprites.alternative : sprites.default;
 }
 
 // TODO(fpion): unit tests

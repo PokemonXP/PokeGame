@@ -53,6 +53,8 @@ export async function rememberPokemonMove(pokemonId: string, moveId: string, pay
 
 export async function searchPokemon(payload: SearchPokemonPayload): Promise<SearchResults<Pokemon>> {
   const url: string = new urlUtils.UrlBuilder({ path: "/pokemon" })
+    .setQuery("species", payload.speciesId ?? "")
+    .setQuery("item", payload.heldItemId ?? "")
     .setQuery("trainer", payload.trainerId ?? "")
     .setQuery("ids", payload.ids)
     .setQuery(
