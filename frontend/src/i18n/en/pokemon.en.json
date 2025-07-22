@@ -113,7 +113,6 @@
     "release": "Release",
     "trainer": {
       "current": "Current Trainer",
-      "license": "License",
       "original": "Original Trainer"
     },
     "title": "Memories"

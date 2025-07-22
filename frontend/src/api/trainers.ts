@@ -1,8 +1,23 @@
 import { urlUtils } from "logitar-js";
 
+import type { CreateOrReplaceTrainerPayload, SearchTrainersPayload, Trainer, UpdateTrainerPayload } from "@/types/trainers";
 import type { SearchResults } from "@/types/search";
-import type { SearchTrainersPayload, Trainer } from "@/types/trainers";
-import { get } from ".";
+import { _delete, get, patch, post } from ".";
+
+export async function createTrainer(payload: CreateOrReplaceTrainerPayload): Promise<Trainer> {
+  const url: string = new urlUtils.UrlBuilder({ path: "/trainers" }).buildRelative();
+  return (await post<CreateOrReplaceTrainerPayload, Trainer>(url, payload)).data;
+}
+
+export async function deleteTrainer(id: string): Promise<Trainer> {
+  const url: string = new urlUtils.UrlBuilder({ path: "/trainers/{id}" }).setParameter("id", id).buildRelative();
+  return (await _delete<Trainer>(url)).data;
+}
+
+export async function readTrainer(id: string): Promise<Trainer> {
+  const url: string = new urlUtils.UrlBuilder({ path: "/trainers/{id}" }).setParameter("id", id).buildRelative();
+  return (await get<Trainer>(url)).data;
+}
 
 export async function searchTrainers(payload: SearchTrainersPayload): Promise<SearchResults<Trainer>> {
   const url: string = new urlUtils.UrlBuilder({ path: "/trainers" })
@@ -22,4 +37,9 @@ export async function searchTrainers(payload: SearchTrainersPayload): Promise<Se
     .setQuery("limit", payload.limit.toString())
     .buildRelative();
   return (await get<SearchResults<Trainer>>(url)).data;
+}
+
+export async function updateTrainer(id: string, payload: UpdateTrainerPayload): Promise<Trainer> {
+  const url: string = new urlUtils.UrlBuilder({ path: "/trainers/{id}" }).setParameter("id", id).buildRelative();
+  return (await patch<UpdateTrainerPayload, Trainer>(url, payload)).data;
 }

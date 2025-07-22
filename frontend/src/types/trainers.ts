@@ -1,5 +1,18 @@
-import type { Aggregate } from "./aggregate";
+import type { Aggregate, Change } from "./aggregate";
 import type { SearchPayload, SortOption } from "./search";
+
+export type CreateOrReplaceTrainerPayload = {
+  license: string;
+  uniqueName: string;
+  displayName?: string;
+  description?: string;
+  gender: TrainerGender;
+  money: number;
+  userId?: string;
+  sprite?: string;
+  url?: string;
+  notes?: string;
+};
 
 export type SearchTrainersPayload = SearchPayload & {
   gender?: TrainerGender;
@@ -8,11 +21,11 @@ export type SearchTrainersPayload = SearchPayload & {
 };
 
 export type Trainer = Aggregate & {
+  license: string;
   uniqueName: string;
   displayName?: string | null;
   description?: string | null;
   gender: TrainerGender;
-  license: string;
   money: number;
   userId?: string | null;
   sprite?: string | null;
@@ -26,4 +39,16 @@ export type TrainerSort = "CreatedOn" | "DisplayName" | "License" | "Money" | "U
 
 export type TrainerSortOption = SortOption & {
   field: TrainerSort;
+};
+
+export type UpdateTrainerPayload = {
+  uniqueName?: string;
+  displayName?: Change<string>;
+  description?: Change<string>;
+  gender?: TrainerGender;
+  money?: number;
+  userId?: Change<string>;
+  sprite?: Change<string>;
+  url?: Change<string>;
+  notes?: Change<string>;
 };

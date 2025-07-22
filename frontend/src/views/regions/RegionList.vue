@@ -151,19 +151,20 @@ watch(
       <table class="table table-striped">
         <thead>
           <tr>
-            <th scope="col">{{ t("regions.sort.options.UniqueName") }}</th>
-            <th scope="col">{{ t("regions.sort.options.DisplayName") }}</th>
+            <th scope="col">{{ t("name.label") }}</th>
             <th scope="col">{{ t("regions.sort.options.UpdatedOn") }}</th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="region in regions" :key="region.id">
             <td>
-              <RouterLink :to="{ name: 'RegionEdit', params: { id: region.id } }"><EditIcon /> {{ region.uniqueName }}</RouterLink>
-            </td>
-            <td>
-              <template v-if="region.displayName">{{ region.displayName }}</template>
-              <span v-else class="text-muted">{{ "—" }}</span>
+              <RouterLink :to="{ name: 'RegionEdit', params: { id: region.id } }">
+                <EditIcon /> {{ region.displayName ?? region.uniqueName }}
+                <template v-if="region.displayName">
+                  <br />
+                  {{ region.uniqueName }}
+                </template>
+              </RouterLink>
             </td>
             <td><StatusBlock :actor="region.updatedBy" :date="region.updatedOn" /></td>
           </tr>

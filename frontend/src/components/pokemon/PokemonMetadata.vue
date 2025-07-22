@@ -2,6 +2,7 @@
 import { computed, ref, watch } from "vue";
 
 import NotesTextarea from "@/components/shared/NotesTextarea.vue";
+import SpriteInput from "@/components/shared/SpriteInput.vue";
 import SubmitButton from "@/components/shared/SubmitButton.vue";
 import UrlInput from "@/components/shared/UrlInput.vue";
 import type { Form, Pokemon, UpdatePokemonPayload } from "@/types/pokemon";
@@ -76,7 +77,7 @@ watch(
     <form @submit.prevent="submit">
       <div class="row">
         <UrlInput class="col" v-model="url" />
-        <UrlInput class="col" id="sprite" label="pokemon.sprite.label" v-model="sprite" />
+        <SpriteInput class="col" v-model="sprite" />
       </div>
       <div class="row">
         <NotesTextarea class="col" v-model="notes" />

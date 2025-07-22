@@ -1,0 +1,32 @@
+{
+  "create": "New Trainer",
+  "created": "The trainer has been created.",
+  "delete": {
+    "confirm": "To delete the trainer, enter its name in the field below.",
+    "title": "Delete Trainer"
+  },
+  "deleted": "The trainer has been deleted.",
+  "empty": "This list is empty.",
+  "gender": {
+    "label": "Gender",
+    "options": {
+      "Female": "Female",
+      "Male": "Male"
+    },
+    "placeholder": "Select a gender"
+  },
+  "license": "License",
+  "money": "Money",
+  "sort": {
+    "options": {
+      "CreatedOn": "Created on",
+      "DisplayName": "Display Name",
+      "License": "License",
+      "Money": "Money",
+      "UniqueName": "Unique Name",
+      "UpdatedOn": "Updated on"
+    }
+  },
+  "title": "Trainers",
+  "updated": "The trainer has been updated."
+}
