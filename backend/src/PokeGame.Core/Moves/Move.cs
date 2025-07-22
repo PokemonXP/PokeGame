@@ -125,9 +125,9 @@ public class Move : AggregateRoot
     PokemonType type,
     MoveCategory category,
     UniqueName uniqueName,
-    PowerPoints powerPoints,
     Accuracy? accuracy = null,
     Power? power = null,
+    PowerPoints? powerPoints = null,
     ActorId? actorId = null,
     MoveId? moveId = null) : base((moveId ?? MoveId.NewId()).StreamId)
   {
@@ -145,6 +145,7 @@ public class Move : AggregateRoot
       throw new ArgumentException("A status move cannot have power.", nameof(power));
     }
 
+    powerPoints ??= new(1);
     Raise(new MoveCreated(type, category, uniqueName, accuracy, power, powerPoints), actorId);
   }
   protected virtual void Handle(MoveCreated @event)

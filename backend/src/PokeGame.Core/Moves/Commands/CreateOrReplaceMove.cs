@@ -54,7 +54,7 @@ internal class CreateOrReplaceMoveHandler : ICommandHandler<CreateOrReplaceMove,
     bool created = false;
     if (move is null)
     {
-      move = new(payload.Type, payload.Category, uniqueName, powerPoints, accuracy, power, actorId, moveId);
+      move = new(payload.Type, payload.Category, uniqueName, accuracy, power, powerPoints, actorId, moveId);
       created = true;
     }
     else
