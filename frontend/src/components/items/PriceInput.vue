@@ -20,8 +20,8 @@ withDefaults(
     type?: InputType;
   }>(),
   {
-    id: "money",
-    label: "trainers.money",
+    id: "price",
+    label: "items.price",
     min: 0,
     step: 1,
     type: "number",

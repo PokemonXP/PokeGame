@@ -15,11 +15,13 @@ const { t } = useI18n();
 
 const props = withDefaults(
   defineProps<{
+    disabled?: boolean | string;
     exclude?: string[];
     id?: string;
     label?: string;
     modelValue?: string;
     placeholder?: string;
+    required?: boolean | string;
   }>(),
   {
     exclude: () => [],
@@ -75,12 +77,13 @@ onMounted(async () => {
 
 <template>
   <FormSelect
-    :disabled="!options.length"
+    :disabled="!options.length || disabled"
     :id="id"
     :label="t(label)"
     :model-value="modelValue"
     :options="options"
     :placeholder="t(placeholder)"
+    :required="required"
     @update:model-value="onModelValueUpdate"
   >
     <template #append>
