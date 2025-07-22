@@ -18,6 +18,7 @@ public interface IPokemonService
   Task<PokemonModel?> RememberMoveAsync(Guid pokemonId, Guid moveId, RememberPokemonMovePayload payload, CancellationToken cancellationToken = default);
   Task<PokemonModel?> SwitchMovesAsync(Guid id, SwitchPokemonMovesPayload payload, CancellationToken cancellationToken = default);
 
+  Task<PokemonModel?> CatchAsync(Guid id, CatchPokemonPayload payload, CancellationToken cancellationToken = default);
   Task<PokemonModel?> ReceiveAsync(Guid id, ReceivePokemonPayload payload, CancellationToken cancellationToken = default);
   Task<PokemonModel?> ReleaseAsync(Guid id, CancellationToken cancellationToken = default);
 }
@@ -28,6 +29,7 @@ internal class PokemonService : IPokemonService
   {
     services.AddTransient<IPokemonService, PokemonService>();
     services.AddTransient<IPokemonManager, PokemonManager>();
+    services.AddTransient<ICommandHandler<CatchPokemon, PokemonModel?>, CatchPokemonHandler>();
     services.AddTransient<ICommandHandler<CreatePokemon, PokemonModel>, CreatePokemonHandler>();
     services.AddTransient<ICommandHandler<DeletePokemon, PokemonModel?>, DeletePokemonHandler>();
     services.AddTransient<ICommandHandler<ReceivePokemon, PokemonModel?>, ReceivePokemonHandler>();
@@ -87,6 +89,12 @@ internal class PokemonService : IPokemonService
   public async Task<PokemonModel?> SwitchMovesAsync(Guid id, SwitchPokemonMovesPayload payload, CancellationToken cancellationToken)
   {
     SwitchPokemonMoves command = new(id, payload);
+    return await _commandBus.ExecuteAsync(command, cancellationToken);
+  }
+
+  public async Task<PokemonModel?> CatchAsync(Guid id, CatchPokemonPayload payload, CancellationToken cancellationToken)
+  {
+    CatchPokemon command = new(id, payload);
     return await _commandBus.ExecuteAsync(command, cancellationToken);
   }
 
