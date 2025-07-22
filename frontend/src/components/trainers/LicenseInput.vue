@@ -20,7 +20,7 @@ const props = withDefaults(
   }>(),
   {
     id: "license",
-    label: "trainers.license",
+    label: "trainers.license.label",
     max: 10,
   },
 );

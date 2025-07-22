@@ -121,7 +121,7 @@ watch(
             <th scope="row">
               {{ t("pokemon.memories.trainer.original") }}
               {{ "/" }}
-              {{ t("trainers.license") }}
+              {{ t("trainers.license.label") }}
             </th>
             <td colspan="2">
               <RouterLink :to="{ name: 'TrainerEdit', params: { id: pokemon.ownership.originalTrainer.id } }">
@@ -138,7 +138,7 @@ watch(
             <th scope="row">
               {{ t("pokemon.memories.trainer.current") }}
               {{ "/" }}
-              {{ t("trainers.license") }}
+              {{ t("trainers.license.label") }}
             </th>
             <td colspan="2">
               <RouterLink :to="{ name: 'TrainerEdit', params: { id: pokemon.ownership.currentTrainer.id } }">

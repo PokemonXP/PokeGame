@@ -4,6 +4,7 @@ import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 
 import GenderSelect from "./GenderSelect.vue";
+import LicenseAlreadyUsed from "./LicenseAlreadyUsed.vue";
 import LicenseInput from "./LicenseInput.vue";
 import UniqueNameAlreadyUsed from "@/components/shared/UniqueNameAlreadyUsed.vue";
 import UniqueNameInput from "@/components/shared/UniqueNameInput.vue";
@@ -18,6 +19,7 @@ const { t } = useI18n();
 const gender = ref<string>("Male");
 const isLoading = ref<boolean>(false);
 const license = ref<string>("");
+const licenseAlreadyUsed = ref<boolean>(false);
 const modalRef = ref<InstanceType<typeof TarModal> | null>(null);
 const uniqueName = ref<string>("");
 const uniqueNameAlreadyUsed = ref<boolean>(false);
@@ -36,6 +38,7 @@ async function submit(): Promise<void> {
   if (!isLoading.value) {
     isLoading.value = true;
     uniqueNameAlreadyUsed.value = false;
+    licenseAlreadyUsed.value = false;
     try {
       validate();
       if (isValid.value) {
@@ -53,6 +56,8 @@ async function submit(): Promise<void> {
     } catch (e: unknown) {
       if (isError(e, StatusCodes.Conflict, ErrorCodes.UniqueNameAlreadyUsed)) {
         uniqueNameAlreadyUsed.value = true;
+      } else if (isError(e, StatusCodes.Conflict, ErrorCodes.LicenseAlreadyUsed)) {
+        licenseAlreadyUsed.value = true;
       } else {
         emit("error", e);
       }
@@ -68,6 +73,7 @@ function onCancel(): void {
 }
 function onReset(): void {
   uniqueNameAlreadyUsed.value = false;
+  licenseAlreadyUsed.value = false;
   reset();
 }
 </script>
@@ -77,6 +83,7 @@ function onReset(): void {
     <TarButton icon="fas fa-plus" :text="t('actions.create')" variant="success" data-bs-toggle="modal" data-bs-target="#create-trainer" />
     <TarModal :close="t('actions.close')" id="create-trainer" ref="modalRef" size="large" :title="t('trainers.create')">
       <UniqueNameAlreadyUsed v-model="uniqueNameAlreadyUsed" />
+      <LicenseAlreadyUsed v-model="licenseAlreadyUsed" />
       <form @submit.prevent="submit">
         <UniqueNameInput required v-model="uniqueName" />
         <GenderSelect v-model="gender" />

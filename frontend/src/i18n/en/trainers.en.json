@@ -15,7 +15,13 @@
     },
     "placeholder": "Select a gender"
   },
-  "license": "License",
+  "license": {
+    "alreadyUsed": {
+      "help": "Please enter a different trainer license.",
+      "lead": "The trainer license is already used."
+    },
+    "label": "License"
+  },
   "money": "Money",
   "sort": {
     "options": {
