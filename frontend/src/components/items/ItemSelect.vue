@@ -40,6 +40,8 @@ const options = computed<SelectOption[]>(() =>
     "text",
   ),
 );
+const item = computed<Item | undefined>(() => (props.modelValue ? items.value.find(({ id }) => id === props.modelValue) : undefined));
+const alt = computed<string>(() => `${item.value ? (item.value.displayName ?? item.value.uniqueName) : ""}'s Sprite'`);
 
 const emit = defineEmits<{
   (e: "error", error: unknown): void;
@@ -86,5 +88,11 @@ watch(
     :placeholder="t(placeholder)"
     :required="required"
     @update:model-value="onModelValueUpdate"
-  />
+  >
+    <template v-if="item?.sprite" #append>
+      <RouterLink class="input-group-text" :to="{ name: 'ItemEdit', params: { id: item.id } }" target="_blank">
+        <img :src="item.sprite" :alt="alt" height="40" />
+      </RouterLink>
+    </template>
+  </FormSelect>
 </template>

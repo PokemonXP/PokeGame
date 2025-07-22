@@ -10,16 +10,16 @@ import AdminBreadcrumb from "@/components/admin/AdminBreadcrumb.vue";
 import AppPagination from "@/components/shared/AppPagination.vue";
 import CountSelect from "@/components/shared/CountSelect.vue";
 import EditIcon from "@/components/icons/EditIcon.vue";
+import ItemBlock from "@/components/items/ItemBlock.vue";
 import ItemFilter from "@/components/items/ItemFilter.vue";
-import ItemIcon from "@/components/icons/ItemIcon.vue";
 import PokemonGenderIcon from "@/components/icons/PokemonGenderIcon.vue";
 import RefreshButton from "@/components/shared/RefreshButton.vue";
 import SearchInput from "@/components/shared/SearchInput.vue";
 import SortSelect from "@/components/shared/SortSelect.vue";
 import SpeciesFilter from "@/components/species/SpeciesFilter.vue";
 import StatusBlock from "@/components/shared/StatusBlock.vue";
+import TrainerBlock from "@/components/trainers/TrainerBlock.vue";
 import TrainerFilter from "@/components/trainers/TrainerFilter.vue";
-import TrainerIcon from "@/components/icons/TrainerIcon.vue";
 import type { Pokemon, PokemonSort, SearchPokemonPayload } from "@/types/pokemon";
 import type { SearchResults } from "@/types/search";
 import { getSpriteUrl } from "@/helpers/pokemon";
@@ -171,6 +171,11 @@ watch(
             <th scope="col">{{ t("pokemon.progress.title") }}</th>
             <th scope="col">{{ t("pokemon.item.held") }}</th>
             <th scope="col">{{ t("pokemon.trainer.label") }}</th>
+            <th scope="col">
+              {{ t("pokemon.memories.position.label") }}
+              {{ "/" }}
+              {{ t("pokemon.memories.box.label") }}
+            </th>
             <th scope="col">{{ t("pokemon.sort.options.UpdatedOn") }}</th>
           </tr>
         </thead>
@@ -207,23 +212,24 @@ watch(
               {{ t("pokemon.experience.format", { experience: pokemon.experience }) }}
             </td>
             <td>
-              <RouterLink v-if="pokemon.heldItem" :to="{ name: 'ItemEdit', params: { id: pokemon.heldItem.id } }">
-                <ItemIcon /> {{ pokemon.heldItem.displayName ?? pokemon.heldItem.uniqueName }}
-                <template v-if="pokemon.heldItem.displayName">
-                  <br />
-                  {{ pokemon.heldItem.uniqueName }}
-                </template>
-              </RouterLink>
+              <ItemBlock v-if="pokemon.heldItem" :item="pokemon.heldItem" />
               <span v-else class="text-muted">{{ "—" }}</span>
             </td>
             <td>
-              <RouterLink v-if="pokemon.ownership" :to="{ name: 'TrainerEdit', params: { id: pokemon.ownership.currentTrainer.id } }">
-                <TrainerIcon /> {{ pokemon.ownership.currentTrainer.displayName ?? pokemon.ownership.currentTrainer.uniqueName }}
-                <template v-if="pokemon.ownership.currentTrainer.displayName">
-                  <br />
-                  {{ pokemon.ownership.currentTrainer.uniqueName }}
+              <TrainerBlock v-if="pokemon.ownership" :trainer="pokemon.ownership.currentTrainer" />
+              <span v-else class="text-muted">{{ t("pokemon.wild") }}</span>
+            </td>
+            <td>
+              <template v-if="pokemon.ownership">
+                {{ t("pokemon.memories.position.format", { position: pokemon.ownership.position + 1 }) }}
+                <br />
+                <template v-if="typeof pokemon.ownership.box === 'number'">
+                  {{ t("pokemon.memories.box.format", { box: (pokemon.ownership.box ?? 0) + 1 }) }}
                 </template>
-              </RouterLink>
+                <span v-else class="text-muted">
+                  {{ t("pokemon.memories.party") }}
+                </span>
+              </template>
               <span v-else class="text-muted">{{ "—" }}</span>
             </td>
             <td><StatusBlock :actor="pokemon.updatedBy" :date="pokemon.updatedOn" /></td>

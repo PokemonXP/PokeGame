@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { TarAvatar, type SelectOption } from "logitar-vue3-ui";
+import type { SelectOption } from "logitar-vue3-ui";
 import { arrayUtils, objectUtils } from "logitar-js";
 import { computed, inject, onMounted, ref, watch } from "vue";
 import { parsingUtils } from "logitar-js";
@@ -10,14 +10,14 @@ import AdminBreadcrumb from "@/components/admin/AdminBreadcrumb.vue";
 import AppPagination from "@/components/shared/AppPagination.vue";
 import CountSelect from "@/components/shared/CountSelect.vue";
 import CreateTrainer from "@/components/trainers/CreateTrainer.vue";
-import EditIcon from "@/components/icons/EditIcon.vue";
 import GenderFilter from "@/components/trainers/GenderFilter.vue";
 import PokeDollarIcon from "@/components/items/PokeDollarIcon.vue";
 import RefreshButton from "@/components/shared/RefreshButton.vue";
 import SearchInput from "@/components/shared/SearchInput.vue";
 import SortSelect from "@/components/shared/SortSelect.vue";
 import StatusBlock from "@/components/shared/StatusBlock.vue";
-import TrainerGenderIcon from "@/components/trainers/TrainerGenderIcon.vue";
+import TrainerBlock from "@/components/trainers/TrainerBlock.vue";
+import UserBlock from "@/components/users/UserBlock.vue";
 import UserFilter from "@/components/users/UserFilter.vue";
 import type { SearchResults } from "@/types/search";
 import type { Trainer, TrainerGender, TrainerSort, SearchTrainersPayload } from "@/types/trainers";
@@ -26,7 +26,6 @@ import { handleErrorKey } from "@/inject";
 import { searchTrainers } from "@/api/trainers";
 import { searchUsers } from "@/api/users";
 import { useToastStore } from "@/stores/toast";
-import UserBlock from "@/components/users/UserBlock.vue";
 
 const handleError = inject(handleErrorKey) as (e: unknown) => void;
 const route = useRoute();
@@ -192,25 +191,7 @@ onMounted(async () => {
         <tbody>
           <tr v-for="trainer in trainers" :key="trainer.id">
             <td>
-              <div class="d-flex">
-                <div class="d-flex">
-                  <div class="align-content-center flex-wrap mx-1">
-                    <RouterLink v-if="trainer.displayName" :to="{ name: 'TrainerEdit', params: { id: trainer.id } }">
-                      <TarAvatar :display-name="trainer.displayName ?? trainer.uniqueName" icon="fas fa-person" size="40" :url="trainer.sprite" />
-                    </RouterLink>
-                  </div>
-                </div>
-                <div>
-                  <RouterLink v-if="trainer.displayName" :to="{ name: 'TrainerEdit', params: { id: trainer.id } }">
-                    <EditIcon /> {{ trainer.displayName }}
-                    <br />
-                    <TrainerGenderIcon :gender="trainer.gender" /> {{ trainer.uniqueName }}
-                  </RouterLink>
-                  <RouterLink v-else :to="{ name: 'TrainerEdit', params: { id: trainer.id } }">
-                    <EditIcon /> {{ trainer.uniqueName }} <TrainerGenderIcon :gender="trainer.gender" />
-                  </RouterLink>
-                </div>
-              </div>
+              <TrainerBlock :trainer="trainer" />
             </td>
             <td>{{ trainer.license }}</td>
             <td><PokeDollarIcon height="20" /> {{ n(trainer.money, "integer") }}</td>

@@ -120,7 +120,7 @@ watch(
       <h2 class="h3">{{ t("abilities.label") }}</h2>
       <div class="row mb-3">
         <div class="col">
-          <RouterLink :to="{ name: 'AbilityEdit', params: { id: ability.id } }">
+          <RouterLink :to="{ name: 'AbilityEdit', params: { id: ability.id } }" target="_blank">
             <TarCard class="clickable" :subtitle="t(`abilities.slots.${pokemon.abilitySlot}`)" :title="ability.displayName ?? ability.uniqueName">
               <div v-if="ability.description" class="card-text">{{ ability.description }}</div>
             </TarCard>

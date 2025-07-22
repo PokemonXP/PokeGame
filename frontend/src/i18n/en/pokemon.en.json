@@ -84,7 +84,10 @@
     "label": "Level"
   },
   "memories": {
-    "box": "Box",
+    "box": {
+      "format": "Box {box}",
+      "label": "Box"
+    },
     "characteristic": "Characteristic",
     "catch": "Catch",
     "event": {
@@ -100,7 +103,10 @@
       "label": "Poké Ball",
       "placeholder": "Select a Poké Ball"
     },
-    "position": "Position",
+    "position": {
+      "format": "#{position}",
+      "label": "Position"
+    },
     "receive": "Receive",
     "release": "Release",
     "trainer": {
@@ -285,5 +291,6 @@
   },
   "vitality": {
     "label": "Vitality"
-  }
+  },
+  "wild": "Wild Pokémon"
 }
