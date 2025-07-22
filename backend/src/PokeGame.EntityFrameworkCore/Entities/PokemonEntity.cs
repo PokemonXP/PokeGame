@@ -137,6 +137,20 @@ internal class PokemonEntity : AggregateEntity
   {
   }
 
+  public void Catch(TrainerEntity trainer, ItemEntity pokeBall, PokemonCaught @event)
+  {
+    Update(@event);
+
+    SetOwnership(trainer, pokeBall, Core.Pokemon.OwnershipKind.Caught, @event, @event.OccurredOn);
+  }
+
+  public void Heal(PokemonHealed @event)
+  {
+    Update(@event);
+
+    // TODO(fpion): Heal
+  }
+
   public void HoldItem(ItemEntity item, PokemonItemHeld @event)
   {
     Update(@event);
@@ -158,20 +172,7 @@ internal class PokemonEntity : AggregateEntity
   {
     Update(@event);
 
-    if (!OriginalTrainerId.HasValue)
-    {
-      SetOriginalTrainer(trainer);
-    }
-    SetCurrentTrainer(trainer);
-    SetPokeBall(pokeBall);
-
-    OwnershipKind = Core.Pokemon.OwnershipKind.Received;
-    MetAtLevel = @event.Level.Value;
-    MetLocation = @event.Location.Value;
-    MetOn = (@event.MetOn ?? @event.OccurredOn).AsUniversalTime();
-    MetDescription = @event.Description?.Value;
-
-    SetSlot(@event.Slot);
+    SetOwnership(trainer, pokeBall, Core.Pokemon.OwnershipKind.Received, @event, @event.OccurredOn);
   }
 
   public void Release(PokemonReleased @event)
@@ -291,6 +292,23 @@ internal class PokemonEntity : AggregateEntity
     }
   }
 
+  private void SetOwnership(TrainerEntity trainer, ItemEntity pokeBall, OwnershipKind kind, IPokemonOwnershipEvent @event, DateTime occurredOn)
+  {
+    if (kind == Core.Pokemon.OwnershipKind.Caught || !OriginalTrainerId.HasValue)
+    {
+      SetOriginalTrainer(trainer);
+    }
+    SetCurrentTrainer(trainer);
+    SetPokeBall(pokeBall);
+
+    OwnershipKind = kind;
+    MetAtLevel = @event.Level.Value;
+    MetLocation = @event.Location.Value;
+    MetOn = (@event.MetOn ?? occurredOn).AsUniversalTime();
+    MetDescription = @event.Description?.Value;
+
+    SetSlot(@event.Slot);
+  }
   private void SetCurrentTrainer(TrainerEntity? trainer)
   {
     CurrentTrainer = trainer;

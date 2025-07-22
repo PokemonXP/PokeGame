@@ -13,7 +13,7 @@ import TrainerSelect from "@/components/trainers/TrainerSelect.vue";
 import type { Item } from "@/types/items";
 import type { Pokemon, ReceivePokemonPayload } from "@/types/pokemon";
 import type { Trainer } from "@/types/trainers";
-import { receivePokemon, releasePokemon } from "@/api/pokemon";
+import { catchPokemon, receivePokemon, releasePokemon } from "@/api/pokemon";
 import { useForm } from "@/forms";
 
 const { t } = useI18n();
@@ -51,6 +51,32 @@ async function submit(): Promise<void> {
           description: description.value,
         };
         const pokemon: Pokemon = await receivePokemon(props.pokemon.id, payload);
+        reinitialize();
+        emit("saved", pokemon);
+      }
+    } catch (e: unknown) {
+      emit("error", e);
+    } finally {
+      isLoading.value = false;
+    }
+  }
+}
+
+async function onCatch(): Promise<void> {
+  if (!isLoading.value) {
+    isLoading.value = true;
+    try {
+      validate();
+      if (isValid.value) {
+        const payload: ReceivePokemonPayload = {
+          trainer: trainer.value?.id ?? "",
+          pokeBall: pokeBall.value?.id ?? "",
+          level: level.value,
+          location: location.value,
+          metOn: metOn.value,
+          description: description.value,
+        };
+        const pokemon: Pokemon = await catchPokemon(props.pokemon.id, payload);
         reinitialize();
         emit("saved", pokemon);
       }
@@ -110,8 +136,18 @@ watch(
       <div class="mb-3">
         <SubmitButton class="me-1" icon="fas fa-gift" :loading="isLoading" text="pokemon.memories.receive" />
         <TarButton
+          class="mx-1"
+          :disabled="Boolean(pokemon.ownership) || isLoading"
+          icon="fas fa-bullseye"
+          :loading="isLoading"
+          :status="t('loading')"
+          :text="t('pokemon.memories.catch')"
+          variant="primary"
+          @click="onCatch"
+        />
+        <TarButton
           class="ms-1"
-          :disabled="!Boolean(pokemon.ownership?.box) || isLoading"
+          :disabled="!pokemon.ownership?.box || isLoading"
           icon="fas fa-door-open"
           :loading="isLoading"
           :status="t('loading')"

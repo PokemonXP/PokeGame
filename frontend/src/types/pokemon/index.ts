@@ -36,6 +36,15 @@ export type BaseStatistics = {
   speed: number;
 };
 
+export type CatchPokemonPayload = {
+  trainer: string;
+  pokeBall: string;
+  level: number;
+  location: string;
+  metOn?: Date;
+  description?: string;
+};
+
 export type CreatePokemonPayload = {
   id?: string;
   form: string;

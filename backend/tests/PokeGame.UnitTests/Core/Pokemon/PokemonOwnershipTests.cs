@@ -58,6 +58,70 @@ public class PokemonOwnershipTests
     _trainer = new(new License("Q-613357-7"), new UniqueName(_uniqueNameSettings, "elliotto"));
   }
 
+  [Fact(DisplayName = "Catch: a Pokémon should be caught correctly.")]
+  public void Given_Arguments_When_Catch_Then_Caught()
+  {
+    ActorId actorId = ActorId.NewId();
+
+    PokemonSlot slot = new(new Position(2), new Box(1));
+    _pokemon.Catch(_trainer, _pokeBall, _location, level: null, metOn: null, description: null, slot, actorId);
+    Assert.True(_pokemon.HasChanges);
+    Assert.Contains(_pokemon.Changes, change => change is PokemonCaught caught && caught.ActorId == actorId);
+    DateTime metOn = ((PokemonCaught)_pokemon.Changes.Single(change => change is PokemonCaught)).OccurredOn;
+
+    Assert.Equal(_trainer.Id, _pokemon.OriginalTrainerId);
+
+    Ownership? ownership = _pokemon.Ownership;
+    Assert.NotNull(ownership);
+    Assert.Equal(OwnershipKind.Caught, ownership.Kind);
+    Assert.Equal(_trainer.Id, ownership.TrainerId);
+    Assert.Equal(_pokeBall.Id, ownership.PokeBallId);
+    Assert.Equal(_pokemon.Level, ownership.Level.Value);
+    Assert.Equal(_location, ownership.Location);
+    Assert.Equal(metOn, ownership.MetOn);
+    Assert.Null(ownership.Description);
+
+    Assert.Equal(slot, _pokemon.Slot);
+  }
+
+  [Fact(DisplayName = "Catch: it should catch a Pokémon using a Friend Ball.")]
+  public void Given_FriendBall_When_Catch_Then_CorrectFriendship()
+  {
+    PokeBallProperties properties = new(catchMultiplier: 1.0, heal: false, baseFriendship: 150, friendshipMultiplier: 1.0);
+    Item friendBall = new(new UniqueName(_uniqueNameSettings, "friend-ball"), properties);
+
+    _pokemon.Catch(_trainer, friendBall, _location);
+    Assert.NotNull(_pokemon.Ownership);
+    Assert.Equal(friendBall.Id, _pokemon.Ownership.PokeBallId);
+
+    Assert.Equal(properties.BaseFriendship, _pokemon.Friendship.Value);
+  }
+
+  [Fact(DisplayName = "Catch: it should catch a Pokémon using a Heal Ball.")]
+  public void Given_HealBall_When_Catch_Then_Healed()
+  {
+    ActorId actorId = ActorId.NewId();
+
+    PokeBallProperties properties = new(catchMultiplier: 1.0, heal: true, baseFriendship: 0, friendshipMultiplier: 1.0);
+    Item healBall = new(new UniqueName(_uniqueNameSettings, "heal-ball"), properties, new Price(300));
+
+    _pokemon.Catch(_trainer, healBall, _location, actorId: actorId);
+    Assert.NotNull(_pokemon.Ownership);
+    Assert.Equal(healBall.Id, _pokemon.Ownership.PokeBallId);
+
+    Assert.True(_pokemon.HasChanges);
+    Assert.Contains(_pokemon.Changes, change => change is PokemonHealed healed && healed.ActorId == actorId);
+  }
+
+  [Fact(DisplayName = "Catch: it should throw TrainerPokemonCannotBeCaughtException when attempting to catch a Pokémon owned by a trainer.")]
+  public void Given_TrainerPokemon_When_Catch_Then_TrainerPokemonCannotBeCaughtException()
+  {
+    _pokemon.Receive(_trainer, _pokeBall, _location);
+
+    var exception = Assert.Throws<TrainerPokemonCannotBeCaughtException>(() => _pokemon.Catch(_trainer, _pokeBall, _location));
+    Assert.Equal(_pokemon.Id.ToGuid(), exception.PokemonId);
+  }
+
   [Fact(DisplayName = "Receive: a gifted Pokémon should retain its original trainer and Poké Ball.")]
   public void Given_Gifted_When_Receive_Then_OriginalTrainerAndPokeBallRetained()
   {

@@ -4,6 +4,7 @@ using Logitar.EventSourcing;
 using PokeGame.Core.Abilities;
 using PokeGame.Core.Forms;
 using PokeGame.Core.Items;
+using PokeGame.Core.Items.Properties;
 using PokeGame.Core.Moves;
 using PokeGame.Core.Pokemon.Events;
 using PokeGame.Core.Regions;
@@ -318,12 +319,42 @@ public class Specimen : AggregateRoot
     _friendship = @event.Friendship;
   }
 
+  public void Catch(Trainer trainer, Item pokeBall, Location location, Level? level = null, DateTime? metOn = null, Description? description = null, PokemonSlot? slot = null, ActorId? actorId = null)
+  {
+    if (Ownership is not null)
+    {
+      throw new TrainerPokemonCannotBeCaughtException(this);
+    }
+
+    SetOwnership(OwnershipKind.Caught, trainer, pokeBall, location, level, metOn, description, slot, actorId);
+
+    PokeBallProperties properties = (PokeBallProperties)pokeBall.Properties;
+    if (properties.Heal)
+    {
+      Heal(actorId);
+    }
+    if (properties.BaseFriendship > Friendship.Value)
+    {
+      Friendship = new Friendship(properties.BaseFriendship);
+      Update(actorId);
+    }
+  }
+
   public void Delete(ActorId? actorId = null)
   {
     if (!IsDeleted)
     {
       Raise(new PokemonDeleted(), actorId);
     }
+  }
+
+  public void Heal(ActorId? actorId = null)
+  {
+    Raise(new PokemonHealed(), actorId);
+  }
+  protected virtual void Handle(PokemonHealed _)
+  {
+    // TODO(fpion): Heal
   }
 
   public void HoldItem(Item item, ActorId? actorId = null) => HoldItem(item.Id, actorId);
@@ -386,39 +417,9 @@ public class Specimen : AggregateRoot
     }
   }
 
-  public void Receive(
-    Trainer trainer,
-    Item pokeBall,
-    Location location,
-    Level? level = null,
-    DateTime? metOn = null,
-    Description? description = null,
-    PokemonSlot? slot = null,
-    ActorId? actorId = null)
+  public void Receive(Trainer trainer, Item pokeBall, Location location, Level? level = null, DateTime? metOn = null, Description? description = null, PokemonSlot? slot = null, ActorId? actorId = null)
   {
-    if (pokeBall.Category != ItemCategory.PokeBall)
-    {
-      throw new ArgumentException($"The item category should be '{ItemCategory.PokeBall}'.", nameof(pokeBall));
-    }
-    if (level is not null)
-    {
-      ArgumentOutOfRangeException.ThrowIfGreaterThan(level.Value, Level, nameof(level));
-    }
-    if (metOn?.AsUniversalTime() > DateTime.UtcNow)
-    {
-      throw new ArgumentOutOfRangeException(nameof(metOn));
-    }
-
-    ItemId pokeBallId = Ownership is null ? pokeBall.Id : Ownership.PokeBallId;
-    level ??= new(Level);
-    slot ??= new(new Position(0), Box: null);
-    Raise(new PokemonReceived(trainer.Id, pokeBallId, level, location, metOn, description, slot), actorId);
-  }
-  protected virtual void Handle(PokemonReceived @event)
-  {
-    OriginalTrainerId ??= @event.TrainerId;
-    Ownership = new Ownership(OwnershipKind.Received, @event.TrainerId, @event.PokeBallId, @event.Level, @event.Location, @event.MetOn ?? @event.OccurredOn, @event.Description);
-    Slot = @event.Slot;
+    SetOwnership(OwnershipKind.Received, trainer, pokeBall, location, level, metOn, description, slot, actorId);
   }
 
   public void Release(ActorId? actorId = null)
@@ -564,6 +565,50 @@ public class Specimen : AggregateRoot
     {
       _notes = @event.Notes.Value;
     }
+  }
+
+  private void SetOwnership(OwnershipKind kind, Trainer trainer, Item pokeBall, Location location, Level? level, DateTime? metOn, Description? description, PokemonSlot? slot, ActorId? actorId)
+  {
+    if (pokeBall.Category != ItemCategory.PokeBall)
+    {
+      throw new ArgumentException($"The item category should be '{ItemCategory.PokeBall}'.", nameof(pokeBall));
+    }
+    if (level is not null)
+    {
+      ArgumentOutOfRangeException.ThrowIfGreaterThan(level.Value, Level, nameof(level));
+    }
+    if (metOn?.AsUniversalTime() > DateTime.UtcNow)
+    {
+      throw new ArgumentOutOfRangeException(nameof(metOn));
+    }
+
+    ItemId pokeBallId = Ownership is null ? pokeBall.Id : Ownership.PokeBallId;
+    level ??= new(Level);
+    slot ??= new(new Position(0), Box: null);
+
+    switch (kind)
+    {
+      case OwnershipKind.Caught:
+        Raise(new PokemonCaught(trainer.Id, pokeBallId, level, location, metOn, description, slot), actorId);
+        break;
+      case OwnershipKind.Received:
+        Raise(new PokemonReceived(trainer.Id, pokeBallId, level, location, metOn, description, slot), actorId);
+        break;
+      default:
+        throw new ArgumentOutOfRangeException(nameof(kind));
+    }
+  }
+  protected virtual void Handle(PokemonCaught @event)
+  {
+    OriginalTrainerId = @event.TrainerId;
+    Ownership = new Ownership(OwnershipKind.Caught, @event.TrainerId, @event.PokeBallId, @event.Level, @event.Location, @event.MetOn ?? @event.OccurredOn, @event.Description);
+    Slot = @event.Slot;
+  }
+  protected virtual void Handle(PokemonReceived @event)
+  {
+    OriginalTrainerId ??= @event.TrainerId;
+    Ownership = new Ownership(OwnershipKind.Received, @event.TrainerId, @event.PokeBallId, @event.Level, @event.Location, @event.MetOn ?? @event.OccurredOn, @event.Description);
+    Slot = @event.Slot;
   }
 
   public override string ToString() => $"{Nickname?.Value ?? UniqueName.Value} | {base.ToString()}";

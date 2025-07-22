@@ -6,5 +6,5 @@ using PokeGame.Core.Trainers;
 
 namespace PokeGame.Core.Pokemon.Events;
 
-public record PokemonReceived(TrainerId TrainerId, ItemId PokeBallId, Level Level, Location Location, DateTime? MetOn, Description? Description, PokemonSlot Slot)
+public record PokemonCaught(TrainerId TrainerId, ItemId PokeBallId, Level Level, Location Location, DateTime? MetOn, Description? Description, PokemonSlot Slot)
   : DomainEvent, IPokemonOwnershipEvent;
