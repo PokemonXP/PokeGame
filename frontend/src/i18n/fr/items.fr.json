@@ -1,4 +1,19 @@
 {
+  "category": {
+    "label": "Catégorie",
+    "options": {
+      "BattleItem": "Objet de combat",
+      "Berry": "Baie",
+      "KeyItem": "Objet clé",
+      "Material": "Matériau",
+      "Medicine": "Médicament",
+      "OtherItem": "Autre objet",
+      "PokeBall": "Poké Ball",
+      "TechnicalMachine": "Capsule Technique",
+      "Treasure": "Trésor"
+    },
+    "placeholder": "Sélectionnez une catégorie d’objet"
+  },
   "create": "Nouvel objet",
   "created": "L’objet a été créé.",
   "delete": {
@@ -7,6 +22,7 @@
   },
   "deleted": "L’objet a été supprimé.",
   "empty": "Cette liste est vide.",
+  "price": "Prix",
   "sort": {
     "options": {
       "CreatedOn": "Date de création",
