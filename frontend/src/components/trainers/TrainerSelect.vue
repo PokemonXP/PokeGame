@@ -13,7 +13,7 @@ import { searchTrainers } from "@/api/trainers";
 const { orderBy } = arrayUtils;
 const { t } = useI18n();
 
-withDefaults(
+const props = withDefaults(
   defineProps<{
     id?: string;
     label?: string;
@@ -39,6 +39,8 @@ const options = computed<SelectOption[]>(() =>
     "text",
   ),
 );
+const trainer = computed<Trainer | undefined>(() => (props.modelValue ? trainers.value.find(({ id }) => id === props.modelValue) : undefined));
+const alt = computed<string>(() => `${trainer.value ? (trainer.value.displayName ?? trainer.value.uniqueName) : ""}'s Sprite'`);
 
 const emit = defineEmits<{
   (e: "error", error: unknown): void;
@@ -80,5 +82,11 @@ onMounted(async () => {
     :placeholder="t(placeholder)"
     :required="required"
     @update:model-value="onModelValueUpdate"
-  />
+  >
+    <template v-if="trainer?.sprite" #append>
+      <RouterLink class="input-group-text" :to="{ name: 'TrainerEdit', params: { id: trainer.id } }" target="_blank">
+        <img :src="trainer.sprite" :alt="alt" height="40" />
+      </RouterLink>
+    </template>
+  </FormSelect>
 </template>

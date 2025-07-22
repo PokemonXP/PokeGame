@@ -4,17 +4,18 @@ import { ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 
 import DescriptionTextarea from "@/components/shared/DescriptionTextarea.vue";
+import ItemBlock from "@/components/items/ItemBlock.vue";
 import ItemSelect from "@/components/items/ItemSelect.vue";
 import LevelInput from "./LevelInput.vue";
 import LocationInput from "@/components/regions/LocationInput.vue";
 import MetOnInput from "./MetOnInput.vue";
 import SubmitButton from "@/components/shared/SubmitButton.vue";
+import TrainerBlock from "@/components/trainers/TrainerBlock.vue";
 import TrainerSelect from "@/components/trainers/TrainerSelect.vue";
 import type { Item } from "@/types/items";
 import type { Pokemon, ReceivePokemonPayload } from "@/types/pokemon";
 import type { Trainer } from "@/types/trainers";
 import { catchPokemon, receivePokemon, releasePokemon } from "@/api/pokemon";
-import { formatItem, formatTrainer } from "@/helpers/format";
 import { useForm } from "@/forms";
 
 const { d, t } = useI18n();
@@ -124,9 +125,7 @@ watch(
               {{ t("trainers.license.label") }}
             </th>
             <td colspan="2">
-              <RouterLink :to="{ name: 'TrainerEdit', params: { id: pokemon.ownership.originalTrainer.id } }">
-                {{ formatTrainer(pokemon.ownership.originalTrainer) }}
-              </RouterLink>
+              <TrainerBlock :trainer="pokemon.ownership.originalTrainer" />
             </td>
             <td>
               <RouterLink :to="{ name: 'TrainerEdit', params: { id: pokemon.ownership.originalTrainer.id } }">
@@ -141,9 +140,7 @@ watch(
               {{ t("trainers.license.label") }}
             </th>
             <td colspan="2">
-              <RouterLink :to="{ name: 'TrainerEdit', params: { id: pokemon.ownership.currentTrainer.id } }">
-                {{ formatTrainer(pokemon.ownership.currentTrainer) }}
-              </RouterLink>
+              <TrainerBlock :trainer="pokemon.ownership.currentTrainer" />
             </td>
             <td>
               <RouterLink :to="{ name: 'TrainerEdit', params: { id: pokemon.ownership.currentTrainer.id } }">
@@ -158,9 +155,7 @@ watch(
               {{ t("pokemon.memories.event.label") }}
             </th>
             <td colspan="2">
-              <RouterLink :to="{ name: 'ItemEdit', params: { id: pokemon.ownership.pokeBall.id } }">
-                {{ formatItem(pokemon.ownership.pokeBall) }}
-              </RouterLink>
+              <ItemBlock :item="pokemon.ownership.pokeBall" />
             </td>
             <td>{{ t(`pokemon.memories.event.options.${pokemon.ownership.kind}`) }}</td>
           </tr>
@@ -208,9 +203,9 @@ watch(
             <th scope="row">
               {{ t("pokemon.memories.characteristic") }}
               {{ "/" }}
-              {{ t("pokemon.memories.position") }}
+              {{ t("pokemon.memories.position.label") }}
               {{ "/" }}
-              {{ t("pokemon.memories.box") }}
+              {{ t("pokemon.memories.box.label") }}
             </th>
             <td>{{ pokemon.characteristic }}.</td>
             <td>{{ pokemon.ownership.position + 1 }}</td>

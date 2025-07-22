@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { TarAvatar, type SelectOption } from "logitar-vue3-ui";
+import type { SelectOption } from "logitar-vue3-ui";
 import { arrayUtils, objectUtils } from "logitar-js";
 import { computed, inject, ref, watch } from "vue";
 import { parsingUtils } from "logitar-js";
@@ -10,7 +10,7 @@ import AdminBreadcrumb from "@/components/admin/AdminBreadcrumb.vue";
 import AppPagination from "@/components/shared/AppPagination.vue";
 import CountSelect from "@/components/shared/CountSelect.vue";
 import CreateItem from "@/components/items/CreateItem.vue";
-import EditIcon from "@/components/icons/EditIcon.vue";
+import ItemBlock from "@/components/items/ItemBlock.vue";
 import ItemCategoryFilter from "@/components/items/ItemCategoryFilter.vue";
 import PokeDollarIcon from "@/components/items/PokeDollarIcon.vue";
 import RefreshButton from "@/components/shared/RefreshButton.vue";
@@ -167,24 +167,7 @@ watch(
         <tbody>
           <tr v-for="item in items" :key="item.id">
             <td>
-              <div class="d-flex">
-                <div class="d-flex">
-                  <div class="align-content-center flex-wrap mx-1">
-                    <RouterLink :to="{ name: 'ItemEdit', params: { id: item.id } }">
-                      <TarAvatar :displayName="item.displayName ?? item.uniqueName" icon="fas fa-cart-shopping" size="40" :url="item.sprite" />
-                    </RouterLink>
-                  </div>
-                </div>
-                <div>
-                  <RouterLink :to="{ name: 'ItemEdit', params: { id: item.id } }">
-                    <EditIcon /> {{ item.displayName ?? item.uniqueName }}
-                    <template v-if="item.displayName">
-                      <br />
-                      {{ item.uniqueName }}
-                    </template>
-                  </RouterLink>
-                </div>
-              </div>
+              <ItemBlock :item="item" />
             </td>
             <td>{{ t(`items.category.options.${item.category}`) }}</td>
             <td>
