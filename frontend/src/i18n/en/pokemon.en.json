@@ -101,6 +101,7 @@
       "placeholder": "Select a Poké Ball"
     },
     "receive": "Receive",
+    "release": "Release",
     "title": "Memories"
   },
   "move": {

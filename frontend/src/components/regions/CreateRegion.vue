@@ -3,7 +3,6 @@ import { TarButton, TarModal } from "logitar-vue3-ui";
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 
-import SubmitButton from "@/components/shared/SubmitButton.vue";
 import UniqueNameAlreadyUsed from "@/components/shared/UniqueNameAlreadyUsed.vue";
 import UniqueNameInput from "@/components/shared/UniqueNameInput.vue";
 import type { CreateOrReplaceRegionPayload, Region } from "@/types/regions";
@@ -76,7 +75,15 @@ function onReset(): void {
       </form>
       <template #footer>
         <TarButton icon="fas fa-ban" :text="t('actions.cancel')" variant="secondary" @click="onCancel" />
-        <SubmitButton icon="fas fa-plus" :loading="isLoading" text="actions.create" variant="success" @click="submit" />
+        <TarButton
+          :disabled="isLoading"
+          icon="fas fa-plus"
+          :loading="isLoading"
+          :status="t('loading')"
+          :text="t('actions.create')"
+          variant="success"
+          @click="submit"
+        />
       </template>
     </TarModal>
   </span>

@@ -56,6 +56,13 @@ public class PokemonController : ControllerBase
     return pokemon is null ? NotFound() : Ok(pokemon);
   }
 
+  [HttpPut("{id}/release")]
+  public async Task<ActionResult<PokemonModel>> ReleaseAsync(Guid id, CancellationToken cancellationToken)
+  {
+    PokemonModel? pokemon = await _pokemonService.ReleaseAsync(id, cancellationToken);
+    return pokemon is null ? NotFound() : Ok(pokemon);
+  }
+
   [HttpPut("{pokemonId}/moves/{moveId}/remember")]
   public async Task<ActionResult<PokemonModel>> RememberMoveAsync(Guid pokemonId, Guid moveId, [FromBody] RememberPokemonMovePayload payload, CancellationToken cancellationToken)
   {

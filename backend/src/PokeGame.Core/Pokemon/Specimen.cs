@@ -412,13 +412,32 @@ public class Specimen : AggregateRoot
     ItemId pokeBallId = Ownership is null ? pokeBall.Id : Ownership.PokeBallId;
     level ??= new(Level);
     slot ??= new(new Position(0), Box: null);
-    Raise(new PokemonReceived(trainer.Id, pokeBallId, level, location, description, slot), actorId, metOn);
+    Raise(new PokemonReceived(trainer.Id, pokeBallId, level, location, metOn, description, slot), actorId);
   }
   protected virtual void Handle(PokemonReceived @event)
   {
     OriginalTrainerId ??= @event.TrainerId;
-    Ownership = new Ownership(OwnershipKind.Received, @event.TrainerId, @event.PokeBallId, @event.Level, @event.Location, @event.OccurredOn, @event.Description);
+    Ownership = new Ownership(OwnershipKind.Received, @event.TrainerId, @event.PokeBallId, @event.Level, @event.Location, @event.MetOn ?? @event.OccurredOn, @event.Description);
     Slot = @event.Slot;
+  }
+
+  public void Release(ActorId? actorId = null)
+  {
+    if (Ownership is not null)
+    {
+      if (Slot?.Box is null)
+      {
+        throw new CannotReleasePartyPokemonException(this);
+      }
+
+      Raise(new PokemonReleased(), actorId);
+    }
+  }
+  protected virtual void Handle(PokemonReleased _)
+  {
+    OriginalTrainerId = null;
+    Ownership = null;
+    Slot = null;
   }
 
   public bool RememberMove(Move move, int position, ActorId? actorId = null) => RememberMove(move.Id, position, actorId);
