@@ -331,7 +331,7 @@ public class Specimen : AggregateRoot
     PokeBallProperties properties = (PokeBallProperties)pokeBall.Properties;
     if (properties.Heal)
     {
-      throw new NotImplementedException(); // TODO(fpion): Heal
+      Heal(actorId);
     }
     if (properties.BaseFriendship > Friendship.Value)
     {
@@ -346,6 +346,15 @@ public class Specimen : AggregateRoot
     {
       Raise(new PokemonDeleted(), actorId);
     }
+  }
+
+  public void Heal(ActorId? actorId = null)
+  {
+    Raise(new PokemonHealed(), actorId);
+  }
+  protected virtual void Handle(PokemonHealed _)
+  {
+    // TODO(fpion): Heal
   }
 
   public void HoldItem(Item item, ActorId? actorId = null) => HoldItem(item.Id, actorId);

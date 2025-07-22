@@ -100,14 +100,17 @@ public class PokemonOwnershipTests
   [Fact(DisplayName = "Catch: it should catch a Pokémon using a Heal Ball.")]
   public void Given_HealBall_When_Catch_Then_Healed()
   {
+    ActorId actorId = ActorId.NewId();
+
     PokeBallProperties properties = new(catchMultiplier: 1.0, heal: true, baseFriendship: 0, friendshipMultiplier: 1.0);
     Item healBall = new(new UniqueName(_uniqueNameSettings, "heal-ball"), properties, new Price(300));
 
-    //_pokemon.Catch(_trainer, healBall, _location);
-    //Assert.NotNull(_pokemon.Ownership);
-    //Assert.Equal(healBall.Id, _pokemon.Ownership.PokeBallId);
+    _pokemon.Catch(_trainer, healBall, _location, actorId: actorId);
+    Assert.NotNull(_pokemon.Ownership);
+    Assert.Equal(healBall.Id, _pokemon.Ownership.PokeBallId);
 
-    // TODO(fpion): Heal
+    Assert.True(_pokemon.HasChanges);
+    Assert.Contains(_pokemon.Changes, change => change is PokemonHealed healed && healed.ActorId == actorId);
   }
 
   [Fact(DisplayName = "Catch: it should throw TrainerPokemonCannotBeCaughtException when attempting to catch a Pokémon owned by a trainer.")]

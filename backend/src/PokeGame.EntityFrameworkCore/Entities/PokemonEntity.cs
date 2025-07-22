@@ -144,6 +144,13 @@ internal class PokemonEntity : AggregateEntity
     SetOwnership(trainer, pokeBall, Core.Pokemon.OwnershipKind.Caught, @event, @event.OccurredOn);
   }
 
+  public void Heal(PokemonHealed @event)
+  {
+    Update(@event);
+
+    // TODO(fpion): Heal
+  }
+
   public void HoldItem(ItemEntity item, PokemonItemHeld @event)
   {
     Update(@event);
