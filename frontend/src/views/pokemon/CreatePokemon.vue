@@ -275,7 +275,7 @@ watch(
           <GenderSelect class="col" :disabled="isGenderDisabled" :required="isGenderRequired" v-model="gender" />
         </div>
         <ShinyCheckbox v-model="isShiny" />
-        <h2 class="h3">{{ t("pokemon.type.types") }}</h2>
+        <h2 class="h3">{{ t("pokemon.type.title") }}</h2>
         <div class="row">
           <TypeSelect class="col" disabled id="primary-type" label="pokemon.type.primary" :model-value="form.types.primary" />
           <TypeSelect
@@ -329,10 +329,10 @@ watch(
         <NatureTable v-if="nature" :nature="nature" />
         <h2 class="h3">{{ t("pokemon.item.held") }}</h2>
         <ItemSelect id="held-item" :model-value="heldItem?.id" @selected="heldItem = $event" />
-        <h2 class="h3">{{ t("pokemon.ability.title") }}</h2>
+        <h2 class="h3">{{ t("abilities.label") }}</h2>
         <AbilitySlotSelect :abilities="form.abilities" v-model="abilitySlot" />
         <template v-if="variety">
-          <h2 class="h3">{{ t("pokemon.move.title") }}</h2>
+          <h2 class="h3">{{ t("moves.title") }}</h2>
           <VarietyMoveTable :level="level" :moves="variety.moves" />
         </template>
         <h2 class="h3">{{ t("metadata") }}</h2>

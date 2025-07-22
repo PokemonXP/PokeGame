@@ -5,8 +5,8 @@ import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 
 import FormSelect from "@/components/forms/FormSelect.vue";
-import PokemonGenderIcon from "@/components/icons/PokemonGenderIcon.vue";
-import type { PokemonGender } from "@/types/pokemon";
+import MoveCategoryIcon from "./MoveCategoryIcon.vue";
+import type { MoveCategory } from "@/types/moves";
 
 const { orderBy } = arrayUtils;
 const { rt, t, tm } = useI18n();
@@ -21,16 +21,16 @@ const props = withDefaults(
     required?: boolean | string;
   }>(),
   {
-    id: "gender",
-    label: "pokemon.gender.select.label",
-    placeholder: "pokemon.gender.select.placeholder",
+    id: "category",
+    label: "moves.category.label",
+    placeholder: "moves.category.placeholder",
   },
 );
 
-const gender = computed<PokemonGender | undefined>(() => (props.modelValue ? (props.modelValue as PokemonGender) : undefined));
+const category = computed<MoveCategory | undefined>(() => (props.modelValue ? (props.modelValue as MoveCategory) : undefined));
 const options = computed<SelectOption[]>(() =>
   orderBy(
-    Object.entries(tm(rt("pokemon.gender.select.options"))).map(([value, text]) => ({ text, value }) as SelectOption),
+    Object.entries(tm(rt("moves.category.options"))).map(([value, text]) => ({ text, value }) as SelectOption),
     "text",
   ),
 );
@@ -52,8 +52,8 @@ defineEmits<{
     @update:model-value="$emit('update:model-value', $event)"
   >
     <template #append>
-      <span class="input-group-text">
-        <PokemonGenderIcon :gender="gender" />
+      <span v-if="category" class="input-group-text">
+        <MoveCategoryIcon :category="category" />
       </span>
     </template>
   </FormSelect>

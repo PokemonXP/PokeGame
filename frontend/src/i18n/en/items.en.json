@@ -1,0 +1,21 @@
+{
+  "create": "New Item",
+  "created": "The item has been created.",
+  "delete": {
+    "confirm": "To delete the item, enter its name in the field below.",
+    "title": "Delete Item"
+  },
+  "deleted": "The item has been deleted.",
+  "empty": "This list is empty.",
+  "sort": {
+    "options": {
+      "CreatedOn": "Created on",
+      "DisplayName": "Display Name",
+      "Price": "Price",
+      "UniqueName": "Unique Name",
+      "UpdatedOn": "Updated on"
+    }
+  },
+  "title": "Items",
+  "updated": "The item has been updated."
+}

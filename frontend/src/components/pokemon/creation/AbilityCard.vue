@@ -23,7 +23,7 @@ defineEmits<{
 </script>
 
 <template>
-  <TarCard :class="classes" :subtitle="t(`pokemon.ability.slots.${abilitySlot}`)" :title="ability.displayName ?? ability.uniqueName" @click="$emit('selected')">
+  <TarCard :class="classes" :subtitle="t(`abilities.slots.${abilitySlot}`)" :title="ability.displayName ?? ability.uniqueName" @click="$emit('selected')">
     <div v-if="ability.description" class="card-text">{{ ability.description }}</div>
   </TarCard>
 </template>

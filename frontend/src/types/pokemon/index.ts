@@ -2,7 +2,7 @@ import type { Ability, AbilitySlot } from "../abilities";
 import type { Aggregate, Change } from "../aggregate";
 import type { EggGroups } from "./species";
 import type { Item } from "../items";
-import type { Move, MoveLearningMethod } from "./moves";
+import type { Move, MoveLearningMethod } from "../moves";
 import type { Region } from "../regions";
 import type { SearchPayload, SortOption } from "../search";
 import type { Trainer } from "../trainers";

@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import type { SelectOption } from "logitar-vue3-ui";
 import { arrayUtils } from "logitar-js";
+import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 
 import FormSelect from "@/components/forms/FormSelect.vue";
 import PokemonGenderIcon from "@/components/icons/PokemonGenderIcon.vue";
 import type { PokemonGender } from "@/types/pokemon";
-import { computed } from "vue";
 
 const { orderBy } = arrayUtils;
 const { rt, t, tm } = useI18n();

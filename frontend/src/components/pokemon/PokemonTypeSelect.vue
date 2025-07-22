@@ -5,8 +5,8 @@ import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 
 import FormSelect from "@/components/forms/FormSelect.vue";
-import PokemonGenderIcon from "@/components/icons/PokemonGenderIcon.vue";
-import type { PokemonGender } from "@/types/pokemon";
+import PokemonTypeImage from "./PokemonTypeImage.vue";
+import type { PokemonType } from "@/types/pokemon";
 
 const { orderBy } = arrayUtils;
 const { rt, t, tm } = useI18n();
@@ -21,19 +21,19 @@ const props = withDefaults(
     required?: boolean | string;
   }>(),
   {
-    id: "gender",
-    label: "pokemon.gender.select.label",
-    placeholder: "pokemon.gender.select.placeholder",
+    id: "type",
+    label: "pokemon.type.label",
+    placeholder: "pokemon.type.placeholder",
   },
 );
 
-const gender = computed<PokemonGender | undefined>(() => (props.modelValue ? (props.modelValue as PokemonGender) : undefined));
 const options = computed<SelectOption[]>(() =>
   orderBy(
-    Object.entries(tm(rt("pokemon.gender.select.options"))).map(([value, text]) => ({ text, value }) as SelectOption),
+    Object.entries(tm(rt("pokemon.type.options"))).map(([value, text]) => ({ text, value }) as SelectOption),
     "text",
   ),
 );
+const type = computed<PokemonType | undefined>(() => (props.modelValue ? (props.modelValue as PokemonType) : undefined));
 
 defineEmits<{
   (e: "update:model-value", value: string): void;
@@ -51,9 +51,9 @@ defineEmits<{
     :required="required"
     @update:model-value="$emit('update:model-value', $event)"
   >
-    <template #append>
+    <template v-if="type" #append>
       <span class="input-group-text">
-        <PokemonGenderIcon :gender="gender" />
+        <PokemonTypeImage height="32" :type="type" />
       </span>
     </template>
   </FormSelect>

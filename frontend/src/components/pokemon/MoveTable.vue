@@ -8,7 +8,6 @@ import MoveCategoryBadge from "@/components/moves/MoveCategoryBadge.vue";
 import MoveIcon from "@/components/icons/MoveIcon.vue";
 import PokemonTypeImage from "./PokemonTypeImage.vue";
 import type { MoveDisplayMove, PokemonMove } from "@/types/pokemon";
-import { getMoveUrl } from "@/helpers/cms";
 
 const { n, t } = useI18n();
 const { parseBoolean, parseNumber } = parsingUtils;
@@ -40,15 +39,23 @@ defineEmits<{
             <th scope="col"></th>
             <th scope="col">#</th>
           </template>
-          <th scope="col">{{ t("pokemon.move.name") }}</th>
-          <th scope="col">{{ t("pokemon.move.typeAndCategory") }}</th>
-          <th scope="col">{{ t("pokemon.move.accuracy") }} / {{ t("pokemon.move.power") }}</th>
-          <th scope="col">{{ t("pokemon.move.powerPoints.label") }}</th>
+          <th scope="col">{{ t("name.label") }}</th>
+          <th scope="col">
+            {{ t("pokemon.type.label") }}
+            {{ "/" }}
+            {{ t("moves.category.label") }}
+          </th>
+          <th scope="col">
+            {{ t("moves.accuracy.label") }}
+            {{ "/" }}
+            {{ t("moves.power") }}
+          </th>
+          <th scope="col">{{ t("moves.powerPoints.label") }}</th>
           <th scope="col">{{ t("pokemon.move.learned.label") }}</th>
           <th scope="col">
             <template v-if="mode === 'actions'"></template>
-            <template v-if="mode === 'description'">{{ t("pokemon.move.description") }}</template>
-            <template v-if="mode === 'notes'">{{ t("pokemon.move.notes") }}</template>
+            <template v-if="mode === 'description'">{{ t("description") }}</template>
+            <template v-if="mode === 'notes'">{{ t("notes") }}</template>
           </th>
         </tr>
       </thead>
@@ -70,18 +77,18 @@ defineEmits<{
             <td>{{ index + 1 }}</td>
           </template>
           <td>
-            <a :href="getMoveUrl(item.move)" target="_blank">
+            <RouterLink :to="{ name: 'MoveEdit', params: { id: item.move.id } }">
               <MoveIcon /> {{ item.move.displayName ?? item.move.uniqueName }}
               <template v-if="item.move.displayName">
                 <br />
                 {{ item.move.uniqueName }}
               </template>
-            </a>
+            </RouterLink>
           </td>
           <td>
-            <PokemonTypeImage :type="item.move.type" />
+            <PokemonTypeImage height="20" :type="item.move.type" />
             <br />
-            <MoveCategoryBadge :category="item.move.category" />
+            <MoveCategoryBadge :category="item.move.category" height="20" />
           </td>
           <td>
             <template v-if="item.move.accuracy">{{ n(item.move.accuracy / 100, "integer_percent") }}</template>
@@ -93,7 +100,7 @@ defineEmits<{
           <td>
             {{ item.powerPoints.current }} / {{ item.powerPoints.maximum }}
             <br />
-            {{ t("pokemon.move.powerPoints.format", { powerPoints: item.powerPoints.reference }) }}
+            {{ t("moves.powerPoints.format", { powerPoints: item.powerPoints.reference }) }}
           </td>
           <td>
             {{ t("pokemon.level.format", { level: item.level }) }}
@@ -134,7 +141,7 @@ defineEmits<{
         </tr>
       </tbody>
     </table>
-    <p v-else>{{ t("pokemon.move.empty") }}</p>
+    <p v-else>{{ t("moves.empty") }}</p>
   </div>
 </template>
 

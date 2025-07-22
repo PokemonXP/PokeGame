@@ -1,0 +1,21 @@
+{
+  "create": "Nouvel objet",
+  "created": "L’objet a été créé.",
+  "delete": {
+    "confirm": "Afin de supprimer l’objet, veuillez entrer son nom dans le champs suivant.",
+    "title": "Supprimer l’objet"
+  },
+  "deleted": "L’objet a été supprimé.",
+  "empty": "Cette liste est vide.",
+  "sort": {
+    "options": {
+      "CreatedOn": "Date de création",
+      "DisplayName": "Nom d’affichage",
+      "Price": "Prix",
+      "UniqueName": "Nom unique",
+      "UpdatedOn": "Dernière modification"
+    }
+  },
+  "title": "Objets",
+  "updated": "L’objet a été mis à jour."
+}

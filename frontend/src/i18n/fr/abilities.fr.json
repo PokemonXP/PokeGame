@@ -7,7 +7,13 @@
   },
   "deleted": "La capacité a été supprimée.",
   "empty": "Cette liste est vide.",
+  "label": "Capacité",
   "location": "Emplacement",
+  "slots": {
+    "Hidden": "Cachée",
+    "Primary": "Primaire",
+    "Secondary": "Secondaire"
+  },
   "sort": {
     "options": {
       "CreatedOn": "Date de création",

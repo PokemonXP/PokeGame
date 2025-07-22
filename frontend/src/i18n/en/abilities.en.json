@@ -7,7 +7,13 @@
   },
   "deleted": "The ability has been deleted.",
   "empty": "This list is empty.",
+  "label": "Ability",
   "location": "Location",
+  "slots": {
+    "Hidden": "Hidden",
+    "Primary": "Primary",
+    "Secondary": "Secondary"
+  },
   "sort": {
     "options": {
       "CreatedOn": "Created on",
