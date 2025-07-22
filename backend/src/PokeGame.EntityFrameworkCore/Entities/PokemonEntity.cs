@@ -168,10 +168,27 @@ internal class PokemonEntity : AggregateEntity
     OwnershipKind = Core.Pokemon.OwnershipKind.Received;
     MetAtLevel = @event.Level.Value;
     MetLocation = @event.Location.Value;
-    MetOn = @event.OccurredOn.AsUniversalTime();
+    MetOn = (@event.MetOn ?? @event.OccurredOn).AsUniversalTime();
     MetDescription = @event.Description?.Value;
 
     SetSlot(@event.Slot);
+  }
+
+  public void Release(PokemonReleased @event)
+  {
+    Update(@event);
+
+    SetOriginalTrainer(null);
+    SetCurrentTrainer(null);
+    SetPokeBall(null);
+
+    OwnershipKind = null;
+    MetAtLevel = null;
+    MetLocation = null;
+    MetOn = null;
+    MetDescription = null;
+
+    SetSlot(null);
   }
 
   public bool RememberMove(PokemonMoveRemembered @event)
@@ -274,28 +291,28 @@ internal class PokemonEntity : AggregateEntity
     }
   }
 
-  private void SetCurrentTrainer(TrainerEntity trainer)
+  private void SetCurrentTrainer(TrainerEntity? trainer)
   {
     CurrentTrainer = trainer;
-    CurrentTrainerId = trainer.TrainerId;
-    CurrentTrainerUid = trainer.Id;
+    CurrentTrainerId = trainer?.TrainerId;
+    CurrentTrainerUid = trainer?.Id;
   }
-  private void SetOriginalTrainer(TrainerEntity trainer)
+  private void SetOriginalTrainer(TrainerEntity? trainer)
   {
     OriginalTrainer = trainer;
-    OriginalTrainerId = trainer.TrainerId;
-    OriginalTrainerUid = trainer.Id;
+    OriginalTrainerId = trainer?.TrainerId;
+    OriginalTrainerUid = trainer?.Id;
   }
-  private void SetPokeBall(ItemEntity pokeBall)
+  private void SetPokeBall(ItemEntity? pokeBall)
   {
     PokeBall = pokeBall;
-    PokeBallId = pokeBall.ItemId;
-    PokeBallUid = pokeBall.Id;
+    PokeBallId = pokeBall?.ItemId;
+    PokeBallUid = pokeBall?.Id;
   }
-  private void SetSlot(PokemonSlot slot)
+  private void SetSlot(PokemonSlot? slot)
   {
-    Position = slot.Position.Value;
-    Box = slot.Box?.Value;
+    Position = slot?.Position.Value;
+    Box = slot?.Box?.Value;
   }
 
   public PokemonStatisticsModel GetStatistics()

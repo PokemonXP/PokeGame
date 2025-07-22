@@ -145,4 +145,35 @@ public class PokemonOwnershipTests
     var exception = Assert.Throws<ArgumentOutOfRangeException>(() => _pokemon.Receive(_trainer, _pokeBall, _location, metOn: DateTime.Now.AddDays(1)));
     Assert.Equal("metOn", exception.ParamName);
   }
+
+  [Fact(DisplayName = "Release: it should release a Pokémon in a box.")]
+  public void Given_PokemonInBox_When_Release_Then_Released()
+  {
+    ActorId actorId = ActorId.NewId();
+
+    PokemonSlot slot = new(new Position(0), new Box(0));
+    _pokemon.Receive(_trainer, _pokeBall, _location, slot: slot);
+
+    _pokemon.Release(actorId);
+    Assert.Null(_pokemon.OriginalTrainerId);
+    Assert.Null(_pokemon.Ownership);
+    Assert.Null(_pokemon.Slot);
+    Assert.True(_pokemon.HasChanges);
+    Assert.Contains(_pokemon.Changes, change => change is PokemonReleased released && released.ActorId == actorId);
+
+    _pokemon.ClearChanges();
+    _pokemon.Release();
+    Assert.False(_pokemon.HasChanges);
+    Assert.Empty(_pokemon.Changes);
+  }
+
+  [Fact(DisplayName = "Release: it should throw CannotReleasePartyPokemonException when the Pokémon is in the party.")]
+  public void Given_PokemonInParty_When_Release_Then_CannotReleasePartyPokemonException()
+  {
+    PokemonSlot slot = new(new Position(0), Box: null);
+    _pokemon.Receive(_trainer, _pokeBall, _location, slot: slot);
+
+    var exception = Assert.Throws<CannotReleasePartyPokemonException>(() => _pokemon.Release());
+    Assert.Equal(_pokemon.Id.ToGuid(), exception.PokemonId);
+  }
 }
