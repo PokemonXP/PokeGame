@@ -102,7 +102,6 @@ watch(
         />
       </div>
       <div class="row">
-        <!-- TODO(fpion): level should be inclusive between 0 and current level -->
         <LevelInput class="col" required v-model="level" />
         <MetOnInput class="col" v-model="metOn" />
       </div>
