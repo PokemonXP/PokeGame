@@ -2,9 +2,9 @@ import type { Aggregate, Change } from "./aggregate";
 import type { Move } from "./moves";
 import type { SearchPayload, SortOption } from "./search";
 
-export type BattleItemProperties = {}; // TODO(fpion): implement
+export type BattleItemProperties = {};
 
-export type BerryProperties = {}; // TODO(fpion): implement
+export type BerryProperties = {};
 
 export type CreateOrReplaceItemPayload = {
   uniqueName: string;
@@ -57,11 +57,11 @@ export type KeyItemProperties = {};
 
 export type MaterialProperties = {};
 
-export type MedicineProperties = {}; // TODO(fpion): implement
+export type MedicineProperties = {};
 
 export type OtherItemProperties = {};
 
-export type PokeBallProperties = {}; // TODO(fpion): implement
+export type PokeBallProperties = {};
 
 export type SearchItemsPayload = SearchPayload & {
   category?: ItemCategory;
