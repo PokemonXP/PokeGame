@@ -4,8 +4,8 @@ import { arrayUtils } from "logitar-js";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 
-import PokemonGenderIcon from "@/components/icons/PokemonGenderIcon.vue";
-import type { PokemonGender } from "@/types/pokemon";
+import MoveCategoryIcon from "./MoveCategoryIcon.vue";
+import type { MoveCategory } from "@/types/moves";
 
 const { orderBy } = arrayUtils;
 const { rt, t, tm } = useI18n();
@@ -18,16 +18,16 @@ const props = withDefaults(
     placeholder?: string;
   }>(),
   {
-    id: "gender",
-    label: "trainers.gender.label",
-    placeholder: "trainers.gender.placeholder",
+    id: "category",
+    label: "moves.category.label",
+    placeholder: "moves.category.placeholder",
   },
 );
 
-const gender = computed<PokemonGender | undefined>(() => (props.modelValue ? (props.modelValue as PokemonGender) : undefined));
+const category = computed<MoveCategory | undefined>(() => (props.modelValue ? (props.modelValue as MoveCategory) : undefined));
 const options = computed<SelectOption[]>(() =>
   orderBy(
-    Object.entries(tm(rt("trainers.gender.options"))).map(([value, text]) => ({ text, value }) as SelectOption),
+    Object.entries(tm(rt("moves.category.options"))).map(([value, text]) => ({ text, value }) as SelectOption),
     "text",
   ),
 );
@@ -49,8 +49,8 @@ defineEmits<{
     @update:model-value="$emit('update:model-value', $event)"
   >
     <template #append>
-      <span class="input-group-text">
-        <PokemonGenderIcon :gender="gender" />
+      <span v-if="category" class="input-group-text">
+        <MoveCategoryIcon :category="category" height="32" />
       </span>
     </template>
   </TarSelect>

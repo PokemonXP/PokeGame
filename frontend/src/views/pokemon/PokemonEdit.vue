@@ -121,7 +121,7 @@ onMounted(async () => {
         <TarTab id="statistics" :title="t('pokemon.statistic.title')">
           <PokemonStatistics :pokemon="pokemon" @error="handleError" @saved="onStatisticsUpdated" />
         </TarTab>
-        <TarTab id="moves" :title="t('pokemon.move.title')">
+        <TarTab id="moves" :title="t('moves.title')">
           <PokemonMoves :pokemon="pokemon" @error="handleError" @saved="onMovesUpdated" />
         </TarTab>
         <TarTab id="memories" :title="t('pokemon.memories.title')">

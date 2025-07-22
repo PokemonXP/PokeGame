@@ -5,10 +5,10 @@ import { computed, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 
 import FormSelect from "@/components/forms/FormSelect.vue";
-import type { Move, SearchMovesPayload } from "@/types/pokemon/moves";
+import type { Move, SearchMovesPayload } from "@/types/moves";
 import type { SearchResults } from "@/types/search";
 import { formatMove } from "@/helpers/format";
-import { searchMoves } from "@/api/pokemon/moves";
+import { searchMoves } from "@/api/moves";
 
 const { orderBy } = arrayUtils;
 const { t } = useI18n();
@@ -24,8 +24,8 @@ const props = withDefaults(
   {
     exclude: () => [],
     id: "move",
-    label: "pokemon.move.select.label",
-    placeholder: "pokemon.move.select.placeholder",
+    label: "moves.select.label",
+    placeholder: "moves.select.placeholder",
   },
 );
 

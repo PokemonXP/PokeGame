@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { TarAvatar, type SelectOption } from "logitar-vue3-ui";
+import type { SelectOption } from "logitar-vue3-ui";
 import { arrayUtils, objectUtils } from "logitar-js";
-import { computed, inject, onMounted, ref, watch } from "vue";
+import { computed, inject, ref, watch } from "vue";
 import { parsingUtils } from "logitar-js";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
@@ -9,24 +9,22 @@ import { useRoute, useRouter } from "vue-router";
 import AdminBreadcrumb from "@/components/admin/AdminBreadcrumb.vue";
 import AppPagination from "@/components/shared/AppPagination.vue";
 import CountSelect from "@/components/shared/CountSelect.vue";
-import CreateTrainer from "@/components/trainers/CreateTrainer.vue";
+import CreateMove from "@/components/moves/CreateMove.vue";
 import EditIcon from "@/components/icons/EditIcon.vue";
-import GenderFilter from "@/components/trainers/GenderFilter.vue";
-import PokeDollarIcon from "@/components/items/PokeDollarIcon.vue";
+import MoveCategoryBadge from "@/components/moves/MoveCategoryBadge.vue";
+import MoveCategoryFilter from "@/components/moves/MoveCategoryFilter.vue";
+import PokemonTypeFilter from "@/components/pokemon/PokemonTypeFilter.vue";
+import PokemonTypeImage from "@/components/pokemon/PokemonTypeImage.vue";
 import RefreshButton from "@/components/shared/RefreshButton.vue";
 import SearchInput from "@/components/shared/SearchInput.vue";
 import SortSelect from "@/components/shared/SortSelect.vue";
 import StatusBlock from "@/components/shared/StatusBlock.vue";
-import TrainerGenderIcon from "@/components/trainers/TrainerGenderIcon.vue";
-import UserFilter from "@/components/users/UserFilter.vue";
+import type { Move, MoveCategory, MoveSort, SearchMovesPayload } from "@/types/moves";
+import type { PokemonType } from "@/types/pokemon";
 import type { SearchResults } from "@/types/search";
-import type { Trainer, TrainerGender, TrainerSort, SearchTrainersPayload } from "@/types/trainers";
-import type { UserSummary } from "@/types/users";
 import { handleErrorKey } from "@/inject";
-import { searchTrainers } from "@/api/trainers";
-import { searchUsers } from "@/api/users";
+import { searchMoves } from "@/api/moves";
 import { useToastStore } from "@/stores/toast";
-import UserBlock from "@/components/users/UserBlock.vue";
 
 const handleError = inject(handleErrorKey) as (e: unknown) => void;
 const route = useRoute();
@@ -38,31 +36,29 @@ const { parseBoolean, parseNumber } = parsingUtils;
 const { n, rt, t, tm } = useI18n();
 
 const isLoading = ref<boolean>(false);
+const moves = ref<Move[]>([]);
 const timestamp = ref<number>(0);
 const total = ref<number>(0);
-const trainers = ref<Trainer[]>([]);
-const userIndex = ref<Map<string, UserSummary>>(new Map());
-const users = ref<UserSummary[]>([]);
 
+const category = computed<string>(() => route.query.category?.toString() ?? "");
 const count = computed<number>(() => parseNumber(route.query.count?.toString()) || 10);
-const gender = computed<string>(() => route.query.gender?.toString() ?? "");
 const isDescending = computed<boolean>(() => parseBoolean(route.query.isDescending?.toString()) ?? false);
 const page = computed<number>(() => parseNumber(route.query.page?.toString()) || 1);
 const search = computed<string>(() => route.query.search?.toString() ?? "");
 const sort = computed<string>(() => route.query.sort?.toString() ?? "");
-const userId = computed<string>(() => route.query.user?.toString() ?? "");
+const type = computed<string>(() => route.query.type?.toString() ?? "");
 
 const sortOptions = computed<SelectOption[]>(() =>
   orderBy(
-    Object.entries(tm(rt("trainers.sort.options"))).map(([value, text]) => ({ text, value }) as SelectOption),
+    Object.entries(tm(rt("moves.sort.options"))).map(([value, text]) => ({ text, value }) as SelectOption),
     "text",
   ),
 );
 
 async function refresh(): Promise<void> {
-  const payload: SearchTrainersPayload = {
-    gender: gender.value as TrainerGender,
-    userId: userId.value,
+  const payload: SearchMovesPayload = {
+    category: category.value as MoveCategory,
+    type: type.value as PokemonType,
     ids: [],
     search: {
       terms: search.value
@@ -71,7 +67,7 @@ async function refresh(): Promise<void> {
         .map((term) => ({ value: `%${term}%` })),
       operator: "And",
     },
-    sort: sort.value ? [{ field: sort.value as TrainerSort, isDescending: isDescending.value }] : [],
+    sort: sort.value ? [{ field: sort.value as MoveSort, isDescending: isDescending.value }] : [],
     skip: (page.value - 1) * count.value,
     limit: count.value,
   };
@@ -79,9 +75,9 @@ async function refresh(): Promise<void> {
   const now = Date.now();
   timestamp.value = now;
   try {
-    const results: SearchResults<Trainer> = await searchTrainers(payload);
+    const results: SearchResults<Move> = await searchMoves(payload);
     if (now === timestamp.value) {
-      trainers.value = results.items;
+      moves.value = results.items;
       total.value = results.total;
     }
   } catch (e: unknown) {
@@ -96,9 +92,9 @@ async function refresh(): Promise<void> {
 function setQuery(key: string, value: string): void {
   const query = { ...route.query, [key]: value };
   switch (key) {
-    case "gender":
+    case "category":
     case "search":
-    case "user":
+    case "type":
     case "count":
       query.page = "1";
       break;
@@ -106,24 +102,24 @@ function setQuery(key: string, value: string): void {
   router.replace({ ...route, query });
 }
 
-function onCreated(trainer: Trainer) {
-  toasts.success("trainers.created");
-  router.push({ name: "TrainerEdit", params: { id: trainer.id } });
+function onCreated(move: Move) {
+  toasts.success("moves.created");
+  router.push({ name: "MoveEdit", params: { id: move.id } });
 }
 
 watch(
   () => route,
   (route) => {
-    if (route.name === "TrainerList") {
+    if (route.name === "MoveList") {
       const { query } = route;
       if (!query.page || !query.count) {
         router.replace({
           ...route,
           query: isEmpty(query)
             ? {
-                gender: "",
+                category: "",
                 search: "",
-                user: "",
+                type: "",
                 sort: "UpdatedOn",
                 isDescending: "true",
                 page: 1,
@@ -142,29 +138,19 @@ watch(
   },
   { deep: true, immediate: true },
 );
-
-onMounted(async () => {
-  try {
-    const results: SearchResults<UserSummary> = await searchUsers();
-    users.value = [...results.items];
-    users.value.forEach((user) => userIndex.value.set(user.id, user));
-  } catch (e: unknown) {
-    handleError(e);
-  }
-});
 </script>
 
 <template>
   <main class="container">
-    <h1>{{ t("trainers.title") }}</h1>
-    <AdminBreadcrumb :current="t('trainers.title')" />
+    <h1>{{ t("moves.title") }}</h1>
+    <AdminBreadcrumb :current="t('moves.title')" />
     <div class="my-3">
       <RefreshButton class="me-1" :disabled="isLoading" :loading="isLoading" @click="refresh()" />
-      <CreateTrainer class="ms-1" @created="onCreated" @error="handleError" />
+      <CreateMove class="ms-1" @created="onCreated" @error="handleError" />
     </div>
     <div class="row">
-      <GenderFilter class="col" :model-value="gender" placeholder="any" @update:model-value="setQuery('gender', $event)" />
-      <UserFilter class="col" :model-value="userId" placeholder="any" :users="users" @update:model-value="setQuery('user', $event)" />
+      <PokemonTypeFilter class="col" :model-value="type" placeholder="any" @update:model-value="setQuery('type', $event)" />
+      <MoveCategoryFilter class="col" :model-value="category" placeholder="any" @update:model-value="setQuery('category', $event)" />
     </div>
     <div class="mb-3 row">
       <SearchInput class="col" :model-value="search" @update:model-value="setQuery('search', $event)" />
@@ -178,52 +164,53 @@ onMounted(async () => {
       />
       <CountSelect class="col" :model-value="count" @update:model-value="setQuery('count', ($event ?? 10).toString())" />
     </div>
-    <template v-if="trainers.length">
+    <template v-if="moves.length">
       <table class="table table-striped">
         <thead>
           <tr>
             <th scope="col">{{ t("name.label") }}</th>
-            <th scope="col">{{ t("trainers.sort.options.License") }}</th>
-            <th scope="col">{{ t("trainers.sort.options.Money") }}</th>
-            <th scope="col">{{ t("user.label") }}</th>
-            <th scope="col">{{ t("trainers.sort.options.UpdatedOn") }}</th>
+            <th scope="col">
+              {{ t("pokemon.type.label") }}
+              {{ "/" }}
+              {{ t("moves.category.label") }}
+            </th>
+            <th scope="col">{{ t("moves.accuracy.label") }}</th>
+            <th scope="col">{{ t("moves.power") }}</th>
+            <th scope="col">{{ t("moves.powerPoints.label") }}</th>
+            <th scope="col">{{ t("moves.sort.options.UpdatedOn") }}</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="trainer in trainers" :key="trainer.id">
+          <tr v-for="move in moves" :key="move.id">
             <td>
-              <div class="d-flex">
-                <div class="d-flex">
-                  <div class="align-content-center flex-wrap mx-1">
-                    <RouterLink v-if="trainer.displayName" :to="{ name: 'TrainerEdit', params: { id: trainer.id } }">
-                      <TarAvatar :display-name="trainer.displayName ?? trainer.uniqueName" icon="fas fa-person" size="40" :url="trainer.sprite" />
-                    </RouterLink>
-                  </div>
-                </div>
-                <div>
-                  <RouterLink v-if="trainer.displayName" :to="{ name: 'TrainerEdit', params: { id: trainer.id } }">
-                    <EditIcon /> {{ trainer.displayName }}
-                    <br />
-                    <TrainerGenderIcon :gender="trainer.gender" /> {{ trainer.uniqueName }}
-                  </RouterLink>
-                  <RouterLink v-else :to="{ name: 'TrainerEdit', params: { id: trainer.id } }">
-                    <EditIcon /> {{ trainer.uniqueName }} <TrainerGenderIcon :gender="trainer.gender" />
-                  </RouterLink>
-                </div>
-              </div>
+              <RouterLink :to="{ name: 'MoveEdit', params: { id: move.id } }">
+                <EditIcon /> {{ move.displayName ?? move.uniqueName }}
+                <template v-if="move.displayName">
+                  <br />
+                  {{ move.uniqueName }}
+                </template>
+              </RouterLink>
             </td>
-            <td>{{ trainer.license }}</td>
-            <td><PokeDollarIcon height="20" /> {{ n(trainer.money, "integer") }}</td>
             <td>
-              <UserBlock v-if="trainer.userId && userIndex.has(trainer.userId)" :user="userIndex.get(trainer.userId)!" />
+              <PokemonTypeImage height="20" :type="move.type" />
+              <br />
+              <MoveCategoryBadge :category="move.category" height="20" />
+            </td>
+            <td>
+              <template v-if="move.accuracy">{{ n(move.accuracy / 100, "integer_percent") }}</template>
+              <span v-else class="text-muted">{{ t("moves.accuracy.neverMisses") }}</span>
+            </td>
+            <td>
+              <template v-if="move.power">{{ move.power }}</template>
               <span v-else class="text-muted">{{ "—" }}</span>
             </td>
-            <td><StatusBlock :actor="trainer.updatedBy" :date="trainer.updatedOn" /></td>
+            <td>{{ move.powerPoints }}</td>
+            <td><StatusBlock :actor="move.updatedBy" :date="move.updatedOn" /></td>
           </tr>
         </tbody>
       </table>
       <AppPagination :count="count" :model-value="page" :total="total" @update:model-value="setQuery('page', $event.toString())" />
     </template>
-    <p v-else>{{ t("trainers.empty") }}</p>
+    <p v-else>{{ t("moves.empty") }}</p>
   </main>
 </template>

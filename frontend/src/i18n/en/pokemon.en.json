@@ -1,12 +1,4 @@
 {
-  "ability": {
-    "slots": {
-      "Hidden": "Hidden",
-      "Primary": "Primary",
-      "Secondary": "Secondary"
-    },
-    "title": "Ability"
-  },
   "create": "Create Pokémon",
   "created": "The Pokémon has been created.",
   "delete": {
@@ -118,19 +110,8 @@
     "title": "Memories"
   },
   "move": {
-    "accuracy": "Accuracy",
     "actions": "Actions",
-    "category": {
-      "options": {
-        "Physical": "Physical",
-        "Special": "Special",
-        "Status": "Status"
-      }
-    },
     "current": "Current Moves",
-    "description": "Description",
-    "empty": "This list is empty.",
-    "learn": "Learn",
     "learned": {
       "label": "Learned",
       "technicalMachine": "TM"
@@ -141,22 +122,9 @@
         "LevelingUp": "Leveling-Up"
       }
     },
-    "name": "Name",
-    "notes": "Notes",
     "other": "Other Moves",
-    "power": "Power",
-    "powerPoints": {
-      "format": "Base: {powerPoints}",
-      "label": "Power Points"
-    },
     "remember": "Remember",
-    "select": {
-      "label": "Move",
-      "placeholder": "Select a move"
-    },
-    "switch": "Switch",
-    "title": "Moves",
-    "typeAndCategory": "Type & Category"
+    "switch": "Switch"
   },
   "name": "Name",
   "nature": {
@@ -279,35 +247,33 @@
     "placeholder": "Select a trainer"
   },
   "type": {
+    "label": "Type",
     "none": "None",
+    "options": {
+      "Normal": "Normal",
+      "Bug": "Bug",
+      "Dark": "Dark",
+      "Dragon": "Dragon",
+      "Electric": "Electric",
+      "Fairy": "Fairy",
+      "Fighting": "Fighting",
+      "Fire": "Fire",
+      "Flying": "Flying",
+      "Ghost": "Ghost",
+      "Grass": "Grass",
+      "Ground": "Ground",
+      "Ice": "Ice",
+      "Poison": "Poison",
+      "Psychic": "Psychic",
+      "Rock": "Rock",
+      "Steel": "Steel",
+      "Water": "Water"
+    },
+    "placeholder": "Select a Pokémon type",
     "primary": "Primary",
     "secondary": "Secondary",
-    "select": {
-      "label": "Type",
-      "options": {
-        "Normal": "Normal",
-        "Bug": "Bug",
-        "Dark": "Dark",
-        "Dragon": "Dragon",
-        "Electric": "Electric",
-        "Fairy": "Fairy",
-        "Fighting": "Fighting",
-        "Fire": "Fire",
-        "Flying": "Flying",
-        "Ghost": "Ghost",
-        "Grass": "Grass",
-        "Ground": "Ground",
-        "Ice": "Ice",
-        "Poison": "Poison",
-        "Psychic": "Psychic",
-        "Rock": "Rock",
-        "Steel": "Steel",
-        "Water": "Water"
-      },
-      "placeholder": "Select a Pokémon type"
-    },
     "tera": "Tera",
-    "types": "Types"
+    "title": "Types"
   },
   "updated": "The Pokémon has been updated.",
   "variety": {

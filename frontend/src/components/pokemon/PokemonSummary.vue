@@ -120,16 +120,16 @@ watch(
           </td>
         </tr>
         <tr>
-          <th scope="row">{{ t("pokemon.type.types") }} / {{ t("pokemon.type.tera") }}</th>
+          <th scope="row">{{ t("pokemon.type.title") }} / {{ t("pokemon.type.tera") }}</th>
           <td>
-            <PokemonTypeImage :type="form.types.primary" />
+            <PokemonTypeImage height="20" :type="form.types.primary" />
           </td>
           <td>
-            <PokemonTypeImage v-if="form.types.secondary" :type="form.types.secondary" class="ms-2" />
+            <PokemonTypeImage v-if="form.types.secondary" class="ms-2" height="20" :type="form.types.secondary" />
             <span v-else class="text-muted">{{ "—" }}</span>
           </td>
           <td>
-            <PokemonTypeImage :type="pokemon.teraType" />
+            <PokemonTypeImage height="20" :type="pokemon.teraType" />
           </td>
         </tr>
         <tr>

@@ -6,7 +6,6 @@ withDefaults(
   }>(),
   {
     alt: "PokéDollar Icon",
-    height: 20,
   },
 );
 </script>

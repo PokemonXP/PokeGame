@@ -60,6 +60,17 @@ const router = createRouter({
           path: "items/:id",
           component: () => import("./views/items/ItemEdit.vue"),
         },
+        // Moves
+        {
+          name: "MoveList",
+          path: "moves",
+          component: () => import("./views/moves/MoveList.vue"),
+        },
+        {
+          name: "MoveEdit",
+          path: "moves/:id",
+          component: () => import("./views/moves/MoveEdit.vue"),
+        },
         // Pokémon
         {
           name: "PokemonList",

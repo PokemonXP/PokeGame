@@ -117,11 +117,11 @@ watch(
         <StatusConditionSelect class="col" v-model="statusCondition" />
         <FriendshipInput class="col" v-model="friendship" />
       </div>
-      <h2 class="h3">{{ t("pokemon.ability.title") }}</h2>
+      <h2 class="h3">{{ t("abilities.label") }}</h2>
       <div class="row mb-3">
         <div class="col">
           <RouterLink :to="{ name: 'AbilityEdit', params: { id: ability.id } }">
-            <TarCard class="clickable" :subtitle="t(`pokemon.ability.slots.${pokemon.abilitySlot}`)" :title="ability.displayName ?? ability.uniqueName">
+            <TarCard class="clickable" :subtitle="t(`abilities.slots.${pokemon.abilitySlot}`)" :title="ability.displayName ?? ability.uniqueName">
               <div v-if="ability.description" class="card-text">{{ ability.description }}</div>
             </TarCard>
           </RouterLink>

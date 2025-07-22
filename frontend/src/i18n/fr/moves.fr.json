@@ -1,0 +1,38 @@
+{
+  "accuracy": {
+    "label": "Précision",
+    "neverMisses": "Ne rate jamais"
+  },
+  "category": {
+    "label": "Catégorie",
+    "options": {
+      "Physical": "Physique",
+      "Special": "Spéciale",
+      "Status": "Statut"
+    },
+    "placeholder": "Sélectionnez une catégorie d'attaque"
+  },
+  "create": "Nouvelle attaque",
+  "created": "L'attaque a été créée.",
+  "delete": {
+    "confirm": "Afin de supprimer l'attaque, veuillez entrer son nom dans le champs suivant.",
+    "title": "Supprimer l'attaque"
+  },
+  "deleted": "L'attaque a été supprimée.",
+  "empty": "Cette liste est vide.",
+  "power": "Puissance",
+  "powerPoints": {
+    "format": "Base : {powerPoints}",
+    "label": "Points de pouvoir"
+  },
+  "sort": {
+    "options": {
+      "CreatedOn": "Date de création",
+      "DisplayName": "Nom d’affichage",
+      "UniqueName": "Nom unique",
+      "UpdatedOn": "Dernière modification"
+    }
+  },
+  "title": "Attaques",
+  "updated": "L'attaque a été mise à jour."
+}

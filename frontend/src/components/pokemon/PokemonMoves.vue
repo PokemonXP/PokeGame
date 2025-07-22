@@ -82,8 +82,8 @@ async function onSwitch(destination: number): Promise<void> {
       <div class="col">
         <div class="btn-group float-end" role="group" aria-label="Move Display Mode">
           <TarButton :class="{ active: mode === 'actions' }" icon="fas fa-hand" :text="t('pokemon.move.actions')" @click="mode = 'actions'" />
-          <TarButton :class="{ active: mode === 'description' }" icon="fas fa-book" :text="t('pokemon.move.description')" @click="mode = 'description'" />
-          <TarButton :class="{ active: mode === 'notes' }" icon="fas fa-note-sticky" :text="t('pokemon.move.notes')" @click="mode = 'notes'" />
+          <TarButton :class="{ active: mode === 'description' }" icon="fas fa-book" :text="t('description')" @click="mode = 'description'" />
+          <TarButton :class="{ active: mode === 'notes' }" icon="fas fa-note-sticky" :text="t('notes')" @click="mode = 'notes'" />
         </div>
       </div>
     </div>

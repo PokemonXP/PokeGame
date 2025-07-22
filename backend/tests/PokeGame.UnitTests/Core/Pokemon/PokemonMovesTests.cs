@@ -43,16 +43,16 @@ public class PokemonMovesTests
   {
     ActorId actorId = ActorId.NewId();
 
-    Move tackle = new(PokemonType.Normal, MoveCategory.Physical, new UniqueName(_uniqueNameSettings, "tackle"), new PowerPoints(35), new Accuracy(100), new Power(40));
-    Move tailWhip = new(PokemonType.Normal, MoveCategory.Status, new UniqueName(_uniqueNameSettings, "tail-whip"), new PowerPoints(30), new Accuracy(100));
-    Move ember = new(PokemonType.Fire, MoveCategory.Special, new UniqueName(_uniqueNameSettings, "ember"), new PowerPoints(25), new Accuracy(100), new Power(40));
-    Move endure = new(PokemonType.Normal, MoveCategory.Status, new UniqueName(_uniqueNameSettings, "endure"), new PowerPoints(10));
+    Move tackle = new(PokemonType.Normal, MoveCategory.Physical, new UniqueName(_uniqueNameSettings, "tackle"), new Accuracy(100), new Power(40), new PowerPoints(35));
+    Move tailWhip = new(PokemonType.Normal, MoveCategory.Status, new UniqueName(_uniqueNameSettings, "tail-whip"), new Accuracy(100), power: null, new PowerPoints(30));
+    Move ember = new(PokemonType.Fire, MoveCategory.Special, new UniqueName(_uniqueNameSettings, "ember"), new Accuracy(100), new Power(40), new PowerPoints(25));
+    Move endure = new(PokemonType.Normal, MoveCategory.Status, new UniqueName(_uniqueNameSettings, "endure"), accuracy: null, power: null, new PowerPoints(10));
     _pokemon.LearnMove(tackle, position: 0, new Level(1));
     _pokemon.LearnMove(tailWhip, position: 1, new Level(1));
     _pokemon.LearnMove(ember, position: 2, new Level(1));
     _pokemon.LearnMove(endure, position: 3, new Level(1));
 
-    Move armThrust = new(PokemonType.Fighting, MoveCategory.Physical, new UniqueName(_uniqueNameSettings, "arm-thrust"), new PowerPoints(20), new Accuracy(100), new Power(15));
+    Move armThrust = new(PokemonType.Fighting, MoveCategory.Physical, new UniqueName(_uniqueNameSettings, "arm-thrust"), new Accuracy(100), new Power(15), new PowerPoints(20));
     int position = 3;
     MoveLearningMethod method = MoveLearningMethod.Evolving;
     Notes notes = new("Learned by evolving from Tepig to Pignite.");
@@ -77,12 +77,12 @@ public class PokemonMovesTests
   [InlineData(3)]
   public void Given_LimitNotReached_When_LearnMove_Then_PositionOverriden(int? position)
   {
-    Move tackle = new(PokemonType.Normal, MoveCategory.Physical, new UniqueName(_uniqueNameSettings, "tackle"), new PowerPoints(35), new Accuracy(100), new Power(40));
-    Move tailWhip = new(PokemonType.Normal, MoveCategory.Status, new UniqueName(_uniqueNameSettings, "tail-whip"), new PowerPoints(30), new Accuracy(100));
+    Move tackle = new(PokemonType.Normal, MoveCategory.Physical, new UniqueName(_uniqueNameSettings, "tackle"), new Accuracy(100), new Power(40), new PowerPoints(35));
+    Move tailWhip = new(PokemonType.Normal, MoveCategory.Status, new UniqueName(_uniqueNameSettings, "tail-whip"), new Accuracy(100), power: null, new PowerPoints(30));
     _pokemon.LearnMove(tackle, position: 0, new Level(1));
     _pokemon.LearnMove(tailWhip, position: 1, new Level(1));
 
-    Move ember = new(PokemonType.Fire, MoveCategory.Special, new UniqueName(_uniqueNameSettings, "ember"), new PowerPoints(25), new Accuracy(100), new Power(40));
+    Move ember = new(PokemonType.Fire, MoveCategory.Special, new UniqueName(_uniqueNameSettings, "ember"), new Accuracy(100), new Power(40), new PowerPoints(25));
     Assert.True(_pokemon.LearnMove(ember, position, new Level(1)));
     Assert.True(_pokemon.HasChanges);
     Assert.Contains(_pokemon.Changes, change => change is PokemonMoveLearned learned && learned.MoveId == ember.Id && learned.Position == 2);
@@ -102,7 +102,7 @@ public class PokemonMovesTests
   [Fact(DisplayName = "LearnMove: it should return false when the Pokémon has already learned the move.")]
   public void Given_MoveAlreadyLearned_When_LearnMove_Then_FalseReturned()
   {
-    Move move = new(PokemonType.Normal, MoveCategory.Physical, new UniqueName(_uniqueNameSettings, "tackle"), new PowerPoints(35), new Accuracy(100), new Power(40));
+    Move move = new(PokemonType.Normal, MoveCategory.Physical, new UniqueName(_uniqueNameSettings, "tackle"), new Accuracy(100), new Power(40), new PowerPoints(35));
     Assert.True(_pokemon.LearnMove(move));
     Assert.False(_pokemon.LearnMove(move));
   }
@@ -112,7 +112,7 @@ public class PokemonMovesTests
   [InlineData(4)]
   public void Given_PositionOutOfBounds_When_LearnMove_Then_ArgumentOutOfRangeException(int position)
   {
-    Move move = new(PokemonType.Normal, MoveCategory.Physical, new UniqueName(_uniqueNameSettings, "tackle"), new PowerPoints(35), new Accuracy(100), new Power(40));
+    Move move = new(PokemonType.Normal, MoveCategory.Physical, new UniqueName(_uniqueNameSettings, "tackle"), new Accuracy(100), new Power(40), new PowerPoints(35));
     var exception = Assert.Throws<ArgumentOutOfRangeException>(() => _pokemon.LearnMove(move, position));
     Assert.Equal("position", exception.ParamName);
   }
@@ -122,11 +122,11 @@ public class PokemonMovesTests
   {
     ActorId actorId = ActorId.NewId();
 
-    Move tackle = new(PokemonType.Normal, MoveCategory.Physical, new UniqueName(_uniqueNameSettings, "tackle"), new PowerPoints(35), new Accuracy(100), new Power(40));
-    Move tailWhip = new(PokemonType.Normal, MoveCategory.Status, new UniqueName(_uniqueNameSettings, "tail-whip"), new PowerPoints(30), new Accuracy(100));
-    Move ember = new(PokemonType.Fire, MoveCategory.Special, new UniqueName(_uniqueNameSettings, "ember"), new PowerPoints(25), new Accuracy(100), new Power(40));
-    Move endure = new(PokemonType.Normal, MoveCategory.Status, new UniqueName(_uniqueNameSettings, "endure"), new PowerPoints(10));
-    Move defenseCurl = new(PokemonType.Normal, MoveCategory.Status, new UniqueName(_uniqueNameSettings, "defense-curl"), new PowerPoints(40));
+    Move tackle = new(PokemonType.Normal, MoveCategory.Physical, new UniqueName(_uniqueNameSettings, "tackle"), new Accuracy(100), new Power(40), new PowerPoints(35));
+    Move tailWhip = new(PokemonType.Normal, MoveCategory.Status, new UniqueName(_uniqueNameSettings, "tail-whip"), new Accuracy(100), power: null, new PowerPoints(30));
+    Move ember = new(PokemonType.Fire, MoveCategory.Special, new UniqueName(_uniqueNameSettings, "ember"), new Accuracy(100), new Power(40), new PowerPoints(25));
+    Move endure = new(PokemonType.Normal, MoveCategory.Status, new UniqueName(_uniqueNameSettings, "endure"), accuracy: null, power: null, new PowerPoints(10));
+    Move defenseCurl = new(PokemonType.Normal, MoveCategory.Status, new UniqueName(_uniqueNameSettings, "defense-curl"), accuracy: null, power: null, new PowerPoints(40));
     _pokemon.LearnMove(tackle);
     _pokemon.LearnMove(tailWhip);
     _pokemon.LearnMove(ember);
@@ -145,7 +145,7 @@ public class PokemonMovesTests
   [Fact(DisplayName = "RememberMove: it should return true when the move is currently learned.")]
   public void Given_AlreadyLearned_When_RememberMove_Then_FalseReturned()
   {
-    Move ember = new(PokemonType.Fire, MoveCategory.Special, new UniqueName(_uniqueNameSettings, "ember"), new PowerPoints(25), new Accuracy(100), new Power(40));
+    Move ember = new(PokemonType.Fire, MoveCategory.Special, new UniqueName(_uniqueNameSettings, "ember"), new Accuracy(100), new Power(40), new PowerPoints(25));
     _pokemon.LearnMove(ember, position: null, new Level(6));
     _pokemon.ClearChanges();
 
@@ -157,7 +157,7 @@ public class PokemonMovesTests
   [Fact(DisplayName = "RememberMove: it should return false when the Pokémon has not learned the move.")]
   public void Given_MoveNeverLearned_When_RememberMove_Then_FalseReturned()
   {
-    Move ember = new(PokemonType.Fire, MoveCategory.Special, new UniqueName(_uniqueNameSettings, "ember"), new PowerPoints(25), new Accuracy(100), new Power(40));
+    Move ember = new(PokemonType.Fire, MoveCategory.Special, new UniqueName(_uniqueNameSettings, "ember"), new Accuracy(100), new Power(40), new PowerPoints(25));
     Assert.False(_pokemon.RememberMove(ember, position: 0));
   }
 
@@ -166,11 +166,11 @@ public class PokemonMovesTests
   [InlineData(4)]
   public void Given_PositionOutOfBounds_When_RememberMove_Then_ArgumentOutOfRangeException(int position)
   {
-    Move tackle = new(PokemonType.Normal, MoveCategory.Physical, new UniqueName(_uniqueNameSettings, "tackle"), new PowerPoints(35), new Accuracy(100), new Power(40));
-    Move tailWhip = new(PokemonType.Normal, MoveCategory.Status, new UniqueName(_uniqueNameSettings, "tail-whip"), new PowerPoints(30), new Accuracy(100));
-    Move ember = new(PokemonType.Fire, MoveCategory.Special, new UniqueName(_uniqueNameSettings, "ember"), new PowerPoints(25), new Accuracy(100), new Power(40));
-    Move endure = new(PokemonType.Normal, MoveCategory.Status, new UniqueName(_uniqueNameSettings, "endure"), new PowerPoints(10));
-    Move defenseCurl = new(PokemonType.Normal, MoveCategory.Status, new UniqueName(_uniqueNameSettings, "defense-curl"), new PowerPoints(40));
+    Move tackle = new(PokemonType.Normal, MoveCategory.Physical, new UniqueName(_uniqueNameSettings, "tackle"), new Accuracy(100), new Power(40), new PowerPoints(35));
+    Move tailWhip = new(PokemonType.Normal, MoveCategory.Status, new UniqueName(_uniqueNameSettings, "tail-whip"), new Accuracy(100), power: null, new PowerPoints(30));
+    Move ember = new(PokemonType.Fire, MoveCategory.Special, new UniqueName(_uniqueNameSettings, "ember"), new Accuracy(100), new Power(40), new PowerPoints(25));
+    Move endure = new(PokemonType.Normal, MoveCategory.Status, new UniqueName(_uniqueNameSettings, "endure"), accuracy: null, power: null, new PowerPoints(10));
+    Move defenseCurl = new(PokemonType.Normal, MoveCategory.Status, new UniqueName(_uniqueNameSettings, "defense-curl"), accuracy: null, power: null, new PowerPoints(40));
     _pokemon.LearnMove(tackle);
     _pokemon.LearnMove(tailWhip);
     _pokemon.LearnMove(ember);
@@ -186,9 +186,9 @@ public class PokemonMovesTests
   {
     ActorId actorId = ActorId.NewId();
 
-    Move tackle = new(PokemonType.Normal, MoveCategory.Physical, new UniqueName(_uniqueNameSettings, "tackle"), new PowerPoints(35), new Accuracy(100), new Power(40));
-    Move tailWhip = new(PokemonType.Normal, MoveCategory.Status, new UniqueName(_uniqueNameSettings, "tail-whip"), new PowerPoints(30), new Accuracy(100));
-    Move ember = new(PokemonType.Fire, MoveCategory.Special, new UniqueName(_uniqueNameSettings, "ember"), new PowerPoints(25), new Accuracy(100), new Power(40));
+    Move tackle = new(PokemonType.Normal, MoveCategory.Physical, new UniqueName(_uniqueNameSettings, "tackle"), new Accuracy(100), new Power(40), new PowerPoints(35));
+    Move tailWhip = new(PokemonType.Normal, MoveCategory.Status, new UniqueName(_uniqueNameSettings, "tail-whip"), new Accuracy(100), power: null, new PowerPoints(30));
+    Move ember = new(PokemonType.Fire, MoveCategory.Special, new UniqueName(_uniqueNameSettings, "ember"), new Accuracy(100), new Power(40), new PowerPoints(25));
 
     _pokemon.LearnMove(tackle);
     _pokemon.LearnMove(tailWhip);
@@ -208,7 +208,7 @@ public class PokemonMovesTests
   [Fact(DisplayName = "SwitchMoves: it should not do anything when the destination move is empty.")]
   public void Given_SourceEqualDestination_When_SwitchMoves_Then_NoChange()
   {
-    Move ember = new(PokemonType.Fire, MoveCategory.Special, new UniqueName(_uniqueNameSettings, "ember"), new PowerPoints(25), new Accuracy(100), new Power(40));
+    Move ember = new(PokemonType.Fire, MoveCategory.Special, new UniqueName(_uniqueNameSettings, "ember"), new Accuracy(100), new Power(40), new PowerPoints(25));
     _pokemon.LearnMove(ember);
     _pokemon.ClearChanges();
 
@@ -220,7 +220,7 @@ public class PokemonMovesTests
   [Fact(DisplayName = "SwitchMoves: it should not do anything when the source and destination moves are the same.")]
   public void Given_SourceNotCurrent_When_SwitchMoves_Then_NoChange()
   {
-    Move ember = new(PokemonType.Fire, MoveCategory.Special, new UniqueName(_uniqueNameSettings, "ember"), new PowerPoints(25), new Accuracy(100), new Power(40));
+    Move ember = new(PokemonType.Fire, MoveCategory.Special, new UniqueName(_uniqueNameSettings, "ember"), new Accuracy(100), new Power(40), new PowerPoints(25));
     _pokemon.LearnMove(ember);
     _pokemon.ClearChanges();
 
@@ -232,7 +232,7 @@ public class PokemonMovesTests
   [Fact(DisplayName = "SwitchMoves: it should not do anything when the source move is empty.")]
   public void Given_DestinationNotCurrent_When_SwitchMoves_Then_NoChange()
   {
-    Move ember = new(PokemonType.Fire, MoveCategory.Special, new UniqueName(_uniqueNameSettings, "ember"), new PowerPoints(25), new Accuracy(100), new Power(40));
+    Move ember = new(PokemonType.Fire, MoveCategory.Special, new UniqueName(_uniqueNameSettings, "ember"), new Accuracy(100), new Power(40), new PowerPoints(25));
     _pokemon.LearnMove(ember);
     _pokemon.ClearChanges();
 

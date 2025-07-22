@@ -1,7 +1,7 @@
 import type { Ability } from "@/types/abilities";
 import type { Form, Species, Variety } from "@/types/pokemon";
 import type { Item } from "@/types/items";
-import type { Move } from "@/types/pokemon/moves";
+import type { Move } from "@/types/moves";
 import type { Region } from "@/types/regions";
 import type { Trainer } from "@/types/trainers";
 import type { UserSummary } from "@/types/users";

@@ -3,16 +3,10 @@ import { computed } from "vue";
 
 import type { PokemonType } from "@/types/pokemon";
 
-const props = withDefaults(
-  defineProps<{
-    height?: number | string;
-    type: PokemonType;
-  }>(),
-  {
-    height: 20,
-  },
-);
-
+const props = defineProps<{
+  height?: number | string;
+  type: PokemonType;
+}>();
 const src = computed<string>(() => `/img/types/${props.type.toLowerCase()}.png`);
 </script>
 
