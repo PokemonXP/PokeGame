@@ -272,7 +272,8 @@
     "placeholder": "Select a Pokémon type",
     "primary": "Primary",
     "secondary": "Secondary",
-    "tera": "Tera"
+    "tera": "Tera",
+    "title": "Types"
   },
   "updated": "The Pokémon has been updated.",
   "variety": {
