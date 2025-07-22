@@ -3,6 +3,8 @@
 public enum PokemonSort
 {
   CreatedOn,
+  Experience,
+  Level,
   Nickname,
   UniqueName,
   UpdatedOn

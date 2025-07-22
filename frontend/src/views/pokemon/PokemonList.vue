@@ -10,11 +10,16 @@ import AdminBreadcrumb from "@/components/admin/AdminBreadcrumb.vue";
 import AppPagination from "@/components/shared/AppPagination.vue";
 import CountSelect from "@/components/shared/CountSelect.vue";
 import EditIcon from "@/components/icons/EditIcon.vue";
+import ItemFilter from "@/components/items/ItemFilter.vue";
+import ItemIcon from "@/components/icons/ItemIcon.vue";
 import PokemonGenderIcon from "@/components/icons/PokemonGenderIcon.vue";
 import RefreshButton from "@/components/shared/RefreshButton.vue";
 import SearchInput from "@/components/shared/SearchInput.vue";
 import SortSelect from "@/components/shared/SortSelect.vue";
+import SpeciesFilter from "@/components/species/SpeciesFilter.vue";
 import StatusBlock from "@/components/shared/StatusBlock.vue";
+import TrainerFilter from "@/components/trainers/TrainerFilter.vue";
+import TrainerIcon from "@/components/icons/TrainerIcon.vue";
 import type { Pokemon, PokemonSort, SearchPokemonPayload } from "@/types/pokemon";
 import type { SearchResults } from "@/types/search";
 import { getSpriteUrl } from "@/helpers/pokemon";
@@ -35,10 +40,12 @@ const timestamp = ref<number>(0);
 const total = ref<number>(0);
 
 const count = computed<number>(() => parseNumber(route.query.count?.toString()) || 10);
+const heldItemId = computed<string>(() => route.query.item?.toString() ?? "");
 const isDescending = computed<boolean>(() => parseBoolean(route.query.isDescending?.toString()) ?? false);
 const page = computed<number>(() => parseNumber(route.query.page?.toString()) || 1);
 const search = computed<string>(() => route.query.search?.toString() ?? "");
 const sort = computed<string>(() => route.query.sort?.toString() ?? "");
+const speciesId = computed<string>(() => route.query.species?.toString() ?? "");
 const trainerId = computed<string>(() => route.query.trainer?.toString() ?? "");
 
 const sortOptions = computed<SelectOption[]>(() =>
@@ -50,6 +57,8 @@ const sortOptions = computed<SelectOption[]>(() =>
 
 async function refresh(): Promise<void> {
   const payload: SearchPokemonPayload = {
+    speciesId: speciesId.value,
+    heldItemId: heldItemId.value,
     trainerId: trainerId.value,
     ids: [],
     search: {
@@ -84,7 +93,9 @@ async function refresh(): Promise<void> {
 function setQuery(key: string, value: string): void {
   const query = { ...route.query, [key]: value };
   switch (key) {
+    case "item":
     case "search":
+    case "species":
     case "trainer":
     case "count":
       query.page = "1";
@@ -103,7 +114,9 @@ watch(
           ...route,
           query: isEmpty(query)
             ? {
+                item: "",
                 search: "",
+                species: "",
                 trainer: "",
                 sort: "UpdatedOn",
                 isDescending: "true",
@@ -133,6 +146,11 @@ watch(
       <RefreshButton class="me-1" :disabled="isLoading" :loading="isLoading" @click="refresh()" />
       <RouterLink :to="{ name: 'CreatePokemon' }" class="btn btn-success ms-1"><font-awesome-icon icon="fas fa-plus" /> {{ t("actions.create") }}</RouterLink>
     </div>
+    <div class="row">
+      <SpeciesFilter class="col" :model-value="speciesId" @error="handleError" @update:model-value="setQuery('species', $event)" />
+      <ItemFilter class="col" :model-value="heldItemId" @update:model-value="setQuery('item', $event)" />
+      <TrainerFilter class="col" :model-value="trainerId" @update:model-value="setQuery('trainer', $event)" />
+    </div>
     <div class="mb-3 row">
       <SearchInput class="col" :model-value="search" @update:model-value="setQuery('search', $event)" />
       <SortSelect
@@ -151,6 +169,7 @@ watch(
           <tr>
             <th scope="col">{{ t("pokemon.name") }}</th>
             <th scope="col">{{ t("pokemon.progress.title") }}</th>
+            <th scope="col">{{ t("pokemon.item.held") }}</th>
             <th scope="col">{{ t("pokemon.trainer.label") }}</th>
             <th scope="col">{{ t("pokemon.sort.options.UpdatedOn") }}</th>
           </tr>
@@ -188,15 +207,24 @@ watch(
               {{ t("pokemon.experience.format", { experience: pokemon.experience }) }}
             </td>
             <td>
-              <!-- <a v-if="pokemon.ownership?.trainer" :href="getTrainerUrl(pokemon.ownership.trainer)" target="_blank">
-                <template v-if="pokemon.ownership.trainer.displayName">
-                  {{ pokemon.ownership.trainer.displayName }}
+              <RouterLink v-if="pokemon.heldItem" :to="{ name: 'ItemEdit', params: { id: pokemon.heldItem.id } }">
+                <ItemIcon /> {{ pokemon.heldItem.displayName ?? pokemon.heldItem.uniqueName }}
+                <template v-if="pokemon.heldItem.displayName">
                   <br />
+                  {{ pokemon.heldItem.uniqueName }}
                 </template>
-                {{ pokemon.ownership.trainer.uniqueName }}
-              </a>
-              <span v-else class="text-muted">{{ "—" }}</span> -->
-              <span class="text-muted">{{ "—" }}</span>
+              </RouterLink>
+              <span v-else class="text-muted">{{ "—" }}</span>
+            </td>
+            <td>
+              <RouterLink v-if="pokemon.ownership" :to="{ name: 'TrainerEdit', params: { id: pokemon.ownership.currentTrainer.id } }">
+                <TrainerIcon /> {{ pokemon.ownership.currentTrainer.displayName ?? pokemon.ownership.currentTrainer.uniqueName }}
+                <template v-if="pokemon.ownership.currentTrainer.displayName">
+                  <br />
+                  {{ pokemon.ownership.currentTrainer.uniqueName }}
+                </template>
+              </RouterLink>
+              <span v-else class="text-muted">{{ "—" }}</span>
             </td>
             <td><StatusBlock :actor="pokemon.updatedBy" :date="pokemon.updatedOn" /></td>
           </tr>

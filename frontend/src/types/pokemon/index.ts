@@ -204,7 +204,7 @@ export type PokemonSizePayload = {
   weight: number;
 };
 
-export type PokemonSort = "CreatedOn" | "Experience" | "Friendship" | "Level" | "Nickname" | "UniqueName" | "UpdatedOn";
+export type PokemonSort = "CreatedOn" | "Experience" | "Level" | "Nickname" | "UniqueName" | "UpdatedOn";
 
 export type PokemonSortOption = SortOption & {
   field: PokemonSort;
@@ -266,6 +266,8 @@ export type RememberPokemonMovePayload = {
 };
 
 export type SearchPokemonPayload = SearchPayload & {
+  speciesId?: string;
+  heldItemId?: string;
   trainerId?: string;
   sort: PokemonSortOption[];
 };
