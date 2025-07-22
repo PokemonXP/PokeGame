@@ -65,5 +65,9 @@
       "title": "Attention !"
     }
   },
-  "url": "URL"
+  "url": "URL",
+  "user": {
+    "label": "Utilisateur",
+    "placeholder": "Sélectionnez un utilisateur"
+  }
 }

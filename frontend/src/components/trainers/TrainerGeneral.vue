@@ -9,6 +9,7 @@ import MoneyInput from "./MoneyInput.vue";
 import SubmitButton from "@/components/shared/SubmitButton.vue";
 import UniqueNameAlreadyUsed from "@/components/shared/UniqueNameAlreadyUsed.vue";
 import UniqueNameInput from "@/components/shared/UniqueNameInput.vue";
+import UserSelect from "@/components/users/UserSelect.vue";
 import type { Trainer, TrainerGender, UpdateTrainerPayload } from "@/types/trainers";
 import { ErrorCodes, StatusCodes } from "@/types/api";
 import { isError } from "@/helpers/error";
@@ -26,6 +27,7 @@ const isLoading = ref<boolean>(false);
 const money = ref<number>(0);
 const uniqueName = ref<string>("");
 const uniqueNameAlreadyUsed = ref<boolean>(false);
+const userId = ref<string>("");
 
 const emit = defineEmits<{
   (e: "error", value: unknown): void;
@@ -46,6 +48,7 @@ async function submit(): Promise<void> {
           description: (props.trainer.description ?? "") !== description.value ? { value: description.value } : undefined,
           gender: props.trainer.gender !== gender.value ? (gender.value as TrainerGender) : undefined,
           money: props.trainer.money !== money.value ? money.value : undefined,
+          userId: (props.trainer.userId ?? "") !== userId.value ? { value: userId.value || undefined } : undefined,
         };
         const trainer: Trainer = await updateTrainer(props.trainer.id, payload);
         reinitialize();
@@ -71,6 +74,7 @@ watch(
     gender.value = trainer.gender;
     money.value = trainer.money;
     uniqueName.value = trainer.uniqueName;
+    userId.value = trainer.userId ?? "";
   },
   { deep: true, immediate: true },
 );
@@ -79,7 +83,10 @@ watch(
 <template>
   <section>
     <form @submit.prevent="submit">
-      <LicenseInput disabled :model-value="trainer.license" />
+      <div class="row">
+        <LicenseInput class="col" disabled :model-value="trainer.license" />
+        <UserSelect class="col" v-model="userId" />
+      </div>
       <UniqueNameAlreadyUsed v-model="uniqueNameAlreadyUsed" />
       <div class="row">
         <UniqueNameInput class="col" required v-model="uniqueName" />

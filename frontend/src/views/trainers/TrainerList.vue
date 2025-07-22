@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { TarAvatar, type SelectOption } from "logitar-vue3-ui";
 import { arrayUtils, objectUtils } from "logitar-js";
-import { computed, inject, ref, watch } from "vue";
+import { computed, inject, onMounted, ref, watch } from "vue";
 import { parsingUtils } from "logitar-js";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
@@ -18,11 +18,15 @@ import SearchInput from "@/components/shared/SearchInput.vue";
 import SortSelect from "@/components/shared/SortSelect.vue";
 import StatusBlock from "@/components/shared/StatusBlock.vue";
 import TrainerGenderIcon from "@/components/trainers/TrainerGenderIcon.vue";
+import UserFilter from "@/components/users/UserFilter.vue";
 import type { SearchResults } from "@/types/search";
 import type { Trainer, TrainerGender, TrainerSort, SearchTrainersPayload } from "@/types/trainers";
+import type { UserSummary } from "@/types/users";
 import { handleErrorKey } from "@/inject";
 import { searchTrainers } from "@/api/trainers";
+import { searchUsers } from "@/api/users";
 import { useToastStore } from "@/stores/toast";
+import UserBlock from "@/components/users/UserBlock.vue";
 
 const handleError = inject(handleErrorKey) as (e: unknown) => void;
 const route = useRoute();
@@ -37,6 +41,8 @@ const isLoading = ref<boolean>(false);
 const timestamp = ref<number>(0);
 const total = ref<number>(0);
 const trainers = ref<Trainer[]>([]);
+const userIndex = ref<Map<string, UserSummary>>(new Map());
+const users = ref<UserSummary[]>([]);
 
 const count = computed<number>(() => parseNumber(route.query.count?.toString()) || 10);
 const gender = computed<string>(() => route.query.gender?.toString() ?? "");
@@ -44,6 +50,7 @@ const isDescending = computed<boolean>(() => parseBoolean(route.query.isDescendi
 const page = computed<number>(() => parseNumber(route.query.page?.toString()) || 1);
 const search = computed<string>(() => route.query.search?.toString() ?? "");
 const sort = computed<string>(() => route.query.sort?.toString() ?? "");
+const userId = computed<string>(() => route.query.user?.toString() ?? "");
 
 const sortOptions = computed<SelectOption[]>(() =>
   orderBy(
@@ -55,6 +62,7 @@ const sortOptions = computed<SelectOption[]>(() =>
 async function refresh(): Promise<void> {
   const payload: SearchTrainersPayload = {
     gender: gender.value as TrainerGender,
+    userId: userId.value,
     ids: [],
     search: {
       terms: search.value
@@ -90,6 +98,7 @@ function setQuery(key: string, value: string): void {
   switch (key) {
     case "gender":
     case "search":
+    case "user":
     case "count":
       query.page = "1";
       break;
@@ -114,6 +123,7 @@ watch(
             ? {
                 gender: "",
                 search: "",
+                user: "",
                 sort: "UpdatedOn",
                 isDescending: "true",
                 page: 1,
@@ -132,6 +142,16 @@ watch(
   },
   { deep: true, immediate: true },
 );
+
+onMounted(async () => {
+  try {
+    const results: SearchResults<UserSummary> = await searchUsers();
+    users.value = [...results.items];
+    users.value.forEach((user) => userIndex.value.set(user.id, user));
+  } catch (e: unknown) {
+    handleError(e);
+  }
+});
 </script>
 
 <template>
@@ -144,6 +164,7 @@ watch(
     </div>
     <div class="row">
       <GenderFilter class="col" :model-value="gender" placeholder="any" @update:model-value="setQuery('gender', $event)" />
+      <UserFilter class="col" :model-value="userId" placeholder="any" :users="users" @update:model-value="setQuery('user', $event)" />
     </div>
     <div class="mb-3 row">
       <SearchInput class="col" :model-value="search" @update:model-value="setQuery('search', $event)" />
@@ -164,6 +185,7 @@ watch(
             <th scope="col">{{ t("name.label") }}</th>
             <th scope="col">{{ t("trainers.sort.options.License") }}</th>
             <th scope="col">{{ t("trainers.sort.options.Money") }}</th>
+            <th scope="col">{{ t("user.label") }}</th>
             <th scope="col">{{ t("trainers.sort.options.UpdatedOn") }}</th>
           </tr>
         </thead>
@@ -192,6 +214,10 @@ watch(
             </td>
             <td>{{ trainer.license }}</td>
             <td><PokeDollarIcon /> {{ n(trainer.money, "integer") }}</td>
+            <td>
+              <UserBlock v-if="trainer.userId && userIndex.has(trainer.userId)" :user="userIndex.get(trainer.userId)!" />
+              <span v-else class="text-muted">{{ "—" }}</span>
+            </td>
             <td><StatusBlock :actor="trainer.updatedBy" :date="trainer.updatedOn" /></td>
           </tr>
         </tbody>

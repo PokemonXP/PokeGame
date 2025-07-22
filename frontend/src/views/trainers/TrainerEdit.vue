@@ -49,6 +49,7 @@ function onGeneralUpdated(updated: Trainer): void {
     trainer.value.description = updated.description;
     trainer.value.gender = updated.gender;
     trainer.value.money = updated.money;
+    trainer.value.userId = updated.userId;
   }
   toasts.success("trainers.updated");
 }

@@ -65,5 +65,9 @@
       "title": "Warning!"
     }
   },
-  "url": "URL"
+  "url": "URL",
+  "user": {
+    "label": "User",
+    "placeholder": "Select a user"
+  }
 }
