@@ -95,6 +95,7 @@
     "label": "Level"
   },
   "memories": {
+    "catch": "Catch",
     "metOn": "Met on",
     "pokeBall": {
       "label": "Poké Ball",
