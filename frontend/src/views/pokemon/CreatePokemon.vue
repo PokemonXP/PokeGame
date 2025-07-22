@@ -23,6 +23,7 @@ import NatureSelect from "@/components/pokemon/creation/NatureSelect.vue";
 import NatureTable from "@/components/pokemon/creation/NatureTable.vue";
 import NicknameInput from "@/components/pokemon/NicknameInput.vue";
 import NotesTextarea from "@/components/shared/NotesTextarea.vue";
+import PokemonTypeSelect from "@/components/pokemon/PokemonTypeSelect.vue";
 import ProgressTable from "@/components/pokemon/creation/ProgressTable.vue";
 import ShinyCheckbox from "@/components/pokemon/ShinyCheckbox.vue";
 import SizeEdit from "@/components/pokemon/creation/SizeEdit.vue";
@@ -30,7 +31,6 @@ import SpeciesSelect from "@/components/pokemon/creation/SpeciesSelect.vue";
 import StaminaInput from "@/components/pokemon/StaminaInput.vue";
 import SubmitButton from "@/components/shared/SubmitButton.vue";
 import TotalStatisticsView from "@/components/pokemon/creation/TotalStatisticsView.vue";
-import TypeSelect from "@/components/pokemon/creation/TypeSelect.vue";
 import UniqueNameAlreadyUsed from "@/components/shared/UniqueNameAlreadyUsed.vue";
 import UniqueNameInput from "@/components/shared/UniqueNameInput.vue";
 import UrlInput from "@/components/shared/UrlInput.vue";
@@ -277,8 +277,8 @@ watch(
         <ShinyCheckbox v-model="isShiny" />
         <h2 class="h3">{{ t("pokemon.type.title") }}</h2>
         <div class="row">
-          <TypeSelect class="col" disabled id="primary-type" label="pokemon.type.primary" :model-value="form.types.primary" />
-          <TypeSelect
+          <PokemonTypeSelect class="col" disabled id="primary-type" label="pokemon.type.primary" :model-value="form.types.primary" />
+          <PokemonTypeSelect
             class="col"
             disabled
             id="secondary-type"
@@ -286,7 +286,7 @@ watch(
             :model-value="form.types.secondary ?? undefined"
             placeholder="pokemon.type.none"
           />
-          <TypeSelect class="col" id="tera-type" label="pokemon.type.tera" required v-model="teraType" />
+          <PokemonTypeSelect class="col" id="tera-type" label="pokemon.type.tera" required v-model="teraType" />
         </div>
         <h2 class="h3">{{ t("pokemon.size.title") }}</h2>
         <SizeEdit v-model="size" />

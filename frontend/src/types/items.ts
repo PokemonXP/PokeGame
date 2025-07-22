@@ -1,29 +1,28 @@
-import type { Aggregate } from "./aggregate";
-import type { PokemonStatistic, StatisticChanges, StatusCondition } from "./pokemon";
+import type { Aggregate, Change } from "./aggregate";
 import type { Move } from "./moves";
 import type { SearchPayload, SortOption } from "./search";
 
-export type BattleItem = {
-  statisticChanges: StatisticChanges;
-  guardTurns: number;
-};
+export type BattleItemProperties = {};
 
-export type Berry = {
-  healing: number;
-  isHealingPercentage: boolean;
-  statusCondition?: StatusCondition | null;
-  cureConfusion: boolean;
-  cureNonVolatileConditions: boolean;
-  powerPoints: number;
-  statisticChanges: StatisticChanges;
-  lowerEffortValues?: PokemonStatistic | null;
-  raiseFriendship: number;
-};
+export type BerryProperties = {};
 
-export type Healing = {
-  value: number;
-  isPercentage: boolean;
-  revive: boolean;
+export type CreateOrReplaceItemPayload = {
+  uniqueName: string;
+  displayName?: string;
+  description?: string;
+  price: number;
+  battleItem?: BattleItemProperties;
+  berry?: BerryProperties;
+  keyItem?: KeyItemProperties;
+  material?: MaterialProperties;
+  medicine?: MedicineProperties;
+  otherItem?: OtherItemProperties;
+  pokeBall?: PokeBallProperties;
+  technicalMachine?: TechnicalMachinePayload;
+  treasure?: TreasureProperties;
+  sprite?: string;
+  url?: string;
+  notes?: string;
 };
 
 export type Item = Aggregate & {
@@ -32,11 +31,15 @@ export type Item = Aggregate & {
   description?: string | null;
   price: number;
   category: ItemCategory;
-  battleItem?: BattleItem | null;
-  berry?: Berry | null;
-  medicine?: Medicine | null;
-  pokeBall?: PokeBall | null;
-  technicalMachine?: TechnicalMachine | null;
+  battleItem?: BattleItemProperties | null;
+  berry?: BerryProperties | null;
+  keyItem?: KeyItemProperties | null;
+  material?: MaterialProperties | null;
+  medicine?: MedicineProperties | null;
+  otherItem?: OtherItemProperties | null;
+  pokeBall?: PokeBallProperties | null;
+  technicalMachine?: TechnicalMachineProperties | null;
+  treasure?: TreasureProperties;
   sprite?: string | null;
   url?: string | null;
   notes?: string | null;
@@ -50,36 +53,46 @@ export type ItemSortOption = SortOption & {
   field: ItemSort;
 };
 
-export type Medicine = {
-  isHerbal: boolean;
-  healing?: Healing;
-  status?: StatusHealing;
-  powerPoints?: PowerPointRestore;
-};
+export type KeyItemProperties = {};
 
-export type PokeBall = {
-  catchMultiplier: number;
-  heal: boolean;
-  baseFriendship: number;
-  friendshipMultiplier: number;
-};
+export type MaterialProperties = {};
 
-export type PowerPointRestore = {
-  value: number;
-  isPercentage: boolean;
-  allMoves: boolean;
-};
+export type MedicineProperties = {};
+
+export type OtherItemProperties = {};
+
+export type PokeBallProperties = {};
 
 export type SearchItemsPayload = SearchPayload & {
   category?: ItemCategory;
   sort: ItemSortOption[];
 };
 
-export type StatusHealing = {
-  condition?: StatusCondition | null;
-  all: boolean;
+export type TechnicalMachinePayload = {
+  move: string;
 };
 
-export type TechnicalMachine = {
+export type TechnicalMachineProperties = {
   move: Move;
+};
+
+export type TreasureProperties = {};
+
+export type UpdateItemPayload = {
+  uniqueName?: string;
+  displayName?: Change<string>;
+  description?: Change<string>;
+  price?: number;
+  battleItem?: BattleItemProperties;
+  berry?: BerryProperties;
+  keyItem?: KeyItemProperties;
+  material?: MaterialProperties;
+  medicine?: MedicineProperties;
+  otherItem?: OtherItemProperties;
+  pokeBall?: PokeBallProperties;
+  technicalMachine?: TechnicalMachinePayload;
+  treasure?: TreasureProperties;
+  sprite?: Change<string>;
+  url?: Change<string>;
+  notes?: Change<string>;
 };

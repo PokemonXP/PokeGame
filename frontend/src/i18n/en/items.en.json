@@ -1,4 +1,19 @@
 {
+  "category": {
+    "label": "Category",
+    "options": {
+      "BattleItem": "Battle Item",
+      "Berry": "Berry",
+      "KeyItem": "Key Item",
+      "Material": "Material",
+      "Medicine": "Medicine",
+      "OtherItem": "Other Item",
+      "PokeBall": "Poké Ball",
+      "TechnicalMachine": "Technical Machine",
+      "Treasure": "Treasure"
+    },
+    "placeholder": "Select an item category"
+  },
   "create": "New Item",
   "created": "The item has been created.",
   "delete": {
@@ -7,6 +22,7 @@
   },
   "deleted": "The item has been deleted.",
   "empty": "This list is empty.",
+  "price": "Price",
   "sort": {
     "options": {
       "CreatedOn": "Created on",

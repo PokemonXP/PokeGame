@@ -1,8 +1,23 @@
 import { urlUtils } from "logitar-js";
 
+import type { CreateOrReplaceItemPayload, Item, SearchItemsPayload, UpdateItemPayload } from "@/types/items";
 import type { SearchResults } from "@/types/search";
-import type { Item, SearchItemsPayload } from "@/types/items";
-import { get } from ".";
+import { _delete, get, patch, post } from ".";
+
+export async function createItem(payload: CreateOrReplaceItemPayload): Promise<Item> {
+  const url: string = new urlUtils.UrlBuilder({ path: "/items" }).buildRelative();
+  return (await post<CreateOrReplaceItemPayload, Item>(url, payload)).data;
+}
+
+export async function deleteItem(id: string): Promise<Item> {
+  const url: string = new urlUtils.UrlBuilder({ path: "/items/{id}" }).setParameter("id", id).buildRelative();
+  return (await _delete<Item>(url)).data;
+}
+
+export async function readItem(id: string): Promise<Item> {
+  const url: string = new urlUtils.UrlBuilder({ path: "/items/{id}" }).setParameter("id", id).buildRelative();
+  return (await get<Item>(url)).data;
+}
 
 export async function searchItems(payload: SearchItemsPayload): Promise<SearchResults<Item>> {
   const url: string = new urlUtils.UrlBuilder({ path: "/items" })
@@ -21,4 +36,9 @@ export async function searchItems(payload: SearchItemsPayload): Promise<SearchRe
     .setQuery("limit", payload.limit.toString())
     .buildRelative();
   return (await get<SearchResults<Item>>(url)).data;
+}
+
+export async function updateItem(id: string, payload: UpdateItemPayload): Promise<Item> {
+  const url: string = new urlUtils.UrlBuilder({ path: "/items/{id}" }).setParameter("id", id).buildRelative();
+  return (await patch<UpdateItemPayload, Item>(url, payload)).data;
 }

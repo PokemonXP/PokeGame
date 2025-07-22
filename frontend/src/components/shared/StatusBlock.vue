@@ -26,17 +26,7 @@ const icon = computed<string | undefined>(() => {
   }
   return "fas fa-robot";
 });
-const route = computed<RouteLocationRaw | undefined>(() => {
-  // if (!props.actor.isDeleted) {
-  //   switch (props.actor.type) {
-  //     case "ApiKey":
-  //       return { name: "ApiKeyEdit", params: { id: props.actor.id } };
-  //     case "User":
-  //       return { name: "UserEdit", params: { id: props.actor.id } };
-  //   }
-  // } // TODO(fpion): implement
-  return undefined;
-});
+const route = computed<RouteLocationRaw | undefined>(() => undefined);
 const variant = computed<string | undefined>(() => (props.actor.type === "ApiKey" ? "info" : undefined));
 </script>
 

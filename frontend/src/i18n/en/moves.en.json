@@ -25,6 +25,10 @@
     "format": "Base: {powerPoints}",
     "label": "Power Points"
   },
+  "select": {
+    "label": "Move",
+    "placeholder": "Select a move"
+  },
   "sort": {
     "options": {
       "CreatedOn": "Created on",
