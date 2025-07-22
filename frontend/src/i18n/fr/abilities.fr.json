@@ -1,0 +1,21 @@
+{
+  "create": "Nouvelle capacité",
+  "created": "La capacité a été créée.",
+  "delete": {
+    "confirm": "Afin de supprimer la capacité, veuillez entrer son nom dans le champs suivant.",
+    "title": "Supprimer la capacité"
+  },
+  "deleted": "La capacité a été supprimée.",
+  "empty": "Cette liste est vide.",
+  "location": "Emplacement",
+  "sort": {
+    "options": {
+      "CreatedOn": "Date de création",
+      "DisplayName": "Nom d’affichage",
+      "UniqueName": "Nom unique",
+      "UpdatedOn": "Dernière modification"
+    }
+  },
+  "title": "Capacités",
+  "updated": "La capacité a été mise à jour."
+}

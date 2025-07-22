@@ -4,7 +4,7 @@ import { computed } from "vue";
 import { parsingUtils } from "logitar-js";
 import { useI18n } from "vue-i18n";
 
-import type { Ability, AbilitySlot } from "@/types/pokemon";
+import type { Ability, AbilitySlot } from "@/types/abilities";
 
 const { parseBoolean } = parsingUtils;
 const { t } = useI18n();
