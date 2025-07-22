@@ -1,5 +1,7 @@
 <script setup lang="ts">
+import { TarButton } from "logitar-vue3-ui";
 import { ref, watch } from "vue";
+import { useI18n } from "vue-i18n";
 
 import DescriptionTextarea from "@/components/shared/DescriptionTextarea.vue";
 import ItemSelect from "@/components/items/ItemSelect.vue";
@@ -11,8 +13,10 @@ import TrainerSelect from "@/components/trainers/TrainerSelect.vue";
 import type { Item } from "@/types/items";
 import type { Pokemon, ReceivePokemonPayload } from "@/types/pokemon";
 import type { Trainer } from "@/types/trainers";
-import { receivePokemon } from "@/api/pokemon";
+import { receivePokemon, releasePokemon } from "@/api/pokemon";
 import { useForm } from "@/forms";
+
+const { t } = useI18n();
 
 const props = defineProps<{
   pokemon: Pokemon;
@@ -58,6 +62,20 @@ async function submit(): Promise<void> {
   }
 }
 
+async function onRelease(): Promise<void> {
+  if (!isLoading.value) {
+    isLoading.value = true;
+    try {
+      const pokemon: Pokemon = await releasePokemon(props.pokemon.id);
+      emit("saved", pokemon);
+    } catch (e: unknown) {
+      emit("error", e);
+    } finally {
+      isLoading.value = false;
+    }
+  }
+}
+
 watch(
   () => props.pokemon,
   (pokemon) => {
@@ -91,7 +109,17 @@ watch(
       <LocationInput required v-model="location" />
       <DescriptionTextarea v-model="description" />
       <div class="mb-3">
-        <SubmitButton :loading="isLoading" text="pokemon.memories.receive" />
+        <SubmitButton class="me-1" icon="fas fa-gift" :loading="isLoading" text="pokemon.memories.receive" />
+        <TarButton
+          class="ms-1"
+          :disabled="!Boolean(pokemon.ownership?.box) || isLoading"
+          icon="fas fa-door-open"
+          :loading="isLoading"
+          :status="t('loading')"
+          :text="t('pokemon.memories.release')"
+          variant="warning"
+          @click="onRelease"
+        />
       </div>
     </form>
   </section>
