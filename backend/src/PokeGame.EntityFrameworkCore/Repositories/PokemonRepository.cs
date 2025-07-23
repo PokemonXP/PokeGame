@@ -14,6 +14,11 @@ internal class PokemonRepository : Repository, IPokemonRepository
     return await LoadAsync<Specimen>(id.StreamId, cancellationToken);
   }
 
+  public async Task<IReadOnlyCollection<Specimen>> LoadAsync(IEnumerable<PokemonId> ids, CancellationToken cancellationToken)
+  {
+    return await LoadAsync<Specimen>(ids.Select(id => id.StreamId), cancellationToken);
+  }
+
   public async Task SaveAsync(Specimen pokemon, CancellationToken cancellationToken)
   {
     await base.SaveAsync(pokemon, cancellationToken);

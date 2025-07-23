@@ -55,6 +55,7 @@ public class Specimen : AggregateRoot
   public PokemonNature Nature => _nature ?? throw new InvalidOperationException("The Pokémon has not been initialized.");
 
   public EggCycles? EggCycles { get; private set; }
+  public bool IsEgg => EggCycles is not null;
   public GrowthRate GrowthRate { get; private set; }
   public int Experience { get; private set; }
   public int Level => ExperienceTable.Instance.GetLevel(GrowthRate, Experience);
@@ -346,6 +347,26 @@ public class Specimen : AggregateRoot
     {
       Raise(new PokemonDeleted(), actorId);
     }
+  }
+
+  public void Deposit(PokemonSlot slot, ActorId? actorId = null)
+  {
+    if (Ownership is null)
+    {
+      throw new InvalidOperationException($"The Pokémon 'Id={Id}' is not owned by any trainer.");
+    }
+    else if (slot.Box is null)
+    {
+      throw new ArgumentException("The Pokémon must be deposited inside a box.", nameof(slot));
+    }
+    else if (Slot != slot)
+    {
+      Raise(new PokemonDeposited(slot), actorId);
+    }
+  }
+  protected virtual void Handle(PokemonDeposited @event)
+  {
+    Slot = @event.Slot;
   }
 
   public void Heal(ActorId? actorId = null)

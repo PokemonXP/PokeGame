@@ -66,9 +66,9 @@ internal class FormEntity : AggregateEntity
   public List<FormAbilityEntity> Abilities { get; private set; } = [];
   public List<PokemonEntity> Pokemon { get; private set; } = [];
 
-  public FormEntity(VarietyEntity variety, FormCreated e) : base(e)
+  public FormEntity(VarietyEntity variety, FormCreated @event) : base(@event)
   {
-    Id = new FormId(e.StreamId).ToGuid();
+    Id = new FormId(@event.StreamId).ToGuid();
 
     SpeciesEntity species = variety.Species ?? throw new ArgumentException("The species is required.", nameof(variety));
     Species = species;
@@ -78,20 +78,20 @@ internal class FormEntity : AggregateEntity
     Variety = variety;
     VarietyId = variety.VarietyId;
     VarietyUid = variety.Id;
-    IsDefault = e.IsDefault;
+    IsDefault = @event.IsDefault;
 
-    UniqueName = e.UniqueName.Value;
+    UniqueName = @event.UniqueName.Value;
 
-    IsBattleOnly = e.IsBattleOnly;
-    IsMega = e.IsMega;
+    IsBattleOnly = @event.IsBattleOnly;
+    IsMega = @event.IsMega;
 
-    Height = e.Height.Value;
-    Weight = e.Weight.Value;
+    Height = @event.Height.Value;
+    Weight = @event.Weight.Value;
 
-    SetTypes(e.Types);
-    SetBaseStatistics(e.BaseStatistics);
-    SetYield(e.Yield);
-    SetSprites(e.Sprites);
+    SetTypes(@event.Types);
+    SetBaseStatistics(@event.BaseStatistics);
+    SetYield(@event.Yield);
+    SetSprites(@event.Sprites);
   }
 
   private FormEntity() : base()

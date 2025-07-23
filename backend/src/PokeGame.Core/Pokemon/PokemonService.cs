@@ -21,6 +21,8 @@ public interface IPokemonService
   Task<PokemonModel?> CatchAsync(Guid id, CatchPokemonPayload payload, CancellationToken cancellationToken = default);
   Task<PokemonModel?> ReceiveAsync(Guid id, ReceivePokemonPayload payload, CancellationToken cancellationToken = default);
   Task<PokemonModel?> ReleaseAsync(Guid id, CancellationToken cancellationToken = default);
+
+  Task<PokemonModel?> DepositAsync(Guid id, CancellationToken cancellationToken = default);
 }
 
 internal class PokemonService : IPokemonService
@@ -107,6 +109,12 @@ internal class PokemonService : IPokemonService
   public async Task<PokemonModel?> ReleaseAsync(Guid id, CancellationToken cancellationToken)
   {
     ReleasePokemon command = new(id);
+    return await _commandBus.ExecuteAsync(command, cancellationToken);
+  }
+
+  public async Task<PokemonModel?> DepositAsync(Guid id, CancellationToken cancellationToken)
+  {
+    DepositPokemon command = new(id);
     return await _commandBus.ExecuteAsync(command, cancellationToken);
   }
 }

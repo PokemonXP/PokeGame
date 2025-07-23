@@ -122,6 +122,43 @@ public class PokemonOwnershipTests
     Assert.Equal(_pokemon.Id.ToGuid(), exception.PokemonId);
   }
 
+  [Fact(DisplayName = "Deposit: it should deposit a Pokémon.")]
+  public void Given_Box_When_Deposit_Then_Deposited()
+  {
+    ActorId actorId = ActorId.NewId();
+
+    _pokemon.Receive(_trainer, _pokeBall, _location);
+
+    PokemonSlot slot = new(new Position(2), new Box(8));
+    _pokemon.Deposit(slot, actorId);
+    Assert.Equal(slot, _pokemon.Slot);
+    Assert.True(_pokemon.HasChanges);
+    Assert.Contains(_pokemon.Changes, change => change is PokemonDeposited deposited && deposited.ActorId == actorId);
+
+    _pokemon.ClearChanges();
+    _pokemon.Deposit(slot);
+    Assert.False(_pokemon.HasChanges);
+    Assert.Empty(_pokemon.Changes);
+  }
+
+  [Fact(DisplayName = "Deposit: it should throw ArgumentException when the Pokémon is deposited in the party.")]
+  public void Given_InTheParty_When_Deposit_Then_ArgumentException()
+  {
+    PokemonSlot slot = new(new Position(0), Box: null);
+    _pokemon.Receive(_trainer, _pokeBall, _location, slot: slot);
+
+    var exception = Assert.Throws<ArgumentException>(() => _pokemon.Deposit(slot));
+    Assert.Equal("slot", exception.ParamName);
+    Assert.StartsWith("The Pokémon must be deposited inside a box.", exception.Message);
+  }
+
+  [Fact(DisplayName = "Deposit: it should throw InvalidOperationException when the Pokémon is not owned by any trainer.")]
+  public void Given_NoOwner_When_Deposit_Then_InvalidOperationException()
+  {
+    PokemonSlot slot = new(new Position(2), new Box(8));
+    Assert.Throws<InvalidOperationException>(() => _pokemon.Deposit(slot));
+  }
+
   [Fact(DisplayName = "Receive: a gifted Pokémon should retain its original trainer and Poké Ball.")]
   public void Given_Gifted_When_Receive_Then_OriginalTrainerAndPokeBallRetained()
   {

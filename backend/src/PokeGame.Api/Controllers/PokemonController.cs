@@ -56,6 +56,13 @@ public class PokemonController : ControllerBase
     return pokemon is null ? NotFound() : Ok(pokemon);
   }
 
+  [HttpPut("{id}/deposit")]
+  public async Task<ActionResult<PokemonModel>> DepositAsync(Guid id, CancellationToken cancellationToken)
+  {
+    PokemonModel? pokemon = await _pokemonService.DepositAsync(id, cancellationToken);
+    return pokemon is null ? NotFound() : Ok(pokemon);
+  }
+
   [HttpPut("{id}/receive")]
   public async Task<ActionResult<PokemonModel>> ReceiveAsync(Guid id, [FromBody] ReceivePokemonPayload payload, CancellationToken cancellationToken)
   {

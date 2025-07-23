@@ -144,6 +144,13 @@ internal class PokemonEntity : AggregateEntity
     SetOwnership(trainer, pokeBall, Core.Pokemon.OwnershipKind.Caught, @event, @event.OccurredOn);
   }
 
+  public void Deposit(PokemonDeposited @event)
+  {
+    Update(@event);
+
+    SetSlot(@event.Slot);
+  }
+
   public void Heal(PokemonHealed @event)
   {
     Update(@event);

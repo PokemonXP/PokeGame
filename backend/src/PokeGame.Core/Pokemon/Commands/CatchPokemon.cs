@@ -69,7 +69,7 @@ internal class CatchPokemonHandler : ICommandHandler<CatchPokemon, PokemonModel?
     Location location = new(payload.Location);
     Level? level = payload.Level < 1 ? null : new(payload.Level);
     Description? description = Description.TryCreate(payload.Description);
-    PokemonSlot slot = storage.GetFirstAvailable();
+    PokemonSlot slot = storage.GetFirstEmptySlot();
 
     pokemon.Catch(trainer, pokeBall, location, level, payload.MetOn, description, slot, actorId);
 
