@@ -18,6 +18,11 @@ export async function catchPokemon(id: string, payload: CatchPokemonPayload): Pr
   return (await put<CatchPokemonPayload, Pokemon>(url, payload)).data;
 }
 
+export async function depositPokemon(id: string): Promise<Pokemon> {
+  const url: string = new urlUtils.UrlBuilder({ path: "/pokemon/{id}/deposit" }).setParameter("id", id).buildRelative();
+  return (await put<void, Pokemon>(url)).data;
+}
+
 export async function createPokemon(payload: CreatePokemonPayload): Promise<Pokemon> {
   const url: string = new urlUtils.UrlBuilder({ path: "/pokemon" }).buildRelative();
   return (await post<CreatePokemonPayload, Pokemon>(url, payload)).data;
@@ -80,4 +85,9 @@ export async function switchPokemonMoves(id: string, payload: SwitchPokemonMoves
 export async function updatePokemon(id: string, payload: UpdatePokemonPayload): Promise<Pokemon> {
   const url: string = new urlUtils.UrlBuilder({ path: "/pokemon/{id}" }).setParameter("id", id).buildRelative();
   return (await patch<UpdatePokemonPayload, Pokemon>(url, payload)).data;
+}
+
+export async function withdrawPokemon(id: string): Promise<Pokemon> {
+  const url: string = new urlUtils.UrlBuilder({ path: "/pokemon/{id}/withdraw" }).setParameter("id", id).buildRelative();
+  return (await put<void, Pokemon>(url)).data;
 }

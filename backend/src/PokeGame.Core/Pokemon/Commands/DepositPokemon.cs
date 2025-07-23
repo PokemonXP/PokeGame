@@ -53,26 +53,29 @@ internal class DepositPokemonHandler : ICommandHandler<DepositPokemon, PokemonMo
 
     TrainerId trainerId = pokemon.Ownership.TrainerId;
     Storage storage = await _pokemonQuerier.GetStorageAsync(trainerId, cancellationToken);
-    if (!pokemon.IsEgg)
+    IEnumerable<PokemonId> pokemonIds = storage.Party.Except([pokemon.Id]);
+    IReadOnlyCollection<Specimen> partyPokemon = await _pokemonRepository.LoadAsync(pokemonIds, cancellationToken);
+    if (!pokemon.IsEgg && !partyPokemon.Any(p => !p.IsEgg))
     {
-      IEnumerable<PokemonId> pokemonIds = storage.Party.Except([pokemon.Id]);
-      IReadOnlyCollection<Specimen> partyPokemon = await _pokemonRepository.LoadAsync(pokemonIds, cancellationToken);
-      if (!partyPokemon.Any(p => !p.IsEgg))
+      ValidationFailure failure = new("TrainerId", "The trainer party must contain at least one other hatched Pokémon.", trainerId.ToGuid())
       {
-        ValidationFailure failure = new("TrainerId", "The trainer party must contain at least one other hatched Pokémon.", trainerId.ToGuid())
-        {
-          ErrorCode = "CannotEmptyTrainerParty"
-        };
-        throw new ValidationException([failure]);
+        ErrorCode = "CannotEmptyTrainerParty"
+      };
+      throw new ValidationException([failure]);
+    }
+    foreach (Specimen member in partyPokemon)
+    {
+      if (member.Slot is not null && member.Slot.Box is null && member.Slot.Position.Value > pokemon.Slot.Position.Value)
+      {
+        PokemonSlot newSlot = new(new Position(member.Slot.Position.Value - 1), Box: null);
+        member.Move(newSlot, actorId);
       }
     }
 
     PokemonSlot slot = storage.GetFirstBoxEmptySlot();
     pokemon.Deposit(slot, actorId);
 
-    // TODO(fpion): when the Pokémon is not last in the party, we must decrement the position of other Pokémon after it.
-
-    await _pokemonRepository.SaveAsync(pokemon, cancellationToken);
+    await _pokemonRepository.SaveAsync(new[] { pokemon }.Concat(partyPokemon), cancellationToken);
 
     return await _pokemonQuerier.ReadAsync(pokemon, cancellationToken);
   }

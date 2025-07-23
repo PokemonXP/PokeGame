@@ -175,6 +175,13 @@ internal class PokemonEntity : AggregateEntity
     Moves.Add(new PokemonMoveEntity(this, move, @event));
   }
 
+  public void Move(PokemonMoved @event)
+  {
+    Update(@event);
+
+    SetSlot(@event.Slot);
+  }
+
   public void Receive(TrainerEntity trainer, ItemEntity pokeBall, PokemonReceived @event)
   {
     Update(@event);

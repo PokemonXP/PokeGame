@@ -159,6 +159,32 @@ public class PokemonOwnershipTests
     Assert.Throws<InvalidOperationException>(() => _pokemon.Deposit(slot));
   }
 
+  [Fact(DisplayName = "Move: it should throw InvalidOperationException when the Pokémon is not owned by any trainer.")]
+  public void Given_NoOwner_When_Move_Then_InvalidOperationException()
+  {
+    PokemonSlot slot = new(new Position(2), Box: null);
+    Assert.Throws<InvalidOperationException>(() => _pokemon.Move(slot));
+  }
+
+  [Fact(DisplayName = "Move: it should move a Pokémon.")]
+  public void Given_HasOwner_Move_Withdraw_Then_Moved()
+  {
+    ActorId actorId = ActorId.NewId();
+
+    _pokemon.Receive(_trainer, _pokeBall, _location, slot: new PokemonSlot(new Position(0), new Box(0)));
+
+    PokemonSlot slot = new(new Position(5), new Box(2));
+    _pokemon.Move(slot, actorId);
+    Assert.Equal(slot, _pokemon.Slot);
+    Assert.True(_pokemon.HasChanges);
+    Assert.Contains(_pokemon.Changes, change => change is PokemonMoved moved && moved.ActorId == actorId);
+
+    _pokemon.ClearChanges();
+    _pokemon.Move(slot);
+    Assert.False(_pokemon.HasChanges);
+    Assert.Empty(_pokemon.Changes);
+  }
+
   [Fact(DisplayName = "Receive: a gifted Pokémon should retain its original trainer and Poké Ball.")]
   public void Given_Gifted_When_Receive_Then_OriginalTrainerAndPokeBallRetained()
   {

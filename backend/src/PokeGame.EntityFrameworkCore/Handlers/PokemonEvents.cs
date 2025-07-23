@@ -18,6 +18,7 @@ internal class PokemonEvents : IEventHandler<PokemonCaught>,
   IEventHandler<PokemonMoveLearned>,
   IEventHandler<PokemonMoveRemembered>,
   IEventHandler<PokemonMoveSwitched>,
+  IEventHandler<PokemonMoved>,
   IEventHandler<PokemonNicknamed>,
   IEventHandler<PokemonReceived>,
   IEventHandler<PokemonReleased>,
@@ -37,6 +38,7 @@ internal class PokemonEvents : IEventHandler<PokemonCaught>,
     services.AddScoped<IEventHandler<PokemonMoveLearned>, PokemonEvents>();
     services.AddScoped<IEventHandler<PokemonMoveRemembered>, PokemonEvents>();
     services.AddScoped<IEventHandler<PokemonMoveSwitched>, PokemonEvents>();
+    services.AddScoped<IEventHandler<PokemonMoved>, PokemonEvents>();
     services.AddScoped<IEventHandler<PokemonNicknamed>, PokemonEvents>();
     services.AddScoped<IEventHandler<PokemonReceived>, PokemonEvents>();
     services.AddScoped<IEventHandler<PokemonReleased>, PokemonEvents>();
@@ -224,6 +226,20 @@ internal class PokemonEvents : IEventHandler<PokemonCaught>,
     }
 
     pokemon.SwitchMoves(@event);
+
+    await _context.SaveChangesAsync(cancellationToken);
+  }
+
+  public async Task HandleAsync(PokemonMoved @event, CancellationToken cancellationToken)
+  {
+    PokemonEntity? pokemon = await _context.Pokemon.SingleOrDefaultAsync(x => x.StreamId == @event.StreamId.Value, cancellationToken);
+    if (pokemon is null || pokemon.Version != (@event.Version - 1))
+    {
+      _logger.LogUnexpectedVersion(@event, pokemon);
+      return;
+    }
+
+    pokemon.Move(@event);
 
     await _context.SaveChangesAsync(cancellationToken);
   }

@@ -85,8 +85,10 @@
   },
   "memories": {
     "box": {
+      "deposit": "Deposit",
       "format": "Box {box}",
-      "label": "Box"
+      "label": "Box",
+      "withdraw": "Withdraw"
     },
     "characteristic": "Characteristic",
     "catch": "Catch",
