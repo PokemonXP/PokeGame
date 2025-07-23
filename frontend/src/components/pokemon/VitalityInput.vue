@@ -60,6 +60,7 @@ defineEmits<{
       <span v-if="max" class="input-group-text">/ {{ max }}</span>
     </template>
     <template v-if="typeof percentage === 'number'" #after>
+      <!-- TODO(fpion): refactor -->
       <TarProgress class="mt-1" :label="n(percentage, 'integer_percent')" min="0" max="100" :value="percentage * 100" variant="danger" />
     </template>
   </FormInput>
