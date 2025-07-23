@@ -5,10 +5,10 @@ import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 
 import PartyPokemonCard from "./PartyPokemonCard.vue";
-import type { MovePokemonPayload, Pokemon, SearchPokemonPayload } from "@/types/pokemon";
+import type { MovePokemonPayload, Pokemon, SearchPokemonPayload, SwapPokemonPayload } from "@/types/pokemon";
 import type { SearchResults } from "@/types/search";
 import type { Trainer } from "@/types/trainers";
-import { depositPokemon, movePokemon, withdrawPokemon } from "@/api/pokemon";
+import { depositPokemon, movePokemon, swapPokemon, withdrawPokemon } from "@/api/pokemon";
 import { searchPokemon } from "@/api/pokemon";
 
 const BOX_SIZE: number = 30;
@@ -182,6 +182,54 @@ async function move(): Promise<void> {
   }
 }
 
+function isEggInBox(pokemon: Pokemon): boolean {
+  return Boolean(pokemon.eggCycles && pokemon.ownership && typeof pokemon.ownership.box === "number");
+}
+function isHatchedInParty(pokemon: Pokemon): boolean {
+  return Boolean(!pokemon.eggCycles && pokemon.ownership && typeof pokemon.ownership.box !== "number");
+}
+const canSwap = computed<boolean>(() => {
+  if (isLoading.value || selected.value.size !== 2) {
+    return false; // NOTE(fpion): cannot move if loading, or if less than two slots selected.
+  }
+  const slots: string[] = [...selected.value];
+  const first: Pokemon | null = findPokemon(slots[0]);
+  const other: Pokemon | null = findPokemon(slots[1]);
+  if (!first || !other) {
+    return false; // NOTE(fpion): can only swap two Pokémon.
+  }
+  if ((isEggInBox(first) && isHatchedInParty(other)) || (isEggInBox(other) && isHatchedInParty(first))) {
+    // NOTE(fpion): can only swap if at least one other Pokémon in the party that is not an egg.
+    return party.value.filter((pokemon) => !isSelected(pokemon) && !pokemon.eggCycles).length > 0;
+  }
+  return true;
+});
+async function swap(): Promise<void> {
+  if (!isLoading.value) {
+    isLoading.value = true;
+    try {
+      if (selected.value.size === 2) {
+        const slots: string[] = [...selected.value];
+        const first: Pokemon | null = findPokemon(slots[0]);
+        const other: Pokemon | null = findPokemon(slots[1]);
+        if (first && other) {
+          const payload: SwapPokemonPayload = {
+            ids: [first.id, other.id],
+          };
+          const swapped: Pokemon[] = await swapPokemon(payload);
+          swapped.forEach((swapped) => pokemon.value.set(swapped.id, swapped));
+          // TODO(fpion): toast
+        }
+        selected.value.clear();
+      }
+    } catch (e: unknown) {
+      emit("error", e);
+    } finally {
+      isLoading.value = false;
+    }
+  }
+}
+
 const canWithdraw = computed<boolean>(() => {
   if (isLoading.value || selected.value.size !== 1) {
     return false; // NOTE(fpion): cannot withdraw if loading, if no slot is selected, or if multiple slots are selected.
@@ -239,7 +287,6 @@ watch(() => props.trainer, refresh, { deep: true, immediate: true });
     <!--
       TODO(fpion): actions
       - Check summary (when only one Pokémon is selected)
-      - Swap Pokémon (when two Pokémon are selected)
       - Restore (when only one Pokémon is selected)
       - Held item (when only one Pokémon is selected)
     -->
@@ -270,6 +317,15 @@ watch(() => props.trainer, refresh, { deep: true, immediate: true });
         :status="t('loading')"
         :text="t('pokemon.memories.box.move')"
         @click="move"
+      />
+      <TarButton
+        class="ms-1"
+        :disabled="!canSwap"
+        icon="fas fa-rotate"
+        :loading="isLoading"
+        :status="t('loading')"
+        :text="t('pokemon.memories.box.swap')"
+        @click="swap"
       />
     </div>
     <div class="row">

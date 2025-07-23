@@ -8,6 +8,7 @@ import type {
   ReceivePokemonPayload,
   RememberPokemonMovePayload,
   SearchPokemonPayload,
+  SwapPokemonPayload,
   SwitchPokemonMovesPayload,
   UpdatePokemonPayload,
 } from "@/types/pokemon";
@@ -81,6 +82,11 @@ export async function searchPokemon(payload: SearchPokemonPayload): Promise<Sear
     .setQuery("limit", payload.limit.toString())
     .buildRelative();
   return (await get<SearchResults<Pokemon>>(url)).data;
+}
+
+export async function swapPokemon(payload: SwapPokemonPayload): Promise<Pokemon[]> {
+  const url: string = new urlUtils.UrlBuilder({ path: "/pokemon/swap" }).buildRelative();
+  return (await patch<SwapPokemonPayload, Pokemon[]>(url, payload)).data;
 }
 
 export async function switchPokemonMoves(id: string, payload: SwitchPokemonMovesPayload): Promise<Pokemon> {

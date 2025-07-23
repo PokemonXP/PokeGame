@@ -89,6 +89,7 @@
       "format": "Box {box}",
       "label": "Box",
       "move": "Move",
+      "swap": "Swap",
       "withdraw": "Withdraw"
     },
     "characteristic": "Characteristic",
