@@ -15,7 +15,7 @@ import TrainerSelect from "@/components/trainers/TrainerSelect.vue";
 import type { Item } from "@/types/items";
 import type { Pokemon, ReceivePokemonPayload } from "@/types/pokemon";
 import type { Trainer } from "@/types/trainers";
-import { catchPokemon, receivePokemon, releasePokemon } from "@/api/pokemon";
+import { catchPokemon, receivePokemon } from "@/api/pokemon";
 import { useForm } from "@/forms";
 
 const { d, t } = useI18n();
@@ -82,20 +82,6 @@ async function onCatch(): Promise<void> {
         reinitialize();
         emit("saved", pokemon);
       }
-    } catch (e: unknown) {
-      emit("error", e);
-    } finally {
-      isLoading.value = false;
-    }
-  }
-}
-
-async function onRelease(): Promise<void> {
-  if (!isLoading.value) {
-    isLoading.value = true;
-    try {
-      const pokemon: Pokemon = await releasePokemon(props.pokemon.id);
-      emit("saved", pokemon);
     } catch (e: unknown) {
       emit("error", e);
     } finally {
@@ -249,16 +235,6 @@ watch(
           :text="t('pokemon.memories.catch')"
           variant="primary"
           @click="onCatch"
-        />
-        <TarButton
-          class="ms-1"
-          :disabled="isLoading"
-          icon="fas fa-door-open"
-          :loading="isLoading"
-          :status="t('loading')"
-          :text="t('pokemon.memories.release')"
-          variant="warning"
-          @click="onRelease"
         />
       </div>
     </form>

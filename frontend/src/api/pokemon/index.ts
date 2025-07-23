@@ -52,7 +52,7 @@ export async function receivePokemon(id: string, payload: ReceivePokemonPayload)
 
 export async function releasePokemon(id: string): Promise<Pokemon> {
   const url: string = new urlUtils.UrlBuilder({ path: "/pokemon/{id}/release" }).setParameter("id", id).buildRelative();
-  return (await put<void, Pokemon>(url)).data;
+  return (await patch<void, Pokemon>(url)).data;
 }
 
 export async function rememberPokemonMove(pokemonId: string, moveId: string, payload: RememberPokemonMovePayload): Promise<Pokemon> {

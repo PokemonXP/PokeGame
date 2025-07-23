@@ -89,6 +89,7 @@
       "format": "Box {box}",
       "label": "Box",
       "move": "Move",
+      "release": "Release",
       "swap": "Swap",
       "withdraw": "Withdraw"
     },
@@ -112,7 +113,6 @@
       "label": "Position"
     },
     "receive": "Receive",
-    "release": "Release",
     "trainer": {
       "current": "Current Trainer",
       "original": "Original Trainer"

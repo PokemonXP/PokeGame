@@ -77,7 +77,7 @@ public class PokemonController : ControllerBase
     return pokemon is null ? NotFound() : Ok(pokemon);
   }
 
-  [HttpPut("{id}/release")]
+  [HttpPatch("{id}/release")]
   public async Task<ActionResult<PokemonModel>> ReleaseAsync(Guid id, CancellationToken cancellationToken)
   {
     PokemonModel? pokemon = await _pokemonService.ReleaseAsync(id, cancellationToken);
