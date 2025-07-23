@@ -56,6 +56,20 @@ public class PokemonController : ControllerBase
     return pokemon is null ? NotFound() : Ok(pokemon);
   }
 
+  [HttpPatch("{id}/deposit")]
+  public async Task<ActionResult<PokemonModel>> DepositAsync(Guid id, CancellationToken cancellationToken)
+  {
+    PokemonModel? pokemon = await _pokemonService.DepositAsync(id, cancellationToken);
+    return pokemon is null ? NotFound() : Ok(pokemon);
+  }
+
+  [HttpPatch("{id}/move")]
+  public async Task<ActionResult<PokemonModel>> MoveAsync(Guid id, [FromBody] MovePokemonPayload payload, CancellationToken cancellationToken)
+  {
+    PokemonModel? pokemon = await _pokemonService.MoveAsync(id, payload, cancellationToken);
+    return pokemon is null ? NotFound() : Ok(pokemon);
+  }
+
   [HttpPut("{id}/receive")]
   public async Task<ActionResult<PokemonModel>> ReceiveAsync(Guid id, [FromBody] ReceivePokemonPayload payload, CancellationToken cancellationToken)
   {
@@ -67,6 +81,20 @@ public class PokemonController : ControllerBase
   public async Task<ActionResult<PokemonModel>> ReleaseAsync(Guid id, CancellationToken cancellationToken)
   {
     PokemonModel? pokemon = await _pokemonService.ReleaseAsync(id, cancellationToken);
+    return pokemon is null ? NotFound() : Ok(pokemon);
+  }
+
+  [HttpPatch("swap")]
+  public async Task<ActionResult<IReadOnlyCollection<PokemonModel>>> SwapAsync([FromBody] SwapPokemonPayload payload, CancellationToken cancellationToken)
+  {
+    IReadOnlyCollection<PokemonModel> pokemon = await _pokemonService.SwapAsync(payload, cancellationToken);
+    return Ok(pokemon);
+  }
+
+  [HttpPatch("{id}/withdraw")]
+  public async Task<ActionResult<PokemonModel>> WithdrawAsync(Guid id, CancellationToken cancellationToken)
+  {
+    PokemonModel? pokemon = await _pokemonService.WithdrawAsync(id, cancellationToken);
     return pokemon is null ? NotFound() : Ok(pokemon);
   }
 

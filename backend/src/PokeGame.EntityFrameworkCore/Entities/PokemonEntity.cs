@@ -144,6 +144,13 @@ internal class PokemonEntity : AggregateEntity
     SetOwnership(trainer, pokeBall, Core.Pokemon.OwnershipKind.Caught, @event, @event.OccurredOn);
   }
 
+  public void Deposit(PokemonDeposited @event)
+  {
+    Update(@event);
+
+    SetSlot(@event.Slot);
+  }
+
   public void Heal(PokemonHealed @event)
   {
     Update(@event);
@@ -166,6 +173,13 @@ internal class PokemonEntity : AggregateEntity
 
     RemoveMove(@event.Position);
     Moves.Add(new PokemonMoveEntity(this, move, @event));
+  }
+
+  public void Move(PokemonMoved @event)
+  {
+    Update(@event);
+
+    SetSlot(@event.Slot);
   }
 
   public void Receive(TrainerEntity trainer, ItemEntity pokeBall, PokemonReceived @event)
@@ -231,6 +245,13 @@ internal class PokemonEntity : AggregateEntity
     UniqueName = @event.UniqueName.Value;
   }
 
+  public void Swap(PokemonSwapped @event)
+  {
+    Update(@event);
+
+    SetSlot(@event.Slot);
+  }
+
   public void SwitchMoves(PokemonMoveSwitched @event)
   {
     Update(@event);
@@ -281,6 +302,13 @@ internal class PokemonEntity : AggregateEntity
     {
       Notes = @event.Notes.Value?.Value;
     }
+  }
+
+  public void Withdraw(PokemonWithdrew @event)
+  {
+    Update(@event);
+
+    SetSlot(@event.Slot);
   }
 
   private void RemoveMove(int? position)

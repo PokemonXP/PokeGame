@@ -55,6 +55,7 @@ public class Specimen : AggregateRoot
   public PokemonNature Nature => _nature ?? throw new InvalidOperationException("The Pokémon has not been initialized.");
 
   public EggCycles? EggCycles { get; private set; }
+  public bool IsEgg => EggCycles is not null;
   public GrowthRate GrowthRate { get; private set; }
   public int Experience { get; private set; }
   public int Level => ExperienceTable.Instance.GetLevel(GrowthRate, Experience);
@@ -348,6 +349,26 @@ public class Specimen : AggregateRoot
     }
   }
 
+  public void Deposit(PokemonSlot slot, ActorId? actorId = null)
+  {
+    if (Ownership is null)
+    {
+      throw new InvalidOperationException($"The Pokémon 'Id={Id}' is not owned by any trainer.");
+    }
+    else if (slot.Box is null)
+    {
+      throw new ArgumentException("The Pokémon must be deposited inside a box.", nameof(slot));
+    }
+    else if (Slot != slot)
+    {
+      Raise(new PokemonDeposited(slot), actorId);
+    }
+  }
+  protected virtual void Handle(PokemonDeposited @event)
+  {
+    Slot = @event.Slot;
+  }
+
   public void Heal(ActorId? actorId = null)
   {
     Raise(new PokemonHealed(), actorId);
@@ -415,6 +436,22 @@ public class Specimen : AggregateRoot
         _currentMoves[@event.Position.Value] = @event.MoveId;
       }
     }
+  }
+
+  public void Move(PokemonSlot slot, ActorId? actorId = null)
+  {
+    if (Ownership is null)
+    {
+      throw new InvalidOperationException($"The Pokémon 'Id={Id}' is not owned by any trainer.");
+    }
+    else if (Slot != slot)
+    {
+      Raise(new PokemonMoved(slot), actorId);
+    }
+  }
+  protected virtual void Handle(PokemonMoved @event)
+  {
+    Slot = @event.Slot;
   }
 
   public void Receive(Trainer trainer, Item pokeBall, Location location, Level? level = null, DateTime? metOn = null, Description? description = null, PokemonSlot? slot = null, ActorId? actorId = null)
@@ -499,6 +536,32 @@ public class Specimen : AggregateRoot
     _uniqueName = @event.UniqueName;
   }
 
+  public void Swap(Specimen pokemon, ActorId? actorId = null)
+  {
+    if (Ownership is null || Slot is null)
+    {
+      throw new InvalidOperationException($"The Pokémon 'Id={Id}' is not owned by any trainer.");
+    }
+    else if (pokemon.Ownership is null || pokemon.Slot is null)
+    {
+      throw new ArgumentException("The Pokémon is not owned by any trainer.", nameof(pokemon));
+    }
+    else if (Ownership.TrainerId != pokemon.Ownership.TrainerId)
+    {
+      throw new ArgumentException("The Pokémon are not owned by the same trainer.", nameof(pokemon));
+    }
+    else if (Slot != pokemon.Slot)
+    {
+      PokemonSlot slot = Slot;
+      Raise(new PokemonSwapped(pokemon.Slot), actorId);
+      pokemon.Raise(new PokemonSwapped(slot), actorId);
+    }
+  }
+  protected virtual void Handle(PokemonSwapped @event)
+  {
+    Slot = @event.Slot;
+  }
+
   public void SwitchMoves(int source, int destination, ActorId? actorId = null)
   {
     ArgumentOutOfRangeException.ThrowIfNegative(source, nameof(source));
@@ -565,6 +628,24 @@ public class Specimen : AggregateRoot
     {
       _notes = @event.Notes.Value;
     }
+  }
+
+  public void Withdraw(Position position, ActorId? actorId = null)
+  {
+    if (Ownership is null)
+    {
+      throw new InvalidOperationException($"The Pokémon 'Id={Id}' is not owned by any trainer.");
+    }
+
+    PokemonSlot slot = new(position, Box: null);
+    if (Slot != slot)
+    {
+      Raise(new PokemonWithdrew(slot), actorId);
+    }
+  }
+  protected virtual void Handle(PokemonWithdrew @event)
+  {
+    Slot = @event.Slot;
   }
 
   private void SetOwnership(OwnershipKind kind, Trainer trainer, Item pokeBall, Location location, Level? level, DateTime? metOn, Description? description, PokemonSlot? slot, ActorId? actorId)

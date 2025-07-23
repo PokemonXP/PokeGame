@@ -9,6 +9,7 @@ import DeleteTrainer from "@/components/trainers/DeleteTrainer.vue";
 import StatusDetail from "@/components/shared/StatusDetail.vue";
 import TrainerGeneral from "@/components/trainers/TrainerGeneral.vue";
 import TrainerMetadata from "@/components/trainers/TrainerMetadata.vue";
+import TrainerPokemon from "@/components/trainers/TrainerPokemon.vue";
 import type { Breadcrumb } from "@/types/components";
 import type { Trainer } from "@/types/trainers";
 import { StatusCodes, type ApiFailure } from "@/types/api";
@@ -91,8 +92,11 @@ onMounted(async () => {
         <DeleteTrainer :trainer="trainer" @deleted="onDeleted" @error="handleError" />
       </div>
       <TarTabs>
-        <TarTab active id="general" :title="t('general')">
+        <TarTab id="general" :title="t('general')">
           <TrainerGeneral :trainer="trainer" @error="handleError" @updated="onGeneralUpdated" />
+        </TarTab>
+        <TarTab active id="pokemon" :title="t('pokemon.title')">
+          <TrainerPokemon :trainer="trainer" @error="handleError" />
         </TarTab>
         <TarTab id="metadata" :title="t('metadata')">
           <TrainerMetadata :trainer="trainer" @error="handleError" @updated="onMetadataUpdate" />

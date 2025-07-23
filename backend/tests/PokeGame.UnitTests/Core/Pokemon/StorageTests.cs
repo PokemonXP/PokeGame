@@ -3,8 +3,8 @@
 [Trait(Traits.Category, Categories.Unit)]
 public class StorageTests
 {
-  [Fact(DisplayName = "GetFirstAvailable: it should return box, 0 when the box is empty.")]
-  public void Given_EmptyBox_When_GetFirstAvailable_Then_Party0()
+  [Fact(DisplayName = "GetFirstEmptySlot: it should return box, 0 when the box is empty.")]
+  public void Given_EmptyBox_When_GetFirstEmptySlot_Then_Party0()
   {
     List<KeyValuePair<PokemonId, PokemonSlot>> slots = new(capacity: Storage.PartySize + Storage.BoxSize);
     for (int position = 0; position < Storage.PartySize; position++)
@@ -17,22 +17,22 @@ public class StorageTests
     }
     Storage storage = new(slots);
 
-    PokemonSlot slot = storage.GetFirstAvailable();
+    PokemonSlot slot = storage.GetFirstEmptySlot();
     Assert.Equal(0, slot.Position.Value);
     Assert.Equal(1, slot.Box?.Value);
   }
 
-  [Fact(DisplayName = "GetFirstAvailable: it should return party, 0 when storage is empty.")]
-  public void Given_EmptyStorage_When_GetFirstAvailable_Then_Party0()
+  [Fact(DisplayName = "GetFirstEmptySlot: it should return party, 0 when storage is empty.")]
+  public void Given_EmptyStorage_When_GetFirstEmptySlot_Then_Party0()
   {
     Storage storage = new(slots: []);
-    PokemonSlot slot = storage.GetFirstAvailable();
+    PokemonSlot slot = storage.GetFirstEmptySlot();
     Assert.Equal(0, slot.Position.Value);
     Assert.Null(slot.Box);
   }
 
-  [Fact(DisplayName = "GetFirstAvailable: it should return the first box available slot.")]
-  public void Given_BoxNotFull_When_GetFirstAvailable_Then_BoxFirstAvailable()
+  [Fact(DisplayName = "GetFirstEmptySlot: it should return the first box available slot.")]
+  public void Given_BoxNotFull_When_GetFirstEmptySlot_Then_BoxFirstAvailable()
   {
     List<KeyValuePair<PokemonId, PokemonSlot>> slots = new(capacity: 2 * Storage.PartySize);
     for (int position = 0; position < Storage.PartySize; position++)
@@ -42,13 +42,13 @@ public class StorageTests
     }
     Storage storage = new(slots);
 
-    PokemonSlot slot = storage.GetFirstAvailable();
+    PokemonSlot slot = storage.GetFirstEmptySlot();
     Assert.Equal(Storage.PartySize, slot.Position.Value);
     Assert.Equal(0, slot.Box?.Value);
   }
 
-  [Fact(DisplayName = "GetFirstAvailable: it should return the first party available slot.")]
-  public void Given_PartyNotFull_When_GetFirstAvailable_Then_PartyFirstAvailable()
+  [Fact(DisplayName = "GetFirstEmptySlot: it should return the first party available slot.")]
+  public void Given_PartyNotFull_When_GetFirstEmptySlot_Then_PartyFirstAvailable()
   {
     KeyValuePair<PokemonId, PokemonSlot>[] slots =
     [
@@ -58,9 +58,31 @@ public class StorageTests
     ];
     Storage storage = new(slots);
 
-    PokemonSlot slot = storage.GetFirstAvailable();
+    PokemonSlot slot = storage.GetFirstEmptySlot();
     Assert.Equal(2, slot.Position.Value);
     Assert.Null(slot.Box);
+  }
+
+  [Fact(DisplayName = "IsEmpty: it should return false when the slot is not empty.")]
+  public void Given_NotEmpty_When_IsEmpty_Then_False()
+  {
+    PokemonSlot slot = new(new Position(0), new Box(0));
+    Storage storage = new(
+    [
+      new(PokemonId.NewId(), new PokemonSlot(new Position(0), Box: null)),
+      new(PokemonId.NewId(), slot)
+    ]);
+
+    Assert.False(storage.IsEmpty(slot));
+  }
+
+  [Fact(DisplayName = "IsEmpty: it should return true when the slot is empty.")]
+  public void Given_Empty_When_IsEmpty_Then_True()
+  {
+    Storage storage = new([new(PokemonId.NewId(), new PokemonSlot(new Position(0), Box: null))]);
+
+    PokemonSlot slot = new(new Position(0), new Box(0));
+    Assert.True(storage.IsEmpty(slot));
   }
 
   [Fact(DisplayName = "It should create a storage with boxes.")]

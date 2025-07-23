@@ -114,6 +114,11 @@ export type IndividualValues = {
 
 export type MoveDisplayMove = "actions" | "description" | "notes";
 
+export type MovePokemonPayload = {
+  position: number;
+  box: number;
+};
+
 export type Ownership = {
   originalTrainer: Trainer;
   currentTrainer: Trainer;
@@ -306,6 +311,10 @@ export type StatisticValues = {
 };
 
 export type StatusCondition = "Burn" | "Freeze" | "Paralysis" | "Poison" | "Sleep";
+
+export type SwapPokemonPayload = {
+  ids: string[];
+};
 
 export type SwitchPokemonMovesPayload = {
   source: number;

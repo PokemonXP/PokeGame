@@ -1,5 +1,5 @@
 import type { Ability } from "@/types/abilities";
-import type { Form, Species, Variety } from "@/types/pokemon";
+import type { Form, Pokemon, Species, Variety } from "@/types/pokemon";
 import type { Item } from "@/types/items";
 import type { Move } from "@/types/moves";
 import type { Region } from "@/types/regions";
@@ -20,6 +20,10 @@ export function formatItem(item: Item): string {
 
 export function formatMove(move: Move): string {
   return move.displayName ? `${move.displayName} (${move.uniqueName})` : move.uniqueName;
+}
+
+export function formatPokemon(pokemon: Pokemon): string {
+  return pokemon.nickname ? `${pokemon.nickname} (${pokemon.uniqueName})` : pokemon.uniqueName;
 }
 
 export function formatRegion(region: Region): string {

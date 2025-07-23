@@ -49,8 +49,7 @@ internal class MoveRepository : Repository, IMoveRepository
 
   public async Task<IReadOnlyCollection<Move>> LoadAsync(IEnumerable<MoveId> ids, CancellationToken cancellationToken)
   {
-    IEnumerable<StreamId> streamIds = ids.Select(id => id.StreamId);
-    return await LoadAsync<Move>(streamIds, cancellationToken);
+    return await LoadAsync<Move>(ids.Select(id => id.StreamId), cancellationToken);
   }
 
   public async Task SaveAsync(Move move, CancellationToken cancellationToken)

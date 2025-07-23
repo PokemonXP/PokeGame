@@ -27,14 +27,3 @@ defineEmits<{
     <div v-if="ability.description" class="card-text">{{ ability.description }}</div>
   </TarCard>
 </template>
-
-<style scoped>
-.clickable:hover {
-  background-color: #f0f0f0;
-  cursor: pointer;
-}
-
-.selected {
-  background-color: #c8c8c8;
-}
-</style>

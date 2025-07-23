@@ -92,14 +92,14 @@ public class Storage
     }
   }
 
-  public PokemonSlot GetFirstAvailable()
+  public PokemonSlot GetFirstEmptySlot()
   {
-    Position? position = GetPartyFirstAvailable();
-    if (position is not null)
-    {
-      return new PokemonSlot(position, Box: null);
-    }
-
+    Position? position = GetFirstPartyEmptySlot();
+    return position is not null ? new PokemonSlot(position, Box: null) : GetFirstBoxEmptySlot();
+  }
+  public Position? GetFirstPartyEmptySlot() => _party.Count < PartySize ? new Position(_party.Count) : null;
+  public PokemonSlot GetFirstBoxEmptySlot()
+  {
     int box = 0;
     while (true)
     {
@@ -120,5 +120,6 @@ public class Storage
       box++;
     }
   }
-  private Position? GetPartyFirstAvailable() => _party.Count < PartySize ? new Position(_party.Count) : null;
+
+  public bool IsEmpty(PokemonSlot slot) => !_slots.ContainsKey(slot);
 }

@@ -10,6 +10,11 @@ public static class ValidationExtensions
     return ruleBuilder.GreaterThan((byte)0).LessThanOrEqualTo((byte)100);
   }
 
+  public static IRuleBuilderOptions<T, int> Box<T>(this IRuleBuilder<T, int> ruleBuilder)
+  {
+    return ruleBuilder.GreaterThanOrEqualTo(0);
+  }
+
   public static IRuleBuilderOptions<T, byte> CatchRate<T>(this IRuleBuilder<T, byte> ruleBuilder)
   {
     return ruleBuilder.GreaterThan((byte)0);

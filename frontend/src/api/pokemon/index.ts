@@ -3,10 +3,12 @@ import { urlUtils } from "logitar-js";
 import type {
   CatchPokemonPayload,
   CreatePokemonPayload,
+  MovePokemonPayload,
   Pokemon,
   ReceivePokemonPayload,
   RememberPokemonMovePayload,
   SearchPokemonPayload,
+  SwapPokemonPayload,
   SwitchPokemonMovesPayload,
   UpdatePokemonPayload,
 } from "@/types/pokemon";
@@ -18,6 +20,11 @@ export async function catchPokemon(id: string, payload: CatchPokemonPayload): Pr
   return (await put<CatchPokemonPayload, Pokemon>(url, payload)).data;
 }
 
+export async function depositPokemon(id: string): Promise<Pokemon> {
+  const url: string = new urlUtils.UrlBuilder({ path: "/pokemon/{id}/deposit" }).setParameter("id", id).buildRelative();
+  return (await patch<void, Pokemon>(url)).data;
+}
+
 export async function createPokemon(payload: CreatePokemonPayload): Promise<Pokemon> {
   const url: string = new urlUtils.UrlBuilder({ path: "/pokemon" }).buildRelative();
   return (await post<CreatePokemonPayload, Pokemon>(url, payload)).data;
@@ -26,6 +33,11 @@ export async function createPokemon(payload: CreatePokemonPayload): Promise<Poke
 export async function deletePokemon(id: string): Promise<Pokemon> {
   const url: string = new urlUtils.UrlBuilder({ path: "/pokemon/{id}" }).setParameter("id", id).buildRelative();
   return (await _delete<Pokemon>(url)).data;
+}
+
+export async function movePokemon(id: string, payload: MovePokemonPayload): Promise<Pokemon> {
+  const url: string = new urlUtils.UrlBuilder({ path: "/pokemon/{id}/move" }).setParameter("id", id).buildRelative();
+  return (await patch<MovePokemonPayload, Pokemon>(url, payload)).data;
 }
 
 export async function readPokemon(id: string): Promise<Pokemon> {
@@ -72,6 +84,11 @@ export async function searchPokemon(payload: SearchPokemonPayload): Promise<Sear
   return (await get<SearchResults<Pokemon>>(url)).data;
 }
 
+export async function swapPokemon(payload: SwapPokemonPayload): Promise<Pokemon[]> {
+  const url: string = new urlUtils.UrlBuilder({ path: "/pokemon/swap" }).buildRelative();
+  return (await patch<SwapPokemonPayload, Pokemon[]>(url, payload)).data;
+}
+
 export async function switchPokemonMoves(id: string, payload: SwitchPokemonMovesPayload): Promise<Pokemon> {
   const url: string = new urlUtils.UrlBuilder({ path: "/pokemon/{id}/moves/switch" }).setParameter("id", id).buildRelative();
   return (await put<SwitchPokemonMovesPayload, Pokemon>(url, payload)).data;
@@ -80,4 +97,9 @@ export async function switchPokemonMoves(id: string, payload: SwitchPokemonMoves
 export async function updatePokemon(id: string, payload: UpdatePokemonPayload): Promise<Pokemon> {
   const url: string = new urlUtils.UrlBuilder({ path: "/pokemon/{id}" }).setParameter("id", id).buildRelative();
   return (await patch<UpdatePokemonPayload, Pokemon>(url, payload)).data;
+}
+
+export async function withdrawPokemon(id: string): Promise<Pokemon> {
+  const url: string = new urlUtils.UrlBuilder({ path: "/pokemon/{id}/withdraw" }).setParameter("id", id).buildRelative();
+  return (await patch<void, Pokemon>(url)).data;
 }
