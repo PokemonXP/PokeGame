@@ -8,7 +8,7 @@ import PartyPokemonCard from "./PartyPokemonCard.vue";
 import type { MovePokemonPayload, Pokemon, SearchPokemonPayload, SwapPokemonPayload } from "@/types/pokemon";
 import type { SearchResults } from "@/types/search";
 import type { Trainer } from "@/types/trainers";
-import { depositPokemon, movePokemon, swapPokemon, withdrawPokemon } from "@/api/pokemon";
+import { depositPokemon, movePokemon, releasePokemon, swapPokemon, withdrawPokemon } from "@/api/pokemon";
 import { searchPokemon } from "@/api/pokemon";
 
 const BOX_SIZE: number = 30;
@@ -182,6 +182,37 @@ async function move(): Promise<void> {
   }
 }
 
+const canRelease = computed<boolean>(() => {
+  if (isLoading.value || selected.value.size !== 1) {
+    return false; // NOTE(fpion): cannot move if loading, or if no slot or more than one slot is selected.
+  }
+  const slot: string = [...selected.value][0];
+  const pokemon: Pokemon | null = findPokemon(slot);
+  // NOTE(fpion): cannot release an egg Pokémon, or a Pokémon in the party.
+  return Boolean(pokemon && !pokemon.eggCycles && pokemon.ownership && typeof pokemon.ownership.box === "number");
+});
+async function release(): Promise<void> {
+  if (!isLoading.value) {
+    isLoading.value = true;
+    try {
+      if (selected.value.size === 1) {
+        const slot: string = [...selected.value][0];
+        const id: string = findPokemon(slot)?.id ?? "";
+        if (id) {
+          const released: Pokemon = await releasePokemon(id);
+          pokemon.value.delete(released.id);
+          // TODO(fpion): toast
+        }
+        selected.value.clear();
+      }
+    } catch (e: unknown) {
+      emit("error", e);
+    } finally {
+      isLoading.value = false;
+    }
+  }
+}
+
 function isEggInBox(pokemon: Pokemon): boolean {
   return Boolean(pokemon.eggCycles && pokemon.ownership && typeof pokemon.ownership.box === "number");
 }
@@ -310,7 +341,7 @@ watch(() => props.trainer, refresh, { deep: true, immediate: true });
         @click="withdraw"
       />
       <TarButton
-        class="ms-1"
+        class="mx-1"
         :disabled="!canMove"
         icon="fas fa-arrows-up-down-left-right"
         :loading="isLoading"
@@ -319,13 +350,23 @@ watch(() => props.trainer, refresh, { deep: true, immediate: true });
         @click="move"
       />
       <TarButton
-        class="ms-1"
+        class="mx-1"
         :disabled="!canSwap"
         icon="fas fa-rotate"
         :loading="isLoading"
         :status="t('loading')"
         :text="t('pokemon.memories.box.swap')"
         @click="swap"
+      />
+      <TarButton
+        class="ms-1"
+        :disabled="!canRelease"
+        icon="fas fa-door-open"
+        :loading="isLoading"
+        :status="t('loading')"
+        :text="t('pokemon.memories.box.release')"
+        variant="warning"
+        @click="release"
       />
     </div>
     <div class="row">
