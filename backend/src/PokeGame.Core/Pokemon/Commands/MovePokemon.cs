@@ -72,8 +72,6 @@ internal class MovePokemonHandler : ICommandHandler<MovePokemon, PokemonModel?>
         throw new ValidationException([failure]);
       }
 
-      pokemon.Move(slot, actorId);
-
       foreach (Specimen member in partyPokemon)
       {
         if (member.Slot is not null && member.Slot.Box is null && member.Slot.Position.Value > pokemon.Slot.Position.Value)
@@ -82,6 +80,8 @@ internal class MovePokemonHandler : ICommandHandler<MovePokemon, PokemonModel?>
           member.Move(newSlot, actorId);
         }
       }
+
+      pokemon.Move(slot, actorId);
 
       await _pokemonRepository.SaveAsync(new[] { pokemon }.Concat(partyPokemon), cancellationToken);
     }
