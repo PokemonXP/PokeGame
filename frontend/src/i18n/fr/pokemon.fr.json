@@ -88,6 +88,7 @@
       "deposit": "Deposit",
       "format": "Box {box}",
       "label": "Box",
+      "move": "Move",
       "withdraw": "Withdraw"
     },
     "characteristic": "Characteristic",

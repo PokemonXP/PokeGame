@@ -5,10 +5,10 @@ import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 
 import PartyPokemonCard from "./PartyPokemonCard.vue";
-import type { Pokemon, SearchPokemonPayload } from "@/types/pokemon";
+import type { MovePokemonPayload, Pokemon, SearchPokemonPayload } from "@/types/pokemon";
 import type { SearchResults } from "@/types/search";
 import type { Trainer } from "@/types/trainers";
-import { depositPokemon, withdrawPokemon } from "@/api/pokemon";
+import { depositPokemon, movePokemon, withdrawPokemon } from "@/api/pokemon";
 import { searchPokemon } from "@/api/pokemon";
 
 const BOX_SIZE: number = 30;
@@ -47,29 +47,6 @@ const party = computed<Pokemon[]>(() =>
     "order",
   ),
 );
-
-const canDeposit = computed<boolean>(() => {
-  if (isLoading.value || selected.value.size !== 1) {
-    return false; // NOTE(fpion): cannot deposit if loading, if no slot is selected, or if multiple slots are selected.
-  }
-  const box: string = [...selected.value][0].split(":")[0];
-  if (box !== "P") {
-    return false; // NOTE(fpion): cannot deposit a Pokémon that is already in a box.
-  }
-  // NOTE(fpion): can only deposit if at least one other Pokémon in the party that is not an egg.
-  return party.value.filter((pokemon) => !isSelected(pokemon) && !pokemon.eggCycles).length > 0;
-});
-const canWithdraw = computed<boolean>(() => {
-  if (isLoading.value || selected.value.size !== 1) {
-    return false; // NOTE(fpion): cannot withdraw if loading, if no slot is selected, or if multiple slots are selected.
-  }
-  const slot: string = [...selected.value][0];
-  const box: string = slot.split(":")[0];
-  if (!findPokemon(slot) || box === "P") {
-    return false; // NOTE(fpion): cannot withdraw form an empty slot, nor a Pokémon that is already in the party.
-  }
-  return party.value.length < PARTY_SIZE; // NOTE(fpion): cannot exceed party limit.
-});
 
 const emit = defineEmits<{
   (e: "error", error: unknown): void;
@@ -110,7 +87,7 @@ function toggle(pokemon: Pokemon | number | string, box?: number): void {
     case "string":
       if (selected.value.has(pokemon)) {
         selected.value.delete(pokemon);
-      } else {
+      } else if (selected.value.size < 2) {
         selected.value.add(pokemon);
       }
       break;
@@ -123,6 +100,17 @@ function toggle(pokemon: Pokemon | number | string, box?: number): void {
   }
 }
 
+const canDeposit = computed<boolean>(() => {
+  if (isLoading.value || selected.value.size !== 1) {
+    return false; // NOTE(fpion): cannot deposit if loading, if no slot is selected, or if multiple slots are selected.
+  }
+  const box: string = [...selected.value][0].split(":")[0];
+  if (box !== "P") {
+    return false; // NOTE(fpion): cannot deposit a Pokémon that is already in a box.
+  }
+  // NOTE(fpion): can only deposit if at least one other Pokémon in the party that is not an egg.
+  return party.value.filter((pokemon) => !isSelected(pokemon) && !pokemon.eggCycles).length > 0;
+});
 async function deposit(): Promise<void> {
   if (!isLoading.value) {
     isLoading.value = true;
@@ -136,7 +124,7 @@ async function deposit(): Promise<void> {
           await refresh();
           // TODO(fpion): toast
         }
-        selected.value.delete(slot);
+        selected.value.clear();
       }
     } catch (e: unknown) {
       emit("error", e);
@@ -145,6 +133,66 @@ async function deposit(): Promise<void> {
     }
   }
 }
+
+const canMove = computed<boolean>(() => {
+  if (isLoading.value || selected.value.size !== 2) {
+    return false; // NOTE(fpion): cannot move if loading, or if less than two slots selected.
+  }
+  const slots: string[] = [...selected.value];
+  const first: Pokemon | null = findPokemon(slots[0]);
+  const other: Pokemon | null = findPokemon(slots[1]);
+  if ((!first && !other) || (first && other)) {
+    return false; // NOTE(fpion): can only move a Pokémon to an empty slot.
+  }
+  const pokemon: Pokemon = (first ?? other)!;
+  if (pokemon.ownership && typeof pokemon.ownership.box !== "number") {
+    // NOTE(fpion): can only move if at least one other Pokémon in the party that is not an egg.
+    return party.value.filter((pokemon) => !isSelected(pokemon) && !pokemon.eggCycles).length > 0;
+  }
+  return true;
+});
+async function move(): Promise<void> {
+  if (!isLoading.value) {
+    isLoading.value = true;
+    try {
+      if (selected.value.size === 2) {
+        const slots: string[] = [...selected.value];
+        const source: Pokemon | null = findPokemon(slots[0]) ?? findPokemon(slots[1]);
+        if (source) {
+          const slot: string = slots[0] === getSlot(source) ? slots[1] : slots[0];
+          const values: string[] = slot.split(":");
+          const payload: MovePokemonPayload = {
+            position: Number(values[1]),
+            box: values[0] === "P" ? -1 : Number(values[0]),
+          };
+          const moved: Pokemon = await movePokemon(source.id, payload);
+          pokemon.value.set(moved.id, moved);
+          if (source.ownership && typeof source.ownership.box !== "number") {
+            await refresh();
+          }
+          // TODO(fpion): toast
+        }
+        selected.value.clear();
+      }
+    } catch (e: unknown) {
+      emit("error", e);
+    } finally {
+      isLoading.value = false;
+    }
+  }
+}
+
+const canWithdraw = computed<boolean>(() => {
+  if (isLoading.value || selected.value.size !== 1) {
+    return false; // NOTE(fpion): cannot withdraw if loading, if no slot is selected, or if multiple slots are selected.
+  }
+  const slot: string = [...selected.value][0];
+  const box: string = slot.split(":")[0];
+  if (!findPokemon(slot) || box === "P") {
+    return false; // NOTE(fpion): cannot withdraw form an empty slot, nor a Pokémon that is already in the party.
+  }
+  return party.value.length < PARTY_SIZE; // NOTE(fpion): cannot exceed party limit.
+});
 async function withdraw(): Promise<void> {
   if (!isLoading.value) {
     isLoading.value = true;
@@ -157,7 +205,7 @@ async function withdraw(): Promise<void> {
           pokemon.value.set(withdrawed.id, withdrawed);
           // TODO(fpion): toast
         }
-        selected.value.delete(slot);
+        selected.value.clear();
       }
     } catch (e: unknown) {
       emit("error", e);
@@ -206,13 +254,22 @@ watch(() => props.trainer, refresh, { deep: true, immediate: true });
         @click="deposit"
       />
       <TarButton
-        class="ms-1"
+        class="mx-1"
         :disabled="!canWithdraw"
         icon="fas fa-hand"
         :loading="isLoading"
         :status="t('loading')"
         :text="t('pokemon.memories.box.withdraw')"
         @click="withdraw"
+      />
+      <TarButton
+        class="ms-1"
+        :disabled="!canMove"
+        icon="fas fa-arrows-up-down-left-right"
+        :loading="isLoading"
+        :status="t('loading')"
+        :text="t('pokemon.memories.box.move')"
+        @click="move"
       />
     </div>
     <div class="row">

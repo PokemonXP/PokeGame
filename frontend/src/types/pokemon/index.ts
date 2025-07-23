@@ -114,6 +114,11 @@ export type IndividualValues = {
 
 export type MoveDisplayMove = "actions" | "description" | "notes";
 
+export type MovePokemonPayload = {
+  position: number;
+  box: number;
+};
+
 export type Ownership = {
   originalTrainer: Trainer;
   currentTrainer: Trainer;
