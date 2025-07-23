@@ -7,23 +7,23 @@ using PokeGame.Core.Trainers;
 
 namespace PokeGame.Core.Pokemon.Commands;
 
-internal record DepositPokemon(Guid Id) : ICommand<PokemonModel?>;
+internal record WithdrawPokemon(Guid Id) : ICommand<PokemonModel?>;
 
 /// <exception cref="ValidationException"></exception>
-internal class DepositPokemonHandler : ICommandHandler<DepositPokemon, PokemonModel?>
+internal class WithdrawPokemonHandler : ICommandHandler<WithdrawPokemon, PokemonModel?>
 {
   private readonly IApplicationContext _applicationContext;
   private readonly IPokemonQuerier _pokemonQuerier;
   private readonly IPokemonRepository _pokemonRepository;
 
-  public DepositPokemonHandler(IApplicationContext applicationContext, IPokemonQuerier pokemonQuerier, IPokemonRepository pokemonRepository)
+  public WithdrawPokemonHandler(IApplicationContext applicationContext, IPokemonQuerier pokemonQuerier, IPokemonRepository pokemonRepository)
   {
     _applicationContext = applicationContext;
     _pokemonQuerier = pokemonQuerier;
     _pokemonRepository = pokemonRepository;
   }
 
-  public async Task<PokemonModel?> HandleAsync(DepositPokemon command, CancellationToken cancellationToken)
+  public async Task<PokemonModel?> HandleAsync(WithdrawPokemon command, CancellationToken cancellationToken)
   {
     ActorId? actorId = _applicationContext.ActorId;
 
@@ -42,35 +42,28 @@ internal class DepositPokemonHandler : ICommandHandler<DepositPokemon, PokemonMo
       };
       throw new ValidationException([failure]);
     }
-    else if (pokemon.Slot.Box is not null)
+    else if (pokemon.Slot.Box is null)
     {
-      ValidationFailure failure = new(nameof(command.Id), "The Pokémon is already in a box.", pokemon.Id.ToGuid())
+      ValidationFailure failure = new(nameof(command.Id), "The Pokémon is already in the party.", pokemon.Id.ToGuid())
       {
-        ErrorCode = "PokemonIsAlreadyInABox"
+        ErrorCode = "PokemonAlreadyInParty"
       };
       throw new ValidationException([failure]);
     }
 
     TrainerId trainerId = pokemon.Ownership.TrainerId;
     Storage storage = await _pokemonQuerier.GetStorageAsync(trainerId, cancellationToken);
-    if (!pokemon.IsEgg)
+
+    Position? position = storage.GetFirstPartyEmptySlot();
+    if (position is null)
     {
-      IEnumerable<PokemonId> pokemonIds = storage.Party.Except([pokemon.Id]);
-      IReadOnlyCollection<Specimen> partyPokemon = await _pokemonRepository.LoadAsync(pokemonIds, cancellationToken);
-      if (!partyPokemon.Any(p => !p.IsEgg))
+      ValidationFailure failure = new("TrainerId", "The trainer party is already full.", trainerId.ToGuid())
       {
-        ValidationFailure failure = new("TrainerId", "The trainer party must contain at least one other hatched Pokémon.", trainerId.ToGuid())
-        {
-          ErrorCode = "CannotEmptyTrainerParty"
-        };
-        throw new ValidationException([failure]);
-      }
+        ErrorCode = "TrainerPartyFull"
+      };
+      throw new ValidationException([failure]);
     }
-
-    PokemonSlot slot = storage.GetFirstBoxEmptySlot();
-    pokemon.Deposit(slot, actorId);
-
-    // TODO(fpion): when the Pokémon is not last in the party, we must decrement the position of other Pokémon after it.
+    pokemon.Withdraw(position, actorId);
 
     await _pokemonRepository.SaveAsync(pokemon, cancellationToken);
 

@@ -588,6 +588,24 @@ public class Specimen : AggregateRoot
     }
   }
 
+  public void Withdraw(Position position, ActorId? actorId = null)
+  {
+    if (Ownership is null)
+    {
+      throw new InvalidOperationException($"The Pokémon 'Id={Id}' is not owned by any trainer.");
+    }
+
+    PokemonSlot slot = new(position, Box: null);
+    if (Slot != slot)
+    {
+      Raise(new PokemonWithdrew(slot), actorId);
+    }
+  }
+  protected virtual void Handle(PokemonWithdrew @event)
+  {
+    Slot = @event.Slot;
+  }
+
   private void SetOwnership(OwnershipKind kind, Trainer trainer, Item pokeBall, Location location, Level? level, DateTime? metOn, Description? description, PokemonSlot? slot, ActorId? actorId)
   {
     if (pokeBall.Category != ItemCategory.PokeBall)

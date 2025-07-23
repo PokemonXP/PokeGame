@@ -290,6 +290,13 @@ internal class PokemonEntity : AggregateEntity
     }
   }
 
+  public void Withdraw(PokemonWithdrew @event)
+  {
+    Update(@event);
+
+    SetSlot(@event.Slot);
+  }
+
   private void RemoveMove(int? position)
   {
     if (position.HasValue)

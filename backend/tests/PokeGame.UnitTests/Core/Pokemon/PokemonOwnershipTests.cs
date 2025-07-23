@@ -277,4 +277,29 @@ public class PokemonOwnershipTests
     var exception = Assert.Throws<CannotReleasePartyPokemonException>(() => _pokemon.Release());
     Assert.Equal(_pokemon.Id.ToGuid(), exception.PokemonId);
   }
+
+  [Fact(DisplayName = "Withdraw: it should throw InvalidOperationException when the Pokémon is not owned by any trainer.")]
+  public void Given_NoOwner_When_Withdraw_Then_InvalidOperationException()
+  {
+    Assert.Throws<InvalidOperationException>(() => _pokemon.Withdraw(new Position(2)));
+  }
+
+  [Fact(DisplayName = "Withdraw: it should withdraw a Pokémon.")]
+  public void Given_InABox_When_Withdraw_Then_Withdrew()
+  {
+    ActorId actorId = ActorId.NewId();
+
+    Position position = new(0);
+    _pokemon.Receive(_trainer, _pokeBall, _location, slot: new PokemonSlot(position, new Box(0)));
+
+    _pokemon.Withdraw(position, actorId);
+    Assert.Equal(new PokemonSlot(position, Box: null), _pokemon.Slot);
+    Assert.True(_pokemon.HasChanges);
+    Assert.Contains(_pokemon.Changes, change => change is PokemonWithdrew withdrew && withdrew.ActorId == actorId);
+
+    _pokemon.ClearChanges();
+    _pokemon.Withdraw(position);
+    Assert.False(_pokemon.HasChanges);
+    Assert.Empty(_pokemon.Changes);
+  }
 }
