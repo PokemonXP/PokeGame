@@ -120,4 +120,6 @@ public class Storage
       box++;
     }
   }
+
+  public bool IsEmpty(PokemonSlot slot) => !_slots.ContainsKey(slot);
 }

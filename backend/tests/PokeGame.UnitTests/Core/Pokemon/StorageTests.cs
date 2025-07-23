@@ -63,6 +63,28 @@ public class StorageTests
     Assert.Null(slot.Box);
   }
 
+  [Fact(DisplayName = "IsEmpty: it should return false when the slot is not empty.")]
+  public void Given_NotEmpty_When_IsEmpty_Then_False()
+  {
+    PokemonSlot slot = new(new Position(0), new Box(0));
+    Storage storage = new(
+    [
+      new(PokemonId.NewId(), new PokemonSlot(new Position(0), Box: null)),
+      new(PokemonId.NewId(), slot)
+    ]);
+
+    Assert.False(storage.IsEmpty(slot));
+  }
+
+  [Fact(DisplayName = "IsEmpty: it should return true when the slot is empty.")]
+  public void Given_Empty_When_IsEmpty_Then_True()
+  {
+    Storage storage = new([new(PokemonId.NewId(), new PokemonSlot(new Position(0), Box: null))]);
+
+    PokemonSlot slot = new(new Position(0), new Box(0));
+    Assert.True(storage.IsEmpty(slot));
+  }
+
   [Fact(DisplayName = "It should create a storage with boxes.")]
   public void Given_PartyAndBoxes_When_ctor_Then_Created()
   {

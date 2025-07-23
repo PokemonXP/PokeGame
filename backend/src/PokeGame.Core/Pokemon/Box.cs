@@ -17,7 +17,7 @@ public record Box
   {
     public Validator()
     {
-      RuleFor(x => x.Value).GreaterThanOrEqualTo(0);
+      RuleFor(x => x.Value).Box();
     }
   }
 }
