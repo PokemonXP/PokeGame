@@ -84,6 +84,13 @@ public class PokemonController : ControllerBase
     return pokemon is null ? NotFound() : Ok(pokemon);
   }
 
+  [HttpPatch("swap")]
+  public async Task<ActionResult<IReadOnlyCollection<PokemonModel>>> SwapAsync([FromBody] SwapPokemonPayload payload, CancellationToken cancellationToken)
+  {
+    IReadOnlyCollection<PokemonModel> pokemon = await _pokemonService.SwapAsync(payload, cancellationToken);
+    return Ok(pokemon);
+  }
+
   [HttpPut("{id}/withdraw")]
   public async Task<ActionResult<PokemonModel>> WithdrawAsync(Guid id, CancellationToken cancellationToken)
   {

@@ -536,6 +536,32 @@ public class Specimen : AggregateRoot
     _uniqueName = @event.UniqueName;
   }
 
+  public void Swap(Specimen pokemon, ActorId? actorId = null)
+  {
+    if (Ownership is null || Slot is null)
+    {
+      throw new InvalidOperationException($"The Pokémon 'Id={Id}' is not owned by any trainer.");
+    }
+    else if (pokemon.Ownership is null || pokemon.Slot is null)
+    {
+      throw new ArgumentException("The Pokémon is not owned by any trainer.", nameof(pokemon));
+    }
+    else if (Ownership.TrainerId != pokemon.Ownership.TrainerId)
+    {
+      throw new ArgumentException("The Pokémon are not owned by the same trainer.", nameof(pokemon));
+    }
+    else if (Slot != pokemon.Slot)
+    {
+      PokemonSlot slot = Slot;
+      Raise(new PokemonSwapped(pokemon.Slot), actorId);
+      pokemon.Raise(new PokemonSwapped(slot), actorId);
+    }
+  }
+  protected virtual void Handle(PokemonSwapped @event)
+  {
+    Slot = @event.Slot;
+  }
+
   public void SwitchMoves(int source, int destination, ActorId? actorId = null)
   {
     ArgumentOutOfRangeException.ThrowIfNegative(source, nameof(source));
