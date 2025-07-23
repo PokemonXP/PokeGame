@@ -22,7 +22,7 @@ export async function catchPokemon(id: string, payload: CatchPokemonPayload): Pr
 
 export async function depositPokemon(id: string): Promise<Pokemon> {
   const url: string = new urlUtils.UrlBuilder({ path: "/pokemon/{id}/deposit" }).setParameter("id", id).buildRelative();
-  return (await put<void, Pokemon>(url)).data;
+  return (await patch<void, Pokemon>(url)).data;
 }
 
 export async function createPokemon(payload: CreatePokemonPayload): Promise<Pokemon> {
@@ -37,7 +37,7 @@ export async function deletePokemon(id: string): Promise<Pokemon> {
 
 export async function movePokemon(id: string, payload: MovePokemonPayload): Promise<Pokemon> {
   const url: string = new urlUtils.UrlBuilder({ path: "/pokemon/{id}/move" }).setParameter("id", id).buildRelative();
-  return (await put<MovePokemonPayload, Pokemon>(url, payload)).data;
+  return (await patch<MovePokemonPayload, Pokemon>(url, payload)).data;
 }
 
 export async function readPokemon(id: string): Promise<Pokemon> {
@@ -101,5 +101,5 @@ export async function updatePokemon(id: string, payload: UpdatePokemonPayload): 
 
 export async function withdrawPokemon(id: string): Promise<Pokemon> {
   const url: string = new urlUtils.UrlBuilder({ path: "/pokemon/{id}/withdraw" }).setParameter("id", id).buildRelative();
-  return (await put<void, Pokemon>(url)).data;
+  return (await patch<void, Pokemon>(url)).data;
 }

@@ -56,14 +56,14 @@ public class PokemonController : ControllerBase
     return pokemon is null ? NotFound() : Ok(pokemon);
   }
 
-  [HttpPut("{id}/deposit")]
+  [HttpPatch("{id}/deposit")]
   public async Task<ActionResult<PokemonModel>> DepositAsync(Guid id, CancellationToken cancellationToken)
   {
     PokemonModel? pokemon = await _pokemonService.DepositAsync(id, cancellationToken);
     return pokemon is null ? NotFound() : Ok(pokemon);
   }
 
-  [HttpPut("{id}/move")]
+  [HttpPatch("{id}/move")]
   public async Task<ActionResult<PokemonModel>> MoveAsync(Guid id, [FromBody] MovePokemonPayload payload, CancellationToken cancellationToken)
   {
     PokemonModel? pokemon = await _pokemonService.MoveAsync(id, payload, cancellationToken);
@@ -91,7 +91,7 @@ public class PokemonController : ControllerBase
     return Ok(pokemon);
   }
 
-  [HttpPut("{id}/withdraw")]
+  [HttpPatch("{id}/withdraw")]
   public async Task<ActionResult<PokemonModel>> WithdrawAsync(Guid id, CancellationToken cancellationToken)
   {
     PokemonModel? pokemon = await _pokemonService.WithdrawAsync(id, cancellationToken);
