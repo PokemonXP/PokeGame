@@ -8,7 +8,8 @@
   "deleted": "The Pokémon has been deleted.",
   "egg": {
     "cycles": "Egg Cycles",
-    "label": "Is Egg"
+    "is": "Is Egg",
+    "label": "Œuf"
   },
   "empty": "This list is empty.",
   "experience": {
@@ -103,7 +104,6 @@
       }
     },
     "metOn": "Met on",
-    "party": "Party",
     "pokeBall": {
       "label": "Poké Ball",
       "placeholder": "Select a Poké Ball"
@@ -154,6 +154,7 @@
   "nickname": {
     "label": "Nickname"
   },
+  "party": "Équipe",
   "pokedex": "Pokédex",
   "progress": {
     "title": "Progress"
@@ -199,6 +200,7 @@
     }
   },
   "sprite": {
+    "alt": "Image de {name}",
     "label": "Sprite"
   },
   "stamina": {

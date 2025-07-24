@@ -138,6 +138,15 @@ internal class PokemonQuerier : IPokemonQuerier
       builder.Where(PokemonDb.Pokemon.CurrentTrainerUid, Operators.IsEqualTo(payload.TrainerId.Value));
     }
 
+    if (payload.InParty.HasValue)
+    {
+      builder.Where(PokemonDb.Pokemon.Box, payload.InParty.Value ? Operators.IsNull() : Operators.IsNotNull());
+    }
+    if (payload.Box.HasValue)
+    {
+      builder.Where(PokemonDb.Pokemon.Box, Operators.IsEqualTo(payload.Box.Value));
+    }
+
     IQueryable<PokemonEntity> query = _pokemon.FromQuery(builder).AsNoTracking()
       .Include(x => x.CurrentTrainer)
       .Include(x => x.HeldItem)
@@ -152,6 +161,11 @@ internal class PokemonQuerier : IPokemonQuerier
     {
       switch (sort.Field)
       {
+        case PokemonSort.Box:
+          ordered = ordered is null
+            ? (sort.IsDescending ? query.OrderByDescending(x => x.Box) : query.OrderBy(x => x.Box))
+            : (sort.IsDescending ? ordered.ThenByDescending(x => x.Box) : ordered.ThenBy(x => x.Box));
+          break;
         case PokemonSort.CreatedOn:
           ordered = ordered is null
             ? (sort.IsDescending ? query.OrderByDescending(x => x.CreatedOn) : query.OrderBy(x => x.CreatedOn))
@@ -171,6 +185,11 @@ internal class PokemonQuerier : IPokemonQuerier
           ordered = ordered is null
             ? (sort.IsDescending ? query.OrderByDescending(x => x.Nickname) : query.OrderBy(x => x.Nickname))
             : (sort.IsDescending ? ordered.ThenByDescending(x => x.Nickname) : ordered.ThenBy(x => x.Nickname));
+          break;
+        case PokemonSort.Position:
+          ordered = ordered is null
+            ? (sort.IsDescending ? query.OrderByDescending(x => x.Position) : query.OrderBy(x => x.Position))
+            : (sort.IsDescending ? ordered.ThenByDescending(x => x.Position) : ordered.ThenBy(x => x.Position));
           break;
         case PokemonSort.UniqueName:
           ordered = ordered is null

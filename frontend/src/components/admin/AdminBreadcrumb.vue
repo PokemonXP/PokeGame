@@ -12,7 +12,7 @@ defineProps<{
 </script>
 
 <template>
-  <nav aria-label="breadcrumb">
+  <nav aria-label="breadcrumb" :style="{ '--bs-breadcrumb-divider': `'›'` }">
     <ol class="breadcrumb">
       <li class="breadcrumb-item">
         <RouterLink :to="{ name: 'Admin' }">{{ t("admin") }}</RouterLink>

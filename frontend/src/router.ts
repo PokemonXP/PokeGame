@@ -121,6 +121,11 @@ const router = createRouter({
           path: "",
           component: () => import("./views/game/GameMenu.vue"),
         },
+        {
+          name: "PokemonView",
+          path: "pokemon",
+          component: () => import("./views/game/PokemonView.vue"),
+        },
       ],
     },
     // NotFound

@@ -197,7 +197,7 @@ watch(
             <td>{{ pokemon.ownership.position + 1 }}</td>
             <td>
               <template v-if="pokemon.ownership.box">{{ pokemon.ownership.box + 1 }}</template>
-              <span v-else class="text-muted">{{ t("pokemon.memories.party") }}</span>
+              <span v-else class="text-muted">{{ t("pokemon.party") }}</span>
             </td>
           </tr>
         </tbody>
