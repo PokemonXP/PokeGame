@@ -155,7 +155,10 @@
     "label": "Nickname"
   },
   "party": "Party",
-  "pokedex": "Pokédex",
+  "pokedex": {
+    "number": "Pokédex No.",
+    "title": "Pokédex"
+  },
   "progress": {
     "title": "Progress"
   },
@@ -164,6 +167,13 @@
   },
   "size": {
     "category": {
+      "abbreviations": {
+        "ExtraLarge": "XL",
+        "ExtraSmall": "XS",
+        "Large": "L",
+        "Medium": "M",
+        "Small": "S"
+      },
       "label": "Category",
       "options": {
         "ExtraLarge": "Extra Large",
@@ -198,10 +208,6 @@
       "label": "Species",
       "placeholder": "Select a Pokémon species"
     }
-  },
-  "sprite": {
-    "alt": "{name}'s Sprite",
-    "label": "Sprite"
   },
   "stamina": {
     "label": "Stamina"
@@ -251,9 +257,7 @@
       }
     }
   },
-  "summary": {
-    "title": "Summary"
-  },
+  "summary": "Summary",
   "title": "Pokémon",
   "trainer": {
     "label": "Trainer",

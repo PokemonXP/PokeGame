@@ -4,7 +4,7 @@ import { computed } from "vue";
 import { parsingUtils } from "logitar-js";
 
 import TrainerCardContents from "./TrainerCardContents.vue";
-import type { TrainerSheet } from "@/types/trainers";
+import type { TrainerSheet } from "@/types/game";
 
 const { parseBoolean } = parsingUtils;
 

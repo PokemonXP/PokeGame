@@ -3,7 +3,7 @@ import { inject, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 
 import TrainerCard from "@/components/trainers/TrainerCard.vue";
-import type { TrainerSheet } from "@/types/trainers";
+import type { TrainerSheet } from "@/types/game";
 import { getTrainerSheets } from "@/api/game/trainers";
 import { handleErrorKey } from "@/inject";
 

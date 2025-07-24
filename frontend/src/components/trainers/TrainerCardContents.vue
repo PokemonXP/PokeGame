@@ -4,7 +4,7 @@ import { useI18n } from "vue-i18n";
 
 import PokeDollarIcon from "@/components/items/PokeDollarIcon.vue";
 import TrainerGenderIcon from "./TrainerGenderIcon.vue";
-import type { TrainerSheet } from "@/types/trainers";
+import type { TrainerSheet } from "@/types/game";
 
 const { n, t } = useI18n();
 

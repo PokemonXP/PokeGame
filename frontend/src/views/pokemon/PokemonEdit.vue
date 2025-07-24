@@ -115,7 +115,7 @@ onMounted(async () => {
         <DeletePokemon :pokemon="pokemon" @deleted="onDeleted" @error="handleError" />
       </div>
       <TarTabs>
-        <TarTab active id="summary" :title="t('pokemon.summary.title')">
+        <TarTab active id="summary" :title="t('pokemon.summary')">
           <PokemonSummary :pokemon="pokemon" @error="handleError" @saved="onSummaryUpdated" />
         </TarTab>
         <TarTab id="statistics" :title="t('pokemon.statistic.title')">

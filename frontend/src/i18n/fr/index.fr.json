@@ -51,6 +51,10 @@
       "placeholder": "Sélectionnez un tri"
     }
   },
+  "sprite": {
+    "alt": "Image de {name}",
+    "label": "Image"
+  },
   "status": {
     "createdOn": "Création le {date} par",
     "updatedOn": "Dernière modification le {date} par"

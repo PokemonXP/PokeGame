@@ -14,12 +14,12 @@
   "empty": "This list is empty.",
   "experience": {
     "format": "XP: {experience}",
-    "label": "Experience",
+    "label": "Expérience",
     "maximum": "Maximum Experience",
     "minimum": "Minimum Experience",
     "next": {
       "format": "Next: {next}",
-      "label": "To Next Level"
+      "label": "Prochain niveau"
     },
     "percentage": "Percentage",
     "table": {
@@ -74,7 +74,7 @@
     "title": "Identification"
   },
   "item": {
-    "held": "Held Item",
+    "held": "Objet tenu",
     "select": {
       "label": "Item",
       "placeholder": "Select an item"
@@ -115,7 +115,7 @@
     "receive": "Receive",
     "trainer": {
       "current": "Current Trainer",
-      "original": "Original Trainer"
+      "original": "Dresseur d’origine"
     },
     "title": "Memories"
   },
@@ -155,7 +155,10 @@
     "label": "Nickname"
   },
   "party": "Équipe",
-  "pokedex": "Pokédex",
+  "pokedex": {
+    "number": "Pokédex No.",
+    "title": "Pokédex"
+  },
   "progress": {
     "title": "Progress"
   },
@@ -164,6 +167,13 @@
   },
   "size": {
     "category": {
+      "abbreviations": {
+        "ExtraLarge": "XL",
+        "ExtraSmall": "XS",
+        "Large": "L",
+        "Medium": "M",
+        "Small": "S"
+      },
       "label": "Category",
       "options": {
         "ExtraLarge": "Extra Large",
@@ -174,12 +184,12 @@
       }
     },
     "height": {
-      "label": "Height",
+      "label": "Hauteur",
       "scalar": "Height Scalar"
     },
-    "title": "Size",
+    "title": "Taille",
     "weight": {
-      "label": "Weight",
+      "label": "Poids",
       "scalar": "Weight Scalar"
     }
   },
@@ -198,10 +208,6 @@
       "label": "Species",
       "placeholder": "Select a Pokémon species"
     }
-  },
-  "sprite": {
-    "alt": "Image de {name}",
-    "label": "Sprite"
   },
   "stamina": {
     "label": "Stamina"
@@ -251,9 +257,7 @@
       }
     }
   },
-  "summary": {
-    "title": "Summary"
-  },
+  "summary": "Résumé",
   "title": "Pokémon",
   "trainer": {
     "label": "Trainer",

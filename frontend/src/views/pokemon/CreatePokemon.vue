@@ -286,7 +286,7 @@ watch(
             :model-value="form.types.secondary ?? undefined"
             placeholder="pokemon.type.none"
           />
-          <PokemonTypeSelect class="col" id="tera-type" label="pokemon.type.tera" required v-model="teraType" />
+          <PokemonTypeSelect class="col" id="tera-type" label="pokemon.type.tera" required tera v-model="teraType" />
         </div>
         <h2 class="h3">{{ t("pokemon.size.title") }}</h2>
         <SizeEdit v-model="size" />
@@ -338,7 +338,7 @@ watch(
         <h2 class="h3">{{ t("metadata") }}</h2>
         <div class="row">
           <UrlInput class="col" v-model="url" />
-          <UrlInput class="col" id="sprite" label="pokemon.sprite.label" v-model="sprite" />
+          <UrlInput class="col" id="sprite" label="sprite.label" v-model="sprite" />
         </div>
         <div class="row">
           <NotesTextarea class="col" v-model="notes" />

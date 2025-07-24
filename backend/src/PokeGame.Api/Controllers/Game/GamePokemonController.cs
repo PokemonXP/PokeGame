@@ -25,7 +25,7 @@ public class GamePokemonController : ControllerBase
   }
 
   [HttpGet("/game/trainers/{trainerId}/pokemon")]
-  public async Task<ActionResult<PokemonSheet[]>> GetAsync(Guid trainerId, int? box, CancellationToken cancellationToken)
+  public async Task<ActionResult<PokemonCard[]>> GetAsync(Guid trainerId, int? box, CancellationToken cancellationToken)
   {
     TrainerModel? trainer = await _trainerService.ReadAsync(trainerId, uniqueName: null, license: null, cancellationToken);
     if (trainer is null)
@@ -46,7 +46,24 @@ public class GamePokemonController : ControllerBase
     payload.Sort.Add(new PokemonSortOption(PokemonSort.Position));
     SearchResults<PokemonModel> results = await _pokemonService.SearchAsync(payload, cancellationToken);
 
-    PokemonSheet[] pokemon = results.Items.Select(pokemon => new PokemonSheet(pokemon)).ToArray();
+    PokemonCard[] pokemon = results.Items.Select(pokemon => new PokemonCard(pokemon)).ToArray();
     return Ok(pokemon);
+  }
+
+  [HttpGet("{id}/summary")]
+  public async Task<ActionResult<PokemonSummary>> GetSummaryAsync(Guid id, CancellationToken cancellationToken)
+  {
+    PokemonModel? pokemon = await _pokemonService.ReadAsync(id, uniqueName: null, cancellationToken);
+    if (pokemon is null)
+    {
+      return NotFound();
+    }
+    else if (pokemon.Ownership is null || pokemon.Ownership.CurrentTrainer.UserId != HttpContext.GetUserId())
+    {
+      return Forbid();
+    }
+
+    PokemonSummary summary = new(pokemon);
+    return Ok(summary);
   }
 }

@@ -9,7 +9,7 @@ withDefaults(
   }>(),
   {
     id: "sprite",
-    label: "pokemon.sprite.label",
+    label: "sprite.label",
   },
 );
 

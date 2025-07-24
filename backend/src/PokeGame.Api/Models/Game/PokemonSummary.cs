@@ -1,0 +1,93 @@
+﻿using PokeGame.Core;
+using PokeGame.Core.Forms.Models;
+using PokeGame.Core.Pokemon;
+using PokeGame.Core.Pokemon.Models;
+using PokeGame.Core.Species.Models;
+
+namespace PokeGame.Api.Models.Game;
+
+public class PokemonSummary
+{
+  public Guid Id { get; set; }
+
+  public int Number { get; set; }
+  public string Name { get; set; }
+  public string? Nickname { get; set; }
+  public PokemonGender? Gender { get; set; }
+  public string Sprite { get; set; }
+
+  public double Height { get; set; }
+  public double Weight { get; set; }
+  public PokemonSizeCategory Size { get; set; }
+
+  public PokemonType PrimaryType { get; set; }
+  public PokemonType? SecondaryType { get; set; }
+  public PokemonType TeraType { get; set; }
+
+  public int Level { get; set; }
+  public ExperienceSummary? Experience { get; set; }
+
+  public ItemSummary? HeldItem { get; set; }
+
+  public TrainerSummary? OriginalTrainer { get; set; }
+  public string? CaughtBallSprite { get; set; }
+
+  public PokemonSummary() : this(string.Empty, string.Empty)
+  {
+  }
+
+  public PokemonSummary(string name, string sprite)
+  {
+    Name = name;
+    Sprite = sprite;
+  }
+
+  public PokemonSummary(PokemonModel pokemon)
+  {
+    OwnershipModel ownership = pokemon.Ownership ?? throw new ArgumentException($"The {nameof(pokemon.Ownership)} is required.", nameof(pokemon));
+
+    Id = pokemon.Id;
+
+    Sprite = pokemon.GetSprite();
+
+    if (pokemon.IsEgg())
+    {
+      Name = "Egg";
+    }
+    else
+    {
+      FormModel form = pokemon.Form;
+      SpeciesModel species = form.Variety.Species;
+
+      Number = pokemon.Form.Variety.Species.Number;
+      Name = species.DisplayName ?? species.UniqueName;
+      Nickname = pokemon.Nickname;
+      Gender = pokemon.Gender;
+
+      PrimaryType = form.Types.Primary;
+      SecondaryType = form.Types.Secondary;
+      TeraType = pokemon.TeraType;
+
+      double heightMultiplier = pokemon.Size.Height / 255.0 * 0.4 + 0.8;
+      Height = Math.Floor(heightMultiplier * form.Height) / 10.0;
+      Weight = Math.Floor((pokemon.Size.Weight / 255.0 * 0.4 + 0.8) * heightMultiplier * form.Weight) / 10.0;
+      Size = pokemon.Size.Category;
+
+      Level = pokemon.Level;
+      Experience = new ExperienceSummary(pokemon);
+
+      if (pokemon.HeldItem is not null)
+      {
+        HeldItem = new ItemSummary(pokemon.HeldItem);
+      }
+
+      OriginalTrainer = new TrainerSummary(ownership.OriginalTrainer);
+    }
+
+    CaughtBallSprite = ownership.PokeBall.Sprite;
+  }
+
+  public override bool Equals(object? obj) => obj is PokemonSummary pokemon && pokemon.Id == Id;
+  public override int GetHashCode() => Id.GetHashCode();
+  public override string ToString() => $"{Name} (Id={Id})";
+}
