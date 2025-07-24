@@ -1,6 +1,6 @@
-import type { PokemonGender } from ".";
+import type { PokemonGender, PokemonType } from ".";
 
-export type HeldItem = {
+export type ItemSummary = {
   name: string;
   sprite?: string | null;
 };
@@ -14,5 +14,30 @@ export type PokemonSheet = {
   constitution: number;
   vitality: number;
   stamina: number;
-  heldItem?: HeldItem;
+  heldItem?: ItemSummary;
 };
+
+export type PokemonSummary = {
+  id: string;
+  number: number;
+  name: string;
+  nickname?: string | null;
+  gender?: PokemonGender | null;
+  sprite: string;
+  primaryType: PokemonType;
+  secondaryType: PokemonType | null;
+  teraType: PokemonType;
+  level: number;
+  experience: number;
+  heldItem?: ItemSummary | null;
+  originalTrainer?: TrainerSummary | null;
+  pokeBall: ItemSummary;
+};
+
+export type TrainerSummary = {
+  name: string;
+  sprite?: string | null;
+};
+
+// TODO(fpion): move one directory top
+// TODO(fpion): move game trainer types in this file

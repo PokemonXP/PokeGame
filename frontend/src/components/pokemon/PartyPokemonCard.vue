@@ -7,7 +7,7 @@ import { useI18n } from "vue-i18n";
 import PokemonGenderIcon from "@/components/icons/PokemonGenderIcon.vue";
 import StaminaBar from "@/components/pokemon/StaminaBar.vue";
 import VitalityBar from "@/components/pokemon/VitalityBar.vue";
-import type { HeldItem, PokemonSheet } from "@/types/pokemon/game";
+import type { ItemSummary, PokemonSheet } from "@/types/pokemon/game";
 
 const { parseBoolean } = parsingUtils;
 const { t } = useI18n();
@@ -18,15 +18,13 @@ const props = defineProps<{
 }>();
 
 const classes = computed<string[]>(() => {
-  const classes: string[] = [
-    /* TODO(fpion): "clickable"*/
-  ];
+  const classes: string[] = ["clickable"];
   if (parseBoolean(props.selected)) {
     classes.push("selected");
   }
   return classes;
 });
-const heldItem = computed<HeldItem | undefined>(() => props.pokemon.heldItem ?? undefined);
+const heldItem = computed<ItemSummary | undefined>(() => props.pokemon.heldItem ?? undefined);
 const isEgg = computed<boolean>(() => props.pokemon.level < 1);
 const name = computed<string>(() => (isEgg.value ? t("pokemon.egg.label") : props.pokemon.name));
 </script>

@@ -251,9 +251,7 @@
       }
     }
   },
-  "summary": {
-    "title": "Summary"
-  },
+  "summary": "Summary",
   "title": "Pokémon",
   "trainer": {
     "label": "Trainer",
