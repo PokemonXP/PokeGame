@@ -23,7 +23,9 @@ onMounted(async () => {
   isLoading.value = true;
   try {
     const id: string = route.params.trainer.toString();
-    trainer.value = await getTrainerSheet(id);
+    if (id) {
+      trainer.value = await getTrainerSheet(id);
+    }
   } catch (e: unknown) {
     handleError(e);
   } finally {
@@ -43,7 +45,7 @@ onMounted(async () => {
     <div class="d-flex flex-column justify-content-center align-items-center mt-3">
       <div class="grid">
         <a href="#" class="tile"><font-awesome-icon class="icon" icon="fas fa-book" /> {{ t("pokemon.pokedex") }}</a>
-        <a href="#" class="tile"><PokemonIcon class="icon" /> {{ t("pokemon.title") }}</a>
+        <RouterLink :to="{ name: 'PokemonView' }" class="tile"><PokemonIcon class="icon" /> {{ t("pokemon.title") }}</RouterLink>
         <a href="#" class="tile"><font-awesome-icon class="icon" icon="fas fa-suitcase" /> {{ t("items.bag") }}</a>
         <a href="#" class="tile" data-bs-toggle="modal" data-bs-target="#trainer-card-modal">
           <font-awesome-icon class="icon" icon="fas fa-id-card" /> {{ t("trainers.card") }}

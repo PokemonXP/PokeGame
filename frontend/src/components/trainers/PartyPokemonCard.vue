@@ -32,7 +32,7 @@ const heldItem = computed<Item | undefined>(() => props.pokemon.heldItem ?? unde
 </script>
 
 <template>
-  <TarCard :class="classes" :subtitle="undefined">
+  <TarCard :class="classes">
     <template #contents>
       <div class="card-body">
         <div class="d-flex">

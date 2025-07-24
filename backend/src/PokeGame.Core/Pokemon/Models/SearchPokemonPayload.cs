@@ -8,5 +8,8 @@ public record SearchPokemonPayload : SearchPayload
   public Guid? HeldItemId { get; set; }
   public Guid? TrainerId { get; set; }
 
+  public bool? InParty { get; set; }
+  public int? Box { get; set; }
+
   public new List<PokemonSortOption> Sort { get; set; } = [];
 }

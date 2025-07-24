@@ -36,6 +36,8 @@ internal class PokemonConfiguration : AggregateConfiguration<PokemonEntity>, IEn
     builder.HasIndex(x => x.OriginalTrainerUid);
     builder.HasIndex(x => x.CurrentTrainerUid);
     builder.HasIndex(x => x.PokeBallUid);
+    //builder.HasIndex(x => x.Position);
+    //builder.HasIndex(x => x.Box); // TODO(fpion): next migration
 
     builder.Property(x => x.UniqueName).HasMaxLength(UniqueName.MaximumLength);
     builder.Property(x => x.UniqueNameNormalized).HasMaxLength(UniqueName.MaximumLength);

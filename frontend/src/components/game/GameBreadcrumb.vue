@@ -13,7 +13,7 @@ defineProps<{
 
 <template>
   <div class="d-flex justify-content-center">
-    <nav aria-label="breadcrumb">
+    <nav aria-label="breadcrumb" :style="{ '--bs-breadcrumb-divider': `'›'` }">
       <ol class="breadcrumb">
         <li class="breadcrumb-item">
           <RouterLink :to="{ name: 'Home' }">{{ t("home") }}</RouterLink>

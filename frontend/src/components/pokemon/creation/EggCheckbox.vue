@@ -16,7 +16,7 @@ const props = withDefaults(
   }>(),
   {
     id: "egg",
-    label: "pokemon.egg.label",
+    label: "pokemon.egg.is",
     switch: true,
   },
 );
