@@ -5,6 +5,7 @@ namespace PokeGame.Api.Models.Game;
 public record ItemSummary
 {
   public string Name { get; set; }
+  // TODO(fpion): Description
   public string? Sprite { get; set; }
 
   public ItemSummary() : this(string.Empty)

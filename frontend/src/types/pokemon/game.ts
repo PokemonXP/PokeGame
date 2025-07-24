@@ -5,29 +5,29 @@ export type ItemSummary = {
   sprite?: string | null;
 };
 
-export type PokemonSheet = {
+export type PokemonBase = {
+  name: string
+  sprite: string
+  level: number
+}
+
+export type PokemonSheet = PokemonBase & {
   id: string;
-  name: string;
   gender?: PokemonGender | null;
-  sprite: string;
-  level: number;
   constitution: number;
   vitality: number;
   stamina: number;
   heldItem?: ItemSummary;
 };
 
-export type PokemonSummary = {
+export type PokemonSummary = PokemonBase & {
   id: string;
   number: number;
-  name: string;
   nickname?: string | null;
   gender?: PokemonGender | null;
-  sprite: string;
   primaryType: PokemonType;
   secondaryType: PokemonType | null;
   teraType: PokemonType;
-  level: number;
   experience: number;
   heldItem?: ItemSummary | null;
   originalTrainer?: TrainerSummary | null;

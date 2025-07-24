@@ -155,7 +155,10 @@
     "label": "Nickname"
   },
   "party": "Party",
-  "pokedex": "Pokédex",
+  "pokedex": {
+    "number": "Pokédex No.",
+    "title": "Pokédex"
+  },
   "progress": {
     "title": "Progress"
   },
@@ -198,10 +201,6 @@
       "label": "Species",
       "placeholder": "Select a Pokémon species"
     }
-  },
-  "sprite": {
-    "alt": "{name}'s Sprite",
-    "label": "Sprite"
   },
   "stamina": {
     "label": "Stamina"

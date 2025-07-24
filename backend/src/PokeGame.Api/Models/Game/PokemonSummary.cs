@@ -16,6 +16,10 @@ public class PokemonSummary // TODO(fpion): should be named PokemonSheet...
   public PokemonGender? Gender { get; set; }
   public string Sprite { get; set; }
 
+  // TODO(fpion): Height
+  // TODO(fpion): Weight
+  // TODO(fpion): Size
+
   public PokemonType PrimaryType { get; set; }
   public PokemonType? SecondaryType { get; set; }
   public PokemonType TeraType { get; set; }

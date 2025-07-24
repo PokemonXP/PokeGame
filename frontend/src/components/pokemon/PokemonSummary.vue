@@ -129,7 +129,7 @@ watch(
             <span v-else class="text-muted">{{ "—" }}</span>
           </td>
           <td>
-            <PokemonTypeImage height="20" :type="pokemon.teraType" />
+            <PokemonTypeImage height="20" tera :type="pokemon.teraType" />
           </td>
         </tr>
         <tr>

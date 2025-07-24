@@ -5,7 +5,7 @@ namespace PokeGame.Api.Models.Game;
 public record TrainerSummary
 {
   public string Name { get; set; }
-  public string? Sprite { get; set; }
+  public string? Sprite { get; set; } // TODO(fpion: License instead of sprite
 
   public TrainerSummary() : this(string.Empty)
   {

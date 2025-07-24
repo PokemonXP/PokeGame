@@ -6,6 +6,7 @@ import { useRoute } from "vue-router";
 
 import GameBreadcrumb from "@/components/game/GameBreadcrumb.vue";
 import PartyPokemonCard from "@/components/pokemon/PartyPokemonCard.vue";
+import PokemonInfo from "@/components/pokemon/PokemonInfo.vue";
 import PokemonSprite from "@/components/pokemon/PokemonSprite.vue";
 import type { Breadcrumb } from "@/types/components";
 import type { PokemonSheet, PokemonSummary } from "@/types/pokemon/game";
@@ -102,6 +103,10 @@ onMounted(async () => {
           <div v-for="pokemon in party" :key="pokemon.id" class="col-4">
             <PokemonSprite class="img-fluid mb-2 mx-auto" clickable :pokemon="pokemon" :selected="selected?.id === pokemon.id" @click="select(pokemon)" />
           </div>
+        </div>
+        <div v-if="view === 'summary' && summary">
+          <h2 class="h3">{{ t("pokemon.summary") }}</h2>
+          <PokemonInfo :pokemon="summary" />
         </div>
       </section>
     </div>

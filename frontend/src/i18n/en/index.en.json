@@ -51,6 +51,10 @@
       "placeholder": "Select a sort"
     }
   },
+  "sprite": {
+    "alt": "{name}'s Sprite",
+    "label": "Sprite"
+  },
   "status": {
     "createdOn": "Created on {date} by",
     "updatedOn": "Last updated on {date} by"
