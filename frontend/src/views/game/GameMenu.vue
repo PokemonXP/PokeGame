@@ -1,10 +1,35 @@
 <script setup lang="ts">
+import { TarButton, TarModal } from "logitar-vue3-ui";
+import { inject, onMounted, ref } from "vue";
+import { useRoute } from "vue-router";
 import { useI18n } from "vue-i18n";
 
 import GameBreadcrumb from "@/components/game/GameBreadcrumb.vue";
 import PokemonIcon from "@/components/icons/PokemonIcon.vue";
+import TrainerCardContents from "@/components/trainers/TrainerCardContents.vue";
+import type { TrainerSheet } from "@/types/trainers";
+import { getTrainerSheet } from "@/api/game/trainers";
+import { handleErrorKey } from "@/inject";
 
+const handleError = inject(handleErrorKey) as (e: unknown) => void;
+
+const route = useRoute();
 const { t } = useI18n();
+
+const isLoading = ref<boolean>(false);
+const trainer = ref<TrainerSheet>();
+
+onMounted(async () => {
+  isLoading.value = true;
+  try {
+    const id: string = route.params.trainer.toString();
+    trainer.value = await getTrainerSheet(id);
+  } catch (e: unknown) {
+    handleError(e);
+  } finally {
+    isLoading.value = false;
+  }
+});
 </script>
 
 <template>
@@ -17,12 +42,20 @@ const { t } = useI18n();
     <GameBreadcrumb :current="t('menu')" />
     <div class="d-flex flex-column justify-content-center align-items-center mt-3">
       <div class="grid">
-        <a href="#" class="tile"><font-awesome-icon class="icon" icon="fas fa-book" /> todo:pokedex</a>
+        <a href="#" class="tile"><font-awesome-icon class="icon" icon="fas fa-book" /> {{ t("pokemon.pokedex") }}</a>
         <a href="#" class="tile"><PokemonIcon class="icon" /> {{ t("pokemon.title") }}</a>
-        <a href="#" class="tile"><font-awesome-icon class="icon" icon="fas fa-suitcase" /> todo:bag</a>
-        <a href="#" class="tile"><font-awesome-icon class="icon" icon="fas fa-id-card" /> {{ t("trainers.card") }}</a>
+        <a href="#" class="tile"><font-awesome-icon class="icon" icon="fas fa-suitcase" /> {{ t("items.bag") }}</a>
+        <a href="#" class="tile" data-bs-toggle="modal" data-bs-target="#trainer-card-modal">
+          <font-awesome-icon class="icon" icon="fas fa-id-card" /> {{ t("trainers.card") }}
+        </a>
       </div>
     </div>
+    <TarModal centered :close="t('actions.close')" fade id="trainer-card-modal" scrollable size="large">
+      <TrainerCardContents v-if="trainer" :trainer="trainer" />
+      <template #footer>
+        <TarButton icon="fas fa-times" :text="t('actions.close')" variant="secondary" data-bs-dismiss="modal" />
+      </template>
+    </TarModal>
   </main>
 </template>
 
