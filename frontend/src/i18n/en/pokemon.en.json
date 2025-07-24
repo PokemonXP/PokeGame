@@ -167,6 +167,13 @@
   },
   "size": {
     "category": {
+      "abbreviations": {
+        "ExtraLarge": "XL",
+        "ExtraSmall": "XS",
+        "Large": "L",
+        "Medium": "M",
+        "Small": "S"
+      },
       "label": "Category",
       "options": {
         "ExtraLarge": "Extra Large",

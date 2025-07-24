@@ -19,7 +19,7 @@
     "minimum": "Minimum Experience",
     "next": {
       "format": "Next: {next}",
-      "label": "To Next Level"
+      "label": "Prochain niveau"
     },
     "percentage": "Percentage",
     "table": {
@@ -167,6 +167,13 @@
   },
   "size": {
     "category": {
+      "abbreviations": {
+        "ExtraLarge": "XL",
+        "ExtraSmall": "XS",
+        "Large": "L",
+        "Medium": "M",
+        "Small": "S"
+      },
       "label": "Category",
       "options": {
         "ExtraLarge": "Extra Large",
@@ -177,12 +184,12 @@
       }
     },
     "height": {
-      "label": "Height",
+      "label": "Hauteur",
       "scalar": "Height Scalar"
     },
-    "title": "Size",
+    "title": "Taille",
     "weight": {
-      "label": "Weight",
+      "label": "Poids",
       "scalar": "Weight Scalar"
     }
   },

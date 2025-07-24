@@ -6,7 +6,7 @@ using PokeGame.Core.Species.Models;
 
 namespace PokeGame.Api.Models.Game;
 
-public class PokemonSummary // TODO(fpion): should be named PokemonSheet...
+public class PokemonSummary
 {
   public Guid Id { get; set; }
 
@@ -16,32 +16,30 @@ public class PokemonSummary // TODO(fpion): should be named PokemonSheet...
   public PokemonGender? Gender { get; set; }
   public string Sprite { get; set; }
 
-  // TODO(fpion): Height
-  // TODO(fpion): Weight
-  // TODO(fpion): Size
+  public double Height { get; set; }
+  public double Weight { get; set; }
+  public PokemonSizeCategory Size { get; set; }
 
   public PokemonType PrimaryType { get; set; }
   public PokemonType? SecondaryType { get; set; }
   public PokemonType TeraType { get; set; }
 
   public int Level { get; set; }
-  public int Experience { get; set; }
+  public ExperienceSummary? Experience { get; set; }
 
   public ItemSummary? HeldItem { get; set; }
 
   public TrainerSummary? OriginalTrainer { get; set; }
-  public ItemSummary PokeBall { get; set; }
+  public string? CaughtBallSprite { get; set; }
 
-  public PokemonSummary() : this(string.Empty, string.Empty, new ItemSummary())
+  public PokemonSummary() : this(string.Empty, string.Empty)
   {
   }
 
-  public PokemonSummary(string name, string sprite, ItemSummary pokeBall)
+  public PokemonSummary(string name, string sprite)
   {
     Name = name;
     Sprite = sprite;
-
-    PokeBall = pokeBall;
   }
 
   public PokemonSummary(PokemonModel pokemon)
@@ -70,8 +68,13 @@ public class PokemonSummary // TODO(fpion): should be named PokemonSheet...
       SecondaryType = form.Types.Secondary;
       TeraType = pokemon.TeraType;
 
+      double heightMultiplier = pokemon.Size.Height / 255.0 * 0.4 + 0.8;
+      Height = Math.Floor(heightMultiplier * form.Height) / 10.0;
+      Weight = Math.Floor((pokemon.Size.Weight / 255.0 * 0.4 + 0.8) * heightMultiplier * form.Weight) / 10.0;
+      Size = pokemon.Size.Category;
+
       Level = pokemon.Level;
-      Experience = pokemon.Experience;
+      Experience = new ExperienceSummary(pokemon);
 
       if (pokemon.HeldItem is not null)
       {
@@ -81,7 +84,7 @@ public class PokemonSummary // TODO(fpion): should be named PokemonSheet...
       OriginalTrainer = new TrainerSummary(ownership.OriginalTrainer);
     }
 
-    PokeBall = new ItemSummary(ownership.PokeBall);
+    CaughtBallSprite = ownership.PokeBall.Sprite;
   }
 
   public override bool Equals(object? obj) => obj is PokemonSummary pokemon && pokemon.Id == Id;

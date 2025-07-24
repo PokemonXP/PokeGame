@@ -1,23 +1,37 @@
-import type { PokemonGender, PokemonType } from ".";
+import type { PokemonGender, PokemonSizeCategory, PokemonType } from ".";
 
-export type ItemSummary = {
+export type ExperienceSummary = {
+  current: number
+  minimum: number
+  maximum: number
+  toNextLevel: number
+  percentage: number
+}
+
+export type ItemCard = {
   name: string;
   sprite?: string | null;
 };
 
-export type PokemonBase = {
-  name: string
-  sprite: string
-  level: number
-}
+export type ItemSummary = {
+  name: string;
+  description?: string | null;
+  sprite?: string | null;
+};
 
-export type PokemonSheet = PokemonBase & {
+export type PokemonBase = {
+  name: string;
+  sprite: string;
+  level: number;
+};
+
+export type PokemonCard = PokemonBase & {
   id: string;
   gender?: PokemonGender | null;
   constitution: number;
   vitality: number;
   stamina: number;
-  heldItem?: ItemSummary;
+  heldItem?: ItemCard;
 };
 
 export type PokemonSummary = PokemonBase & {
@@ -28,16 +42,20 @@ export type PokemonSummary = PokemonBase & {
   primaryType: PokemonType;
   secondaryType: PokemonType | null;
   teraType: PokemonType;
-  experience: number;
+  height: number;
+  weight: number;
+  size: PokemonSizeCategory;
+  experience?: ExperienceSummary | null;
   heldItem?: ItemSummary | null;
   originalTrainer?: TrainerSummary | null;
-  pokeBall: ItemSummary;
+  caughtBallSprite?: string | null;
 };
 
 export type TrainerSummary = {
+  license: string;
   name: string;
-  sprite?: string | null;
 };
 
 // TODO(fpion): move one directory top
 // TODO(fpion): move game trainer types in this file
+

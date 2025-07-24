@@ -25,7 +25,7 @@ public class GamePokemonController : ControllerBase
   }
 
   [HttpGet("/game/trainers/{trainerId}/pokemon")]
-  public async Task<ActionResult<PokemonSheet[]>> GetAsync(Guid trainerId, int? box, CancellationToken cancellationToken)
+  public async Task<ActionResult<PokemonCard[]>> GetAsync(Guid trainerId, int? box, CancellationToken cancellationToken)
   {
     TrainerModel? trainer = await _trainerService.ReadAsync(trainerId, uniqueName: null, license: null, cancellationToken);
     if (trainer is null)
@@ -46,7 +46,7 @@ public class GamePokemonController : ControllerBase
     payload.Sort.Add(new PokemonSortOption(PokemonSort.Position));
     SearchResults<PokemonModel> results = await _pokemonService.SearchAsync(payload, cancellationToken);
 
-    PokemonSheet[] pokemon = results.Items.Select(pokemon => new PokemonSheet(pokemon)).ToArray();
+    PokemonCard[] pokemon = results.Items.Select(pokemon => new PokemonCard(pokemon)).ToArray();
     return Ok(pokemon);
   }
 

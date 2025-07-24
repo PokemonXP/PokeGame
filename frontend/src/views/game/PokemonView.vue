@@ -9,8 +9,8 @@ import PartyPokemonCard from "@/components/pokemon/PartyPokemonCard.vue";
 import PokemonInfo from "@/components/pokemon/PokemonInfo.vue";
 import PokemonSprite from "@/components/pokemon/PokemonSprite.vue";
 import type { Breadcrumb } from "@/types/components";
-import type { PokemonSheet, PokemonSummary } from "@/types/pokemon/game";
-import { getPokemonList, getSummary } from "@/api/game/pokemon";
+import type { PokemonCard, PokemonSummary } from "@/types/pokemon/game";
+import { getPokemon, getSummary } from "@/api/game/pokemon";
 import { handleErrorKey } from "@/inject";
 import { onMounted, ref } from "vue";
 
@@ -21,9 +21,9 @@ const route = useRoute();
 const { t } = useI18n();
 
 const isLoading = ref<boolean>(false);
-const party = ref<PokemonSheet[]>([]);
+const party = ref<PokemonCard[]>([]);
 const parent = ref<Breadcrumb>({ text: t("menu"), to: { name: "GameMenu" } });
-const selected = ref<PokemonSheet>();
+const selected = ref<PokemonCard>();
 const summary = ref<PokemonSummary>();
 const view = ref<ViewMode>("party");
 
@@ -46,7 +46,7 @@ async function openSummary(): Promise<void> {
   }
 }
 
-function select(pokemon: PokemonSheet): void {
+function select(pokemon: PokemonCard): void {
   if (selected.value?.id === pokemon.id) {
     selected.value = undefined;
   } else {
@@ -59,7 +59,7 @@ onMounted(async () => {
   try {
     const trainerId: string = route.params.trainer.toString();
     if (trainerId) {
-      party.value = await getPokemonList(trainerId);
+      party.value = await getPokemon(trainerId);
     }
   } catch (e: unknown) {
     handleError(e);

@@ -2,25 +2,23 @@
 
 namespace PokeGame.Api.Models.Game;
 
-public record ItemSummary
+public record ItemCard
 {
   public string Name { get; set; }
-  public string? Description { get; set; }
   public string? Sprite { get; set; }
 
-  public ItemSummary() : this(string.Empty)
+  public ItemCard() : this(string.Empty)
   {
   }
 
-  public ItemSummary(string name)
+  public ItemCard(string name)
   {
     Name = name;
   }
 
-  public ItemSummary(ItemModel item)
+  public ItemCard(ItemModel item)
   {
     Name = item.DisplayName ?? item.UniqueName;
-    Description = item.Description;
     Sprite = item.Sprite;
   }
 }

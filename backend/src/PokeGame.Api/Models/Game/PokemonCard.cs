@@ -3,7 +3,7 @@ using PokeGame.Core.Pokemon.Models;
 
 namespace PokeGame.Api.Models.Game;
 
-public class PokemonSheet // TODO(fpion): should be named PokemonSummary...
+public class PokemonCard
 {
   public Guid Id { get; set; }
 
@@ -16,19 +16,19 @@ public class PokemonSheet // TODO(fpion): should be named PokemonSummary...
   public int Vitality { get; set; }
   public int Stamina { get; set; }
 
-  public ItemSummary? HeldItem { get; set; }
+  public ItemCard? HeldItem { get; set; }
 
-  public PokemonSheet() : this(string.Empty, string.Empty)
+  public PokemonCard() : this(string.Empty, string.Empty)
   {
   }
 
-  public PokemonSheet(string name, string sprite)
+  public PokemonCard(string name, string sprite)
   {
     Name = name;
     Sprite = sprite;
   }
 
-  public PokemonSheet(PokemonModel pokemon)
+  public PokemonCard(PokemonModel pokemon)
   {
     Id = pokemon.Id;
 
@@ -46,12 +46,12 @@ public class PokemonSheet // TODO(fpion): should be named PokemonSummary...
 
       if (pokemon.HeldItem is not null)
       {
-        HeldItem = new ItemSummary(pokemon.HeldItem);
+        HeldItem = new ItemCard(pokemon.HeldItem);
       }
     }
   }
 
-  public override bool Equals(object? obj) => obj is PokemonSheet pokemon && pokemon.Id == Id;
+  public override bool Equals(object? obj) => obj is PokemonCard pokemon && pokemon.Id == Id;
   public override int GetHashCode() => Id.GetHashCode();
   public override string ToString() => $"{Name} (Id={Id})";
 }
