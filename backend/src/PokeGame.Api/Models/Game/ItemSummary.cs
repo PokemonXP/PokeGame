@@ -2,21 +2,21 @@
 
 namespace PokeGame.Api.Models.Game;
 
-public record HeldItem
+public record ItemSummary
 {
   public string Name { get; set; }
   public string? Sprite { get; set; }
 
-  public HeldItem() : this(string.Empty)
+  public ItemSummary() : this(string.Empty)
   {
   }
 
-  public HeldItem(string name)
+  public ItemSummary(string name)
   {
     Name = name;
   }
 
-  public HeldItem(ItemModel item)
+  public ItemSummary(ItemModel item)
   {
     Name = item.DisplayName ?? item.UniqueName;
     Sprite = item.Sprite;

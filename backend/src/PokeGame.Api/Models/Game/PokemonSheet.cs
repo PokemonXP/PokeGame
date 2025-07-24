@@ -1,11 +1,9 @@
-﻿using PokeGame.Core.Forms.Models;
-using PokeGame.Core.Pokemon;
+﻿using PokeGame.Core.Pokemon;
 using PokeGame.Core.Pokemon.Models;
-using PokeGame.Core.Species.Models;
 
 namespace PokeGame.Api.Models.Game;
 
-public class PokemonSheet
+public class PokemonSheet // TODO(fpion): should be named PokemonSummary...
 {
   public Guid Id { get; set; }
 
@@ -18,7 +16,7 @@ public class PokemonSheet
   public int Vitality { get; set; }
   public int Stamina { get; set; }
 
-  public HeldItem? HeldItem { get; set; }
+  public ItemSummary? HeldItem { get; set; }
 
   public PokemonSheet() : this(string.Empty, string.Empty)
   {
@@ -34,16 +32,12 @@ public class PokemonSheet
   {
     Id = pokemon.Id;
 
-    if (pokemon.EggCycles > 0)
+    Name = pokemon.GetName();
+    Sprite = pokemon.GetSprite();
+
+    if (!pokemon.IsEgg())
     {
-      Name = "Egg";
-      Sprite = "/img/egg.png";
-    }
-    else
-    {
-      Name = GetName(pokemon);
       Gender = pokemon.Gender;
-      Sprite = GetSprite(pokemon);
 
       Level = pokemon.Level;
       Constitution = pokemon.Statistics.HP.Value;
@@ -52,35 +46,9 @@ public class PokemonSheet
 
       if (pokemon.HeldItem is not null)
       {
-        HeldItem = new HeldItem(pokemon.HeldItem);
+        HeldItem = new ItemSummary(pokemon.HeldItem);
       }
     }
-  }
-
-  private static string GetName(PokemonModel pokemon)
-  {
-    if (pokemon.Nickname is not null)
-    {
-      return pokemon.Nickname;
-    }
-
-    SpeciesModel species = pokemon.Form.Variety.Species;
-    return species.DisplayName ?? species.UniqueName;
-  }
-
-  private static string GetSprite(PokemonModel pokemon)
-  {
-    if (pokemon.Sprite is not null)
-    {
-      return pokemon.Sprite;
-    }
-
-    FormModel form = pokemon.Form;
-    if (pokemon.IsShiny)
-    {
-      return pokemon.Gender == PokemonGender.Female && form.Sprites.AlternativeShiny is not null ? form.Sprites.AlternativeShiny : form.Sprites.Shiny;
-    }
-    return pokemon.Gender == PokemonGender.Female && form.Sprites.Alternative is not null ? form.Sprites.Alternative : form.Sprites.Default;
   }
 
   public override bool Equals(object? obj) => obj is PokemonSheet pokemon && pokemon.Id == Id;

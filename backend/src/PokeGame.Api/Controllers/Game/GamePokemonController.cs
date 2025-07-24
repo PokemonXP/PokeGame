@@ -49,4 +49,21 @@ public class GamePokemonController : ControllerBase
     PokemonSheet[] pokemon = results.Items.Select(pokemon => new PokemonSheet(pokemon)).ToArray();
     return Ok(pokemon);
   }
+
+  [HttpGet("{id}/summary")]
+  public async Task<ActionResult<PokemonSummary>> GetSummaryAsync(Guid id, CancellationToken cancellationToken)
+  {
+    PokemonModel? pokemon = await _pokemonService.ReadAsync(id, uniqueName: null, cancellationToken);
+    if (pokemon is null)
+    {
+      return NotFound();
+    }
+    else if (pokemon.Ownership is null || pokemon.Ownership.CurrentTrainer.UserId != HttpContext.GetUserId())
+    {
+      return Forbid();
+    }
+
+    PokemonSummary summary = new(pokemon);
+    return Ok(summary);
+  }
 }

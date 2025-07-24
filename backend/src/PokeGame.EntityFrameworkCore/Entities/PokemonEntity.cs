@@ -44,6 +44,7 @@ internal class PokemonEntity : AggregateEntity
   public AbilitySlot AbilitySlot { get; private set; }
   public string Nature { get; private set; } = string.Empty;
 
+  // TODO(fpion): IsEgg + filter
   public byte EggCycles { get; private set; }
   public GrowthRate GrowthRate { get; private set; }
   public int Level { get; private set; }
