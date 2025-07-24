@@ -112,6 +112,17 @@ const router = createRouter({
       ],
       meta: { isAdmin: true },
     },
+    // Game
+    {
+      path: "/game/:trainer",
+      children: [
+        {
+          name: "GameMenu",
+          path: "",
+          component: () => import("./views/game/GameMenu.vue"),
+        },
+      ],
+    },
     // NotFound
     {
       name: "NotFound",
