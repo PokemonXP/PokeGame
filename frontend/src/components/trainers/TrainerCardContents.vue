@@ -46,7 +46,6 @@ const alt = computed<string>(() => `${props.trainer.name}'s Sprite'`);
       </table>
     </div>
     <div class="col-xs-12 col-md-6">
-      <!-- TODO(fpion): placeholder when the trainer does not have a sprite -->
       <img v-if="trainer.sprite" :src="trainer.sprite" :alt="alt" class="img-fluid" />
     </div>
   </div>

@@ -38,7 +38,6 @@ onMounted(async () => {
           <TrainerCard class="mb-3" clickable :trainer="trainer" />
         </RouterLink>
       </div>
-      <p v-else>todo:empty</p>
     </section>
   </main>
 </template>
