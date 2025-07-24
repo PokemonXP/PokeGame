@@ -1,4 +1,5 @@
 ﻿using PokeGame.Core;
+using PokeGame.Core.Abilities;
 using PokeGame.Core.Forms.Models;
 using PokeGame.Core.Pokemon;
 using PokeGame.Core.Pokemon.Models;
@@ -29,6 +30,13 @@ public class PokemonSummary
 
   public ItemSummary? HeldItem { get; set; }
 
+  public AbilitySummary? Ability { get; set; }
+  public StatisticsSummary? Statistics { get; set; }
+  public int Vitality { get; set; }
+  public int Stamina { get; set; }
+  public StatusCondition? StatusCondition { get; set; }
+
+  public NatureSummary? Nature { get; set; }
   public TrainerSummary? OriginalTrainer { get; set; }
   public string? CaughtBallSprite { get; set; }
 
@@ -81,6 +89,30 @@ public class PokemonSummary
         HeldItem = new ItemSummary(pokemon.HeldItem);
       }
 
+      switch (pokemon.AbilitySlot)
+      {
+        case AbilitySlot.Primary:
+          Ability = new AbilitySummary(form.Abilities.Primary);
+          break;
+        case AbilitySlot.Secondary:
+          if (form.Abilities.Secondary is not null)
+          {
+            Ability = new AbilitySummary(form.Abilities.Secondary);
+          }
+          break;
+        case AbilitySlot.Hidden:
+          if (form.Abilities.Hidden is not null)
+          {
+            Ability = new AbilitySummary(form.Abilities.Hidden);
+          }
+          break;
+      }
+      Statistics = new StatisticsSummary(pokemon.Statistics);
+      Vitality = pokemon.Vitality;
+      Stamina = pokemon.Stamina;
+      StatusCondition = pokemon.StatusCondition;
+
+      Nature = new NatureSummary(pokemon.Nature);
       OriginalTrainer = new TrainerSummary(ownership.OriginalTrainer);
     }
 
