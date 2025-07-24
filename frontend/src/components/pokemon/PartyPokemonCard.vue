@@ -7,7 +7,7 @@ import { useI18n } from "vue-i18n";
 import PokemonGenderIcon from "@/components/icons/PokemonGenderIcon.vue";
 import StaminaBar from "@/components/pokemon/StaminaBar.vue";
 import VitalityBar from "@/components/pokemon/VitalityBar.vue";
-import type { ItemCard, PokemonCard } from "@/types/pokemon/game";
+import type { ItemCard, PokemonCard } from "@/types/game";
 
 const { parseBoolean } = parsingUtils;
 const { t } = useI18n();

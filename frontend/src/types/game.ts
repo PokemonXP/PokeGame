@@ -1,12 +1,13 @@
-import type { PokemonGender, PokemonSizeCategory, PokemonType } from ".";
+import type { PokemonGender, PokemonSizeCategory, PokemonType } from "./pokemon";
+import type { TrainerGender } from "./trainers";
 
 export type ExperienceSummary = {
-  current: number
-  minimum: number
-  maximum: number
-  toNextLevel: number
-  percentage: number
-}
+  current: number;
+  minimum: number;
+  maximum: number;
+  toNextLevel: number;
+  percentage: number;
+};
 
 export type ItemCard = {
   name: string;
@@ -51,11 +52,16 @@ export type PokemonSummary = PokemonBase & {
   caughtBallSprite?: string | null;
 };
 
+export type TrainerSheet = {
+  id: string;
+  license: string;
+  name: string;
+  gender: TrainerGender;
+  money: number;
+  sprite?: string | null;
+};
+
 export type TrainerSummary = {
   license: string;
   name: string;
 };
-
-// TODO(fpion): move one directory top
-// TODO(fpion): move game trainer types in this file
-

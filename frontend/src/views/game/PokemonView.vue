@@ -9,7 +9,7 @@ import PartyPokemonCard from "@/components/pokemon/PartyPokemonCard.vue";
 import PokemonInfo from "@/components/pokemon/PokemonInfo.vue";
 import PokemonSprite from "@/components/pokemon/PokemonSprite.vue";
 import type { Breadcrumb } from "@/types/components";
-import type { PokemonCard, PokemonSummary } from "@/types/pokemon/game";
+import type { PokemonCard, PokemonSummary } from "@/types/game";
 import { getPokemon, getSummary } from "@/api/game/pokemon";
 import { handleErrorKey } from "@/inject";
 import { onMounted, ref } from "vue";

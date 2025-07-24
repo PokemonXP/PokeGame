@@ -7,7 +7,7 @@ import { useI18n } from "vue-i18n";
 import GameBreadcrumb from "@/components/game/GameBreadcrumb.vue";
 import PokemonIcon from "@/components/icons/PokemonIcon.vue";
 import TrainerCardContents from "@/components/trainers/TrainerCardContents.vue";
-import type { TrainerSheet } from "@/types/trainers";
+import type { TrainerSheet } from "@/types/game";
 import { getTrainerSheet } from "@/api/game/trainers";
 import { handleErrorKey } from "@/inject";
 

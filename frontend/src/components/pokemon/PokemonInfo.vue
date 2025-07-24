@@ -7,7 +7,7 @@ import ExperienceBar from "./ExperienceBar.vue";
 import PokemonGenderIcon from "@/components/icons/PokemonGenderIcon.vue";
 import PokemonSprite from "./PokemonSprite.vue";
 import PokemonTypeImage from "./PokemonTypeImage.vue";
-import type { ItemSummary, PokemonSummary } from "@/types/pokemon/game";
+import type { ItemSummary, PokemonSummary } from "@/types/game";
 
 const { n, t } = useI18n();
 

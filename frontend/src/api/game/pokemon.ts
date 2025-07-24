@@ -1,6 +1,6 @@
 import { urlUtils } from "logitar-js";
 
-import type { PokemonCard, PokemonSummary } from "@/types/pokemon/game";
+import type { PokemonCard, PokemonSummary } from "@/types/game";
 import { get } from "..";
 
 export async function getPokemon(trainerId: string, box?: number): Promise<PokemonCard[]> {

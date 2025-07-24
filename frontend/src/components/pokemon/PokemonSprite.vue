@@ -3,7 +3,7 @@ import { computed } from "vue";
 import { parsingUtils } from "logitar-js";
 import { useI18n } from "vue-i18n";
 
-import type { PokemonBase } from "@/types/pokemon/game";
+import type { PokemonBase } from "@/types/game";
 
 const { parseBoolean } = parsingUtils;
 const { t } = useI18n();

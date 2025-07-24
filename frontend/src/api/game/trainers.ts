@@ -1,6 +1,6 @@
 import { urlUtils } from "logitar-js";
 
-import type { TrainerSheet } from "@/types/trainers";
+import type { TrainerSheet } from "@/types/game";
 import { get } from "..";
 
 export async function getTrainerSheet(id: string): Promise<TrainerSheet> {
