@@ -1,4 +1,5 @@
 {
+  "card": "Trainer Card",
   "create": "New Trainer",
   "created": "The trainer has been created.",
   "delete": {
