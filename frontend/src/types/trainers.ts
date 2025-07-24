@@ -33,6 +33,15 @@ export type Trainer = Aggregate & {
   notes?: string | null;
 };
 
+export type TrainerSheet = {
+  id: string;
+  license: string;
+  name: string;
+  gender: TrainerGender;
+  money: number;
+  sprite?: string | null;
+};
+
 export type TrainerGender = "Female" | "Male";
 
 export type TrainerSort = "CreatedOn" | "DisplayName" | "License" | "Money" | "UniqueName" | "UpdatedOn";
