@@ -87,6 +87,7 @@ internal static class HttpContextExtensions
   public static ApiKey? GetApiKey(this HttpContext context) => context.GetItem<ApiKey>(ApiKeyKey);
   public static Session? GetSession(this HttpContext context) => context.GetItem<Session>(SessionKey);
   public static User? GetUser(this HttpContext context) => context.GetItem<User>(UserKey);
+  public static Guid GetUserId(this HttpContext context) => context.GetUser()?.Id ?? throw new InvalidOperationException("An authenticated user is required.");
   public static T? GetItem<T>(this HttpContext context, object key) => context.Items.TryGetValue(key, out object? value) ? (T?)value : default;
 
   public static void SetApiKey(this HttpContext context, ApiKey? apiKey)
