@@ -154,6 +154,7 @@
   "nickname": {
     "label": "Nickname"
   },
+  "pokedex": "Pokédex",
   "progress": {
     "title": "Progress"
   },
