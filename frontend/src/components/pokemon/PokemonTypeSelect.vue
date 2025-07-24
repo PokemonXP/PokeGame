@@ -19,6 +19,7 @@ const props = withDefaults(
     modelValue?: string;
     placeholder?: string;
     required?: boolean | string;
+    tera?: boolean | string;
   }>(),
   {
     id: "type",
@@ -53,7 +54,7 @@ defineEmits<{
   >
     <template v-if="type" #append>
       <span class="input-group-text">
-        <PokemonTypeImage height="32" :type="type" />
+        <PokemonTypeImage height="32" :tera="tera" :type="type" />
       </span>
     </template>
   </FormSelect>

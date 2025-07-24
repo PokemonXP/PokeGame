@@ -286,7 +286,7 @@ watch(
             :model-value="form.types.secondary ?? undefined"
             placeholder="pokemon.type.none"
           />
-          <PokemonTypeSelect class="col" id="tera-type" label="pokemon.type.tera" required v-model="teraType" />
+          <PokemonTypeSelect class="col" id="tera-type" label="pokemon.type.tera" required tera v-model="teraType" />
         </div>
         <h2 class="h3">{{ t("pokemon.size.title") }}</h2>
         <SizeEdit v-model="size" />
