@@ -49,7 +49,7 @@ public class PokemonController : ControllerBase
     return pokemon is null ? NotFound() : Ok(pokemon);
   }
 
-  [HttpPut("{id}/catch")]
+  [HttpPatch("{id}/catch")]
   public async Task<ActionResult<PokemonModel>> CatchAsync(Guid id, [FromBody] CatchPokemonPayload payload, CancellationToken cancellationToken)
   {
     PokemonModel? pokemon = await _pokemonService.CatchAsync(id, payload, cancellationToken);
@@ -70,7 +70,7 @@ public class PokemonController : ControllerBase
     return pokemon is null ? NotFound() : Ok(pokemon);
   }
 
-  [HttpPut("{id}/receive")]
+  [HttpPatch("{id}/receive")]
   public async Task<ActionResult<PokemonModel>> ReceiveAsync(Guid id, [FromBody] ReceivePokemonPayload payload, CancellationToken cancellationToken)
   {
     PokemonModel? pokemon = await _pokemonService.ReceiveAsync(id, payload, cancellationToken);
@@ -98,7 +98,7 @@ public class PokemonController : ControllerBase
     return pokemon is null ? NotFound() : Ok(pokemon);
   }
 
-  [HttpPut("{pokemonId}/moves/{moveId}/remember")]
+  [HttpPatch("{pokemonId}/moves/{moveId}/remember")]
   public async Task<ActionResult<PokemonModel>> RememberMoveAsync(Guid pokemonId, Guid moveId, [FromBody] RememberPokemonMovePayload payload, CancellationToken cancellationToken)
   {
     PokemonModel? pokemon = await _pokemonService.RememberMoveAsync(pokemonId, moveId, payload, cancellationToken);
@@ -113,7 +113,7 @@ public class PokemonController : ControllerBase
     return Ok(regions);
   }
 
-  [HttpPut("{id}/moves/switch")]
+  [HttpPatch("{id}/moves/switch")]
   public async Task<ActionResult<PokemonModel>> SwitchMovesAsync(Guid id, [FromBody] SwitchPokemonMovesPayload payload, CancellationToken cancellationToken)
   {
     PokemonModel? pokemon = await _pokemonService.SwitchMovesAsync(id, payload, cancellationToken);

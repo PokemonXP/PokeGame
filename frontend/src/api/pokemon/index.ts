@@ -13,11 +13,11 @@ import type {
   UpdatePokemonPayload,
 } from "@/types/pokemon";
 import type { SearchResults } from "@/types/search";
-import { _delete, get, patch, post, put } from "..";
+import { _delete, get, patch, post } from "..";
 
 export async function catchPokemon(id: string, payload: CatchPokemonPayload): Promise<Pokemon> {
   const url: string = new urlUtils.UrlBuilder({ path: "/pokemon/{id}/catch" }).setParameter("id", id).buildRelative();
-  return (await put<CatchPokemonPayload, Pokemon>(url, payload)).data;
+  return (await patch<CatchPokemonPayload, Pokemon>(url, payload)).data;
 }
 
 export async function depositPokemon(id: string): Promise<Pokemon> {
@@ -47,7 +47,7 @@ export async function readPokemon(id: string): Promise<Pokemon> {
 
 export async function receivePokemon(id: string, payload: ReceivePokemonPayload): Promise<Pokemon> {
   const url: string = new urlUtils.UrlBuilder({ path: "/pokemon/{id}/receive" }).setParameter("id", id).buildRelative();
-  return (await put<ReceivePokemonPayload, Pokemon>(url, payload)).data;
+  return (await patch<ReceivePokemonPayload, Pokemon>(url, payload)).data;
 }
 
 export async function releasePokemon(id: string): Promise<Pokemon> {
@@ -60,7 +60,7 @@ export async function rememberPokemonMove(pokemonId: string, moveId: string, pay
     .setParameter("pokemonId", pokemonId)
     .setParameter("moveId", moveId)
     .buildRelative();
-  return (await put<RememberPokemonMovePayload, Pokemon>(url, payload)).data;
+  return (await patch<RememberPokemonMovePayload, Pokemon>(url, payload)).data;
 }
 
 export async function searchPokemon(payload: SearchPokemonPayload): Promise<SearchResults<Pokemon>> {
@@ -91,7 +91,7 @@ export async function swapPokemon(payload: SwapPokemonPayload): Promise<Pokemon[
 
 export async function switchPokemonMoves(id: string, payload: SwitchPokemonMovesPayload): Promise<Pokemon> {
   const url: string = new urlUtils.UrlBuilder({ path: "/pokemon/{id}/moves/switch" }).setParameter("id", id).buildRelative();
-  return (await put<SwitchPokemonMovesPayload, Pokemon>(url, payload)).data;
+  return (await patch<SwitchPokemonMovesPayload, Pokemon>(url, payload)).data;
 }
 
 export async function updatePokemon(id: string, payload: UpdatePokemonPayload): Promise<Pokemon> {
