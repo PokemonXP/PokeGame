@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useI18n } from "vue-i18n";
 
+import GameBreadcrumb from "@/components/game/GameBreadcrumb.vue";
 import PokemonIcon from "@/components/icons/PokemonIcon.vue";
 
 const { t } = useI18n();
@@ -13,6 +14,7 @@ const { t } = useI18n();
       {{ t("menu") }}
       <img src="@/assets/img/logo.png" :alt="`$­{t('brand')} Logo`" height="40" />
     </h1>
+    <GameBreadcrumb :current="t('menu')" />
     <div class="d-flex flex-column justify-content-center align-items-center mt-3">
       <div class="grid">
         <a href="#" class="tile"><font-awesome-icon class="icon" icon="fas fa-book" /> todo:pokedex</a>
