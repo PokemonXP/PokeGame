@@ -34,7 +34,9 @@ onMounted(async () => {
     </h1>
     <section class="mt-3 mx-auto">
       <div v-if="trainers.length">
-        <TrainerCard v-for="trainer in trainers" :key="trainer.id" class="mb-3" clickable :trainer="trainer" />
+        <RouterLink v-for="trainer in trainers" :key="trainer.id" :to="{ name: 'GameMenu', params: { trainer: trainer.id } }">
+          <TrainerCard class="mb-3" clickable :trainer="trainer" />
+        </RouterLink>
       </div>
       <p v-else>todo:empty</p>
     </section>
