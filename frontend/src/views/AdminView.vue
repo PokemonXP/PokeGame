@@ -2,7 +2,6 @@
 import { useI18n } from "vue-i18n";
 
 import AbilityIcon from "@/components/icons/AbilityIcon.vue";
-import AdminBreadcrumb from "@/components/admin/AdminBreadcrumb.vue";
 import FormIcon from "@/components/icons/FormIcon.vue";
 import ItemIcon from "@/components/icons/ItemIcon.vue";
 import MoveIcon from "@/components/icons/MoveIcon.vue";
@@ -18,7 +17,6 @@ const { t } = useI18n();
 <template>
   <main class="container">
     <h1 class="text-center">{{ t("admin") }}</h1>
-    <AdminBreadcrumb />
     <div class="d-flex flex-column justify-content-center align-items-center mt-3">
       <div class="grid">
         <RouterLink :to="{ name: 'RegionList' }" class="tile"><RegionIcon class="icon" /> {{ t("regions.title") }}</RouterLink>

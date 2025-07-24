@@ -6,7 +6,7 @@ import type { Breadcrumb } from "@/types/components";
 const { t } = useI18n();
 
 defineProps<{
-  current?: string;
+  current: string;
   parent?: Breadcrumb | Breadcrumb[];
 }>();
 </script>
@@ -14,10 +14,9 @@ defineProps<{
 <template>
   <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
-      <li v-if="current" class="breadcrumb-item">
+      <li class="breadcrumb-item">
         <RouterLink :to="{ name: 'Admin' }">{{ t("admin") }}</RouterLink>
       </li>
-      <li v-else class="breadcrumb-item active">{{ t("admin") }}</li>
       <template v-if="Array.isArray(parent)">
         <li v-for="(item, index) in parent" :key="index" class="breadcrumb-item">
           <RouterLink :to="item.to">{{ item.text }}</RouterLink>
@@ -26,7 +25,7 @@ defineProps<{
       <li v-else-if="parent" class="breadcrumb-item">
         <RouterLink :to="parent.to">{{ parent.text }}</RouterLink>
       </li>
-      <li v-if="current" class="breadcrumb-item active" aria-current="page">{{ current }}</li>
+      <li class="breadcrumb-item active" aria-current="page">{{ current }}</li>
     </ol>
   </nav>
 </template>
