@@ -1,5 +1,5 @@
 import type { MoveCategory } from "./moves";
-import type { Flavor, PokemonGender, PokemonSizeCategory, PokemonStatistic, PokemonType, StatusCondition } from "./pokemon";
+import type { Flavor, OwnershipKind, PokemonGender, PokemonSizeCategory, PokemonStatistic, PokemonType, StatusCondition } from "./pokemon";
 import type { TrainerGender } from "./trainers";
 
 export type AbilitySummary = {
@@ -45,6 +45,14 @@ export type NatureSummary = {
   dislikedFlavor?: Flavor | null;
 };
 
+export type OwnershipSummary = {
+  kind: OwnershipKind;
+  level: number;
+  location: string;
+  metOn: Date;
+  description?: string | null;
+};
+
 export type PokemonBase = {
   name: string;
   sprite: string;
@@ -82,6 +90,8 @@ export type PokemonSummary = PokemonBase & {
   nature?: NatureSummary | null;
   originalTrainer?: TrainerSummary | null;
   caughtBallSprite?: string | null;
+  ownership: OwnershipSummary;
+  characteristic?: string | null;
 };
 
 export type StatisticsSummary = {
