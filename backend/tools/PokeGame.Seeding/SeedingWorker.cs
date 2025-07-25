@@ -60,16 +60,16 @@ internal class SeedingWorker : BackgroundService
         ?? throw new InvalidOperationException($"The user 'UniqueName={defaults.UniqueName}' was not found.");
       _applicationContext.ActorId = new ActorId(new UserId(user.Id).Value);
 
-      await ExecuteAsync(new SeedRealmsTask(), cancellationToken);
-      await ExecuteAsync(new SeedRolesTask(), cancellationToken);
+      //await ExecuteAsync(new SeedRealmsTask(), cancellationToken);
+      //await ExecuteAsync(new SeedRolesTask(), cancellationToken);
 
-      await ExecuteAsync(new SeedRegionsTask(), cancellationToken);
-      await ExecuteAsync(new SeedAbilitiesTask(), cancellationToken);
-      await ExecuteAsync(new SeedMovesTask(), cancellationToken);
-      await ExecuteAsync(new SeedSpeciesTask(), cancellationToken);
-      await ExecuteAsync(new SeedVarietiesTask(), cancellationToken);
-      await ExecuteAsync(new SeedFormsTask(), cancellationToken);
-      await ExecuteAsync(new SeedTrainersTask(), cancellationToken);
+      //await ExecuteAsync(new SeedRegionsTask(), cancellationToken);
+      //await ExecuteAsync(new SeedAbilitiesTask(), cancellationToken);
+      //await ExecuteAsync(new SeedMovesTask(), cancellationToken);
+      //await ExecuteAsync(new SeedSpeciesTask(), cancellationToken);
+      //await ExecuteAsync(new SeedVarietiesTask(), cancellationToken);
+      //await ExecuteAsync(new SeedFormsTask(), cancellationToken);
+      //await ExecuteAsync(new SeedTrainersTask(), cancellationToken);
 
       await ExecuteAsync(new SeedItemsTask(), cancellationToken);
       await ExecuteAsync(new SeedBattleItemsTask(), cancellationToken);

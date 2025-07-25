@@ -64,6 +64,8 @@ internal class CreateOrReplaceItemHandler : ICommandHandler<CreateOrReplaceItem,
     }
     else
     {
+      new CreateOrReplaceItemValidator(item.Category).ValidateAndThrow(payload);
+
       item.SetUniqueName(uniqueName, actorId);
 
       item.Price = price;
