@@ -6,9 +6,10 @@ import { useI18n } from "vue-i18n";
 
 import ItemBlock from "@/components/items/ItemBlock.vue";
 import PokeDollarIcon from "@/components/items/PokeDollarIcon.vue";
+import QuantityForm from "./QuantityForm.vue";
 import type { InventoryItem, InventoryQuantityPayload } from "@/types/inventory";
-import { removeItem } from "@/api/inventory";
 import type { Trainer } from "@/types/trainers";
+import { addItem, removeItem, updateItem } from "@/api/inventory";
 
 const { n, t } = useI18n();
 const { orderBy } = arrayUtils;
@@ -31,17 +32,52 @@ const filteredItems = computed<InventoryItem[]>(() =>
 );
 
 const emit = defineEmits<{
+  (e: "added", item: InventoryItem): void;
   (e: "error", error: unknown): void;
   (e: "removed", item: InventoryItem): void;
 }>();
 
-async function remove(line: InventoryItem): Promise<void> {
+async function add(line: InventoryItem, quantity: number = 0): Promise<void> {
   if (!isLoading.value) {
     isLoading.value = true;
     try {
-      const payload: InventoryQuantityPayload = { quantity: 0 }; // NOTE(fpion): remove all occurrences.
+      const payload: InventoryQuantityPayload = { quantity };
+      const added: InventoryItem = await addItem(props.trainer.id, line.item.id, payload);
+      emit("added", added);
+    } catch (e: unknown) {
+      emit("error", e);
+    } finally {
+      isLoading.value = false;
+    }
+  }
+}
+
+async function remove(line: InventoryItem, quantity: number = 0): Promise<void> {
+  if (!isLoading.value) {
+    isLoading.value = true;
+    try {
+      const payload: InventoryQuantityPayload = { quantity };
       const removed: InventoryItem = await removeItem(props.trainer.id, line.item.id, payload);
       emit("removed", removed);
+    } catch (e: unknown) {
+      emit("error", e);
+    } finally {
+      isLoading.value = false;
+    }
+  }
+}
+
+async function update(line: InventoryItem, quantity: number): Promise<void> {
+  if (!isLoading.value) {
+    isLoading.value = true;
+    try {
+      const payload: InventoryQuantityPayload = { quantity };
+      const updated: InventoryItem = await updateItem(props.trainer.id, line.item.id, payload);
+      if (updated.quantity > line.quantity) {
+        emit("added", updated);
+      } else {
+        emit("removed", updated);
+      }
     } catch (e: unknown) {
       emit("error", e);
     } finally {
@@ -76,7 +112,9 @@ async function remove(line: InventoryItem): Promise<void> {
             <template v-if="line.item.description">{{ line.item.description }}</template>
             <span v-else class="text-muted">{{ "—" }}</span>
           </td>
-          <td>{{ n(line.quantity) }}</td>
+          <td>
+            <QuantityForm :item="line" :loading="isLoading" @add="add(line)" @remove="remove(line, 1)" @update="update(line, $event)" />
+          </td>
           <td>
             <TarButton
               :disabled="isLoading"

@@ -43,6 +43,9 @@ defineEmits<{
     :type="type"
     @update:model-value="$emit('update:model-value', parseNumber($event) ?? 0)"
   >
+    <template #prepend>
+      <slot name="prepend"></slot>
+    </template>
     <template #append>
       <slot name="append"></slot>
     </template>
