@@ -9,19 +9,19 @@ using PokeGame.Core.Trainers;
 
 namespace PokeGame.Core.Inventory.Commands;
 
-internal record AddInventoryItem(Guid TrainerId, Guid ItemId, InventoryQuantityPayload Payload) : ICommand<InventoryItemModel>;
+internal record RemoveInventoryItem(Guid TrainerId, Guid ItemId, InventoryQuantityPayload Payload) : ICommand<InventoryItemModel>;
 
 /// <exception cref="ItemNotFoundException"></exception>
 /// <exception cref="TrainerNotFoundException"></exception>
 /// <exception cref="ValidationException"></exception>
-internal class AddInventoryItemHandler : ICommandHandler<AddInventoryItem, InventoryItemModel>
+internal class RemoveInventoryItemHandler : ICommandHandler<RemoveInventoryItem, InventoryItemModel>
 {
   private readonly IApplicationContext _applicationContext;
   private readonly IItemQuerier _itemQuerier;
   private readonly IItemRepository _itemRepository;
   private readonly ITrainerRepository _trainerRepository;
 
-  public AddInventoryItemHandler(IApplicationContext applicationContext, IItemQuerier itemQuerier, IItemRepository itemRepository, ITrainerRepository trainerRepository)
+  public RemoveInventoryItemHandler(IApplicationContext applicationContext, IItemQuerier itemQuerier, IItemRepository itemRepository, ITrainerRepository trainerRepository)
   {
     _applicationContext = applicationContext;
     _itemQuerier = itemQuerier;
@@ -29,7 +29,7 @@ internal class AddInventoryItemHandler : ICommandHandler<AddInventoryItem, Inven
     _trainerRepository = trainerRepository;
   }
 
-  public async Task<InventoryItemModel> HandleAsync(AddInventoryItem command, CancellationToken cancellationToken)
+  public async Task<InventoryItemModel> HandleAsync(RemoveInventoryItem command, CancellationToken cancellationToken)
   {
     ActorId? actorId = _applicationContext.ActorId;
 
@@ -45,7 +45,7 @@ internal class AddInventoryItemHandler : ICommandHandler<AddInventoryItem, Inven
       ?? throw new ItemNotFoundException(command.ItemId.ToString(), nameof(command.ItemId));
 
     TrainerInventory inventory = await _trainerRepository.LoadInventoryAsync(trainer, cancellationToken);
-    inventory.Add(item, payload.Quantity < 1 ? 1 : payload.Quantity, actorId);
+    inventory.Remove(item, payload.Quantity < 1 ? int.MaxValue : payload.Quantity, actorId);
 
     await _trainerRepository.SaveAsync(inventory, cancellationToken);
 

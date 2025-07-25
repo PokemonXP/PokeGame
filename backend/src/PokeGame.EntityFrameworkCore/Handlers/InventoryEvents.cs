@@ -9,7 +9,7 @@ using PokeGame.EntityFrameworkCore.Entities;
 
 namespace PokeGame.EntityFrameworkCore.Handlers;
 
-internal class InventoryEvents : IEventHandler<InventoryItemAdded>
+internal class InventoryEvents : IEventHandler<InventoryItemAdded>, IEventHandler<InventoryItemRemoved>
 {
   public static void Register(IServiceCollection services)
   {
@@ -48,5 +48,29 @@ internal class InventoryEvents : IEventHandler<InventoryItemAdded>
 
     await _context.SaveChangesAsync(cancellationToken);
     _logger.LogSuccess(@event);
+  }
+
+  public async Task HandleAsync(InventoryItemRemoved @event, CancellationToken cancellationToken)
+  {
+    Guid trainerUid = new TrainerInventoryId(@event.StreamId).TrainerId.ToGuid();
+    Guid itemUid = @event.ItemId.ToGuid();
+    InventoryEntity? inventory = await _context.Inventory
+      .SingleOrDefaultAsync(x => x.TrainerUid == trainerUid && x.ItemUid == itemUid, cancellationToken);
+    if (inventory is null)
+    {
+      _logger.LogError("No inventory line was found for trainer 'Id={TrainerId}' and item 'Id={ItemId}'.", trainerUid, itemUid);
+    }
+    else
+    {
+      inventory.Remove(@event);
+
+      if (inventory.Quantity <= 0)
+      {
+        _context.Inventory.Remove(inventory);
+      }
+
+      await _context.SaveChangesAsync(cancellationToken);
+      _logger.LogSuccess(@event);
+    }
   }
 }

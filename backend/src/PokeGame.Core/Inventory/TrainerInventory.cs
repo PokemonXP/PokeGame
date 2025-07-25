@@ -26,11 +26,42 @@ public class TrainerInventory : AggregateRoot
   {
     ArgumentOutOfRangeException.ThrowIfNegative(quantity, nameof(quantity));
 
-    Raise(new InventoryItemAdded(itemId, quantity), actorId);
+    if (quantity > 0)
+    {
+      Raise(new InventoryItemAdded(itemId, quantity), actorId);
+    }
   }
   protected virtual void Handle(InventoryItemAdded @event)
   {
     _quantities.TryGetValue(@event.ItemId, out int existingQuantity);
     _quantities[@event.ItemId] = existingQuantity + @event.Quantity;
+  }
+
+  public void Remove(Item item, int quantity = 1, ActorId? actorId = null) => Remove(item.Id, quantity, actorId);
+  public void Remove(ItemId itemId, int quantity = 1, ActorId? actorId = null)
+  {
+    ArgumentOutOfRangeException.ThrowIfNegative(quantity, nameof(quantity));
+
+    if (quantity > 0)
+    {
+      if (_quantities.TryGetValue(itemId, out int existingQuantity) && existingQuantity < quantity)
+      {
+        quantity = existingQuantity;
+      }
+      Raise(new InventoryItemRemoved(itemId, quantity), actorId);
+    }
+  }
+  protected virtual void Handle(InventoryItemRemoved @event)
+  {
+    _quantities.TryGetValue(@event.ItemId, out int existingQuantity);
+
+    if (existingQuantity <= @event.Quantity)
+    {
+      _quantities.Remove(@event.ItemId);
+    }
+    else
+    {
+      _quantities[@event.ItemId] = existingQuantity - @event.Quantity;
+    }
   }
 }

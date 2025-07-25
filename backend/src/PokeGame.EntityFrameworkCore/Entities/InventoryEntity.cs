@@ -36,6 +36,11 @@ internal class InventoryEntity
     Quantity += @event.Quantity;
   }
 
+  public void Remove(InventoryItemRemoved @event)
+  {
+    Quantity -= @event.Quantity;
+  }
+
   public override bool Equals(object? obj) => obj is InventoryEntity entity && entity.TrainerUid == TrainerUid && entity.ItemId == ItemId;
   public override int GetHashCode() => HashCode.Combine(TrainerUid, ItemId);
   public override string ToString() => $"{GetType()} (TrainerUid={TrainerUid}, ItemId={ItemId})";

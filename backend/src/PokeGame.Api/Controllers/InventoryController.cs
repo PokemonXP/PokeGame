@@ -19,9 +19,17 @@ public class InventoryController : ControllerBase
   }
 
   [HttpPost("{itemId}")]
-  public async Task<ActionResult> AddAsync(Guid trainerId, Guid itemId, [FromBody] AddInventoryItemPayload payload, CancellationToken cancellationToken)
+  public async Task<ActionResult<InventoryItemModel>> AddAsync(Guid trainerId, Guid itemId, [FromBody] InventoryQuantityPayload payload, CancellationToken cancellationToken)
   {
     InventoryItemModel item = await _inventoryService.AddAsync(trainerId, itemId, payload, cancellationToken);
+    return Ok(item);
+  }
+
+  [HttpDelete("{itemId}")]
+  public async Task<ActionResult<InventoryItemModel>> RemoveAsync(Guid trainerId, Guid itemId, int? quantity, CancellationToken cancellationToken)
+  {
+    InventoryQuantityPayload? payload = quantity.HasValue ? new(quantity.Value) : null;
+    InventoryItemModel item = await _inventoryService.RemoveAsync(trainerId, itemId, payload, cancellationToken);
     return Ok(item);
   }
 }
