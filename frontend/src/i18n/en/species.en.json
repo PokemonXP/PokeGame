@@ -1,0 +1,72 @@
+{
+  "category": {
+    "label": "Category",
+    "options": {
+      "Baby": "Baby",
+      "Legendary": "Legendary",
+      "Mythical": "Mythical",
+      "Standard": "Standard"
+    },
+    "placeholder": "Select a Pokémon category"
+  },
+  "create": "New Species",
+  "created": "The species has been created.",
+  "delete": {
+    "confirm": "To delete the species, enter its name in the field below.",
+    "title": "Delete Species"
+  },
+  "deleted": "The species has been deleted.",
+  "egg": {
+    "cycles": "Egg Cycles",
+    "groups": {
+      "label": "Egg Groups",
+      "options": {
+        "NoEggsDiscovered": "No Eggs Discovered",
+        "Amorphous": "Amorphous",
+        "Bug": "Bug",
+        "Ditto": "Ditto",
+        "Dragon": "Dragon",
+        "Fairy": "Fairy",
+        "Field": "Field",
+        "Flying": "Flying",
+        "Grass": "Grass",
+        "HumanLike": "Human-Like",
+        "Mineral": "Mineral",
+        "Monster": "Monster",
+        "Water1": "Water 1",
+        "Water2": "Water 2",
+        "Water3": "Water 3"
+      }
+    }
+  },
+  "empty": "This list is empty.",
+  "growthRate": {
+    "label": "Growth Rate",
+    "options": {
+      "Erratic": "Erratic",
+      "Fast": "Fast",
+      "Fluctuating": "Fluctuating",
+      "MediumFast": "Medium Fast",
+      "MediumSlow": "Medium Slow",
+      "Slow": "Slow"
+    },
+    "placeholder": "Select a growth rate"
+  },
+  "number": {
+    "alreadyUsed": {
+      "help": "Please enter a different Pokémon number.",
+      "lead": "The Pokémon number is already used."
+    },
+    "label": "Number"
+  },
+  "sort": {
+    "options": {
+      "CreatedOn": "Created on",
+      "DisplayName": "Display Name",
+      "UniqueName": "Unique Name",
+      "UpdatedOn": "Updated on"
+    }
+  },
+  "title": "Species",
+  "updated": "The species has been updated."
+}

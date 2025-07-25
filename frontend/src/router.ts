@@ -98,6 +98,17 @@ const router = createRouter({
           path: "regions/:id",
           component: () => import("./views/regions/RegionEdit.vue"),
         },
+        // Species
+        {
+          name: "SpeciesList",
+          path: "species",
+          component: () => import("./views/species/SpeciesList.vue"),
+        },
+        {
+          name: "SpeciesEdit",
+          path: "species/:id",
+          component: () => import("./views/species/SpeciesEdit.vue"),
+        },
         // Trainers
         {
           name: "TrainerList",

@@ -6,7 +6,8 @@ import { useI18n } from "vue-i18n";
 
 import FormSelect from "@/components/forms/FormSelect.vue";
 import type { SearchResults } from "@/types/search";
-import type { Species, Variety } from "@/types/pokemon";
+import type { Species } from "@/types/species";
+import type { Variety } from "@/types/pokemon";
 import { formatVariety } from "@/helpers/format";
 import { searchVarieties } from "@/api/pokemon/varieties";
 import type { SearchVarietiesPayload } from "@/types/pokemon/varieties";

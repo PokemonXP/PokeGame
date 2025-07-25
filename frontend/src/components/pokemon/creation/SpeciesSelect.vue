@@ -6,10 +6,10 @@ import { useI18n } from "vue-i18n";
 
 import FormSelect from "@/components/forms/FormSelect.vue";
 import type { SearchResults } from "@/types/search";
-import type { Species } from "@/types/pokemon";
+import type { SearchSpeciesPayload } from "@/types/species";
+import type { Species } from "@/types/species";
 import { formatSpecies } from "@/helpers/format";
-import { searchSpecies } from "@/api/pokemon/species";
-import type { SearchSpeciesPayload } from "@/types/pokemon/species";
+import { searchSpecies } from "@/api/species";
 
 const { orderBy } = arrayUtils;
 const { t } = useI18n();
@@ -24,8 +24,8 @@ withDefaults(
   }>(),
   {
     id: "species",
-    label: "pokemon.species.select.label",
-    placeholder: "pokemon.species.select.placeholder",
+    label: "species.select.label",
+    placeholder: "species.select.placeholder",
     required: true,
   },
 );

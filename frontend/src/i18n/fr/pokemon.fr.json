@@ -7,7 +7,6 @@
   },
   "deleted": "The Pokémon has been deleted.",
   "egg": {
-    "cycles": "Egg Cycles",
     "is": "Is Egg",
     "label": "Œuf"
   },
@@ -54,20 +53,6 @@
         "Male": "Male"
       },
       "placeholder": "Unknown"
-    }
-  },
-  "growthRate": {
-    "select": {
-      "label": "Growth Rate",
-      "options": {
-        "Erratic": "Erratic",
-        "Fast": "Fast",
-        "Fluctuating": "Fluctuating",
-        "MediumFast": "Medium Fast",
-        "MediumSlow": "Medium Slow",
-        "Slow": "Slow"
-      },
-      "placeholder": "Select a growth rate"
     }
   },
   "identification": {

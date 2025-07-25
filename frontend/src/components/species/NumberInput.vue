@@ -20,17 +20,17 @@ withDefaults(
     type?: InputType;
   }>(),
   {
-    id: "egg-cycles",
-    label: "species.egg.cycles",
+    id: "number",
+    label: "species.number.label",
+    max: 9999,
     min: 1,
-    required: true,
     step: 1,
     type: "number",
   },
 );
 
 defineEmits<{
-  (e: "update:model-value", experience: number): void;
+  (e: "update:model-value", vitality: number): void;
 }>();
 </script>
 

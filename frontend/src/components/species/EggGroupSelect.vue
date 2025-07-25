@@ -19,16 +19,15 @@ withDefaults(
     required?: boolean | string;
   }>(),
   {
-    disabled: true,
-    id: "growth-rate",
-    label: "species.growthRate.label",
-    placeholder: "species.growthRate.placeholder",
+    id: "egg-group",
+    label: "species.egg.groups.label",
+    placeholder: "species.egg.groups.placeholder",
   },
 );
 
 const options = computed<SelectOption[]>(() =>
   orderBy(
-    Object.entries(tm(rt("species.growthRate.options"))).map(([value, text]) => ({ text, value }) as SelectOption),
+    Object.entries(tm(rt("species.egg.groups.options"))).map(([value, text]) => ({ text, value }) as SelectOption),
     "text",
   ),
 );
@@ -48,9 +47,5 @@ defineEmits<{
     :placeholder="t(placeholder)"
     :required="required"
     @update:model-value="$emit('update:model-value', $event)"
-  >
-    <template #append>
-      <slot name="append"></slot>
-    </template>
-  </FormSelect>
+  />
 </template>
