@@ -43,7 +43,6 @@ import type {
   CreatePokemonPayload,
   EffortValues,
   Form,
-  GrowthRate,
   IndividualValues,
   Pokemon,
   PokemonGender,
@@ -51,9 +50,9 @@ import type {
   PokemonSizePayload,
   PokemonStatistics,
   PokemonType,
-  Species,
   Variety,
 } from "@/types/pokemon";
+import type { GrowthRate, Species } from "@/types/species";
 import type { Breadcrumb } from "@/types/components";
 import type { Item } from "@/types/items";
 import { LEVEL_MAXIMUM, LEVEL_MINIMUM } from "@/types/pokemon";

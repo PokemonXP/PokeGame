@@ -3,7 +3,6 @@ import type {
   BaseStatistics,
   EffortValues,
   Form,
-  GrowthRate,
   IndividualValues,
   Pokemon,
   PokemonNature,
@@ -14,6 +13,7 @@ import type {
   Sprites,
   StatisticValues,
 } from "@/types/pokemon";
+import type { GrowthRate } from "@/types/species";
 
 function calculateErratic(level: number): number {
   let experience: number = 0;

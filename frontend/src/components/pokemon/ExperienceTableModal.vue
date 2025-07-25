@@ -3,7 +3,7 @@ import { TarButton, TarModal } from "logitar-vue3-ui";
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 
-import type { GrowthRate } from "@/types/pokemon";
+import type { GrowthRate } from "@/types/species";
 import { getMaximumExperience } from "@/helpers/pokemon";
 
 const { t } = useI18n();
@@ -31,7 +31,7 @@ function close(): void {
     :id="id"
     ref="modalRef"
     size="x-large"
-    :title="`${t('pokemon.experience.table.title')} - ${t(`pokemon.growthRate.select.options.${growthRate}`)}`"
+    :title="`${t('pokemon.experience.table.title')} - ${t(`species.growthRate.options.${growthRate}`)}`"
   >
     <table class="table table-striped">
       <thead>

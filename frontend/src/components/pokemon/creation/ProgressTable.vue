@@ -2,7 +2,7 @@
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 
-import type { GrowthRate } from "@/types/pokemon";
+import type { GrowthRate } from "@/types/species";
 import { LEVEL_MAXIMUM, LEVEL_MINIMUM } from "@/types/pokemon";
 import { getLevel, getMaximumExperience } from "@/helpers/pokemon";
 

@@ -1,10 +1,10 @@
 import type { Ability, AbilitySlot } from "../abilities";
 import type { Aggregate, Change } from "../aggregate";
-import type { EggGroups } from "./species";
 import type { Item } from "../items";
 import type { Move, MoveLearningMethod } from "../moves";
 import type { Region } from "../regions";
 import type { SearchPayload, SortOption } from "../search";
+import type { GrowthRate, Species } from "../species";
 import type { Trainer } from "../trainers";
 
 export const EFFORT_VALUE_MAXIMUM: number = 255;
@@ -101,8 +101,6 @@ export type FormTypes = {
   secondary?: PokemonType | null;
 };
 
-export type GrowthRate = "Erratic" | "Slow" | "MediumSlow" | "MediumFast" | "Fast" | "Fluctuating";
-
 export type IndividualValues = {
   hp: number;
   attack: number;
@@ -163,8 +161,6 @@ export type Pokemon = Aggregate & {
   url?: string | null;
   notes?: string | null;
 };
-
-export type PokemonCategory = "Standard" | "Baby" | "Legendary" | "Mythical";
 
 export type PokemonGender = "Female" | "Male";
 
@@ -266,22 +262,6 @@ export type SearchPokemonPayload = SearchPayload & {
   heldItemId?: string;
   trainerId?: string;
   sort: PokemonSortOption[];
-};
-
-export type Species = Aggregate & {
-  number: number;
-  category: PokemonCategory;
-  uniqueName: string;
-  displayName?: string | null;
-  baseFriendship: number;
-  catchRate: number;
-  growthRate: GrowthRate;
-  eggCycles: number;
-  eggGroups: EggGroups;
-  url?: string | null;
-  notes?: string | null;
-  regionalNumbers: RegionalNumber[];
-  varieties: Variety[];
 };
 
 export type Sprites = {

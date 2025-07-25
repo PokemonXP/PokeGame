@@ -14,12 +14,13 @@ import SubmitButton from "@/components/shared/SubmitButton.vue";
 import UniqueNameAlreadyUsed from "@/components/shared/UniqueNameAlreadyUsed.vue";
 import UniqueNameInput from "@/components/shared/UniqueNameInput.vue";
 import VarietyIcon from "@/components/icons/VarietyIcon.vue";
-import type { Form, Pokemon, PokemonSize, Species, UpdatePokemonPayload, Variety } from "@/types/pokemon";
+import type { Form, Pokemon, PokemonSize, UpdatePokemonPayload, Variety } from "@/types/pokemon";
 import type { Item } from "@/types/items";
+import type { Species } from "@/types/species";
 import { ErrorCodes, StatusCodes } from "@/types/api";
 import { calculateSize, getMaximumExperience } from "@/helpers/pokemon";
 import { formatForm, formatSpecies, formatVariety } from "@/helpers/format";
-import { getFormUrl, getSpeciesUrl, getVarietyUrl } from "@/helpers/cms";
+import { getFormUrl, getVarietyUrl } from "@/helpers/cms";
 import { isError } from "@/helpers/error";
 import { updatePokemon } from "@/api/pokemon";
 import { useForm } from "@/forms";
@@ -108,9 +109,9 @@ watch(
             {{ t("pokemon.form.select.label") }}
           </th>
           <td>
-            <a :href="getSpeciesUrl(species)" target="_blank">
+            <RouterLink :to="{ name: 'SpeciesEdit', params: { id: species.id } }" target="_blank">
               <SpeciesIcon /> {{ formatSpecies(species) }} #{{ species.number.toString().padStart(4, "0") }}
-            </a>
+            </RouterLink>
           </td>
           <td>
             <a :href="getVarietyUrl(variety)" target="_blank"><VarietyIcon /> {{ formatVariety(variety) }}</a>
@@ -152,7 +153,7 @@ watch(
           </th>
           <td>
             {{ pokemon.level }} (<a href="#" data-bs-toggle="modal" data-bs-target="#experience-table">{{
-              t(`pokemon.growthRate.select.options.${species.growthRate}`)
+              t(`species.growthRate.options.${species.growthRate}`)
             }}</a
             >)
             <ExperienceTableModal :growth-rate="species.growthRate" />

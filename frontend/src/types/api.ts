@@ -22,6 +22,7 @@ export type ApiVersion = {
 export enum ErrorCodes {
   InvalidCredentials = "InvalidCredentials",
   LicenseAlreadyUsed = "LicenseAlreadyUsed",
+  NumberAlreadyUsed = "NumberAlreadyUsed",
   UniqueNameAlreadyUsed = "UniqueNameAlreadyUsed",
 }
 

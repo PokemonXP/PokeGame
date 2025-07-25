@@ -24,7 +24,7 @@ const { t } = useI18n();
         <RouterLink :to="{ name: 'ItemList' }" class="tile"><ItemIcon class="icon" /> {{ t("items.title") }}</RouterLink>
         <RouterLink :to="{ name: 'MoveList' }" class="tile"><MoveIcon class="icon" /> {{ t("moves.title") }}</RouterLink>
         <RouterLink :to="{ name: 'AbilityList' }" class="tile"><AbilityIcon class="icon" /> {{ t("abilities.title") }}</RouterLink>
-        <a href="#" class="tile"><SpeciesIcon class="icon" /> Species</a>
+        <RouterLink :to="{ name: 'SpeciesList' }" class="tile"><SpeciesIcon class="icon" /> {{ t("species.title") }}</RouterLink>
         <a href="#" class="tile"><VarietyIcon class="icon" /> Varieties</a>
         <a href="#" class="tile"><FormIcon class="icon" /> Forms</a>
         <RouterLink :to="{ name: 'PokemonList' }" class="tile"><PokemonIcon class="icon" /> {{ t("pokemon.title") }}</RouterLink>
