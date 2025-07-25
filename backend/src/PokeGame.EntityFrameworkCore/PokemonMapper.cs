@@ -137,14 +137,8 @@ internal class PokemonMapper
     switch (source.Category)
     {
       case ItemCategory.TechnicalMachine:
-        if (source.Move is null)
-        {
-          throw new ArgumentException("The move is required.", nameof(source));
-        }
-        destination.TechnicalMachine = new TechnicalMachinePropertiesModel
-        {
-          Move = ToMove(source.Move)
-        };
+        MoveEntity move = source.Move ?? throw new ArgumentException("The move is required.", nameof(source));
+        destination.TechnicalMachine = new TechnicalMachinePropertiesModel(ToMove(move));
         break;
     }
 
