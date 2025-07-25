@@ -73,13 +73,6 @@
   "identification": {
     "title": "Identification"
   },
-  "item": {
-    "held": "Held Item",
-    "select": {
-      "label": "Item",
-      "placeholder": "Select an item"
-    }
-  },
   "level": {
     "format": "Lv. {level}",
     "label": "Level"

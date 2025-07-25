@@ -1,5 +1,4 @@
 {
-  "bag": "Sac",
   "category": {
     "label": "Catégorie",
     "options": {
@@ -23,7 +22,12 @@
   },
   "deleted": "L’objet a été supprimé.",
   "empty": "Cette liste est vide.",
+  "held": "Objet tenu",
   "price": "Prix",
+  "select": {
+    "label": "Objet",
+    "placeholder": "Sélectionnez un objet"
+  },
   "sort": {
     "options": {
       "CreatedOn": "Date de création",

@@ -1,4 +1,9 @@
 {
+  "bag": {
+    "added": "invalid_quantity | The item has been added. | The items have been added.",
+    "quantity": "Quantity",
+    "title": "Bag"
+  },
   "card": "Trainer Card",
   "create": "New Trainer",
   "created": "The trainer has been created.",

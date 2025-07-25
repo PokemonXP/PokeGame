@@ -22,8 +22,8 @@ const props = withDefaults(
   }>(),
   {
     id: "item",
-    label: "pokemon.item.select.label",
-    placeholder: "pokemon.item.select.placeholder",
+    label: "items.select.label",
+    placeholder: "items.select.placeholder",
   },
 );
 

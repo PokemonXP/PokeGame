@@ -1,4 +1,9 @@
 {
+  "bag": {
+    "added": "invalid_quantity | L’objet a été ajouté. | Les objets ont été ajoutés.",
+    "quantity": "Quantité",
+    "title": "Sac"
+  },
   "card": "Carte d’entraîneur",
   "create": "Nouvel entraîneur",
   "created": "L’entraîneur a été créé.",
