@@ -43,7 +43,9 @@
     }
   },
   "friendship": {
-    "label": "Friendship"
+    "base": "Base Friendship",
+    "label": "Friendship",
+    "multiplier": "Friendship Multiplier"
   },
   "gender": {
     "select": {
@@ -55,6 +57,7 @@
       "placeholder": "Unknown"
     }
   },
+  "heal": "Heal",
   "identification": {
     "title": "Identification"
   },

@@ -28,7 +28,7 @@ withDefaults(
 );
 
 defineEmits<{
-  (e: "update:model-value", vitality: number): void;
+  (e: "update:model-value", quantity: number): void;
 }>();
 </script>
 

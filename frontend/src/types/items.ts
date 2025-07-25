@@ -61,7 +61,12 @@ export type MedicineProperties = {};
 
 export type OtherItemProperties = {};
 
-export type PokeBallProperties = {};
+export type PokeBallProperties = {
+  catchMultiplier: number;
+  heal: boolean;
+  baseFriendship: number;
+  friendshipMultiplier: number;
+};
 
 export type SearchItemsPayload = SearchPayload & {
   category?: ItemCategory;

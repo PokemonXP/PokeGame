@@ -136,6 +136,9 @@ internal class PokemonMapper
 
     switch (source.Category)
     {
+      case ItemCategory.PokeBall:
+        destination.PokeBall = source.GetPokeBallProperties();
+        break;
       case ItemCategory.TechnicalMachine:
         MoveEntity move = source.Move ?? throw new ArgumentException("The move is required.", nameof(source));
         destination.TechnicalMachine = new TechnicalMachinePropertiesModel(ToMove(move));
