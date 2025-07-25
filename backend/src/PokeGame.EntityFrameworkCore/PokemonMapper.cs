@@ -4,6 +4,7 @@ using Logitar.EventSourcing;
 using PokeGame.Core.Abilities;
 using PokeGame.Core.Abilities.Models;
 using PokeGame.Core.Forms.Models;
+using PokeGame.Core.Inventory.Models;
 using PokeGame.Core.Items.Models;
 using PokeGame.Core.Moves.Models;
 using PokeGame.Core.Pokemon;
@@ -105,6 +106,16 @@ internal class PokemonMapper
     MapAggregate(source, destination);
 
     return destination;
+  }
+
+  public InventoryItemModel ToInventoryItem(InventoryEntity source)
+  {
+    if (source.Item is null)
+    {
+      throw new ArgumentException("The item is required.", nameof(source));
+    }
+
+    return new InventoryItemModel(ToItem(source.Item), source.Quantity);
   }
 
   public ItemModel ToItem(ItemEntity source)

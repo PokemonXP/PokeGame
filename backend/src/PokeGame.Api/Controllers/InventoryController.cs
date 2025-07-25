@@ -25,6 +25,20 @@ public class InventoryController : ControllerBase
     return Ok(item);
   }
 
+  [HttpGet]
+  public async Task<ActionResult<IReadOnlyCollection<InventoryItemModel>>> ReadAsync(Guid trainerId, CancellationToken cancellationToken)
+  {
+    IReadOnlyCollection<InventoryItemModel> inventory = await _inventoryService.ReadAsync(trainerId, cancellationToken);
+    return Ok(inventory);
+  }
+
+  [HttpGet("{itemId}")]
+  public async Task<ActionResult<InventoryItemModel>> ReadAsync(Guid trainerId, Guid itemId, CancellationToken cancellationToken)
+  {
+    InventoryItemModel? inventory = await _inventoryService.ReadAsync(trainerId, itemId, cancellationToken);
+    return inventory is null ? NotFound() : Ok(inventory);
+  }
+
   [HttpDelete("{itemId}")]
   public async Task<ActionResult<InventoryItemModel>> RemoveAsync(Guid trainerId, Guid itemId, int? quantity, CancellationToken cancellationToken)
   {
