@@ -46,6 +46,7 @@
     "next": "Next",
     "previous": "Previous"
   },
+  "properties": "Properties",
   "search": "Search",
   "sort": {
     "isDescending": "Is descending",

@@ -16,6 +16,7 @@ import { formatItem } from "@/helpers/format";
 import { handleErrorKey } from "@/inject";
 import { readItem } from "@/api/items";
 import { useToastStore } from "@/stores/toast";
+import TechnicalMachinePropertiesEdit from "@/components/items/TechnicalMachinePropertiesEdit.vue";
 
 const handleError = inject(handleErrorKey) as (e: unknown) => void;
 const route = useRoute();
@@ -27,6 +28,7 @@ const isLoading = ref<boolean>(false);
 const item = ref<Item>();
 
 const breadcrumb = computed<Breadcrumb>(() => ({ to: { name: "ItemList" }, text: t("items.title") }));
+const hasProperties = computed<boolean>(() => Boolean(item.value && item.value.category === "TechnicalMachine"));
 const title = computed<string>(() => (item.value ? formatItem(item.value) : ""));
 
 function onDeleted(): void {
@@ -48,6 +50,13 @@ function onGeneralUpdated(updated: Item): void {
     item.value.displayName = updated.displayName;
     item.value.description = updated.description;
     item.value.price = updated.price;
+  }
+  toasts.success("items.updated");
+}
+function onPropertiesUpdated(updated: Item): void {
+  if (item.value) {
+    updateAggregate(updated);
+    item.value.technicalMachine = updated.technicalMachine ? { ...updated.technicalMachine } : undefined;
   }
   toasts.success("items.updated");
 }
@@ -91,6 +100,9 @@ onMounted(async () => {
       <TarTabs>
         <TarTab active id="general" :title="t('general')">
           <ItemGeneral :item="item" @error="handleError" @updated="onGeneralUpdated" />
+        </TarTab>
+        <TarTab v-if="hasProperties" id="properties" :title="t('properties')">
+          <TechnicalMachinePropertiesEdit :item="item" @error="handleError" @updated="onPropertiesUpdated" />
         </TarTab>
         <TarTab id="metadata" :title="t('metadata')">
           <ItemMetadata :item="item" @error="handleError" @updated="onMetadataUpdate" />

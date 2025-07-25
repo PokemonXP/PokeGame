@@ -43,12 +43,15 @@ internal class ItemQuerier : IItemQuerier
   }
   public async Task<ItemModel?> ReadAsync(ItemId id, CancellationToken cancellationToken)
   {
-    ItemEntity? item = await _items.AsNoTracking().SingleOrDefaultAsync(x => x.StreamId == id.Value, cancellationToken);
+    ItemEntity? item = await _items.AsNoTracking()
+      .Include(x => x.Move)
+      .SingleOrDefaultAsync(x => x.StreamId == id.Value, cancellationToken);
     return item is null ? null : await MapAsync(item, cancellationToken);
   }
   public async Task<ItemModel?> ReadAsync(Guid id, CancellationToken cancellationToken)
   {
     ItemEntity? item = await _items.AsNoTracking()
+      .Include(x => x.Move)
       .SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
     return item is null ? null : await MapAsync(item, cancellationToken);
   }
@@ -57,6 +60,7 @@ internal class ItemQuerier : IItemQuerier
     string uniqueNameNormalized = Helper.Normalize(uniqueName);
 
     ItemEntity? item = await _items.AsNoTracking()
+      .Include(x => x.Move)
       .SingleOrDefaultAsync(x => x.UniqueNameNormalized == uniqueNameNormalized, cancellationToken);
     return item is null ? null : await MapAsync(item, cancellationToken);
   }
@@ -72,7 +76,8 @@ internal class ItemQuerier : IItemQuerier
       builder.Where(PokemonDb.Items.Category, Operators.IsEqualTo(payload.Category.Value.ToString()));
     }
 
-    IQueryable<ItemEntity> query = _items.FromQuery(builder).AsNoTracking();
+    IQueryable<ItemEntity> query = _items.FromQuery(builder).AsNoTracking()
+      .Include(x => x.Move);
     long total = await query.LongCountAsync(cancellationToken);
 
     IOrderedQueryable<ItemEntity>? ordered = null;

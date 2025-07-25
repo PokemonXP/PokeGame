@@ -5,6 +5,7 @@ using PokeGame.Core.Abilities;
 using PokeGame.Core.Abilities.Models;
 using PokeGame.Core.Forms.Models;
 using PokeGame.Core.Inventory.Models;
+using PokeGame.Core.Items;
 using PokeGame.Core.Items.Models;
 using PokeGame.Core.Moves.Models;
 using PokeGame.Core.Pokemon;
@@ -132,6 +133,14 @@ internal class PokemonMapper
       Url = source.Url,
       Notes = source.Notes,
     };
+
+    switch (source.Category)
+    {
+      case ItemCategory.TechnicalMachine:
+        MoveEntity move = source.Move ?? throw new ArgumentException("The move is required.", nameof(source));
+        destination.TechnicalMachine = new TechnicalMachinePropertiesModel(ToMove(move));
+        break;
+    }
 
     MapAggregate(source, destination);
 
