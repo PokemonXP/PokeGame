@@ -50,6 +50,6 @@ internal class UpdateInventoryItemHandler : ICommandHandler<UpdateInventoryItem,
     await _trainerRepository.SaveAsync(inventory, cancellationToken);
 
     ItemModel model = await _itemQuerier.ReadAsync(item, cancellationToken);
-    return new InventoryItemModel(model, inventory.Quantities[item.Id]);
+    return new InventoryItemModel(model, inventory.Quantities.TryGetValue(item.Id, out int quantity) ? quantity : 0);
   }
 }

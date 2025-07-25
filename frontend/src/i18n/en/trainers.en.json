@@ -2,6 +2,7 @@
   "bag": {
     "added": "invalid_quantity | The item has been added. | The items have been added.",
     "quantity": "Quantity",
+    "removed": "invalid_quantity | The item has been removed. | The items have been removed.",
     "title": "Bag"
   },
   "card": "Trainer Card",

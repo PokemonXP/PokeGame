@@ -11,7 +11,7 @@ public record InventoryItemModel
   {
   }
 
-  public InventoryItemModel(ItemModel item, int quantity = 1)
+  public InventoryItemModel(ItemModel item, int quantity = 0)
   {
     Item = item;
     Quantity = quantity;
