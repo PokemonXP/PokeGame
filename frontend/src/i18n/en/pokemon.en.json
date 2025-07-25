@@ -244,6 +244,7 @@
   },
   "status": {
     "condition": {
+      "label": "Condition",
       "select": {
         "label": "Status Condition",
         "options": {
@@ -255,9 +256,14 @@
         },
         "placeholder": "Select a status condition"
       }
-    }
+    },
+    "label": "Status"
   },
-  "summary": "Summary",
+  "summary": {
+    "info": "Information",
+    "skills": "Skills",
+    "title": "Summary"
+  },
   "title": "Pokémon",
   "trainer": {
     "label": "Trainer",

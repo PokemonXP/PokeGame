@@ -6,7 +6,7 @@ import { useRoute } from "vue-router";
 
 import GameBreadcrumb from "@/components/game/GameBreadcrumb.vue";
 import PartyPokemonCard from "@/components/pokemon/PartyPokemonCard.vue";
-import PokemonInfo from "@/components/pokemon/PokemonInfo.vue";
+import PokemonGameSummary from "@/components/pokemon/PokemonGameSummary.vue";
 import PokemonSprite from "@/components/pokemon/PokemonSprite.vue";
 import type { Breadcrumb } from "@/types/components";
 import type { PokemonCard, PokemonSummary } from "@/types/game";
@@ -81,7 +81,7 @@ onMounted(async () => {
         :loading="isLoading"
         size="large"
         :status="t('loading')"
-        :text="t('pokemon.summary')"
+        :text="t('pokemon.summary.title')"
         @click="openSummary"
       />
       <TarButton v-if="summary" class="float-end" icon="fas fa-times" size="large" :text="t('actions.close')" variant="secondary" @click="close" />
@@ -104,10 +104,7 @@ onMounted(async () => {
             <PokemonSprite class="img-fluid mb-2 mx-auto" clickable :pokemon="pokemon" :selected="selected?.id === pokemon.id" @click="select(pokemon)" />
           </div>
         </div>
-        <div v-if="view === 'summary' && summary">
-          <h2 class="h3">{{ t("pokemon.summary") }}</h2>
-          <PokemonInfo :pokemon="summary" />
-        </div>
+        <PokemonGameSummary v-if="view === 'summary' && summary" :pokemon="summary" />
       </section>
     </div>
   </main>
