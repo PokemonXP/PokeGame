@@ -6,7 +6,7 @@ using PokeGame.EntityFrameworkCore.Entities;
 
 namespace PokeGame.EntityFrameworkCore.Configurations;
 
-internal class PokemonMoveConfiguration : IEntityTypeConfiguration<PokemonMoveEntity>
+internal class PokemonMoveConfiguration : IEntityTypeConfiguration<PokemonMoveEntity> // TODO(fpion): next migration
 {
   public void Configure(EntityTypeBuilder<PokemonMoveEntity> builder)
   {
@@ -15,6 +15,7 @@ internal class PokemonMoveConfiguration : IEntityTypeConfiguration<PokemonMoveEn
 
     builder.HasIndex(x => x.PokemonUid);
     builder.HasIndex(x => x.MoveUid);
+    //builder.HasIndex(x => new { x.PokemonUid, x.MoveUid }).IsUnique();
     builder.HasIndex(x => x.ItemUid);
 
     builder.Property(x => x.Method).HasMaxLength(byte.MaxValue).HasConversion(new EnumToStringConverter<MoveLearningMethod>());
