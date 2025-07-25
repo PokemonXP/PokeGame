@@ -9,7 +9,7 @@ internal static class SheetExtensions
 {
   public static string GetName(this PokemonModel pokemon)
   {
-    if (pokemon.IsEgg())
+    if (pokemon.IsEgg)
     {
       return "Egg";
     }
@@ -24,7 +24,7 @@ internal static class SheetExtensions
 
   public static string GetSprite(this PokemonModel pokemon)
   {
-    if (pokemon.IsEgg())
+    if (pokemon.IsEgg)
     {
       return "/img/egg.png";
     }
@@ -38,6 +38,4 @@ internal static class SheetExtensions
       ? (pokemon.Gender == PokemonGender.Female && form.Sprites.AlternativeShiny is not null ? form.Sprites.AlternativeShiny : form.Sprites.Shiny)
       : (pokemon.Gender == PokemonGender.Female && form.Sprites.Alternative is not null ? form.Sprites.Alternative : form.Sprites.Default);
   }
-
-  public static bool IsEgg(this PokemonModel pokemon) => pokemon.EggCycles > 0; // TODO(fpion): remove this method
 }

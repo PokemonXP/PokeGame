@@ -1,6 +1,7 @@
 ﻿using Krakenar.EntityFrameworkCore.Relational.KrakenarDb;
 using Logitar.EventSourcing;
 using Microsoft.EntityFrameworkCore;
+using PokeGame.Core.Inventory;
 using PokeGame.Core.Trainers;
 using PokeGame.EntityFrameworkCore.Entities;
 
@@ -47,6 +48,11 @@ internal class TrainerRepository : Repository, ITrainerRepository
     return await LoadAsync(trainerId, cancellationToken);
   }
 
+  public async Task<TrainerInventory> LoadInventoryAsync(Trainer trainer, CancellationToken cancellationToken)
+  {
+    return await LoadAsync<TrainerInventory>(new TrainerInventoryId(trainer.Id).StreamId, cancellationToken) ?? new(trainer);
+  }
+
   public async Task SaveAsync(Trainer trainer, CancellationToken cancellationToken)
   {
     await base.SaveAsync(trainer, cancellationToken);
@@ -55,5 +61,10 @@ internal class TrainerRepository : Repository, ITrainerRepository
   public async Task SaveAsync(IEnumerable<Trainer> trainers, CancellationToken cancellationToken)
   {
     await base.SaveAsync(trainers, cancellationToken);
+  }
+
+  public async Task SaveAsync(TrainerInventory inventory, CancellationToken cancellationToken)
+  {
+    await base.SaveAsync(inventory, cancellationToken);
   }
 }

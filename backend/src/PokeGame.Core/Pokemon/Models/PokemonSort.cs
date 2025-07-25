@@ -4,6 +4,7 @@ public enum PokemonSort
 {
   Box,
   CreatedOn,
+  EggCycles,
   Experience,
   Level,
   Nickname,

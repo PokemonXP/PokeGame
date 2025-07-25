@@ -20,8 +20,8 @@ public class PokemonModel : AggregateModel
   public AbilitySlot AbilitySlot { get; set; }
   public PokemonNatureModel Nature { get; set; } = new();
 
-  // TODO(fpion): IsEgg
   public byte EggCycles { get; set; }
+  public bool IsEgg => EggCycles > 0;
   public GrowthRate GrowthRate { get; set; }
   public int Level { get; set; }
   public int Experience { get; set; }

@@ -11,6 +11,8 @@ public class PokemonSummary
 {
   public Guid Id { get; set; }
 
+  public bool IsEgg { get; set; }
+
   public int Number { get; set; }
   public string Name { get; set; }
   public string? Nickname { get; set; }
@@ -59,12 +61,14 @@ public class PokemonSummary
   {
     Id = pokemon.Id;
 
+    IsEgg = pokemon.IsEgg;
+
     Sprite = pokemon.GetSprite();
 
     OwnershipModel ownership = pokemon.Ownership ?? throw new ArgumentException($"The {nameof(pokemon.Ownership)} is required.", nameof(pokemon));
     Ownership = new OwnershipSummary(ownership);
 
-    if (pokemon.IsEgg())
+    if (pokemon.IsEgg)
     {
       Name = "Egg";
 

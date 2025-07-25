@@ -7,6 +7,8 @@ public class PokemonCard
 {
   public Guid Id { get; set; }
 
+  public bool IsEgg { get; set; }
+
   public string Name { get; set; }
   public PokemonGender? Gender { get; set; }
   public string Sprite { get; set; }
@@ -32,10 +34,12 @@ public class PokemonCard
   {
     Id = pokemon.Id;
 
+    IsEgg = pokemon.IsEgg;
+
     Name = pokemon.GetName();
     Sprite = pokemon.GetSprite();
 
-    if (!pokemon.IsEgg())
+    if (!pokemon.IsEgg)
     {
       Gender = pokemon.Gender;
 
