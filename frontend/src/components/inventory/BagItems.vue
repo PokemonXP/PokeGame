@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { arrayUtils } from "logitar-js";
+import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 
 import ItemBlock from "@/components/items/ItemBlock.vue";
@@ -6,10 +8,21 @@ import PokeDollarIcon from "@/components/items/PokeDollarIcon.vue";
 import type { InventoryItem } from "@/types/inventory";
 
 const { n, t } = useI18n();
+const { orderBy } = arrayUtils;
 
-defineProps<{
+const props = defineProps<{
+  category?: string;
   items: InventoryItem[];
 }>();
+
+const filteredItems = computed<InventoryItem[]>(() =>
+  orderBy(
+    props.items
+      .filter(({ item }) => !props.category || item.category === props.category)
+      .map((line) => ({ ...line, sort: line.item.displayName ?? line.item.uniqueName })),
+    "sort",
+  ),
+);
 </script>
 
 <template>
@@ -23,7 +36,7 @@ defineProps<{
       </tr>
     </thead>
     <tbody>
-      <tr v-for="line in items" :key="line.item.id">
+      <tr v-for="line in filteredItems" :key="line.item.id">
         <td>
           <ItemBlock :item="line.item" />
         </td>

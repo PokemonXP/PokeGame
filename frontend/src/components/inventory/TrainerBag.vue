@@ -97,7 +97,7 @@ onMounted(async () => {
     <TarTabs id="inventory">
       <TarTab v-for="(category, index) in categories" :key="category.value" :active="index === 0" :id="category.value" :title="category.text">
         <AddItemForm :category="category.value" :items="items" :trainer="trainer" @added="added" @error="$emit('error', $event)" />
-        <BagItems :items="inventory" />
+        <BagItems :category="category.value" :items="inventory" />
       </TarTab>
     </TarTabs>
   </section>
