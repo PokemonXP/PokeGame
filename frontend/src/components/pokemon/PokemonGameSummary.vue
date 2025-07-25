@@ -23,6 +23,11 @@ const props = withDefaults(
 );
 
 const isEgg = computed<boolean>(() => props.pokemon.level < 1);
+
+defineEmits<{
+  (e: "error", error: unknown): void;
+  (e: "nicknamed", nickname: string): void;
+}>();
 </script>
 
 <template>
@@ -31,7 +36,7 @@ const isEgg = computed<boolean>(() => props.pokemon.level < 1);
     <div class="row">
       <TarTabs class="col" :id="id">
         <TarTab active id="info" :title="t('pokemon.summary.info')">
-          <PokemonInfo :pokemon="pokemon" />
+          <PokemonInfo :pokemon="pokemon" @error="$emit('error', $event)" @nicknamed="$emit('nicknamed', $event)" />
         </TarTab>
         <TarTab id="skills" :disabled="isEgg" :title="t('pokemon.summary.skills')">
           <PokemonSkills v-if="!isEgg" :pokemon="pokemon" />

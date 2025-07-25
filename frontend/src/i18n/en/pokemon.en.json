@@ -220,7 +220,8 @@
     }
   },
   "nickname": {
-    "label": "Nickname"
+    "label": "Nickname",
+    "success": "The Pokémon nicknamed has been updated."
   },
   "party": "Party",
   "pokedex": {

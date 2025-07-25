@@ -45,6 +45,10 @@ export type NatureSummary = {
   dislikedFlavor?: Flavor | null;
 };
 
+export type NicknamePokemonPayload = {
+  nickname: string;
+};
+
 export type OwnershipSummary = {
   kind: OwnershipKind;
   level: number;

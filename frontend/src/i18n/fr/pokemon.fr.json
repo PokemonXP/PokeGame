@@ -220,7 +220,8 @@
     }
   },
   "nickname": {
-    "label": "Nickname"
+    "label": "Surnom",
+    "success": "Le surnom du Pokémon a été mis à jour."
   },
   "party": "Équipe",
   "pokedex": {

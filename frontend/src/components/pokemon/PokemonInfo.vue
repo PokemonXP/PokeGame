@@ -4,6 +4,7 @@ import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 
 import ExperienceBar from "./ExperienceBar.vue";
+import NicknameModal from "./NicknameModal.vue";
 import PokemonTypeImage from "./PokemonTypeImage.vue";
 import type { ItemSummary, PokemonSummary } from "@/types/game";
 
@@ -16,6 +17,11 @@ const props = defineProps<{
 const heldItem = computed<ItemSummary | undefined>(() => props.pokemon.heldItem ?? undefined);
 const isEgg = computed<boolean>(() => props.pokemon.level < 1);
 const number = computed<string>(() => props.pokemon.number.toString().padStart(4, "0"));
+
+defineEmits<{
+  (e: "error", error: unknown): void;
+  (e: "nicknamed", nickname: string): void;
+}>();
 </script>
 
 <template>
@@ -111,18 +117,23 @@ const number = computed<string>(() => props.pokemon.number.toString().padStart(4
         </tr>
       </tbody>
     </table>
-    <h3 class="h5">{{ t("pokemon.item.held") }}</h3>
-    <table v-if="heldItem" class="table table-striped">
-      <tbody>
-        <tr>
-          <th scope="row"><TarAvatar :display-name="heldItem.name" size="32" icon="fas fa-cart-shopping" :url="heldItem.sprite" /> {{ heldItem.name }}</th>
-          <td>
-            <template v-if="heldItem.description">{{ heldItem.description }}</template>
-            <span v-else class="text-muted">{{ "—" }}</span>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <template v-if="heldItem">
+      <h3 class="h5">{{ t("pokemon.item.held") }}</h3>
+      <table class="table table-striped">
+        <tbody>
+          <tr>
+            <th scope="row"><TarAvatar :display-name="heldItem.name" size="32" icon="fas fa-cart-shopping" :url="heldItem.sprite" /> {{ heldItem.name }}</th>
+            <td>
+              <template v-if="heldItem.description">{{ heldItem.description }}</template>
+              <span v-else class="text-muted">{{ "—" }}</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </template>
+    <div class="my-3">
+      <NicknameModal :pokemon="pokemon" @error="$emit('error', $event)" @nicknamed="$emit('nicknamed', $event)" />
+    </div>
   </section>
 </template>
 

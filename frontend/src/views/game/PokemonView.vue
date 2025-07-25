@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { TarButton } from "logitar-vue3-ui";
 import { inject } from "vue";
+import { stringUtils } from "logitar-js";
 import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
 
@@ -13,11 +14,14 @@ import type { PokemonCard, PokemonSummary } from "@/types/game";
 import { getPokemon, getSummary } from "@/api/game/pokemon";
 import { handleErrorKey } from "@/inject";
 import { onMounted, ref } from "vue";
+import { useToastStore } from "@/stores/toast";
 
 type ViewMode = "party" | "summary";
 
 const handleError = inject(handleErrorKey) as (e: unknown) => void;
 const route = useRoute();
+const toasts = useToastStore();
+const { cleanTrim } = stringUtils;
 const { t } = useI18n();
 
 const isLoading = ref<boolean>(false);
@@ -30,6 +34,14 @@ const view = ref<ViewMode>("party");
 function close(): void {
   view.value = "party";
   summary.value = undefined;
+}
+
+function nicknamed(nickname: string): void {
+  if (summary.value) {
+    summary.value.nickname = cleanTrim(nickname);
+  }
+  refresh();
+  toasts.success("pokemon.nickname.success");
 }
 
 async function openSummary(): Promise<void> {
@@ -54,7 +66,7 @@ function select(pokemon: PokemonCard): void {
   }
 }
 
-onMounted(async () => {
+async function refresh(): Promise<void> {
   isLoading.value = true;
   try {
     const trainerId: string = route.params.trainer.toString();
@@ -66,7 +78,8 @@ onMounted(async () => {
   } finally {
     isLoading.value = false;
   }
-});
+}
+onMounted(refresh);
 </script>
 
 <template>
@@ -104,7 +117,7 @@ onMounted(async () => {
             <PokemonSprite class="img-fluid mb-2 mx-auto" clickable :pokemon="pokemon" :selected="selected?.id === pokemon.id" @click="select(pokemon)" />
           </div>
         </div>
-        <PokemonGameSummary v-if="view === 'summary' && summary" :pokemon="summary" />
+        <PokemonGameSummary v-if="view === 'summary' && summary" :pokemon="summary" @error="handleError" @nicknamed="nicknamed" />
       </section>
     </div>
   </main>
