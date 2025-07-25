@@ -160,5 +160,7 @@ internal class ItemEntity : AggregateEntity
     }
   }
 
+  public PokeBallPropertiesModel? GetPokeBallProperties() => Properties is null ? null : PokemonSerializer.Instance.Deserialize<PokeBallPropertiesModel>(Properties);
+
   public override string ToString() => $"{DisplayName ?? UniqueName} | {base.ToString()}";
 }

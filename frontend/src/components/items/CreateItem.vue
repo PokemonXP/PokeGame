@@ -49,7 +49,15 @@ async function submit(): Promise<void> {
           material: category.value === "Material" ? {} : undefined,
           medicine: category.value === "Medicine" ? {} : undefined,
           otherItem: category.value === "OtherItem" ? {} : undefined,
-          pokeBall: category.value === "PokeBall" ? {} : undefined,
+          pokeBall:
+            category.value === "PokeBall"
+              ? {
+                  catchMultiplier: 1,
+                  heal: false,
+                  baseFriendship: 0,
+                  friendshipMultiplier: 1,
+                }
+              : undefined,
           technicalMachine: category.value === "TechnicalMachine" ? { move: move.value?.id ?? "" } : undefined,
           treasure: category.value === "Treasure" ? {} : undefined,
         };

@@ -4,7 +4,6 @@ import { parsingUtils } from "logitar-js";
 import { useI18n } from "vue-i18n";
 
 import FormInput from "@/components/forms/FormInput.vue";
-import PokeDollarIcon from "@/components/items/PokeDollarIcon.vue";
 
 const { parseNumber } = parsingUtils;
 const { t } = useI18n();
@@ -16,20 +15,21 @@ withDefaults(
     max?: number | string;
     min?: number | string;
     modelValue?: number | string;
+    required?: boolean | string;
     step?: number | string;
     type?: InputType;
   }>(),
   {
-    id: "price",
-    label: "items.price",
-    min: 0,
-    step: 1,
+    id: "number",
+    label: "pokemon.friendship.multiplier",
+    min: 0.01,
+    step: 0.01,
     type: "number",
   },
 );
 
 defineEmits<{
-  (e: "update:model-value", price: number): void;
+  (e: "update:model-value", catchMultiplier: number): void;
 }>();
 </script>
 
@@ -40,14 +40,9 @@ defineEmits<{
     :min="min"
     :max="max"
     :model-value="modelValue?.toString()"
+    :required="required"
     :step="step"
     :type="type"
     @update:model-value="$emit('update:model-value', parseNumber($event) ?? 0)"
-  >
-    <template #append>
-      <span class="input-group-text">
-        <PokeDollarIcon height="40" />
-      </span>
-    </template>
-  </FormInput>
+  />
 </template>

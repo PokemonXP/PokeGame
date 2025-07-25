@@ -43,7 +43,9 @@
     }
   },
   "friendship": {
-    "label": "Friendship"
+    "base": "Bonheur de base",
+    "label": "Bonheur",
+    "multiplier": "Facteur de bonheur"
   },
   "gender": {
     "select": {
@@ -55,6 +57,7 @@
       "placeholder": "Unknown"
     }
   },
+  "heal": "Soigner",
   "identification": {
     "title": "Identification"
   },
