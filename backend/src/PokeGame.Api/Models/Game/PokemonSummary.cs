@@ -36,6 +36,8 @@ public class PokemonSummary
   public int Stamina { get; set; }
   public StatusCondition? StatusCondition { get; set; }
 
+  public List<MoveSummary> Moves { get; set; } = [];
+
   public NatureSummary? Nature { get; set; }
   public TrainerSummary? OriginalTrainer { get; set; }
   public string? CaughtBallSprite { get; set; }
@@ -111,6 +113,8 @@ public class PokemonSummary
       Vitality = pokemon.Vitality;
       Stamina = pokemon.Stamina;
       StatusCondition = pokemon.StatusCondition;
+
+      Moves.AddRange(pokemon.Moves.Where(m => m.Position.HasValue).OrderBy(m => m.Position!.Value).Select(m => new MoveSummary(m)));
 
       Nature = new NatureSummary(pokemon.Nature);
       OriginalTrainer = new TrainerSummary(ownership.OriginalTrainer);

@@ -1,3 +1,4 @@
+import type { MoveCategory } from "./moves";
 import type { Flavor, PokemonGender, PokemonSizeCategory, PokemonStatistic, PokemonType, StatusCondition } from "./pokemon";
 import type { TrainerGender } from "./trainers";
 
@@ -23,6 +24,17 @@ export type ItemSummary = {
   name: string;
   description?: string | null;
   sprite?: string | null;
+};
+
+export type MoveSummary = {
+  type: PokemonType;
+  category: MoveCategory;
+  name: string;
+  description?: string | null;
+  accuracy?: number | null;
+  power?: number | null;
+  currentPowerPoints: number;
+  maximumPowerPoints: number;
 };
 
 export type NatureSummary = {
@@ -66,6 +78,7 @@ export type PokemonSummary = PokemonBase & {
   vitality: number;
   stamina: number;
   statusCondition?: StatusCondition | null;
+  moves: MoveSummary[];
   nature?: NatureSummary | null;
   originalTrainer?: TrainerSummary | null;
   caughtBallSprite?: string | null;
