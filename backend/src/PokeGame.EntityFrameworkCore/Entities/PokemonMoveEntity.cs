@@ -76,4 +76,8 @@ internal class PokemonMoveEntity
       other.Position = position;
     }
   }
+
+  public override bool Equals(object? obj) => obj is PokemonMoveEntity entity && entity.PokemonId == PokemonId && entity.MoveId == MoveId;
+  public override int GetHashCode() => HashCode.Combine(PokemonId, MoveId);
+  public override string ToString() => $"{GetType()} (PokemonId={PokemonId}, MoveId={MoveId})";
 }

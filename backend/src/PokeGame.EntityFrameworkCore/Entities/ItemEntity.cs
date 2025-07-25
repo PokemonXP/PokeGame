@@ -37,6 +37,7 @@ internal class ItemEntity : AggregateEntity
   public List<PokemonEntity> ContainedPokemon { get; private set; } = [];
   public List<PokemonEntity> HoldingPokemon { get; private set; } = [];
   public List<PokemonMoveEntity> LearnedMoves { get; private set; } = [];
+  public List<InventoryEntity> Inventory { get; private set; } = [];
 
   public ItemEntity(ItemCreated @event) : base(@event)
   {

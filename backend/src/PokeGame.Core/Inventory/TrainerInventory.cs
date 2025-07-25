@@ -1,0 +1,36 @@
+﻿using Logitar.EventSourcing;
+using PokeGame.Core.Inventory.Events;
+using PokeGame.Core.Items;
+using PokeGame.Core.Trainers;
+
+namespace PokeGame.Core.Inventory;
+
+public class TrainerInventory : AggregateRoot
+{
+  public new TrainerInventoryId Id => new(base.Id);
+  public TrainerId TrainerId => Id.TrainerId;
+
+  private readonly Dictionary<ItemId, int> _quantities = [];
+  public IReadOnlyDictionary<ItemId, int> Quantities => _quantities.AsReadOnly();
+
+  public TrainerInventory() : base()
+  {
+  }
+
+  public TrainerInventory(Trainer trainer) : base(new TrainerInventoryId(trainer.Id).StreamId)
+  {
+  }
+
+  public void Add(Item item, int quantity = 1, ActorId? actorId = null) => Add(item.Id, quantity, actorId);
+  public void Add(ItemId itemId, int quantity = 1, ActorId? actorId = null)
+  {
+    ArgumentOutOfRangeException.ThrowIfNegative(quantity, nameof(quantity));
+
+    Raise(new InventoryItemAdded(itemId, quantity), actorId);
+  }
+  protected virtual void Handle(InventoryItemAdded @event)
+  {
+    _quantities.TryGetValue(@event.ItemId, out int existingQuantity);
+    _quantities[@event.ItemId] = existingQuantity + @event.Quantity;
+  }
+}

@@ -38,6 +38,7 @@ internal class TrainerEntity : AggregateEntity
 
   public List<PokemonEntity> CurrentPokemon { get; private set; } = [];
   public List<PokemonEntity> OriginalPokemon { get; private set; } = [];
+  public List<InventoryEntity> Inventory { get; private set; } = [];
 
   public TrainerEntity(TrainerCreated @event) : base(@event)
   {

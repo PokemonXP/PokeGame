@@ -34,6 +34,7 @@ public static class DependencyInjectionExtensions
   {
     AbilityEvents.Register(services);
     FormEvents.Register(services);
+    InventoryEvents.Register(services);
     ItemEvents.Register(services);
     MoveEvents.Register(services);
     PokemonEvents.Register(services);

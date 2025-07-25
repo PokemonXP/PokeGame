@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using PokeGame.Core.Abilities;
 using PokeGame.Core.Forms;
+using PokeGame.Core.Inventory;
 using PokeGame.Core.Items;
 using PokeGame.Core.Moves;
 using PokeGame.Core.Pokemon;
@@ -18,6 +19,7 @@ public static class DependencyInjectionExtensions
   {
     AbilityService.Register(services);
     FormService.Register(services);
+    InventoryService.Register(services);
     ItemService.Register(services);
     MoveService.Register(services);
     PokemonService.Register(services);

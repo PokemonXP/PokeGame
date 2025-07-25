@@ -138,6 +138,10 @@ internal class PokemonQuerier : IPokemonQuerier
       builder.Where(PokemonDb.Pokemon.CurrentTrainerUid, Operators.IsEqualTo(payload.TrainerId.Value));
     }
 
+    if (payload.IsEgg.HasValue)
+    {
+      builder.Where(PokemonDb.Pokemon.EggCycles, payload.IsEgg.Value ? Operators.IsGreaterThan((byte)0) : Operators.IsEqualTo((byte)0));
+    }
     if (payload.InParty.HasValue)
     {
       builder.Where(PokemonDb.Pokemon.Box, payload.InParty.Value ? Operators.IsNull() : Operators.IsNotNull());
@@ -170,6 +174,11 @@ internal class PokemonQuerier : IPokemonQuerier
           ordered = ordered is null
             ? (sort.IsDescending ? query.OrderByDescending(x => x.CreatedOn) : query.OrderBy(x => x.CreatedOn))
             : (sort.IsDescending ? ordered.ThenByDescending(x => x.CreatedOn) : ordered.ThenBy(x => x.CreatedOn));
+          break;
+        case PokemonSort.EggCycles:
+          ordered = ordered is null
+            ? (sort.IsDescending ? query.OrderByDescending(x => x.EggCycles) : query.OrderBy(x => x.EggCycles))
+            : (sort.IsDescending ? ordered.ThenByDescending(x => x.EggCycles) : ordered.ThenBy(x => x.EggCycles));
           break;
         case PokemonSort.Experience:
           ordered = ordered is null
