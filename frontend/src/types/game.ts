@@ -1,3 +1,4 @@
+import type { ItemCategory } from "./items";
 import type { MoveCategory } from "./moves";
 import type { Flavor, OwnershipKind, PokemonGender, PokemonSizeCategory, PokemonStatistic, PokemonType, StatusCondition } from "./pokemon";
 import type { TrainerGender } from "./trainers";
@@ -13,6 +14,19 @@ export type ExperienceSummary = {
   maximum: number;
   toNextLevel: number;
   percentage: number;
+};
+
+export type Inventory = {
+  money: number;
+  items: InventoryItem[];
+};
+
+export type InventoryItem = {
+  category: ItemCategory;
+  name: string;
+  description?: string | null;
+  sprite?: string | null;
+  quantity: number;
 };
 
 export type ItemCard = {
