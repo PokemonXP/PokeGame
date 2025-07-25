@@ -46,7 +46,7 @@ onMounted(async () => {
       <div class="grid">
         <a href="#" class="tile"><font-awesome-icon class="icon" icon="fas fa-book" /> {{ t("pokemon.pokedex.title") }}</a>
         <RouterLink :to="{ name: 'PokemonView' }" class="tile"><PokemonIcon class="icon" /> {{ t("pokemon.title") }}</RouterLink>
-        <a href="#" class="tile"><font-awesome-icon class="icon" icon="fas fa-suitcase" /> {{ t("trainers.bag.title") }}</a>
+        <RouterLink :to="{ name: 'BagView' }" class="tile"><font-awesome-icon class="icon" icon="fas fa-suitcase" /> {{ t("trainers.bag.title") }}</RouterLink>
         <a href="#" class="tile" data-bs-toggle="modal" data-bs-target="#trainer-card-modal">
           <font-awesome-icon class="icon" icon="fas fa-id-card" /> {{ t("trainers.card") }}
         </a>

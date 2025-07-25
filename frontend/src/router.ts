@@ -122,6 +122,11 @@ const router = createRouter({
           component: () => import("./views/game/GameMenu.vue"),
         },
         {
+          name: "BagView",
+          path: "bag",
+          component: () => import("./views/game/BagView.vue"),
+        },
+        {
           name: "PokemonView",
           path: "pokemon",
           component: () => import("./views/game/PokemonView.vue"),

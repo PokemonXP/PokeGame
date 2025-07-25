@@ -3,6 +3,7 @@ import { urlUtils } from "logitar-js";
 import type { CreateOrReplaceTrainerPayload, SearchTrainersPayload, Trainer, UpdateTrainerPayload } from "@/types/trainers";
 import type { SearchResults } from "@/types/search";
 import { _delete, get, patch, post } from ".";
+import type { Inventory } from "@/types/game";
 
 export async function createTrainer(payload: CreateOrReplaceTrainerPayload): Promise<Trainer> {
   const url: string = new urlUtils.UrlBuilder({ path: "/trainers" }).buildRelative();
@@ -12,6 +13,11 @@ export async function createTrainer(payload: CreateOrReplaceTrainerPayload): Pro
 export async function deleteTrainer(id: string): Promise<Trainer> {
   const url: string = new urlUtils.UrlBuilder({ path: "/trainers/{id}" }).setParameter("id", id).buildRelative();
   return (await _delete<Trainer>(url)).data;
+}
+
+export async function getInventory(trainerId: string): Promise<Inventory> {
+  const url: string = new urlUtils.UrlBuilder({ path: "/game/trainers/{trainerId}/inventory" }).setParameter("trainerId", trainerId).buildRelative();
+  return (await get<Inventory>(url)).data;
 }
 
 export async function readTrainer(id: string): Promise<Trainer> {
