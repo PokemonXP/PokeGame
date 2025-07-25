@@ -60,9 +60,9 @@ public class PokemonCharacteristicsTests : IAsyncLifetime
   }
 
   [Theory(DisplayName = "It should return the correct text when many IVs are max.")]
-  [InlineData(27, 27, 25, 21, 25, 27, 103, 66, "A little quick tempered")]
-  [InlineData(27, 27, 25, 21, 25, 27, 40, 200, "Nods off a lot")]
-  [InlineData(27, 27, 25, 21, 25, 27, 22, 7, "Impetuous and silly")]
+  [InlineData(27, 27, 25, 21, 25, 27, 103, 66, "ALittleQuickTempered")]
+  [InlineData(27, 27, 25, 21, 25, 27, 40, 200, "NodsOffALot")]
+  [InlineData(27, 27, 25, 21, 25, 27, 22, 7, "ImpetuousAndSilly")]
   public void Given_ManyMaxStatistics_When_Find_Then_CorrectText(
     int hp, int attack, int defense, int specialAttack, int specialDefense, int speed, int height, int weight, string expected)
   {
@@ -72,7 +72,7 @@ public class PokemonCharacteristicsTests : IAsyncLifetime
   }
 
   [Theory(DisplayName = "It should return the correct text when only one IV is max.")]
-  [InlineData(26, 28, 25, 22, 25, 26, "Likes to fight")]
+  [InlineData(26, 28, 25, 22, 25, 26, "LikesToFight")]
   public void Given_SingleMaxStatistic_When_Find_Then_CorrectText(int hp, int attack, int defense, int specialAttack, int specialDefense, int speed, string expected)
   {
     IndividualValues individualValues = new((byte)hp, (byte)attack, (byte)defense, (byte)specialAttack, (byte)specialDefense, (byte)speed);

@@ -1,6 +1,6 @@
 ﻿modulo,hp,attack,defense,speed,special_attack,special_defense
-0,Loves to eat,Proud of its power,Sturdy body,Likes to run,Highly curious,Strong willed
-1,Takes plenty of siestas,Likes to thrash about,Capable of taking hits,Alert to sounds,Mischievous,Somewhat vain
-2,Nods off a lot,A little quick tempered,Highly persistent,Impetuous and silly,Thoroughly cunning,Strongly defiant
-3,Scatters things often,Likes to fight,Good endurance,Somewhat of a clown,Often lost in thought,Hates to lose
-4,Likes to relax,Quick tempered,Good perseverance,Quick to flee,Very finicky,Somewhat stubborn
+0,LovesToEat,ProudOfItsPower,SturdyBody,LikesToRun,HighlyCurious,StrongWilled
+1,TakesPlentyOfSiestas,LikesToThrashAbout,CapableOfTakingHits,AlertToSounds,Mischievous,SomewhatVain
+2,NodsOffALot,ALittleQuickTempered,HighlyPersistent,ImpetuousAndSilly,ThoroughlyCunning,StronglyDefiant
+3,ScattersThingsOften,LikesToFight,GoodEndurance,SomewhatOfAClown,OftenLostInThought,HatesToLose
+4,LikesToRelax,QuickTempered,GoodPerseverance,QuickToFlee,VeryFinicky,SomewhatStubborn
