@@ -15,7 +15,7 @@ withDefaults(
   {
     id: "nickname",
     label: "pokemon.nickname.label",
-    max: 255,
+    max: 16,
   },
 );
 
@@ -25,5 +25,9 @@ defineEmits<{
 </script>
 
 <template>
-  <FormInput :id="id" :label="t(label)" :max="max" :model-value="modelValue" @update:model-value="$emit('update:model-value', $event)" />
+  <FormInput :id="id" :label="t(label)" :max="max" :model-value="modelValue" @update:model-value="$emit('update:model-value', $event)">
+    <template #append>
+      <slot name="append"></slot>
+    </template>
+  </FormInput>
 </template>

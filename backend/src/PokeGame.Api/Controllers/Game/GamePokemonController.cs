@@ -1,4 +1,5 @@
-﻿using Krakenar.Contracts.Search;
+﻿using Krakenar.Contracts;
+using Krakenar.Contracts.Search;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PokeGame.Api.Extensions;
@@ -65,5 +66,26 @@ public class GamePokemonController : ControllerBase
 
     PokemonSummary summary = new(pokemon);
     return Ok(summary);
+  }
+
+  [HttpPatch("{id}/nickname")]
+  public async Task<ActionResult> NicknameAsync(Guid id, [FromBody] NicknamePokemonPayload input, CancellationToken cancellationToken)
+  {
+    PokemonModel? pokemon = await _pokemonService.ReadAsync(id, uniqueName: null, cancellationToken);
+    if (pokemon is null)
+    {
+      return NotFound();
+    }
+    else if (pokemon.Ownership is null || pokemon.Ownership.CurrentTrainer.UserId != HttpContext.GetUserId())
+    {
+      return Forbid();
+    }
+
+    UpdatePokemonPayload payload = new()
+    {
+      Nickname = new Change<string>(input.Nickname)
+    };
+    await _pokemonService.UpdateAsync(id, payload, cancellationToken);
+    return NoContent();
   }
 }

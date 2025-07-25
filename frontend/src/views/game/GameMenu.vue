@@ -44,7 +44,7 @@ onMounted(async () => {
     <GameBreadcrumb :current="t('menu')" />
     <div class="d-flex flex-column justify-content-center align-items-center mt-3">
       <div class="grid">
-        <a href="#" class="tile"><font-awesome-icon class="icon" icon="fas fa-book" /> {{ t("pokemon.pokedex") }}</a>
+        <a href="#" class="tile"><font-awesome-icon class="icon" icon="fas fa-book" /> {{ t("pokemon.pokedex.title") }}</a>
         <RouterLink :to="{ name: 'PokemonView' }" class="tile"><PokemonIcon class="icon" /> {{ t("pokemon.title") }}</RouterLink>
         <a href="#" class="tile"><font-awesome-icon class="icon" icon="fas fa-suitcase" /> {{ t("items.bag") }}</a>
         <a href="#" class="tile" data-bs-toggle="modal" data-bs-target="#trainer-card-modal">
