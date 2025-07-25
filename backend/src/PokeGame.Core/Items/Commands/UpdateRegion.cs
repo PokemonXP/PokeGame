@@ -50,6 +50,7 @@ internal class UpdateItemHandler : ICommandHandler<UpdateItem, ItemModel?>
     {
       return null;
     }
+    new UpdateItemValidator(item.Category).ValidateAndThrow(payload);
 
     if (!string.IsNullOrWhiteSpace(payload.UniqueName))
     {

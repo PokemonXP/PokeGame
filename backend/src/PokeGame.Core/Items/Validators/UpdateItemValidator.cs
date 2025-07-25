@@ -29,4 +29,88 @@ internal class UpdateItemValidator : AbstractValidator<UpdateItemPayload>
     When(x => !string.IsNullOrWhiteSpace(x.Url?.Value), () => RuleFor(x => x.Url!.Value!).Url());
     When(x => !string.IsNullOrWhiteSpace(x.Notes?.Value), () => RuleFor(x => x.Notes!.Value!).Notes());
   }
+
+  public UpdateItemValidator(ItemCategory category)
+  {
+    if (category == ItemCategory.BattleItem)
+    {
+      When(x => x.BattleItem is not null, () => RuleFor(x => x.BattleItem!).SetValidator(new BattleItemValidator()));
+    }
+    else
+    {
+      RuleFor(x => x.BattleItem).Null();
+    }
+
+    if (category == ItemCategory.Berry)
+    {
+      When(x => x.Berry is not null, () => RuleFor(x => x.Berry!).SetValidator(new BerryValidator()));
+    }
+    else
+    {
+      RuleFor(x => x.Berry).Null();
+    }
+
+    if (category == ItemCategory.KeyItem)
+    {
+      When(x => x.KeyItem is not null, () => RuleFor(x => x.KeyItem!).SetValidator(new KeyItemValidator()));
+    }
+    else
+    {
+      RuleFor(x => x.KeyItem).Null();
+    }
+
+    if (category == ItemCategory.Material)
+    {
+      When(x => x.Material is not null, () => RuleFor(x => x.Material!).SetValidator(new MaterialValidator()));
+    }
+    else
+    {
+      RuleFor(x => x.Material).Null();
+    }
+
+    if (category == ItemCategory.Medicine)
+    {
+      When(x => x.Medicine is not null, () => RuleFor(x => x.Medicine!).SetValidator(new MedicineValidator()));
+    }
+    else
+    {
+      RuleFor(x => x.Medicine).Null();
+    }
+
+    if (category == ItemCategory.OtherItem)
+    {
+      When(x => x.OtherItem is not null, () => RuleFor(x => x.OtherItem!).SetValidator(new OtherItemValidator()));
+    }
+    else
+    {
+      RuleFor(x => x.OtherItem).Null();
+    }
+
+    if (category == ItemCategory.PokeBall)
+    {
+      When(x => x.PokeBall is not null, () => RuleFor(x => x.PokeBall!).SetValidator(new PokeBallValidator()));
+    }
+    else
+    {
+      RuleFor(x => x.PokeBall).Null();
+    }
+
+    if (category == ItemCategory.TechnicalMachine)
+    {
+      When(x => x.TechnicalMachine is not null, () => RuleFor(x => x.TechnicalMachine!).SetValidator(new TechnicalMachineValidator()));
+    }
+    else
+    {
+      RuleFor(x => x.TechnicalMachine).Null();
+    }
+
+    if (category == ItemCategory.Treasure)
+    {
+      When(x => x.Treasure is not null, () => RuleFor(x => x.Treasure!).SetValidator(new TreasureValidator()));
+    }
+    else
+    {
+      RuleFor(x => x.Treasure).Null();
+    }
+  }
 }

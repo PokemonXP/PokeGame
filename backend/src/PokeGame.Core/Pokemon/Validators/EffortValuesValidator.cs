@@ -9,7 +9,7 @@ internal class EffortValuesValidator : AbstractValidator<IEffortValues>
   public EffortValuesValidator()
   {
     RuleFor(x => x).Must(BeValidEffortValues)
-      .WithErrorCode(nameof(EffortValuesValidator))
+      .WithErrorCode("EffortValuesValidator")
       .WithMessage($"The sum of Effort Values must be less than or equal to {Limit}.");
   }
 
