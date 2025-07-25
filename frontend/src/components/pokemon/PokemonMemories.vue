@@ -187,7 +187,7 @@ watch(
           </tr>
           <tr>
             <th scope="row">
-              {{ t("pokemon.memories.characteristic") }}
+              {{ t("pokemon.memories.characteristic.label") }}
               {{ "/" }}
               {{ t("pokemon.memories.position.label") }}
               {{ "/" }}

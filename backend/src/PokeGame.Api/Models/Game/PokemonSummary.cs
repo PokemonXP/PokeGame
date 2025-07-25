@@ -41,28 +41,34 @@ public class PokemonSummary
   public NatureSummary? Nature { get; set; }
   public TrainerSummary? OriginalTrainer { get; set; }
   public string? CaughtBallSprite { get; set; }
+  public OwnershipSummary Ownership { get; set; }
+  public string? Characteristic { get; set; }
 
   public PokemonSummary() : this(string.Empty, string.Empty)
   {
   }
 
-  public PokemonSummary(string name, string sprite)
+  public PokemonSummary(string name, string sprite, OwnershipSummary? ownership = null)
   {
     Name = name;
     Sprite = sprite;
+    Ownership = ownership ?? new();
   }
 
   public PokemonSummary(PokemonModel pokemon)
   {
-    OwnershipModel ownership = pokemon.Ownership ?? throw new ArgumentException($"The {nameof(pokemon.Ownership)} is required.", nameof(pokemon));
-
     Id = pokemon.Id;
 
     Sprite = pokemon.GetSprite();
 
+    OwnershipModel ownership = pokemon.Ownership ?? throw new ArgumentException($"The {nameof(pokemon.Ownership)} is required.", nameof(pokemon));
+    Ownership = new OwnershipSummary(ownership);
+
     if (pokemon.IsEgg())
     {
       Name = "Egg";
+
+      Ownership.Level = 0;
     }
     else
     {
@@ -118,6 +124,7 @@ public class PokemonSummary
 
       Nature = new NatureSummary(pokemon.Nature);
       OriginalTrainer = new TrainerSummary(ownership.OriginalTrainer);
+      Characteristic = pokemon.Characteristic;
     }
 
     CaughtBallSprite = ownership.PokeBall.Sprite;

@@ -109,14 +109,16 @@ const number = computed<string>(() => props.pokemon.number.toString().padStart(4
             <template v-else>{{ n(pokemon.experience.toNextLevel, "integer") }}</template>
           </td>
         </tr>
+      </tbody>
+    </table>
+    <h3 class="h5">{{ t("pokemon.item.held") }}</h3>
+    <table v-if="heldItem" class="table table-striped">
+      <tbody>
         <tr>
-          <th scope="row">{{ t("pokemon.item.held") }}</th>
+          <th scope="row"><TarAvatar :display-name="heldItem.name" size="32" icon="fas fa-cart-shopping" :url="heldItem.sprite" /> {{ heldItem.name }}</th>
           <td>
-            <span v-if="isEgg || !heldItem" class="text-muted">{{ "—" }}</span>
-            <template v-else>
-              <div><TarAvatar :display-name="heldItem.name" size="32" icon="fas fa-cart-shopping" :url="heldItem.sprite" /> {{ heldItem.name }}</div>
-              <div v-if="heldItem.description">{{ heldItem.description }}</div>
-            </template>
+            <template v-if="heldItem.description">{{ heldItem.description }}</template>
+            <span v-else class="text-muted">{{ "—" }}</span>
           </td>
         </tr>
       </tbody>

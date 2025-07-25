@@ -29,11 +29,11 @@
   },
   "flavor": {
     "options": {
-      "Bitter": "Bitter",
-      "Dry": "Dry",
-      "Sour": "Sour",
-      "Spicy": "Spicy",
-      "Sweet": "Sweet"
+      "Bitter": "Amère",
+      "Dry": "Sèche",
+      "Sour": "Aigre",
+      "Spicy": "Épicée",
+      "Sweet": "Sucrée"
     }
   },
   "form": {
@@ -81,7 +81,7 @@
     }
   },
   "level": {
-    "format": "Lv. {level}",
+    "format": "Nv. {level}",
     "label": "Level"
   },
   "memories": {
@@ -94,9 +94,48 @@
       "swap": "Swap",
       "withdraw": "Withdraw"
     },
-    "characteristic": "Characteristic",
+    "characteristic": {
+      "label": "Characteristic",
+      "options": {
+        "ALittleQuickTempered": "Il est un peu coléreux\u00a0!",
+        "AlertToSounds": "Il est attentif aux sons\u00a0!",
+        "CapableOfTakingHits": "Il sait encaisser les coups\u00a0!",
+        "GoodEndurance": "Il a une bonne endurance\u00a0!",
+        "GoodPerseverance": "Il est persévérant\u00a0!",
+        "HatesToLose": "Il déteste perdre\u00a0!",
+        "HighlyCurious": "Il est extrêmement curieux\u00a0!",
+        "HighlyPersistent": "Il est très obstiné\u00a0!",
+        "ImpetuousAndSilly": "Il est bête et impulsif\u00a0!",
+        "LikesToFight": "Il aime se battre\u00a0!",
+        "LikesToRelax": "Il aime se détendre\u00a0!",
+        "LikesToRun": "Il aime courir\u00a0!",
+        "LikesToThrashAbout": "Il aime se démener\u00a0!",
+        "LovesToEat": "Il adore manger\u00a0!",
+        "Mischievous": "Il est coquin\u00a0!",
+        "NodsOffALot": "Il dort beaucoup\u00a0!",
+        "OftenLostInThought": "Il est souvent dans la lune\u00a0!",
+        "ProudOfItsPower": "Il est fier de sa puissance\u00a0!",
+        "QuickTempered": "Il s’emporte facilement\u00a0!",
+        "QuickToFlee": "Il fuit rapidement\u00a0!",
+        "ScattersThingsOften": "Il éparpille souvent des choses\u00a0!",
+        "SomewhatOfAClown": "Il aime faire le pitre\u00a0!",
+        "SomewhatStubborn": "Il est assez entêté\u00a0!",
+        "SomewhatVain": "Il est un peu vaniteux\u00a0!",
+        "StrongWilled": "Il est très volontaire\u00a0!",
+        "StronglyDefiant": "Il a un esprit rebelle\u00a0!",
+        "SturdyBody": "Il a un corps robuste\u00a0!",
+        "TakesPlentyOfSiestas": "Il fait souvent la sieste\u00a0!",
+        "ThoroughlyCunning": "Il est très astucieux\u00a0!",
+        "VeryFinicky": "Il est très particulier\u00a0!"
+      }
+    },
     "catch": "Catch",
     "event": {
+      "format": {
+        "Caught": "Je l’ai attrapé à {0}, le {1}.",
+        "Received": "Je l’ai reçu à {0}, le {1}.",
+        "level": "À ce moment, ce Pokémon était Nv. {level}."
+      },
       "label": "Event",
       "options": {
         "Caught": "Caught",
@@ -117,7 +156,7 @@
       "current": "Current Trainer",
       "original": "Dresseur d’origine"
     },
-    "title": "Memories"
+    "title": "Mémorial"
   },
   "move": {
     "actions": "Actions",
@@ -140,10 +179,39 @@
   "nature": {
     "flavor": {
       "disliked": "Disliked Flavor",
-      "favorite": "Favorite Flavor"
+      "favorite": "Favorite Flavor",
+      "format": "Il aime la nourriture {0}, mais déteste la nourriture {1}."
     },
+    "format": "Ce Pokémon est plutôt {0} de nature.",
     "select": {
       "label": "Nature",
+      "options": {
+        "Adamant": "Rigide",
+        "Bashful": "Pudique",
+        "Bold": "Assuré",
+        "Brave": "Brave",
+        "Calm": "Calme",
+        "Careful": "Prudent",
+        "Docile": "Docile",
+        "Gentle": "Gentil",
+        "Hardy": "Hardi",
+        "Hasty": "Pressé",
+        "Impish": "Malin",
+        "Jolly": "Jovial",
+        "Lax": "Lâche",
+        "Lonely": "Solo",
+        "Mild": "Doux",
+        "Modest": "Modeste",
+        "Naive": "Naïf",
+        "Naughty": "Mauvais",
+        "Quiet": "Discret",
+        "Quirky": "Bizarre",
+        "Rash": "Foufou",
+        "Relaxed": "Relax",
+        "Sassy": "Malpoli",
+        "Serious": "Sérieux",
+        "Timid": "Timide"
+      },
       "placeholder": "Select a nature"
     },
     "statistic": {

@@ -94,9 +94,48 @@
       "swap": "Swap",
       "withdraw": "Withdraw"
     },
-    "characteristic": "Characteristic",
+    "characteristic": {
+      "label": "Characteristic",
+      "options": {
+        "ALittleQuickTempered": "It’s a little quick tempered!",
+        "AlertToSounds": "It’s alert to sounds!",
+        "CapableOfTakingHits": "It’s capable of taking hits!",
+        "GoodEndurance": "It has good endurance!",
+        "GoodPerseverance": "It has good perseverance!",
+        "HatesToLose": "It hates to lose!",
+        "HighlyCurious": "It’s highly curious!",
+        "HighlyPersistent": "It’s highly persistent!",
+        "ImpetuousAndSilly": "It’s impetuous and silly!",
+        "LikesToFight": "It likes to fight!",
+        "LikesToRelax": "It likes to relax!",
+        "LikesToRun": "It likes to run!",
+        "LikesToThrashAbout": "It likes to thrash about!",
+        "LovesToEat": "It loves to eat!",
+        "Mischievous": "It’s mischievous!",
+        "NodsOffALot": "It nods off a lot!",
+        "OftenLostInThought": "It’s often lost in thought!",
+        "ProudOfItsPower": "It’s proud of its power!",
+        "QuickTempered": "It’s quick tempered!",
+        "QuickToFlee": "It’s quick to flee!",
+        "ScattersThingsOften": "It scatters things often!",
+        "SomewhatOfAClown": "It’s somewhat of a clown!",
+        "SomewhatStubborn": "It’s somewhat stubborn!",
+        "SomewhatVain": "It’s somewhat vain!",
+        "StrongWilled": "It’s strong willed!",
+        "StronglyDefiant": "It’s strongly defiant!",
+        "SturdyBody": "It has a sturdy body!",
+        "TakesPlentyOfSiestas": "It takes plenty of siestas!",
+        "ThoroughlyCunning": "It’s thoroughly cunning!",
+        "VeryFinicky": "It’s very finicky!"
+      }
+    },
     "catch": "Catch",
     "event": {
+      "format": {
+        "Caught": "I caught it at {0}, on {1}.",
+        "Received": "I received it at {0}, on {1}.",
+        "level": "At the time, this Pokémon was Lv. {level}."
+      },
       "label": "Event",
       "options": {
         "Caught": "Caught",
@@ -140,10 +179,39 @@
   "nature": {
     "flavor": {
       "disliked": "Disliked Flavor",
-      "favorite": "Favorite Flavor"
+      "favorite": "Favorite Flavor",
+      "format": "It likes {0} food, but abhors {1} food."
     },
+    "format": "This Pokémon is pretty {0} by nature.",
     "select": {
       "label": "Nature",
+      "options": {
+        "Adamant": "Adamant",
+        "Bashful": "Bashful",
+        "Bold": "Bold",
+        "Brave": "Brave",
+        "Calm": "Calm",
+        "Careful": "Careful",
+        "Docile": "Docile",
+        "Gentle": "Gentle",
+        "Hardy": "Hardy",
+        "Hasty": "Hasty",
+        "Impish": "Impish",
+        "Jolly": "Jolly",
+        "Lax": "Lax",
+        "Lonely": "Lonely",
+        "Mild": "Mild",
+        "Modest": "Modest",
+        "Naive": "Naive",
+        "Naughty": "Naughty",
+        "Quiet": "Quiet",
+        "Quirky": "Quirky",
+        "Rash": "Rash",
+        "Relaxed": "Relaxed",
+        "Sassy": "Sassy",
+        "Serious": "Serious",
+        "Timid": "Timid"
+      },
       "placeholder": "Select a nature"
     },
     "statistic": {

@@ -19,12 +19,12 @@ public class PokemonCharacteristics : IPokemonCharacteristics
 
   private readonly Dictionary<PokemonStatistic, string[]> _texts = new(capacity: 6)
   {
-    [PokemonStatistic.HP] = ["Loves to eat", "Takes plenty of siestas", "Nods off a lot", "Scatters things often", "Likes to relax"],
-    [PokemonStatistic.Attack] = ["Proud of its power", "Likes to thrash about", "A little quick tempered", "Likes to fight", "Quick tempered"],
-    [PokemonStatistic.Defense] = ["Sturdy body", "Capable of taking hits", "Highly persistent", "Good endurance", "Good perseverance"],
-    [PokemonStatistic.SpecialAttack] = ["Highly curious", "Mischievous", "Thoroughly cunning", "Often lost in thought", "Very finicky"],
-    [PokemonStatistic.SpecialDefense] = ["Strong willed", "Somewhat vain", "Strongly defiant", "Hates to lose", "Somewhat stubborn"],
-    [PokemonStatistic.Speed] = ["Likes to run", "Alert to sounds", "Impetuous and silly", "Somewhat of a clown", "Quick to flee"]
+    [PokemonStatistic.HP] = ["LovesToEat", "TakesPlentyOfSiestas", "NodsOffALot", "ScattersThingsOften", "LikesToRelax"],
+    [PokemonStatistic.Attack] = ["ProudOfItsPower", "LikesToThrashAbout", "ALittleQuickTempered", "LikesToFight", "QuickTempered"],
+    [PokemonStatistic.Defense] = ["SturdyBody", "CapableOfTakingHits", "HighlyPersistent", "GoodEndurance", "GoodPerseverance"],
+    [PokemonStatistic.SpecialAttack] = ["HighlyCurious", "Mischievous", "ThoroughlyCunning", "OftenLostInThought", "VeryFinicky"],
+    [PokemonStatistic.SpecialDefense] = ["StrongWilled", "SomewhatVain", "StronglyDefiant", "HatesToLose", "SomewhatStubborn"],
+    [PokemonStatistic.Speed] = ["LikesToRun", "AlertToSounds", "ImpetuousAndSilly", "SomewhatOfAClown", "QuickToFlee"]
   };
 
   public PokemonCharacteristic Find(IIndividualValues individualValues, IPokemonSize size)

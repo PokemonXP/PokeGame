@@ -3,6 +3,7 @@ import { TarTab, TarTabs } from "logitar-vue3-ui";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 
+import PokemonGameMemories from "./PokemonGameMemories.vue";
 import PokemonGameMoves from "./PokemonGameMoves.vue";
 import PokemonInfo from "./PokemonInfo.vue";
 import PokemonShowcase from "./PokemonShowcase.vue";
@@ -37,6 +38,9 @@ const isEgg = computed<boolean>(() => props.pokemon.level < 1);
         </TarTab>
         <TarTab id="moves" :disabled="isEgg" :title="t('moves.title')">
           <PokemonGameMoves v-if="!isEgg" :pokemon="pokemon" />
+        </TarTab>
+        <TarTab id="memories" :title="t('pokemon.memories.title')">
+          <PokemonGameMemories :pokemon="pokemon" />
         </TarTab>
       </TarTabs>
       <PokemonShowcase class="col" :pokemon="pokemon" />
