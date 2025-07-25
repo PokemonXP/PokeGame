@@ -14,7 +14,15 @@ internal class InventoryEntity
 
   public int Quantity { get; private set; }
 
-  public InventoryEntity(TrainerEntity trainer, ItemEntity item, InventoryItemAdded @event)
+  public InventoryEntity(TrainerEntity trainer, ItemEntity item, InventoryItemAdded @event) : this(trainer, item)
+  {
+    Add(@event);
+  }
+  public InventoryEntity(TrainerEntity trainer, ItemEntity item, InventoryItemUpdated @event) : this(trainer, item)
+  {
+    Update(@event);
+  }
+  private InventoryEntity(TrainerEntity trainer, ItemEntity item)
   {
     Trainer = trainer;
     TrainerId = trainer.TrainerId;
@@ -23,8 +31,6 @@ internal class InventoryEntity
     Item = item;
     ItemId = item.ItemId;
     ItemUid = item.Id;
-
-    Add(@event);
   }
 
   private InventoryEntity()
@@ -39,6 +45,11 @@ internal class InventoryEntity
   public void Remove(InventoryItemRemoved @event)
   {
     Quantity -= @event.Quantity;
+  }
+
+  public void Update(InventoryItemUpdated @event)
+  {
+    Quantity = @event.Quantity;
   }
 
   public override bool Equals(object? obj) => obj is InventoryEntity entity && entity.TrainerUid == TrainerUid && entity.ItemId == ItemId;

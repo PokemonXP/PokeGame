@@ -9,6 +9,7 @@ public interface IInventoryService
 {
   Task<InventoryItemModel> AddAsync(Guid trainerId, Guid itemId, InventoryQuantityPayload? payload = null, CancellationToken cancellationToken = default);
   Task<InventoryItemModel> RemoveAsync(Guid trainerId, Guid itemId, InventoryQuantityPayload? payload = null, CancellationToken cancellationToken = default);
+  Task<InventoryItemModel> UpdateAsync(Guid trainerId, Guid itemId, InventoryQuantityPayload payload, CancellationToken cancellationToken = default);
 }
 
 internal class InventoryService : IInventoryService
@@ -18,6 +19,7 @@ internal class InventoryService : IInventoryService
     services.AddTransient<IInventoryService, InventoryService>();
     services.AddTransient<ICommandHandler<AddInventoryItem, InventoryItemModel>, AddInventoryItemHandler>();
     services.AddTransient<ICommandHandler<RemoveInventoryItem, InventoryItemModel>, RemoveInventoryItemHandler>();
+    services.AddTransient<ICommandHandler<UpdateInventoryItem, InventoryItemModel>, UpdateInventoryItemHandler>();
   }
 
   private readonly ICommandBus _commandBus;
@@ -36,6 +38,12 @@ internal class InventoryService : IInventoryService
   public async Task<InventoryItemModel> RemoveAsync(Guid trainerId, Guid itemId, InventoryQuantityPayload? payload, CancellationToken cancellationToken)
   {
     RemoveInventoryItem command = new(trainerId, itemId, payload ?? new());
+    return await _commandBus.ExecuteAsync(command, cancellationToken);
+  }
+
+  public async Task<InventoryItemModel> UpdateAsync(Guid trainerId, Guid itemId, InventoryQuantityPayload payload, CancellationToken cancellationToken)
+  {
+    UpdateInventoryItem command = new(trainerId, itemId, payload);
     return await _commandBus.ExecuteAsync(command, cancellationToken);
   }
 }

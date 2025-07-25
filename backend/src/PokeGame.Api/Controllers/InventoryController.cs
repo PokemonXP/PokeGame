@@ -32,4 +32,11 @@ public class InventoryController : ControllerBase
     InventoryItemModel item = await _inventoryService.RemoveAsync(trainerId, itemId, payload, cancellationToken);
     return Ok(item);
   }
+
+  [HttpPut("{itemId}")]
+  public async Task<ActionResult<InventoryItemModel>> UpdateAsync(Guid trainerId, Guid itemId, [FromBody] InventoryQuantityPayload payload, CancellationToken cancellationToken)
+  {
+    InventoryItemModel item = await _inventoryService.UpdateAsync(trainerId, itemId, payload, cancellationToken);
+    return Ok(item);
+  }
 }
