@@ -169,7 +169,7 @@ watch(
           <tr>
             <th scope="col">{{ t("pokemon.name") }}</th>
             <th scope="col">{{ t("pokemon.progress.title") }}</th>
-            <th scope="col">{{ t("pokemon.item.held") }}</th>
+            <th scope="col">{{ t("items.held") }}</th>
             <th scope="col">{{ t("pokemon.trainer.label") }}</th>
             <th scope="col">
               {{ t("pokemon.memories.position.label") }}

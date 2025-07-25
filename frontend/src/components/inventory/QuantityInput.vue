@@ -4,7 +4,6 @@ import { parsingUtils } from "logitar-js";
 import { useI18n } from "vue-i18n";
 
 import FormInput from "@/components/forms/FormInput.vue";
-import PokeDollarIcon from "@/components/items/PokeDollarIcon.vue";
 
 const { parseNumber } = parsingUtils;
 const { t } = useI18n();
@@ -20,9 +19,9 @@ withDefaults(
     type?: InputType;
   }>(),
   {
-    id: "money",
-    label: "trainers.money",
-    min: 0,
+    id: "quantity",
+    label: "trainers.bag.quantity",
+    min: 1,
     step: 1,
     type: "number",
   },
@@ -45,9 +44,6 @@ defineEmits<{
     @update:model-value="$emit('update:model-value', parseNumber($event) ?? 0)"
   >
     <template #append>
-      <span class="input-group-text">
-        <PokeDollarIcon height="40" />
-      </span>
       <slot name="append"></slot>
     </template>
   </FormInput>

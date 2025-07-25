@@ -1,5 +1,4 @@
 {
-  "bag": "Bag",
   "category": {
     "label": "Category",
     "options": {
@@ -23,7 +22,12 @@
   },
   "deleted": "The item has been deleted.",
   "empty": "This list is empty.",
+  "held": "Held Item",
   "price": "Price",
+  "select": {
+    "label": "Item",
+    "placeholder": "Select an item"
+  },
   "sort": {
     "options": {
       "CreatedOn": "Created on",

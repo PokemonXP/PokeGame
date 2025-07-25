@@ -171,7 +171,7 @@ watch(
             </td>
             <td>{{ t(`items.category.options.${item.category}`) }}</td>
             <td>
-              <template v-if="item.price"> <PokeDollarIcon height="20" /> {{ n(item.price, "integer") }} </template>
+              <template v-if="item.price"><PokeDollarIcon height="20" /> {{ n(item.price, "integer") }}</template>
               <span v-else class="text-muted">{{ "—" }}</span>
             </td>
             <td><StatusBlock :actor="item.updatedBy" :date="item.updatedOn" /></td>

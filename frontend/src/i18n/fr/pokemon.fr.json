@@ -73,13 +73,6 @@
   "identification": {
     "title": "Identification"
   },
-  "item": {
-    "held": "Objet tenu",
-    "select": {
-      "label": "Item",
-      "placeholder": "Select an item"
-    }
-  },
   "level": {
     "format": "Nv. {level}",
     "label": "Level"

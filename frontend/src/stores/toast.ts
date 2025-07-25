@@ -18,7 +18,7 @@ export const useToastStore = defineStore("toast", () => {
     }
   }
 
-  function toast(toast: ToastOptions): void {
+  function toast(toast: ToastOptions, args?: number): void {
     const { t } = i18n.global;
     toast = {
       close: toast.close ? t(toast.close) : t("actions.close"),
@@ -26,7 +26,7 @@ export const useToastStore = defineStore("toast", () => {
       fade: true,
       id: `toast_${toast.id ?? nanoid()}`,
       solid: true,
-      text: toast.text ? t(toast.text) : undefined,
+      text: toast.text ? t(toast.text, args ?? 0) : undefined,
       title: toast.title ? t(toast.title) : undefined,
       variant: toast.variant,
     };
@@ -39,12 +39,15 @@ export const useToastStore = defineStore("toast", () => {
       variant: "danger",
     });
   }
-  function success(text: string): void {
-    toast({
-      text,
-      title: "toasts.success",
-      variant: "success",
-    });
+  function success(text: string, args?: number): void {
+    toast(
+      {
+        text,
+        title: "toasts.success",
+        variant: "success",
+      },
+      args,
+    );
   }
   function warning(text: string): void {
     toast({

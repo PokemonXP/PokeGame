@@ -7,6 +7,7 @@ import { useRoute, useRouter } from "vue-router";
 import AdminBreadcrumb from "@/components/admin/AdminBreadcrumb.vue";
 import DeleteTrainer from "@/components/trainers/DeleteTrainer.vue";
 import StatusDetail from "@/components/shared/StatusDetail.vue";
+import TrainerBag from "@/components/inventory/TrainerBag.vue";
 import TrainerGeneral from "@/components/trainers/TrainerGeneral.vue";
 import TrainerMetadata from "@/components/trainers/TrainerMetadata.vue";
 import TrainerPokemon from "@/components/trainers/TrainerPokemon.vue";
@@ -54,6 +55,13 @@ function onGeneralUpdated(updated: Trainer): void {
   }
   toasts.success("trainers.updated");
 }
+function onInventoryUpdated(updated: Trainer): void {
+  if (trainer.value) {
+    updateAggregate(updated);
+    trainer.value.money = updated.money;
+  }
+  toasts.success("trainers.updated");
+}
 function onMetadataUpdate(updated: Trainer): void {
   if (trainer.value) {
     updateAggregate(updated);
@@ -92,11 +100,14 @@ onMounted(async () => {
         <DeleteTrainer :trainer="trainer" @deleted="onDeleted" @error="handleError" />
       </div>
       <TarTabs>
-        <TarTab active id="general" :title="t('general')">
+        <TarTab id="general" :title="t('general')">
           <TrainerGeneral :trainer="trainer" @error="handleError" @updated="onGeneralUpdated" />
         </TarTab>
         <TarTab id="pokemon" :title="t('pokemon.title')">
           <TrainerPokemon :trainer="trainer" @error="handleError" />
+        </TarTab>
+        <TarTab active id="bag" :title="t('trainers.bag.title')">
+          <TrainerBag :trainer="trainer" @error="handleError" @updated="onInventoryUpdated" />
         </TarTab>
         <TarTab id="metadata" :title="t('metadata')">
           <TrainerMetadata :trainer="trainer" @error="handleError" @updated="onMetadataUpdate" />

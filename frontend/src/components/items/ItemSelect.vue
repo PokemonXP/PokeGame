@@ -17,6 +17,7 @@ const props = withDefaults(
   defineProps<{
     category?: ItemCategory;
     id?: string;
+    items?: Item[];
     label?: string;
     modelValue?: string;
     placeholder?: string;
@@ -24,23 +25,26 @@ const props = withDefaults(
   }>(),
   {
     id: "item",
-    label: "pokemon.item.select.label",
-    placeholder: "pokemon.item.select.placeholder",
+    label: "items.select.label",
+    placeholder: "items.select.placeholder",
   },
 );
 
-const items = ref<Item[]>([]);
+const loadedItems = ref<Item[]>([]);
 
+const filteredItems = computed<Item[]>(() =>
+  Array.isArray(props.items) ? props.items.filter((item) => !props.category || item.category === props.category) : loadedItems.value,
+);
 const options = computed<SelectOption[]>(() =>
   orderBy(
-    items.value.map((item) => ({
+    filteredItems.value.map((item) => ({
       text: formatItem(item),
       value: item.id,
     })),
     "text",
   ),
 );
-const item = computed<Item | undefined>(() => (props.modelValue ? items.value.find(({ id }) => id === props.modelValue) : undefined));
+const item = computed<Item | undefined>(() => (props.modelValue ? filteredItems.value.find(({ id }) => id === props.modelValue) : undefined));
 const alt = computed<string>(() => `${item.value ? (item.value.displayName ?? item.value.uniqueName) : ""}'s Sprite'`);
 
 const emit = defineEmits<{
@@ -52,26 +56,28 @@ const emit = defineEmits<{
 function onModelValueUpdate(id: string): void {
   emit("update:model-value", id);
 
-  const selectedItem: Item | undefined = items.value.find((item) => item.id === id);
+  const selectedItem: Item | undefined = filteredItems.value.find((item) => item.id === id);
   emit("selected", selectedItem);
 }
 
 watch(
   () => props.category,
   async (category) => {
-    try {
-      const payload: SearchItemsPayload = {
-        category,
-        ids: [],
-        search: { terms: [], operator: "And" },
-        sort: [],
-        limit: 0,
-        skip: 0,
-      };
-      const results: SearchResults<Item> = await searchItems(payload);
-      items.value = [...results.items];
-    } catch (e: unknown) {
-      emit("error", e);
+    if (!Array.isArray(props.items)) {
+      try {
+        const payload: SearchItemsPayload = {
+          category,
+          ids: [],
+          search: { terms: [], operator: "And" },
+          sort: [],
+          limit: 0,
+          skip: 0,
+        };
+        const results: SearchResults<Item> = await searchItems(payload);
+        loadedItems.value = [...results.items];
+      } catch (e: unknown) {
+        emit("error", e);
+      }
     }
   },
   { immediate: true },

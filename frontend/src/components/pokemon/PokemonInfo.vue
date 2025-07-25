@@ -118,7 +118,7 @@ defineEmits<{
       </tbody>
     </table>
     <template v-if="heldItem">
-      <h3 class="h5">{{ t("pokemon.item.held") }}</h3>
+      <h3 class="h5">{{ t("items.held") }}</h3>
       <table class="table table-striped">
         <tbody>
           <tr>
