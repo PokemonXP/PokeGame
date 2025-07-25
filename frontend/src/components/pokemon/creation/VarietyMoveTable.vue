@@ -76,11 +76,3 @@ const sortedMoves = computed<VarietyMove[]>(() =>
     </tbody>
   </table>
 </template>
-
-<style scoped>
-.description {
-  max-width: 400px;
-  word-wrap: break-word;
-  white-space: normal;
-}
-</style>

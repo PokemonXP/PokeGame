@@ -54,6 +54,18 @@ function added(item: InventoryItem): void {
   }
   toasts.success("trainers.bag.added", quantity);
 }
+function removed(item: InventoryItem): void {
+  const index: number = inventory.value.findIndex((i) => i.item.id === item.item.id);
+  if (index) {
+    const quantity: number = inventory.value[index].quantity - item.quantity;
+    if (item.quantity < 1) {
+      inventory.value.splice(index, 1);
+    } else {
+      inventory.value.splice(index, 1, item);
+    }
+    toasts.success("trainers.bag.removed", quantity);
+  }
+}
 
 async function load(trainer: Trainer): Promise<void> {
   if (!isLoading.value) {
@@ -97,7 +109,7 @@ onMounted(async () => {
     <TarTabs id="inventory">
       <TarTab v-for="(category, index) in categories" :key="category.value" :active="index === 0" :id="category.value" :title="category.text">
         <AddItemForm :category="category.value" :items="items" :trainer="trainer" @added="added" @error="$emit('error', $event)" />
-        <BagItems :category="category.value" :items="inventory" />
+        <BagItems :category="category.value" :items="inventory" :trainer="trainer" @error="$emit('error', $event)" @removed="removed" />
       </TarTab>
     </TarTabs>
   </section>

@@ -2,6 +2,7 @@
   "bag": {
     "added": "invalid_quantity | L’objet a été ajouté. | Les objets ont été ajoutés.",
     "quantity": "Quantité",
+    "removed": "invalid_quantity | L’objet a été retiré. | Les objets ont été retirés.",
     "title": "Sac"
   },
   "card": "Carte d’entraîneur",
