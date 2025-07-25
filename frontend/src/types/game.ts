@@ -1,5 +1,10 @@
-import type { PokemonGender, PokemonSizeCategory, PokemonType } from "./pokemon";
+import type { Flavor, PokemonGender, PokemonSizeCategory, PokemonStatistic, PokemonType, StatusCondition } from "./pokemon";
 import type { TrainerGender } from "./trainers";
+
+export type AbilitySummary = {
+  name: string;
+  description?: string | null;
+};
 
 export type ExperienceSummary = {
   current: number;
@@ -18,6 +23,14 @@ export type ItemSummary = {
   name: string;
   description?: string | null;
   sprite?: string | null;
+};
+
+export type NatureSummary = {
+  name: string;
+  increasedStatistic?: PokemonStatistic | null;
+  decreasedStatistic?: PokemonStatistic | null;
+  favoriteFlavor?: Flavor | null;
+  dislikedFlavor?: Flavor | null;
 };
 
 export type PokemonBase = {
@@ -48,8 +61,23 @@ export type PokemonSummary = PokemonBase & {
   size: PokemonSizeCategory;
   experience?: ExperienceSummary | null;
   heldItem?: ItemSummary | null;
+  ability?: AbilitySummary | null;
+  statistics?: StatisticsSummary | null;
+  vitality: number;
+  stamina: number;
+  statusCondition?: StatusCondition | null;
+  nature?: NatureSummary | null;
   originalTrainer?: TrainerSummary | null;
   caughtBallSprite?: string | null;
+};
+
+export type StatisticsSummary = {
+  hp: number;
+  attack: number;
+  defense: number;
+  specialAttack: number;
+  specialDefense: number;
+  speed: number;
 };
 
 export type TrainerSheet = {

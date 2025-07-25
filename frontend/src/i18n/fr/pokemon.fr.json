@@ -210,7 +210,7 @@
     }
   },
   "stamina": {
-    "label": "Stamina"
+    "label": "Énergie"
   },
   "statistic": {
     "base": "Base Values",
@@ -231,19 +231,20 @@
     "randomize": "Randomize",
     "select": {
       "options": {
-        "Attack": "Attack",
-        "Defense": "Defense",
-        "HP": "HP",
-        "SpecialAttack": "Sp. Attack",
-        "SpecialDefense": "Sp. Defense",
-        "Speed": "Speed"
+        "Attack": "Attaque",
+        "Defense": "Défense",
+        "HP": "PV",
+        "SpecialAttack": "Attaque Sp.",
+        "SpecialDefense": "Défense Sp.",
+        "Speed": "Vitesse"
       }
     },
-    "title": "Statistics",
+    "title": "Statistiques",
     "total": "Total Values"
   },
   "status": {
     "condition": {
+      "label": "Condition",
       "select": {
         "label": "Status Condition",
         "options": {
@@ -255,9 +256,14 @@
         },
         "placeholder": "Select a status condition"
       }
-    }
+    },
+    "label": "État"
   },
-  "summary": "Résumé",
+  "summary": {
+    "info": "Informations",
+    "skills": "Compétences",
+    "title": "Résumé"
+  },
   "title": "Pokémon",
   "trainer": {
     "label": "Trainer",
@@ -301,7 +307,7 @@
     }
   },
   "vitality": {
-    "label": "Vitality"
+    "label": "Vitalité"
   },
   "wild": "Wild Pokémon"
 }
