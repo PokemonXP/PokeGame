@@ -341,6 +341,25 @@ public class Specimen : AggregateRoot
     }
   }
 
+  public void ChangeForm(Form form, ActorId? actorId = null)
+  {
+    if (form.VarietyId != VarietyId)
+    {
+      throw new ArgumentException("The Pokémon current and target forms must be from the same variety.", nameof(form));
+    }
+    else if (FormId != form.Id)
+    {
+
+      Raise(new PokemonFormChanged(form.Id, form.BaseStatistics), actorId);
+    }
+  }
+  protected virtual void Handle(PokemonFormChanged @event)
+  {
+    FormId = @event.FormId;
+
+    _baseStatistics = @event.BaseStatistics;
+  }
+
   public void Delete(ActorId? actorId = null)
   {
     if (!IsDeleted)
