@@ -35,13 +35,6 @@
       "Sweet": "Sucrée"
     }
   },
-  "form": {
-    "select": {
-      "default": "Default",
-      "label": "Form",
-      "placeholder": "Select a Pokémon form"
-    }
-  },
   "friendship": {
     "base": "Bonheur de base",
     "label": "Bonheur",

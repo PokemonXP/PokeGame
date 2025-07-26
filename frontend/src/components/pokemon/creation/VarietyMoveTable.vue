@@ -5,7 +5,7 @@ import { useI18n } from "vue-i18n";
 
 import MoveCategoryBadge from "@/components/moves/MoveCategoryBadge.vue";
 import PokemonTypeImage from "@/components/pokemon/PokemonTypeImage.vue";
-import type { VarietyMove } from "@/types/pokemon";
+import type { VarietyMove } from "@/types/varieties";
 
 const { n, t } = useI18n();
 const { orderBy } = arrayUtils;

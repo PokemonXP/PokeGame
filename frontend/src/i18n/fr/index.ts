@@ -1,5 +1,6 @@
 import abilities from "./abilities.fr.json";
 import errors from "./errors.fr.json";
+import forms from "./forms.fr.json";
 import index from "./index.fr.json";
 import items from "./items.fr.json";
 import moves from "./moves.fr.json";
@@ -14,6 +15,7 @@ export default {
   ...index,
   abilities,
   errors,
+  forms,
   items,
   moves,
   pokemon,

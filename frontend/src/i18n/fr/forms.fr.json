@@ -1,0 +1,11 @@
+{
+  "change": {
+    "submit": "Métamorphoser",
+    "title": "Métamorphose"
+  },
+  "default": "Par défaut",
+  "select": {
+    "label": "Forme",
+    "placeholder": "Sélectionnez une forme de Pokémon"
+  }
+}

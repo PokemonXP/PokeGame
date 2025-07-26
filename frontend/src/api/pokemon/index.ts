@@ -2,6 +2,7 @@ import { urlUtils } from "logitar-js";
 
 import type {
   CatchPokemonPayload,
+  ChangePokemonFormPayload,
   CreatePokemonPayload,
   MovePokemonPayload,
   Pokemon,
@@ -18,6 +19,11 @@ import { _delete, get, patch, post } from "..";
 export async function catchPokemon(id: string, payload: CatchPokemonPayload): Promise<Pokemon> {
   const url: string = new urlUtils.UrlBuilder({ path: "/pokemon/{id}/catch" }).setParameter("id", id).buildRelative();
   return (await patch<CatchPokemonPayload, Pokemon>(url, payload)).data;
+}
+
+export async function changePokemonForm(id: string, payload: ChangePokemonFormPayload): Promise<Pokemon> {
+  const url: string = new urlUtils.UrlBuilder({ path: "/pokemon/{id}/form" }).setParameter("id", id).buildRelative();
+  return (await patch<ChangePokemonFormPayload, Pokemon>(url, payload)).data;
 }
 
 export async function depositPokemon(id: string): Promise<Pokemon> {
