@@ -4,8 +4,9 @@ import type { Item } from "../items";
 import type { Move, MoveLearningMethod } from "../moves";
 import type { Region } from "../regions";
 import type { SearchPayload, SortOption } from "../search";
-import type { GrowthRate, Species } from "../species";
+import type { GrowthRate } from "../species";
 import type { Trainer } from "../trainers";
+import type { Variety } from "../varieties";
 
 export const EFFORT_VALUE_MAXIMUM: number = 255;
 export const EFFORT_VALUE_MINIMUM: number = 0;
@@ -36,6 +37,10 @@ export type CatchPokemonPayload = {
   location: string;
   metOn?: Date;
   description?: string;
+};
+
+export type ChangePokemonFormPayload = {
+  form: string;
 };
 
 export type CreatePokemonPayload = {
@@ -315,26 +320,6 @@ export type UpdatePokemonPayload = {
   sprite?: Change<string>;
   url?: Change<string>;
   notes?: Change<string>;
-};
-
-export type Variety = Aggregate & {
-  species: Species;
-  isDefault: boolean;
-  uniqueName: string;
-  displayName?: string | null;
-  genus?: string | null;
-  description?: string | null;
-  genderRatio?: number | null;
-  url?: string | null;
-  notes?: string | null;
-  canChangeForm: boolean;
-  forms: Form[];
-  moves: VarietyMove[];
-};
-
-export type VarietyMove = {
-  move: Move;
-  level: number;
 };
 
 export type Yield = {

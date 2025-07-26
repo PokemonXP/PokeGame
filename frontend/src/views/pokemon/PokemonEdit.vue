@@ -6,6 +6,7 @@ import { useRoute, useRouter } from "vue-router";
 
 import AdminBreadcrumb from "@/components/admin/AdminBreadcrumb.vue";
 import DeletePokemon from "@/components/pokemon/DeletePokemon.vue";
+import PokemonFormModal from "@/components/pokemon/PokemonFormModal.vue";
 import PokemonMemories from "@/components/pokemon/PokemonMemories.vue";
 import PokemonMetadata from "@/components/pokemon/PokemonMetadata.vue";
 import PokemonMoves from "@/components/pokemon/PokemonMoves.vue";
@@ -37,6 +38,10 @@ function updateAggregate(updated: Pokemon): void {
     pokemon.value.updatedBy = updated.updatedBy;
     pokemon.value.updatedOn = updated.updatedOn;
   }
+}
+function onFormChanged(updated: Pokemon): void {
+  pokemon.value = { ...updated };
+  toasts.success("pokemon.updated");
 }
 function onMetadataUpdated(updated: Pokemon): void {
   updateAggregate(updated);
@@ -112,7 +117,8 @@ onMounted(async () => {
       <AdminBreadcrumb :current="title" :parent="breadcrumb" />
       <StatusDetail :aggregate="pokemon" />
       <div class="mb-3">
-        <DeletePokemon :pokemon="pokemon" @deleted="onDeleted" @error="handleError" />
+        <DeletePokemon class="me-1" :pokemon="pokemon" @deleted="onDeleted" @error="handleError" />
+        <PokemonFormModal v-if="pokemon.form.variety.canChangeForm" class="ms-1" :pokemon="pokemon" @error="handleError" @updated="onFormChanged" />
       </div>
       <TarTabs>
         <TarTab active id="summary" :title="t('pokemon.summary.title')">

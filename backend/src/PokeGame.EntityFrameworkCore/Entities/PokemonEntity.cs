@@ -104,9 +104,7 @@ internal class PokemonEntity : AggregateEntity
     VarietyId = variety.VarietyId;
     VarietyUid = variety.Id;
 
-    Form = form;
-    FormId = form.FormId;
-    FormUid = form.Id;
+    SetForm(form);
 
     UniqueName = @event.UniqueName.Value;
     Gender = @event.Gender;
@@ -142,6 +140,14 @@ internal class PokemonEntity : AggregateEntity
     Update(@event);
 
     SetOwnership(trainer, pokeBall, Core.Pokemon.OwnershipKind.Caught, @event, @event.OccurredOn);
+  }
+
+  public void ChangeForm(FormEntity form, PokemonFormChanged @event)
+  {
+    Update(@event);
+
+    SetForm(form);
+    SetStatistics(@event.BaseStatistics);
   }
 
   public void Deposit(PokemonDeposited @event)
@@ -318,6 +324,13 @@ internal class PokemonEntity : AggregateEntity
       PokemonMoveEntity? pokemonMove = Moves.SingleOrDefault(move => move.Position == position.Value);
       pokemonMove?.Remove();
     }
+  }
+
+  private void SetForm(FormEntity form)
+  {
+    Form = form;
+    FormId = form.FormId;
+    FormUid = form.Id;
   }
 
   private void SetOwnership(TrainerEntity trainer, ItemEntity pokeBall, OwnershipKind kind, IPokemonOwnershipEvent @event, DateTime occurredOn)

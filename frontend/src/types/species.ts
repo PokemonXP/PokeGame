@@ -1,7 +1,7 @@
 import type { Aggregate, Change } from "./aggregate";
-import type { Variety } from "./pokemon";
 import type { Region } from "./regions";
 import type { SearchPayload, SortOption } from "./search";
+import type { Variety } from "./varieties";
 
 export type CreateOrReplaceSpeciesPayload = {
   number: number;

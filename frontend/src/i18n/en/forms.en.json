@@ -1,0 +1,11 @@
+{
+  "change": {
+    "submit": "Change Form",
+    "title": "Change Form"
+  },
+  "default": "Default",
+  "select": {
+    "label": "Form",
+    "placeholder": "Select a Pokémon form"
+  }
+}

@@ -5,9 +5,10 @@ import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 
 import FormSelect from "@/components/forms/FormSelect.vue";
-import type { Form, Variety } from "@/types/pokemon";
+import type { Form } from "@/types/pokemon";
 import type { SearchFormsPayload } from "@/types/pokemon/forms";
 import type { SearchResults } from "@/types/search";
+import type { Variety } from "@/types/varieties";
 import { formatForm } from "@/helpers/format";
 import { searchForms } from "@/api/pokemon/forms";
 
@@ -25,8 +26,8 @@ const props = withDefaults(
   }>(),
   {
     id: "form",
-    label: "pokemon.form.select.label",
-    placeholder: "pokemon.form.select.placeholder",
+    label: "forms.select.label",
+    placeholder: "forms.select.placeholder",
     required: true,
   },
 );
@@ -108,7 +109,7 @@ watch(
     <template #append>
       <span v-if="isDefault" class="input-group-text">
         <font-awesome-icon class="me-1" icon="fas fa-check" />
-        {{ t("pokemon.form.select.default") }}
+        {{ t("forms.default") }}
       </span>
     </template>
   </FormSelect>

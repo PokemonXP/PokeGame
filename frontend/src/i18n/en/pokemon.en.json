@@ -35,13 +35,6 @@
       "Sweet": "Sweet"
     }
   },
-  "form": {
-    "select": {
-      "default": "Default",
-      "label": "Form",
-      "placeholder": "Select a Pokémon form"
-    }
-  },
   "friendship": {
     "base": "Base Friendship",
     "label": "Friendship",

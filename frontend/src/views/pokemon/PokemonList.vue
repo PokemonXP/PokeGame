@@ -227,7 +227,7 @@ watch(
                   {{ t("pokemon.memories.box.format", { box: (pokemon.ownership.box ?? 0) + 1 }) }}
                 </template>
                 <span v-else class="text-muted">
-                  {{ t("pokemon.memories.party") }}
+                  {{ t("pokemon.party") }}
                 </span>
               </template>
               <span v-else class="text-muted">{{ "—" }}</span>

@@ -14,9 +14,10 @@ import SubmitButton from "@/components/shared/SubmitButton.vue";
 import UniqueNameAlreadyUsed from "@/components/shared/UniqueNameAlreadyUsed.vue";
 import UniqueNameInput from "@/components/shared/UniqueNameInput.vue";
 import VarietyIcon from "@/components/icons/VarietyIcon.vue";
-import type { Form, Pokemon, PokemonSize, UpdatePokemonPayload, Variety } from "@/types/pokemon";
+import type { Form, Pokemon, PokemonSize, UpdatePokemonPayload } from "@/types/pokemon";
 import type { Item } from "@/types/items";
 import type { Species } from "@/types/species";
+import type { Variety } from "@/types/varieties";
 import { ErrorCodes, StatusCodes } from "@/types/api";
 import { calculateSize, getMaximumExperience } from "@/helpers/pokemon";
 import { formatForm, formatSpecies, formatVariety } from "@/helpers/format";
@@ -106,7 +107,7 @@ watch(
             {{ " / " }}
             {{ t("varieties.select.label") }}
             {{ " / " }}
-            {{ t("pokemon.form.select.label") }}
+            {{ t("forms.select.label") }}
           </th>
           <td>
             <RouterLink :to="{ name: 'SpeciesEdit', params: { id: species.id } }" target="_blank">
