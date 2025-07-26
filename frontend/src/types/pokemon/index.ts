@@ -27,6 +27,8 @@ export type BaseStatistics = {
   speed: number;
 };
 
+export type BattleStatistic = "Accuracy" | "Attack" | "Defense" | "Evasion" | "SpecialAttack" | "SpecialDefense" | "Speed";
+
 export type CatchPokemonPayload = {
   trainer: string;
   pokeBall: string;

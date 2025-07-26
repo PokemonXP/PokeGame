@@ -43,7 +43,20 @@ async function submit(): Promise<void> {
         const payload: CreateOrReplaceItemPayload = {
           uniqueName: uniqueName.value,
           price: 0,
-          battleItem: category.value === "BattleItem" ? {} : undefined,
+          battleItem:
+            category.value === "BattleItem"
+              ? {
+                  attack: 0,
+                  defense: 0,
+                  specialAttack: 0,
+                  specialDefense: 0,
+                  speed: 0,
+                  accuracy: 0,
+                  evasion: 0,
+                  critical: 0,
+                  guardTurns: 0,
+                }
+              : undefined,
           berry: category.value === "Berry" ? {} : undefined,
           keyItem: category.value === "KeyItem" ? {} : undefined,
           material: category.value === "Material" ? {} : undefined,

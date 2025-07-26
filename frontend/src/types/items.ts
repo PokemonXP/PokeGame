@@ -2,7 +2,17 @@ import type { Aggregate, Change } from "./aggregate";
 import type { Move } from "./moves";
 import type { SearchPayload, SortOption } from "./search";
 
-export type BattleItemProperties = {};
+export type BattleItemProperties = {
+  attack: number;
+  defense: number;
+  specialAttack: number;
+  specialDefense: number;
+  speed: number;
+  accuracy: number;
+  evasion: number;
+  critical: number;
+  guardTurns: number;
+};
 
 export type BerryProperties = {};
 
