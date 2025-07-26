@@ -1,0 +1,26 @@
+{
+  "create": "Nouvelle variété",
+  "created": "La variété a été créée.",
+  "default": "Par défaut",
+  "delete": {
+    "confirm": "Afin de supprimer la variété, veuillez entrer son nom dans le champs suivant.",
+    "title": "Supprimer la variété"
+  },
+  "deleted": "La variété a été supprimée.",
+  "empty": "Cette liste est vide.",
+  "genus": "Genre",
+  "select": {
+    "label": "Variété",
+    "placeholder": "Sélectionnez une variété de Pokémon"
+  },
+  "sort": {
+    "options": {
+      "CreatedOn": "Date de création",
+      "DisplayName": "Nom d’affichage",
+      "UniqueName": "Nom unique",
+      "UpdatedOn": "Dernière modification"
+    }
+  },
+  "title": "Variétés",
+  "updated": "La variété a été mise à jour."
+}

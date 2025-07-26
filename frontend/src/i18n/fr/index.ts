@@ -8,6 +8,7 @@ import regions from "./regions.fr.json";
 import species from "./species.fr.json";
 import trainers from "./trainers.fr.json";
 import users from "./users.fr.json";
+import varieties from "./varieties.fr.json";
 
 export default {
   ...index,
@@ -20,4 +21,5 @@ export default {
   species,
   trainers,
   users,
+  varieties,
 };

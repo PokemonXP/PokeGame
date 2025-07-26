@@ -9,8 +9,8 @@ import type { SearchResults } from "@/types/search";
 import type { Species } from "@/types/species";
 import type { Variety } from "@/types/pokemon";
 import { formatVariety } from "@/helpers/format";
-import { searchVarieties } from "@/api/pokemon/varieties";
-import type { SearchVarietiesPayload } from "@/types/pokemon/varieties";
+import { searchVarieties } from "@/api/varieties";
+import type { SearchVarietiesPayload } from "@/types/varieties";
 
 const { orderBy } = arrayUtils;
 const { t } = useI18n();
@@ -26,8 +26,8 @@ const props = withDefaults(
   }>(),
   {
     id: "variety",
-    label: "pokemon.variety.select.label",
-    placeholder: "pokemon.variety.select.placeholder",
+    label: "varieties.select.label",
+    placeholder: "varieties.select.placeholder",
     required: true,
   },
 );
@@ -109,7 +109,7 @@ watch(
     <template #append>
       <span v-if="isDefault" class="input-group-text">
         <font-awesome-icon class="me-1" icon="fas fa-check" />
-        {{ t("pokemon.variety.select.default") }}
+        {{ t("varieties.default") }}
       </span>
     </template>
   </FormSelect>

@@ -120,6 +120,17 @@ const router = createRouter({
           path: "trainers/:id",
           component: () => import("./views/trainers/TrainerEdit.vue"),
         },
+        // Varieties
+        {
+          name: "VarietyList",
+          path: "varieties",
+          component: () => import("./views/varieties/VarietyList.vue"),
+        },
+        {
+          name: "VarietyEdit",
+          path: "varieties/:id",
+          component: () => import("./views/varieties/VarietyEdit.vue"),
+        },
       ],
       meta: { isAdmin: true },
     },

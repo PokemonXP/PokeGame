@@ -64,7 +64,8 @@ export default createI18n<[MessageSchema], "en" | "fr">({
       },
       percent: {
         style: "percent",
-        minimumFractionDigits: 3,
+        maximumFractionDigits: 1,
+        minimumFractionDigits: 1,
       },
       weight: {
         style: "unit",
@@ -102,7 +103,8 @@ export default createI18n<[MessageSchema], "en" | "fr">({
       },
       percent: {
         style: "percent",
-        minimumFractionDigits: 3,
+        maximumFractionDigits: 1,
+        minimumFractionDigits: 1,
       },
       weight: {
         style: "unit",

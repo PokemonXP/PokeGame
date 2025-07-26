@@ -100,13 +100,13 @@ onMounted(async () => {
         <DeleteTrainer :trainer="trainer" @deleted="onDeleted" @error="handleError" />
       </div>
       <TarTabs>
-        <TarTab id="general" :title="t('general')">
+        <TarTab active id="general" :title="t('general')">
           <TrainerGeneral :trainer="trainer" @error="handleError" @updated="onGeneralUpdated" />
         </TarTab>
         <TarTab id="pokemon" :title="t('pokemon.title')">
           <TrainerPokemon :trainer="trainer" @error="handleError" />
         </TarTab>
-        <TarTab active id="bag" :title="t('trainers.bag.title')">
+        <TarTab id="bag" :title="t('trainers.bag.title')">
           <TrainerBag :trainer="trainer" @error="handleError" @updated="onInventoryUpdated" />
         </TarTab>
         <TarTab id="metadata" :title="t('metadata')">
