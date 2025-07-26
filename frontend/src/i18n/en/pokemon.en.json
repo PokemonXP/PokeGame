@@ -253,12 +253,6 @@
       "UpdatedOn": "Updated on"
     }
   },
-  "species": {
-    "select": {
-      "label": "Species",
-      "placeholder": "Select a Pokémon species"
-    }
-  },
   "stamina": {
     "label": "Stamina"
   },
@@ -349,13 +343,6 @@
     "title": "Types"
   },
   "updated": "The Pokémon has been updated.",
-  "variety": {
-    "select": {
-      "default": "Default",
-      "label": "Variety",
-      "placeholder": "Select a Pokémon variety"
-    }
-  },
   "vitality": {
     "label": "Vitality"
   },

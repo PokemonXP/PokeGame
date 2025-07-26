@@ -59,6 +59,10 @@
     },
     "label": "Number"
   },
+  "select": {
+    "label": "Species",
+    "placeholder": "Select a Pokémon species"
+  },
   "sort": {
     "options": {
       "CreatedOn": "Created on",

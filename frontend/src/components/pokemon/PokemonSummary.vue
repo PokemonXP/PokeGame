@@ -20,7 +20,7 @@ import type { Species } from "@/types/species";
 import { ErrorCodes, StatusCodes } from "@/types/api";
 import { calculateSize, getMaximumExperience } from "@/helpers/pokemon";
 import { formatForm, formatSpecies, formatVariety } from "@/helpers/format";
-import { getFormUrl, getVarietyUrl } from "@/helpers/cms";
+import { getFormUrl } from "@/helpers/cms";
 import { isError } from "@/helpers/error";
 import { updatePokemon } from "@/api/pokemon";
 import { useForm } from "@/forms";
@@ -102,9 +102,9 @@ watch(
       <tbody>
         <tr>
           <th scope="row">
-            {{ t("pokemon.species.select.label") }}
+            {{ t("species.select.label") }}
             {{ " / " }}
-            {{ t("pokemon.variety.select.label") }}
+            {{ t("varieties.select.label") }}
             {{ " / " }}
             {{ t("pokemon.form.select.label") }}
           </th>
@@ -114,7 +114,7 @@ watch(
             </RouterLink>
           </td>
           <td>
-            <a :href="getVarietyUrl(variety)" target="_blank"><VarietyIcon /> {{ formatVariety(variety) }}</a>
+            <RouterLink :to="{ name: 'VarietyEdit', params: { id: variety.id } }" target="_blank"><VarietyIcon /> {{ formatVariety(variety) }}</RouterLink>
           </td>
           <td>
             <a :href="getFormUrl(form)" target="_blank"><FormIcon /> {{ formatForm(form) }}</a>

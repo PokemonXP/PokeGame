@@ -59,6 +59,10 @@
     },
     "label": "Numéro"
   },
+  "select": {
+    "label": "Espèce",
+    "placeholder": "Sélectionnez une espèce de Pokémon"
+  },
   "sort": {
     "options": {
       "CreatedOn": "Date de création",

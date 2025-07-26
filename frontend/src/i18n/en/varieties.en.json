@@ -1,0 +1,26 @@
+{
+  "create": "New Variety",
+  "created": "The variety has been created.",
+  "default": "Default",
+  "delete": {
+    "confirm": "To delete the variety, enter its name in the field below.",
+    "title": "Delete Variety"
+  },
+  "deleted": "The variety has been deleted.",
+  "empty": "This list is empty.",
+  "genus": "Genus",
+  "select": {
+    "label": "Variety",
+    "placeholder": "Select a Pokémon variety"
+  },
+  "sort": {
+    "options": {
+      "CreatedOn": "Created on",
+      "DisplayName": "Display Name",
+      "UniqueName": "Unique Name",
+      "UpdatedOn": "Updated on"
+    }
+  },
+  "title": "Varieties",
+  "updated": "The variety has been updated."
+}

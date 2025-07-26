@@ -27,7 +27,7 @@ import PokemonTypeSelect from "@/components/pokemon/PokemonTypeSelect.vue";
 import ProgressTable from "@/components/pokemon/creation/ProgressTable.vue";
 import ShinyCheckbox from "@/components/pokemon/ShinyCheckbox.vue";
 import SizeEdit from "@/components/pokemon/creation/SizeEdit.vue";
-import SpeciesSelect from "@/components/pokemon/creation/SpeciesSelect.vue";
+import SpeciesSelect from "@/components/species/SpeciesSelect.vue";
 import StaminaInput from "@/components/pokemon/StaminaInput.vue";
 import SubmitButton from "@/components/shared/SubmitButton.vue";
 import TotalStatisticsView from "@/components/pokemon/creation/TotalStatisticsView.vue";
@@ -35,7 +35,7 @@ import UniqueNameAlreadyUsed from "@/components/shared/UniqueNameAlreadyUsed.vue
 import UniqueNameInput from "@/components/shared/UniqueNameInput.vue";
 import UrlInput from "@/components/shared/UrlInput.vue";
 import VarietyMoveTable from "@/components/pokemon/creation/VarietyMoveTable.vue";
-import VarietySelect from "@/components/pokemon/creation/VarietySelect.vue";
+import VarietySelect from "@/components/varieties/VarietySelect.vue";
 import VitalityInput from "@/components/pokemon/VitalityInput.vue";
 import type { AbilitySlot } from "@/types/abilities";
 import type {
