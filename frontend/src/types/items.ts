@@ -1,6 +1,7 @@
 import type { Aggregate, Change } from "./aggregate";
 import type { Move } from "./moves";
 import type { SearchPayload, SortOption } from "./search";
+import type { StatusCondition } from "./pokemon";
 
 export type BattleItemProperties = {
   attack: number;
@@ -67,7 +68,17 @@ export type KeyItemProperties = {};
 
 export type MaterialProperties = {};
 
-export type MedicineProperties = {};
+export type MedicineProperties = {
+  isHerbal: boolean;
+  healing: number;
+  isHealingPercentage: boolean;
+  revives: boolean;
+  statusCondition?: StatusCondition | null;
+  allConditions: boolean;
+  powerPoints: number;
+  isPowerPointPercentage: boolean;
+  restoreAllMoves: boolean;
+};
 
 export type OtherItemProperties = {};
 

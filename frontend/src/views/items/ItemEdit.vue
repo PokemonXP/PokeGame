@@ -9,6 +9,7 @@ import BattleItemPropertiesEdit from "@/components/items/BattleItemPropertiesEdi
 import DeleteItem from "@/components/items/DeleteItem.vue";
 import ItemGeneral from "@/components/items/ItemGeneral.vue";
 import ItemMetadata from "@/components/items/ItemMetadata.vue";
+import MedicinePropertiesEdit from "@/components/items/MedicinePropertiesEdit.vue";
 import PokeBallPropertiesEdit from "@/components/items/PokeBallPropertiesEdit.vue";
 import StatusDetail from "@/components/shared/StatusDetail.vue";
 import TechnicalMachinePropertiesEdit from "@/components/items/TechnicalMachinePropertiesEdit.vue";
@@ -31,7 +32,13 @@ const item = ref<Item>();
 
 const breadcrumb = computed<Breadcrumb>(() => ({ to: { name: "ItemList" }, text: t("items.title") }));
 const hasProperties = computed<boolean>(() =>
-  Boolean(item.value && (item.value.category === "BattleItem" || item.value.category === "PokeBall" || item.value.category === "TechnicalMachine")),
+  Boolean(
+    item.value &&
+      (item.value.category === "BattleItem" ||
+        item.value.category === "Medicine" ||
+        item.value.category === "PokeBall" ||
+        item.value.category === "TechnicalMachine"),
+  ),
 );
 const title = computed<string>(() => (item.value ? formatItem(item.value) : ""));
 
@@ -61,6 +68,7 @@ function onPropertiesUpdated(updated: Item): void {
   if (item.value) {
     updateAggregate(updated);
     item.value.battleItem = updated.battleItem ? { ...updated.battleItem } : undefined;
+    item.value.medicine = updated.medicine ? { ...updated.medicine } : undefined;
     item.value.pokeBall = updated.pokeBall ? { ...updated.pokeBall } : undefined;
     item.value.technicalMachine = updated.technicalMachine ? { ...updated.technicalMachine } : undefined;
   }
@@ -109,6 +117,7 @@ onMounted(async () => {
         </TarTab>
         <TarTab v-if="hasProperties" id="properties" :title="t('properties')">
           <BattleItemPropertiesEdit v-if="item.category === 'BattleItem'" :item="item" @error="handleError" @updated="onPropertiesUpdated" />
+          <MedicinePropertiesEdit v-else-if="item.category === 'Medicine'" :item="item" @error="handleError" @updated="onPropertiesUpdated" />
           <PokeBallPropertiesEdit v-else-if="item.category === 'PokeBall'" :item="item" @error="handleError" @updated="onPropertiesUpdated" />
           <TechnicalMachinePropertiesEdit v-else-if="item.category === 'TechnicalMachine'" :item="item" @error="handleError" @updated="onPropertiesUpdated" />
         </TarTab>

@@ -1,4 +1,5 @@
 {
+  "allConditions": "All Status Conditions",
   "catchMultiplier": "Catch Multiplier",
   "category": {
     "label": "Category",
@@ -24,7 +25,18 @@
   "deleted": "The item has been deleted.",
   "empty": "This list is empty.",
   "guardTurns": "Guard Turns",
+  "healing": {
+    "percentage": "Percentage",
+    "revives": "Revives",
+    "value": "Healing"
+  },
   "held": "Held Item",
+  "herbal": "Is Herbal",
+  "powerPoints": {
+    "allMoves": "All Moves",
+    "percentage": "Percentage",
+    "value": "Restore Power Points"
+  },
   "price": "Price",
   "select": {
     "label": "Item",

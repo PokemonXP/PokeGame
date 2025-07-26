@@ -60,7 +60,19 @@ async function submit(): Promise<void> {
           berry: category.value === "Berry" ? {} : undefined,
           keyItem: category.value === "KeyItem" ? {} : undefined,
           material: category.value === "Material" ? {} : undefined,
-          medicine: category.value === "Medicine" ? {} : undefined,
+          medicine:
+            category.value === "Medicine"
+              ? {
+                  isHerbal: false,
+                  healing: 0,
+                  isHealingPercentage: false,
+                  revives: false,
+                  allConditions: false,
+                  powerPoints: 0,
+                  isPowerPointPercentage: false,
+                  restoreAllMoves: false,
+                }
+              : undefined,
           otherItem: category.value === "OtherItem" ? {} : undefined,
           pokeBall:
             category.value === "PokeBall"
