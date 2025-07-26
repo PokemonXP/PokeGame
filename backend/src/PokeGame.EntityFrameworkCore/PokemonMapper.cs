@@ -139,6 +139,9 @@ internal class PokemonMapper
       case ItemCategory.BattleItem:
         destination.BattleItem = source.GetBattleItemProperties();
         break;
+      case ItemCategory.Medicine:
+        destination.Medicine = source.GetMedicineProperties();
+        break;
       case ItemCategory.PokeBall:
         destination.PokeBall = source.GetPokeBallProperties();
         break;

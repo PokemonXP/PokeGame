@@ -51,10 +51,14 @@ defineEmits<{
     :required="required"
     @update:model-value="$emit('update:model-value', $event)"
   >
-    <template v-if="status" #append>
-      <div class="input-group-text">
+    <template #append>
+      <div v-if="status" class="input-group-text">
         <StatusConditionIcon height="32" :status="status" />
       </div>
+      <slot name="append"></slot>
+    </template>
+    <template #after>
+      <slot name="after"></slot>
     </template>
   </FormSelect>
 </template>

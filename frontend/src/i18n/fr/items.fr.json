@@ -1,4 +1,5 @@
 {
+  "allConditions": "All Status Conditions",
   "catchMultiplier": "Facteur de capture",
   "category": {
     "label": "Catégorie",
@@ -24,7 +25,18 @@
   "deleted": "L’objet a été supprimé.",
   "empty": "Cette liste est vide.",
   "guardTurns": "Garde (tours)",
+  "healing": {
+    "percentage": "Pourcentage",
+    "revives": "Ravive",
+    "value": "Guérison"
+  },
   "held": "Objet tenu",
+  "herbal": "Phytothérapie",
+  "powerPoints": {
+    "allMoves": "Toutes attaques",
+    "percentage": "Pourcentage",
+    "value": "Restauration de points de pouvoir"
+  },
   "price": "Prix",
   "select": {
     "label": "Objet",

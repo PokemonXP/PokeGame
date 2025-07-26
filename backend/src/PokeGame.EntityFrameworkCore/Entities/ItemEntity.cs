@@ -161,6 +161,7 @@ internal class ItemEntity : AggregateEntity
   }
 
   public BattleItemPropertiesModel? GetBattleItemProperties() => Properties is null ? null : PokemonSerializer.Instance.Deserialize<BattleItemPropertiesModel>(Properties);
+  public MedicinePropertiesModel? GetMedicineProperties() => Properties is null ? null : PokemonSerializer.Instance.Deserialize<MedicinePropertiesModel>(Properties);
   public PokeBallPropertiesModel? GetPokeBallProperties() => Properties is null ? null : PokemonSerializer.Instance.Deserialize<PokeBallPropertiesModel>(Properties);
 
   public override string ToString() => $"{DisplayName ?? UniqueName} | {base.ToString()}";
