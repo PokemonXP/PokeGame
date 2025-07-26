@@ -258,6 +258,7 @@
   },
   "statistic": {
     "base": "Base Values",
+    "critical": "Critique",
     "effort": {
       "title": "Effort Values (EVs)",
       "total": {
@@ -275,13 +276,18 @@
     "randomize": "Randomize",
     "select": {
       "options": {
+        "Accuracy": "Précision",
         "Attack": "Attaque",
         "Defense": "Défense",
+        "Evasion": "Esquive",
         "HP": "PV",
         "SpecialAttack": "Attaque Sp.",
         "SpecialDefense": "Défense Sp.",
         "Speed": "Vitesse"
       }
+    },
+    "stage": {
+      "format": "Étages de {stat}"
     },
     "title": "Statistiques",
     "total": "Total Values"

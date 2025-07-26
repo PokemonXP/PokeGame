@@ -136,6 +136,9 @@ internal class PokemonMapper
 
     switch (source.Category)
     {
+      case ItemCategory.BattleItem:
+        destination.BattleItem = source.GetBattleItemProperties();
+        break;
       case ItemCategory.PokeBall:
         destination.PokeBall = source.GetPokeBallProperties();
         break;

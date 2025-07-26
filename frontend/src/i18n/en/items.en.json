@@ -23,6 +23,7 @@
   },
   "deleted": "The item has been deleted.",
   "empty": "This list is empty.",
+  "guardTurns": "Guard Turns",
   "held": "Held Item",
   "price": "Price",
   "select": {
