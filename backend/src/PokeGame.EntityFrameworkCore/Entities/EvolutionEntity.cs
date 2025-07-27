@@ -41,6 +41,8 @@ internal class EvolutionEntity : AggregateEntity
 
   public EvolutionEntity(FormEntity source, FormEntity target, ItemEntity? item, EvolutionCreated @event) : base(@event)
   {
+    Id = new EvolutionId(@event.StreamId).ToGuid();
+
     Source = source;
     SourceId = source.FormId;
     SourceUid = source.Id;
