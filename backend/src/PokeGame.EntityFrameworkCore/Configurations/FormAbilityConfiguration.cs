@@ -6,7 +6,7 @@ using PokeGame.EntityFrameworkCore.Entities;
 
 namespace PokeGame.EntityFrameworkCore.Configurations;
 
-internal class FormAbilityConfiguration : IEntityTypeConfiguration<FormAbilityEntity> // TODO(fpion): next migration
+internal class FormAbilityConfiguration : IEntityTypeConfiguration<FormAbilityEntity>
 {
   public void Configure(EntityTypeBuilder<FormAbilityEntity> builder)
   {
@@ -14,10 +14,9 @@ internal class FormAbilityConfiguration : IEntityTypeConfiguration<FormAbilityEn
     builder.HasKey(x => new { x.FormId, x.AbilityId });
 
     builder.HasIndex(x => new { x.FormId, x.Slot }).IsUnique();
-    builder.HasIndex(x => x.FormUid);
+    builder.HasIndex(x => new { x.FormUid, x.AbilityUid }).IsUnique();
+    builder.HasIndex(x => new { x.FormUid, x.Slot }).IsUnique();
     builder.HasIndex(x => x.AbilityUid);
-    //builder.HasIndex(x => new { x.FormUid, x.AbilityUid }).IsUnique();
-    //builder.HasIndex(x => new { x.FormUid, x.Slot }).IsUnique();
 
     builder.Property(x => x.Slot).HasMaxLength(byte.MaxValue).HasConversion(new EnumToStringConverter<AbilitySlot>());
 

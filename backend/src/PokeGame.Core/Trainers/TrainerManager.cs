@@ -1,4 +1,5 @@
-﻿using PokeGame.Core.Trainers.Events;
+﻿using Logitar.EventSourcing;
+using PokeGame.Core.Trainers.Events;
 
 namespace PokeGame.Core.Trainers;
 
@@ -22,7 +23,7 @@ internal class TrainerManager : ITrainerManager
   {
     bool hasLicenseChanged = false;
     bool hasUniqueNameChanged = false;
-    foreach (var change in trainer.Changes)
+    foreach (IEvent change in trainer.Changes)
     {
       if (change is TrainerCreated)
       {

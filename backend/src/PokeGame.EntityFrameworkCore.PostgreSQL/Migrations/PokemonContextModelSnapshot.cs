@@ -106,6 +106,135 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
                     b.ToTable("Abilities", "Pokemon");
                 });
 
+            modelBuilder.Entity("PokeGame.EntityFrameworkCore.Entities.EvolutionEntity", b =>
+                {
+                    b.Property<int>("EvolutionId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("EvolutionId"));
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("Friendship")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Gender")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<int?>("HeldItemId")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid?>("HeldItemUid")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<int?>("ItemId")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid?>("ItemUid")
+                        .HasColumnType("uuid");
+
+                    b.Property<int?>("KnownMoveId")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid?>("KnownMoveUid")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Level")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Location")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<int>("SourceId")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("SourceUid")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("StreamId")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<int>("TargetId")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("TargetUid")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("TimeOfDay")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<string>("Trigger")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<DateTime>("UpdatedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<long>("Version")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("EvolutionId");
+
+                    b.HasIndex("CreatedBy");
+
+                    b.HasIndex("CreatedOn");
+
+                    b.HasIndex("HeldItemId");
+
+                    b.HasIndex("HeldItemUid");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex("ItemId");
+
+                    b.HasIndex("ItemUid");
+
+                    b.HasIndex("KnownMoveId");
+
+                    b.HasIndex("KnownMoveUid");
+
+                    b.HasIndex("Level");
+
+                    b.HasIndex("SourceId");
+
+                    b.HasIndex("SourceUid");
+
+                    b.HasIndex("StreamId")
+                        .IsUnique();
+
+                    b.HasIndex("TargetId");
+
+                    b.HasIndex("TargetUid");
+
+                    b.HasIndex("UpdatedBy");
+
+                    b.HasIndex("UpdatedOn");
+
+                    b.HasIndex("Version");
+
+                    b.ToTable("Evolutions", "Pokemon");
+                });
+
             modelBuilder.Entity("PokeGame.EntityFrameworkCore.Entities.FormAbilityEntity", b =>
                 {
                     b.Property<int>("FormId")
@@ -131,9 +260,13 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
 
                     b.HasIndex("AbilityUid");
 
-                    b.HasIndex("FormUid");
-
                     b.HasIndex("FormId", "Slot")
+                        .IsUnique();
+
+                    b.HasIndex("FormUid", "AbilityUid")
+                        .IsUnique();
+
+                    b.HasIndex("FormUid", "Slot")
                         .IsUnique();
 
                     b.ToTable("FormAbilities", "Pokemon");
@@ -908,7 +1041,8 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
 
                     b.HasIndex("MoveUid");
 
-                    b.HasIndex("PokemonUid");
+                    b.HasIndex("PokemonUid", "MoveUid")
+                        .IsUnique();
 
                     b.ToTable("PokemonMoves", "Pokemon");
                 });
@@ -1017,11 +1151,13 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
 
                     b.HasKey("SpeciesId", "RegionId");
 
-                    b.HasIndex("RegionUid");
-
-                    b.HasIndex("SpeciesUid");
-
                     b.HasIndex("RegionId", "Number")
+                        .IsUnique();
+
+                    b.HasIndex("RegionUid", "Number")
+                        .IsUnique();
+
+                    b.HasIndex("SpeciesUid", "RegionUid")
                         .IsUnique();
 
                     b.ToTable("RegionalNumbers", "Pokemon");
@@ -1419,9 +1555,50 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
 
                     b.HasIndex("MoveUid");
 
-                    b.HasIndex("VarietyUid");
+                    b.HasIndex("VarietyUid", "MoveUid")
+                        .IsUnique();
 
                     b.ToTable("VarietyMoves", "Pokemon");
+                });
+
+            modelBuilder.Entity("PokeGame.EntityFrameworkCore.Entities.EvolutionEntity", b =>
+                {
+                    b.HasOne("PokeGame.EntityFrameworkCore.Entities.ItemEntity", "HeldItem")
+                        .WithMany("HeldEvolutions")
+                        .HasForeignKey("HeldItemId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("PokeGame.EntityFrameworkCore.Entities.ItemEntity", "Item")
+                        .WithMany("Evolutions")
+                        .HasForeignKey("ItemId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("PokeGame.EntityFrameworkCore.Entities.MoveEntity", "KnownMove")
+                        .WithMany("Evolutions")
+                        .HasForeignKey("KnownMoveId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("PokeGame.EntityFrameworkCore.Entities.FormEntity", "Source")
+                        .WithMany("SourceEvolutions")
+                        .HasForeignKey("SourceId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("PokeGame.EntityFrameworkCore.Entities.FormEntity", "Target")
+                        .WithMany("TargetEvolutions")
+                        .HasForeignKey("TargetId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("HeldItem");
+
+                    b.Navigation("Item");
+
+                    b.Navigation("KnownMove");
+
+                    b.Navigation("Source");
+
+                    b.Navigation("Target");
                 });
 
             modelBuilder.Entity("PokeGame.EntityFrameworkCore.Entities.FormAbilityEntity", b =>
@@ -1631,11 +1808,19 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
                     b.Navigation("Abilities");
 
                     b.Navigation("Pokemon");
+
+                    b.Navigation("SourceEvolutions");
+
+                    b.Navigation("TargetEvolutions");
                 });
 
             modelBuilder.Entity("PokeGame.EntityFrameworkCore.Entities.ItemEntity", b =>
                 {
                     b.Navigation("ContainedPokemon");
+
+                    b.Navigation("Evolutions");
+
+                    b.Navigation("HeldEvolutions");
 
                     b.Navigation("HoldingPokemon");
 
@@ -1646,6 +1831,8 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
 
             modelBuilder.Entity("PokeGame.EntityFrameworkCore.Entities.MoveEntity", b =>
                 {
+                    b.Navigation("Evolutions");
+
                     b.Navigation("Pokemon");
 
                     b.Navigation("TechnicalMachines");
