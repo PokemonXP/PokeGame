@@ -387,7 +387,7 @@ internal class PokemonEntity : AggregateEntity
     PokeBallId = pokeBall?.ItemId;
     PokeBallUid = pokeBall?.Id;
   }
-  public void SetSlot(PokemonSlot? slot)
+  private void SetSlot(PokemonSlot? slot)
   {
     Position = slot?.Position.Value;
     Box = slot?.Box?.Value;

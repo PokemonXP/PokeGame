@@ -42,7 +42,6 @@ public static class DependencyInjectionExtensions
     MoveEvents.Register(services);
     PokemonEvents.Register(services);
     PokemonOwnershipEvents.Register(services);
-    PokemonStorageEvents.Register(services);
     RegionEvents.Register(services);
     SpeciesEvents.Register(services);
     TrainerEvents.Register(services);
