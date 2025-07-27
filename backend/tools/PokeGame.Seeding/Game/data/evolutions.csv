@@ -1,0 +1,16 @@
+﻿id,source,target,trigger,item,level,friendship,gender,held_item,known_move,location,time_of_day
+da382e45-70b8-4ffa-8eb1-efabe7e7eb50,rockruff,lycanroc-midday,Level,,25,,,,,,Day
+b945c028-b579-4abc-a156-0dc1576bbd90,rockruff,lycanroc-midnight,Level,,25,,,,,,Night
+e83ab663-5042-4651-a0bd-39045c968bdc,rockruff,lycanroc-dusk,Level,,25,,,,,,Evening
+e7de2326-d4e7-429d-9d2e-2c30cd0a3d80,eevee,vaporeon,Item,water-stone,,,,,,,
+88d3f521-16c8-4629-979a-1a26bad717b8,eevee,jolteon,Item,thunder-stone,,,,,,,
+8ec81ef4-0340-4dc9-bb11-673891df48c0,eevee,flareon,Item,fire-stone,,,,,,,
+10d5dcc2-7cf9-4804-959c-d34896cfc2e5,eevee,espeon,Level,,,TRUE,,,,,Day
+063ceb35-b3e4-435b-994e-44ec215ccef4,eevee,umbreon,Level,,,TRUE,,,,,Night
+5ea6a062-c226-4687-bf6b-24467cdc40d9,eevee,leafeon,Level,,,,,,,Moss Rock,
+5f44ba41-3b8b-404a-9ebe-4f8d370bd3c4,eevee,glaceon,Level,,,,,,,Ice Rock,
+7734e986-3f65-4acc-8e51-c74558e42526,eevee,sylveon,Level,,,TRUE,,,,,
+bdb21a86-0c74-44d9-937e-23a0c76f6575,yanma,yanmega,Level,,,,,,ancient-power,,
+d30dbceb-4383-4a0a-aedc-ed2b686ed599,combee,vespiquen,Level,,21,,Female,,,,
+1bc787f2-9034-4b1e-92ff-c431551da3db,scyther,scizor,Trade,,,,,metal-coat,,,
+fe83a335-7313-4d88-834e-4e169db91822,scyther,kleavor,Item,black-augurite,,,,,,,
