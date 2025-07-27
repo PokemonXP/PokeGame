@@ -4,6 +4,9 @@ namespace PokeGame.Core.Pokemon;
 
 public record Box
 {
+  public const int Count = 32;
+  public const int Size = 5 * 6;
+
   public int Value { get; }
 
   public Box(int value)
@@ -17,7 +20,7 @@ public record Box
   {
     public Validator()
     {
-      RuleFor(x => x.Value).Box();
+      RuleFor(x => x.Value).InclusiveBetween(0, Count - 1);
     }
   }
 }

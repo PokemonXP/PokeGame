@@ -17,7 +17,7 @@ public record Position
   {
     public Validator()
     {
-      RuleFor(x => x.Value).GreaterThanOrEqualTo(0);
+      RuleFor(x => x.Value).InclusiveBetween(0, Box.Size - 1);
     }
   }
 }

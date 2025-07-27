@@ -139,7 +139,7 @@ public class PokemonOwnershipTests
   [Fact(DisplayName = "Deposit: it should throw ArgumentException when the Pokémon is deposited in the party.")]
   public void Given_InTheParty_When_Deposit_Then_ArgumentException()
   {
-    PokemonSlot slot = new(new Position(0), Box: null);
+    PokemonSlot slot = new(new Position(0));
     _pokemon.Receive(_trainer, _pokeBall, _location, slot: slot);
 
     var exception = Assert.Throws<ArgumentException>(() => _pokemon.Deposit(slot));
@@ -157,7 +157,7 @@ public class PokemonOwnershipTests
   [Fact(DisplayName = "Move: it should throw InvalidOperationException when the Pokémon is not owned by any trainer.")]
   public void Given_NoOwner_When_Move_Then_InvalidOperationException()
   {
-    PokemonSlot slot = new(new Position(2), Box: null);
+    PokemonSlot slot = new(new Position(2));
     Assert.Throws<InvalidOperationException>(() => _pokemon.Move(slot));
   }
 
@@ -286,7 +286,7 @@ public class PokemonOwnershipTests
   [Fact(DisplayName = "Release: it should throw CannotReleasePartyPokemonException when the Pokémon is in the party.")]
   public void Given_PokemonInParty_When_Release_Then_CannotReleasePartyPokemonException()
   {
-    PokemonSlot slot = new(new Position(0), Box: null);
+    PokemonSlot slot = new(new Position(0));
     _pokemon.Receive(_trainer, _pokeBall, _location, slot: slot);
 
     var exception = Assert.Throws<CannotReleasePartyPokemonException>(() => _pokemon.Release());
@@ -296,7 +296,7 @@ public class PokemonOwnershipTests
   [Fact(DisplayName = "Swap: it should swap Pokémon owned by the same trainer.")]
   public void Given_BothOwner_When_Swap_Then_Swapped()
   {
-    PokemonSlot currentSlot = new(new Position(0), Box: null);
+    PokemonSlot currentSlot = new(new Position(0));
     _pokemon.Receive(_trainer, _pokeBall, _location, slot: currentSlot);
 
     Specimen pokemon = new(
@@ -308,7 +308,7 @@ public class PokemonOwnershipTests
       _randomizer.PokemonNature(),
       _randomizer.IndividualValues(),
       _randomizer.PokemonGender(_variety.GenderRatio!));
-    PokemonSlot otherSlot = new(new Position(1), Box: null);
+    PokemonSlot otherSlot = new(new Position(1));
     pokemon.Receive(_trainer, _pokeBall, _location, slot: otherSlot);
 
     _pokemon.Swap(pokemon, _actorId);
@@ -390,7 +390,7 @@ public class PokemonOwnershipTests
     _pokemon.Receive(_trainer, _pokeBall, _location, slot: new PokemonSlot(position, new Box(0)));
 
     _pokemon.Withdraw(position, _actorId);
-    Assert.Equal(new PokemonSlot(position, Box: null), _pokemon.Slot);
+    Assert.Equal(new PokemonSlot(position), _pokemon.Slot);
     Assert.True(_pokemon.HasChanges);
     Assert.Contains(_pokemon.Changes, change => change is PokemonWithdrew withdrew && withdrew.ActorId == _actorId);
 

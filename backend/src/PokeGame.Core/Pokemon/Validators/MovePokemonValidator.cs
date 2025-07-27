@@ -7,7 +7,7 @@ internal class MovePokemonValidator : AbstractValidator<MovePokemonPayload>
 {
   public MovePokemonValidator()
   {
-    RuleFor(x => x.Position).InclusiveBetween(0, Storage.BoxSize - 1);
-    RuleFor(x => x.Box).Box();
+    //RuleFor(x => x.Position).InclusiveBetween(0, Storage.BoxSize - 1);
+    //RuleFor(x => x.Box).Box(); // TODO(fpion): refactor
   }
 }

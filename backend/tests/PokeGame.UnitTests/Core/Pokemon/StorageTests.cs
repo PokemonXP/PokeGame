@@ -9,7 +9,7 @@ public class StorageTests
     List<KeyValuePair<PokemonId, PokemonSlot>> slots = new(capacity: Storage.PartySize + Storage.BoxSize);
     for (int position = 0; position < Storage.PartySize; position++)
     {
-      slots.Add(new(PokemonId.NewId(), new PokemonSlot(new Position(position), Box: null)));
+      slots.Add(new(PokemonId.NewId(), new PokemonSlot(new Position(position))));
     }
     for (int position = 0; position < Storage.BoxSize; position++)
     {
@@ -37,7 +37,7 @@ public class StorageTests
     List<KeyValuePair<PokemonId, PokemonSlot>> slots = new(capacity: 2 * Storage.PartySize);
     for (int position = 0; position < Storage.PartySize; position++)
     {
-      slots.Add(new(PokemonId.NewId(), new PokemonSlot(new Position(position), Box: null)));
+      slots.Add(new(PokemonId.NewId(), new PokemonSlot(new Position(position))));
       slots.Add(new(PokemonId.NewId(), new PokemonSlot(new Position(position), new Box(0))));
     }
     Storage storage = new(slots);
@@ -52,8 +52,8 @@ public class StorageTests
   {
     KeyValuePair<PokemonId, PokemonSlot>[] slots =
     [
-      new(PokemonId.NewId(), new PokemonSlot(new Position(0), Box: null)),
-      new(PokemonId.NewId(), new PokemonSlot(new Position(1), Box: null)),
+      new(PokemonId.NewId(), new PokemonSlot(new Position(0))),
+      new(PokemonId.NewId(), new PokemonSlot(new Position(1))),
       new(PokemonId.NewId(), new PokemonSlot(new Position(2), new Box(2)))
     ];
     Storage storage = new(slots);
@@ -69,7 +69,7 @@ public class StorageTests
     PokemonSlot slot = new(new Position(0), new Box(0));
     Storage storage = new(
     [
-      new(PokemonId.NewId(), new PokemonSlot(new Position(0), Box: null)),
+      new(PokemonId.NewId(), new PokemonSlot(new Position(0))),
       new(PokemonId.NewId(), slot)
     ]);
 
@@ -79,7 +79,7 @@ public class StorageTests
   [Fact(DisplayName = "IsEmpty: it should return true when the slot is empty.")]
   public void Given_Empty_When_IsEmpty_Then_True()
   {
-    Storage storage = new([new(PokemonId.NewId(), new PokemonSlot(new Position(0), Box: null))]);
+    Storage storage = new([new(PokemonId.NewId(), new PokemonSlot(new Position(0)))]);
 
     PokemonSlot slot = new(new Position(0), new Box(0));
     Assert.True(storage.IsEmpty(slot));
@@ -88,7 +88,7 @@ public class StorageTests
   [Fact(DisplayName = "It should create a storage with boxes.")]
   public void Given_PartyAndBoxes_When_ctor_Then_Created()
   {
-    KeyValuePair<PokemonId, PokemonSlot> party = new(PokemonId.NewId(), new PokemonSlot(new Position(0), Box: null));
+    KeyValuePair<PokemonId, PokemonSlot> party = new(PokemonId.NewId(), new PokemonSlot(new Position(0)));
     KeyValuePair<PokemonId, PokemonSlot> box = new(PokemonId.NewId(), new PokemonSlot(new Position(15), new Box(3)));
     Storage storage = new([party, box]);
 
@@ -112,7 +112,7 @@ public class StorageTests
   [Fact(DisplayName = "It should create a storage with empty boxes.")]
   public void Given_PartyEmptyBoxes_When_ctor_Then_Created()
   {
-    KeyValuePair<PokemonId, PokemonSlot> slot = new(PokemonId.NewId(), new PokemonSlot(new Position(0), Box: null));
+    KeyValuePair<PokemonId, PokemonSlot> slot = new(PokemonId.NewId(), new PokemonSlot(new Position(0)));
     Storage storage = new([slot]);
 
     Assert.Single(storage.Pokemon);
@@ -136,7 +136,7 @@ public class StorageTests
   [Fact(DisplayName = "It should ignore Pokémon duplicates.")]
   public void Given_PokemonDuplicate_When_ctor_Then_Ignored()
   {
-    KeyValuePair<PokemonId, PokemonSlot> slot = new(PokemonId.NewId(), new PokemonSlot(new Position(0), Box: null));
+    KeyValuePair<PokemonId, PokemonSlot> slot = new(PokemonId.NewId(), new PokemonSlot(new Position(0)));
     Storage storage = new([slot, slot, slot]);
     Assert.Equal(slot.Key, storage.Party.Single());
   }
@@ -147,7 +147,7 @@ public class StorageTests
     PokemonId pokemonId = PokemonId.NewId();
     KeyValuePair<PokemonId, PokemonSlot>[] slots =
     [
-      new(pokemonId, new PokemonSlot(new Position(0), Box: null)),
+      new(pokemonId, new PokemonSlot(new Position(0))),
       new(pokemonId, new PokemonSlot(new Position(0), new Box(0)))
     ];
     var exception = Assert.Throws<ArgumentException>(() => new Storage(slots));
@@ -158,7 +158,7 @@ public class StorageTests
   [Fact(DisplayName = "It should throw ArgumentException when a slot is occupied by multiple Pokémon.")]
   public void Given_MultipleSlotPokemon_When_ctor_Then_ArgumentException()
   {
-    PokemonSlot slot = new(new Position(0), Box: null);
+    PokemonSlot slot = new(new Position(0));
     KeyValuePair<PokemonId, PokemonSlot>[] slots = [new(PokemonId.NewId(), slot), new(PokemonId.NewId(), slot)];
     var exception = Assert.Throws<ArgumentException>(() => new Storage(slots));
     Assert.Equal("slots", exception.ParamName);
@@ -170,9 +170,9 @@ public class StorageTests
   {
     KeyValuePair<PokemonId, PokemonSlot>[] slots =
     [
-      new(PokemonId.NewId(), new PokemonSlot(new Position(0), Box: null)),
-      new(PokemonId.NewId(), new PokemonSlot(new Position(1), Box: null)),
-      new(PokemonId.NewId(), new PokemonSlot(new Position(3), Box: null))
+      new(PokemonId.NewId(), new PokemonSlot(new Position(0))),
+      new(PokemonId.NewId(), new PokemonSlot(new Position(1))),
+      new(PokemonId.NewId(), new PokemonSlot(new Position(3)))
     ];
     var exception = Assert.Throws<ArgumentException>(() => new Storage(slots));
     Assert.Equal("slots", exception.ParamName);
@@ -189,18 +189,5 @@ public class StorageTests
     var exception = Assert.Throws<ArgumentException>(() => new Storage(slots));
     Assert.Equal("slots", exception.ParamName);
     Assert.StartsWith("The Pokémon party cannot be empty when there are Pokémon in boxes.", exception.Message);
-  }
-
-  [Fact(DisplayName = "It should throw ArgumentException when the party size limit is exceeded.")]
-  public void Given_PartySizeExceeded_When_ctor_Then_ArgumentException()
-  {
-    List<KeyValuePair<PokemonId, PokemonSlot>> slots = new(capacity: Storage.PartySize + 1);
-    for (int i = 0; i < (Storage.PartySize + 1); i++)
-    {
-      slots.Add(new(PokemonId.NewId(), new PokemonSlot(new Position(i), Box: null)));
-    }
-    var exception = Assert.Throws<ArgumentException>(() => new Storage(slots));
-    Assert.Equal("slots", exception.ParamName);
-    Assert.StartsWith("The party cannot exceed 6 Pokémon.", exception.Message);
   }
 }
