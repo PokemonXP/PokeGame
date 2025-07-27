@@ -1,4 +1,5 @@
-﻿using Krakenar.Core;
+﻿using FluentValidation;
+using Krakenar.Core;
 using Logitar.EventSourcing;
 using PokeGame.Core.Evolutions;
 using PokeGame.Core.Forms;
@@ -12,6 +13,7 @@ namespace PokeGame.Core.Pokemon.Commands;
 internal record EvolvePokemon(Guid PokemonId, Guid EvolutionId) : ICommand<PokemonModel?>;
 
 /// <exception cref="EvolutionNotFoundException"></exception>
+/// <exception cref="ValidationException"></exception>
 internal class EvolvePokemonHandler : ICommandHandler<EvolvePokemon, PokemonModel?>
 {
   private readonly IApplicationContext _applicationContext;
