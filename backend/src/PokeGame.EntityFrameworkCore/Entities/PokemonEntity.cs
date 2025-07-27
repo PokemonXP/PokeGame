@@ -258,6 +258,11 @@ internal class PokemonEntity : AggregateEntity
     UniqueName = @event.UniqueName.Value;
   }
 
+  public void Store(PokemonStored @event)
+  {
+    SetSlot(@event.Slot);
+  }
+
   public void Swap(PokemonSwapped @event)
   {
     Update(@event);
