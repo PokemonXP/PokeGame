@@ -1,5 +1,6 @@
 ﻿using Logitar.EventSourcing;
+using PokeGame.Core.Pokemon;
 
-namespace PokeGame.Core.Pokemon.Events;
+namespace PokeGame.Core.Storage.Events;
 
 public record PokemonStored(PokemonId PokemonId, PokemonSlot Slot) : DomainEvent;

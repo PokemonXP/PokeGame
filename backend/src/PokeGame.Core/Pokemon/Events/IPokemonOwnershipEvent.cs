@@ -5,7 +5,7 @@ using PokeGame.Core.Trainers;
 
 namespace PokeGame.Core.Pokemon.Events;
 
-public interface IPokemonOwnershipEvent
+public interface IPokemonOwnershipEvent // TODO(fpion): remove Slot
 {
   TrainerId TrainerId { get; }
   ItemId PokeBallId { get; }

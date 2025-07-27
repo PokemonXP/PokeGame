@@ -8,8 +8,7 @@ using PokeGame.EntityFrameworkCore.Entities;
 
 namespace PokeGame.EntityFrameworkCore.Handlers;
 
-internal class PokemonEvents : IEventHandler<PokemonCaught>,
-  IEventHandler<PokemonCreated>,
+internal class PokemonEvents : IEventHandler<PokemonCreated>,
   IEventHandler<PokemonDeleted>,
   IEventHandler<PokemonDeposited>,
   IEventHandler<PokemonEvolved>,
@@ -22,7 +21,6 @@ internal class PokemonEvents : IEventHandler<PokemonCaught>,
   IEventHandler<PokemonMoveSwitched>,
   IEventHandler<PokemonMoved>,
   IEventHandler<PokemonNicknamed>,
-  IEventHandler<PokemonReceived>,
   IEventHandler<PokemonReleased>,
   IEventHandler<PokemonSwapped>,
   IEventHandler<PokemonUniqueNameChanged>,
@@ -31,7 +29,6 @@ internal class PokemonEvents : IEventHandler<PokemonCaught>,
 {
   public static void Register(IServiceCollection services)
   {
-    services.AddScoped<IEventHandler<PokemonCaught>, PokemonEvents>();
     services.AddScoped<IEventHandler<PokemonCreated>, PokemonEvents>();
     services.AddScoped<IEventHandler<PokemonDeleted>, PokemonEvents>();
     services.AddScoped<IEventHandler<PokemonDeposited>, PokemonEvents>();
@@ -45,7 +42,6 @@ internal class PokemonEvents : IEventHandler<PokemonCaught>,
     services.AddScoped<IEventHandler<PokemonMoveSwitched>, PokemonEvents>();
     services.AddScoped<IEventHandler<PokemonMoved>, PokemonEvents>();
     services.AddScoped<IEventHandler<PokemonNicknamed>, PokemonEvents>();
-    services.AddScoped<IEventHandler<PokemonReceived>, PokemonEvents>();
     services.AddScoped<IEventHandler<PokemonReleased>, PokemonEvents>();
     services.AddScoped<IEventHandler<PokemonSwapped>, PokemonEvents>();
     services.AddScoped<IEventHandler<PokemonUniqueNameChanged>, PokemonEvents>();
@@ -60,25 +56,6 @@ internal class PokemonEvents : IEventHandler<PokemonCaught>,
   {
     _context = context;
     _logger = logger;
-  }
-
-  public async Task HandleAsync(PokemonCaught @event, CancellationToken cancellationToken)
-  {
-    PokemonEntity? pokemon = await _context.Pokemon.SingleOrDefaultAsync(x => x.StreamId == @event.StreamId.Value, cancellationToken);
-    if (pokemon is null || pokemon.Version != (@event.Version - 1))
-    {
-      _logger.LogUnexpectedVersion(@event, pokemon);
-      return;
-    }
-
-    TrainerEntity trainer = await _context.Trainers.SingleOrDefaultAsync(x => x.StreamId == @event.TrainerId.Value, cancellationToken)
-      ?? throw new InvalidOperationException($"The trainer entity 'StreamId={@event.TrainerId}' was not found.");
-    ItemEntity pokeBall = await _context.Items.SingleOrDefaultAsync(x => x.StreamId == @event.PokeBallId.Value, cancellationToken)
-      ?? throw new InvalidOperationException($"The item entity 'StreamId={@event.PokeBallId}' was not found.");
-
-    pokemon.Catch(trainer, pokeBall, @event);
-
-    await _context.SaveChangesAsync(cancellationToken);
   }
 
   public async Task HandleAsync(PokemonCreated @event, CancellationToken cancellationToken)
@@ -296,25 +273,6 @@ internal class PokemonEvents : IEventHandler<PokemonCaught>,
     }
 
     pokemon.SetNickname(@event);
-
-    await _context.SaveChangesAsync(cancellationToken);
-  }
-
-  public async Task HandleAsync(PokemonReceived @event, CancellationToken cancellationToken)
-  {
-    PokemonEntity? pokemon = await _context.Pokemon.SingleOrDefaultAsync(x => x.StreamId == @event.StreamId.Value, cancellationToken);
-    if (pokemon is null || pokemon.Version != (@event.Version - 1))
-    {
-      _logger.LogUnexpectedVersion(@event, pokemon);
-      return;
-    }
-
-    TrainerEntity trainer = await _context.Trainers.SingleOrDefaultAsync(x => x.StreamId == @event.TrainerId.Value, cancellationToken)
-      ?? throw new InvalidOperationException($"The trainer entity 'StreamId={@event.TrainerId}' was not found.");
-    ItemEntity pokeBall = await _context.Items.SingleOrDefaultAsync(x => x.StreamId == @event.PokeBallId.Value, cancellationToken)
-      ?? throw new InvalidOperationException($"The item entity 'StreamId={@event.PokeBallId}' was not found.");
-
-    pokemon.Receive(trainer, pokeBall, @event);
 
     await _context.SaveChangesAsync(cancellationToken);
   }

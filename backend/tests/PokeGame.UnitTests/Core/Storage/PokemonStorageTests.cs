@@ -6,9 +6,9 @@ using PokeGame.Core.Forms;
 using PokeGame.Core.Items;
 using PokeGame.Core.Items.Properties;
 using PokeGame.Core.Pokemon;
-using PokeGame.Core.Pokemon.Events;
 using PokeGame.Core.Regions;
 using PokeGame.Core.Species;
+using PokeGame.Core.Storage.Events;
 using PokeGame.Core.Trainers;
 using PokeGame.Core.Varieties;
 
@@ -65,10 +65,15 @@ public class PokemonStorageTests
     Assert.Contains(_storage.Changes, change => change is PokemonStored stored && stored.ActorId == _actorId);
 
     PokemonSlot slot = new(new Position(0));
-    Assert.Equal(slot, _storage.Pokemon[_pokemon.Id]);
-    Assert.Equal(_pokemon.Id, _storage.Slots[slot]);
+    Assert.Equal(slot, _storage.Slots[_pokemon.Id]);
+    Assert.Equal(_pokemon.Id, _storage.Pokemon[slot]);
     Assert.Equal([_pokemon.Id], _storage.Party);
     Assert.Empty(_storage.Boxes);
+
+    _storage.ClearChanges();
+    _storage.Add(_pokemon);
+    Assert.False(_storage.HasChanges);
+    Assert.Empty(_storage.Changes);
   }
 
   [Fact(DisplayName = "Add: it should throw ArgumentException when the Pokémon has no owner.")]

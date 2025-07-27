@@ -1,6 +1,6 @@
 ﻿using Logitar.EventSourcing;
 using PokeGame.Core.Pokemon;
-using PokeGame.Core.Pokemon.Events;
+using PokeGame.Core.Storage.Events;
 using PokeGame.Core.Trainers;
 
 namespace PokeGame.Core.Storage;
@@ -10,11 +10,11 @@ public class PokemonStorage : AggregateRoot
   public new PokemonStorageId Id => new(base.Id);
   public TrainerId TrainerId => Id.TrainerId;
 
-  private readonly Dictionary<PokemonId, PokemonSlot> _pokemon = [];
-  public IReadOnlyDictionary<PokemonId, PokemonSlot> Pokemon => _pokemon.AsReadOnly();
+  private readonly Dictionary<PokemonId, PokemonSlot> _slots = [];
+  public IReadOnlyDictionary<PokemonId, PokemonSlot> Slots => _slots.AsReadOnly();
 
-  private readonly Dictionary<PokemonSlot, PokemonId> _slots = [];
-  public IReadOnlyDictionary<PokemonSlot, PokemonId> Slots => _slots.AsReadOnly();
+  private readonly Dictionary<PokemonSlot, PokemonId> _pokemon = [];
+  public IReadOnlyDictionary<PokemonSlot, PokemonId> Pokemon => _pokemon.AsReadOnly();
 
   private readonly List<PokemonId> _party = [];
   public IReadOnlyCollection<PokemonId> Party => _party.AsReadOnly();
@@ -47,7 +47,7 @@ public class PokemonStorage : AggregateRoot
     {
       throw new ArgumentException($"The Pokémon current trainer 'Id={pokemon.Ownership?.TrainerId.Value ?? "<null>"}' must be 'Id={TrainerId}'.", nameof(pokemon));
     }
-    else if (!_pokemon.ContainsKey(pokemon.Id))
+    else if (!_slots.ContainsKey(pokemon.Id))
     {
       PokemonSlot slot = FindFirstAvailable();
       Raise(new PokemonStored(pokemon.Id, slot), actorId);
@@ -55,13 +55,36 @@ public class PokemonStorage : AggregateRoot
   }
   protected virtual void Handle(PokemonStored @event)
   {
-    _pokemon[@event.PokemonId] = @event.Slot;
-    _slots[@event.Slot] = @event.PokemonId;
+    _slots[@event.PokemonId] = @event.Slot;
+    _pokemon[@event.Slot] = @event.PokemonId;
 
     if (@event.Slot.Box is null)
     {
       _party.Add(@event.PokemonId);
     }
+  }
+
+  public void Deposit(Specimen pokemon, IEnumerable<Specimen> party, ActorId? actorId = null)
+  {
+    if (pokemon.Ownership is null || pokemon.Ownership.TrainerId != TrainerId)
+    {
+      throw new ArgumentException($"The Pokémon current trainer 'Id={pokemon.Ownership?.TrainerId.Value ?? "<null>"}' must be 'Id={TrainerId}'.", nameof(pokemon));
+    }
+
+    PokemonSlot existingSlot = _slots[pokemon.Id];
+    if (existingSlot.Box is not null)
+    {
+      return;
+    }
+
+    if (!pokemon.IsEgg)
+    {
+      // TODO(fpion): s’assurer qu’il y a au moins un autre Pokémon non-œuf dans le groupe.
+    }
+
+    // TODO(fpion): décaler la position (-1) des autres Pokémon du party après le Pokémon déposé.
+
+    // TODO(fpion): raise event
   }
 
   private PokemonSlot FindFirstAvailable()
