@@ -63,6 +63,13 @@ public class PokemonController : ControllerBase
     return pokemon is null ? NotFound() : Ok(pokemon);
   }
 
+  [HttpPatch("{pokemonId}/evolve/{evolutionId}")]
+  public async Task<ActionResult<PokemonModel>> EvolveAsync(Guid pokemonId, Guid evolutionId, CancellationToken cancellationToken)
+  {
+    PokemonModel? pokemon = await _pokemonService.EvolveAsync(pokemonId, evolutionId, cancellationToken);
+    return pokemon is null ? NotFound() : Ok(pokemon);
+  }
+
   [HttpPatch("{id}/form")]
   public async Task<ActionResult<PokemonModel>> ChangeFormAsync(Guid id, [FromBody] ChangePokemonFormPayload payload, CancellationToken cancellationToken)
   {

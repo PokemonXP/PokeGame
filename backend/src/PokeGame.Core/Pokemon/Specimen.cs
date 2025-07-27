@@ -1,7 +1,10 @@
-﻿using Krakenar.Core;
+﻿using FluentValidation;
+using FluentValidation.Results;
+using Krakenar.Core;
 using Logitar;
 using Logitar.EventSourcing;
 using PokeGame.Core.Abilities;
+using PokeGame.Core.Evolutions;
 using PokeGame.Core.Forms;
 using PokeGame.Core.Items;
 using PokeGame.Core.Items.Properties;
@@ -17,6 +20,7 @@ namespace PokeGame.Core.Pokemon;
 public class Specimen : AggregateRoot
 {
   public const int MoveLimit = 4;
+  public const byte EvolutionFriendship = 200;
 
   private PokemonUpdated _updated = new();
   private bool HasUpdates => _updated.IsShiny.HasValue
@@ -386,6 +390,104 @@ public class Specimen : AggregateRoot
   protected virtual void Handle(PokemonDeposited @event)
   {
     Slot = @event.Slot;
+  }
+
+  public void Evolve(PokemonSpecies species, Variety variety, Form form, Evolution evolution, ActorId? actorId = null)
+  {
+    List<ValidationFailure> failures = new(capacity: 10);
+
+    if (variety.SpeciesId != species.Id)
+    {
+      failures.Add(new ValidationFailure(nameof(variety), "The variety does not belong to the species.", variety.Id)
+      {
+        CustomState = new { SpeciesId = species.Id },
+        ErrorCode = "InvalidVariety"
+      });
+    }
+    if (form.VarietyId != variety.Id)
+    {
+      failures.Add(new ValidationFailure(nameof(form), "The form does not belong to the variety.", form.Id)
+      {
+        CustomState = new { VarietyId = variety.Id },
+        ErrorCode = "InvalidForm"
+      });
+    }
+
+    if (FormId != evolution.SourceId)
+    {
+      failures.Add(new ValidationFailure("EvolutionId", "The Pokémon form should be the evolution source form.", evolution.Id.ToGuid())
+      {
+        CustomState = new { SourceId = evolution.SourceId.ToGuid() },
+        ErrorCode = "InvalidSourceForm"
+      });
+    }
+    if (form.Id != evolution.TargetId)
+    {
+      failures.Add(new ValidationFailure(nameof(form), "The form is not the target evolution form.", form.Id)
+      {
+        CustomState = new { evolution.TargetId },
+        ErrorCode = "InvalidTargetForm"
+      });
+    }
+
+    if (evolution.Trigger == EvolutionTrigger.Trade && (!OriginalTrainerId.HasValue || Ownership is null || OriginalTrainerId == Ownership.TrainerId))
+    {
+      failures.Add(new ValidationFailure("PokemonId", "The Pokémon current and original trainers must be different for traded evolutions.", Id.ToGuid())
+      {
+        ErrorCode = "PokemonNotTraded"
+      });
+    }
+
+    if (evolution.Level is not null && Level < evolution.Level.Value)
+    {
+      failures.Add(new ValidationFailure(nameof(Level), $"The Pokémon level must be greater than or equal to {evolution.Level}.", Level)
+      {
+        ErrorCode = "LevelRequirementNotMet"
+      });
+    }
+    if (evolution.Friendship && Friendship.Value < EvolutionFriendship)
+    {
+      failures.Add(new ValidationFailure(nameof(Friendship), $"The Pokémon friendship must be greater than or equal to {EvolutionFriendship}.", Friendship.Value)
+      {
+        ErrorCode = "FriendshipRequirementNotMet"
+      });
+    }
+    if (evolution.Gender.HasValue && evolution.Gender.Value != Gender)
+    {
+      failures.Add(new ValidationFailure(nameof(Gender), $"The Pokémon gender must be '{evolution.Gender}'.", Gender)
+      {
+        ErrorCode = "GenderRequirementNotMet"
+      });
+    }
+    if (evolution.HeldItemId.HasValue && evolution.HeldItemId.Value != HeldItemId)
+    {
+      failures.Add(new ValidationFailure(nameof(HeldItemId), $"The Pokémon must hold the item 'Id={evolution.HeldItemId.Value.ToGuid()}'.", HeldItemId?.ToGuid())
+      {
+        ErrorCode = "HeldItemRequirementNotMet"
+      });
+    }
+    if (evolution.KnownMoveId.HasValue && !LearnedMoves.ContainsKey(evolution.KnownMoveId.Value))
+    {
+      failures.Add(new ValidationFailure(nameof(CurrentMoves), $"The Pokémon must currently know the move 'Id={evolution.KnownMoveId.Value.ToGuid()}'.", CurrentMoves.Select(move => move.Key.ToGuid()))
+      {
+        ErrorCode = "KnownMoveRequirementNotMet"
+      });
+    }
+
+    if (failures.Count > 0)
+    {
+      throw new ValidationException(failures);
+    }
+
+    Raise(new PokemonEvolved(species.Id, variety.Id, form.Id, form.BaseStatistics), actorId);
+  }
+  protected virtual void Handle(PokemonEvolved @event)
+  {
+    SpeciesId = @event.SpeciesId;
+    VarietyId = @event.VarietyId;
+    FormId = @event.FormId;
+
+    _baseStatistics = @event.BaseStatistics;
   }
 
   public void Heal(ActorId? actorId = null)
