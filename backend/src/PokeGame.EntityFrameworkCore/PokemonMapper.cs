@@ -3,6 +3,7 @@ using Logitar;
 using Logitar.EventSourcing;
 using PokeGame.Core.Abilities;
 using PokeGame.Core.Abilities.Models;
+using PokeGame.Core.Evolutions.Models;
 using PokeGame.Core.Forms.Models;
 using PokeGame.Core.Inventory.Models;
 using PokeGame.Core.Items;
@@ -53,6 +54,11 @@ internal class PokemonMapper
     MapAggregate(source, destination);
 
     return destination;
+  }
+
+  public EvolutionModel ToEvolution(EvolutionEntity source)
+  {
+    throw new NotImplementedException(); // TODO(fpion): implement
   }
 
   public FormModel ToForm(FormEntity source)
