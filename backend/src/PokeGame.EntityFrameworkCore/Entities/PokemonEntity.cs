@@ -96,14 +96,8 @@ internal class PokemonEntity : AggregateEntity
 
     Id = new PokemonId(@event.StreamId).ToGuid();
 
-    Species = species;
-    SpeciesId = species.SpeciesId;
-    SpeciesUid = species.Id;
-
-    Variety = variety;
-    VarietyId = variety.VarietyId;
-    VarietyUid = variety.Id;
-
+    SetSpecies(species);
+    SetVariety(variety);
     SetForm(form);
 
     UniqueName = @event.UniqueName.Value;
@@ -155,6 +149,19 @@ internal class PokemonEntity : AggregateEntity
     Update(@event);
 
     SetSlot(@event.Slot);
+  }
+
+  public void Evolve(FormEntity form, PokemonEvolved @event)
+  {
+    VarietyEntity variety = form.Variety ?? throw new ArgumentException("The variety is required.", nameof(form));
+    SpeciesEntity species = variety.Species ?? throw new ArgumentException("The species is required.", nameof(form));
+
+    Update(@event);
+
+    SetSpecies(species);
+    SetVariety(variety);
+    SetForm(form);
+    SetStatistics(@event.BaseStatistics);
   }
 
   public void Heal(PokemonHealed @event)
@@ -326,6 +333,18 @@ internal class PokemonEntity : AggregateEntity
     }
   }
 
+  private void SetSpecies(SpeciesEntity species)
+  {
+    Species = species;
+    SpeciesId = species.SpeciesId;
+    SpeciesUid = species.Id;
+  }
+  private void SetVariety(VarietyEntity variety)
+  {
+    Variety = variety;
+    VarietyId = variety.VarietyId;
+    VarietyUid = variety.Id;
+  }
   private void SetForm(FormEntity form)
   {
     Form = form;

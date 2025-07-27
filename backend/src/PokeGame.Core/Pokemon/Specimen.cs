@@ -2,6 +2,7 @@
 using Logitar;
 using Logitar.EventSourcing;
 using PokeGame.Core.Abilities;
+using PokeGame.Core.Evolutions;
 using PokeGame.Core.Forms;
 using PokeGame.Core.Items;
 using PokeGame.Core.Items.Properties;
@@ -386,6 +387,69 @@ public class Specimen : AggregateRoot
   protected virtual void Handle(PokemonDeposited @event)
   {
     Slot = @event.Slot;
+  }
+
+  public void Evolve(
+    PokemonSpecies species,
+    Variety variety,
+    Form form,
+    Evolution evolution,
+    ActorId? actorId = null)
+  {
+    if (variety.SpeciesId != species.Id)
+    {
+      // TODO(fpion): error
+    }
+    if (form.VarietyId != variety.Id)
+    {
+      // TODO(fpion): error
+    }
+
+    if (FormId != evolution.SourceId)
+    {
+      // TODO(fpion): error
+    }
+    if (form.Id != evolution.TargetId)
+    {
+      // TODO(fpion): error
+    }
+
+    if (evolution.Trigger == EvolutionTrigger.Trade && (!OriginalTrainerId.HasValue || Ownership is null || OriginalTrainerId != Ownership.TrainerId))
+    {
+      // TODO(fpion): error
+    }
+
+    if (evolution.Level is not null && Level < evolution.Level.Value)
+    {
+      // TODO(fpion): error
+    }
+    if (evolution.Friendship && true)
+    {
+      // TODO(fpion): error
+    }
+    if (evolution.Gender.HasValue && evolution.Gender.Value != Gender)
+    {
+      // TODO(fpion): error
+    }
+    if (evolution.HeldItemId.HasValue && evolution.HeldItemId.Value != HeldItemId)
+    {
+      // TODO(fpion): error
+    }
+    if (evolution.KnownMoveId.HasValue && true)
+    {
+      // TODO(fpion): error
+    }
+
+    // TODO(fpion): variety.EvolutionMoves
+    Raise(new PokemonEvolved(species.Id, variety.Id, form.Id, form.BaseStatistics), actorId);
+  }
+  protected virtual void Handle(PokemonEvolved @event)
+  {
+    SpeciesId = @event.SpeciesId;
+    VarietyId = @event.VarietyId;
+    FormId = @event.FormId;
+
+    _baseStatistics = @event.BaseStatistics;
   }
 
   public void Heal(ActorId? actorId = null)
