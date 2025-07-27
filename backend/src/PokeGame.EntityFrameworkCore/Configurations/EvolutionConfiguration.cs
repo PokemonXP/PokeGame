@@ -32,6 +32,10 @@ internal class EvolutionConfiguration : AggregateConfiguration<EvolutionEntity>,
     builder.Property(x => x.Location).HasMaxLength(Location.MaximumLength);
     builder.Property(x => x.TimeOfDay).HasMaxLength(byte.MaxValue).HasConversion(new EnumToStringConverter<TimeOfDay>());
 
-    // TODO(fpion): relationships
+    builder.HasOne(x => x.Source).WithMany(x => x.SourceEvolutions).OnDelete(DeleteBehavior.Restrict);
+    builder.HasOne(x => x.Target).WithMany(x => x.TargetEvolutions).OnDelete(DeleteBehavior.Restrict);
+    builder.HasOne(x => x.Item).WithMany(x => x.Evolutions).OnDelete(DeleteBehavior.Restrict);
+    builder.HasOne(x => x.HeldItem).WithMany(x => x.HeldEvolutions).OnDelete(DeleteBehavior.Restrict);
+    builder.HasOne(x => x.KnownMove).WithMany(x => x.Evolutions).OnDelete(DeleteBehavior.Restrict);
   }
 }

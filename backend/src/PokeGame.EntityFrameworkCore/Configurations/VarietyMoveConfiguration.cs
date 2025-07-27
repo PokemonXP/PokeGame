@@ -4,16 +4,15 @@ using PokeGame.EntityFrameworkCore.Entities;
 
 namespace PokeGame.EntityFrameworkCore.Configurations;
 
-internal class VarietyMoveConfiguration : IEntityTypeConfiguration<VarietyMoveEntity> // TODO(fpion): next migration
+internal class VarietyMoveConfiguration : IEntityTypeConfiguration<VarietyMoveEntity>
 {
   public void Configure(EntityTypeBuilder<VarietyMoveEntity> builder)
   {
     builder.ToTable(PokemonDb.VarietyMoves.Table.Table!, PokemonDb.VarietyMoves.Table.Schema);
     builder.HasKey(x => new { x.VarietyId, x.MoveId });
 
-    builder.HasIndex(x => x.VarietyUid);
+    builder.HasIndex(x => new { x.VarietyUid, x.MoveUid }).IsUnique();
     builder.HasIndex(x => x.MoveUid);
-    //builder.HasIndex(x => new { x.VarietyUid, x.MoveUid }).IsUnique();
     builder.HasIndex(x => x.Level);
 
     builder.HasOne(x => x.Variety).WithMany(x => x.Moves).OnDelete(DeleteBehavior.Cascade);

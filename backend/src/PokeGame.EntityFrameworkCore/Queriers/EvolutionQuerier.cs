@@ -30,12 +30,24 @@ internal class EvolutionQuerier : IEvolutionQuerier
   }
   public async Task<EvolutionModel?> ReadAsync(EvolutionId id, CancellationToken cancellationToken)
   {
-    EvolutionEntity? evolution = await _evolutions.AsNoTracking().SingleOrDefaultAsync(x => x.StreamId == id.Value, cancellationToken);
+    EvolutionEntity? evolution = await _evolutions.AsNoTracking()
+      .Include(x => x.Source).ThenInclude(x => x!.Variety).ThenInclude(x => x!.Species)
+      .Include(x => x.Target).ThenInclude(x => x!.Variety).ThenInclude(x => x!.Species)
+      .Include(x => x.Item).ThenInclude(x => x!.Move)
+      .Include(x => x.HeldItem).ThenInclude(x => x!.Move)
+      .Include(x => x.KnownMove)
+      .SingleOrDefaultAsync(x => x.StreamId == id.Value, cancellationToken);
     return evolution is null ? null : await MapAsync(evolution, cancellationToken);
   }
   public async Task<EvolutionModel?> ReadAsync(Guid id, CancellationToken cancellationToken)
   {
-    EvolutionEntity? evolution = await _evolutions.AsNoTracking().SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
+    EvolutionEntity? evolution = await _evolutions.AsNoTracking()
+      .Include(x => x.Source).ThenInclude(x => x!.Variety).ThenInclude(x => x!.Species)
+      .Include(x => x.Target).ThenInclude(x => x!.Variety).ThenInclude(x => x!.Species)
+      .Include(x => x.Item).ThenInclude(x => x!.Move)
+      .Include(x => x.HeldItem).ThenInclude(x => x!.Move)
+      .Include(x => x.KnownMove)
+      .SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
     return evolution is null ? null : await MapAsync(evolution, cancellationToken);
   }
 
@@ -43,22 +55,26 @@ internal class EvolutionQuerier : IEvolutionQuerier
   {
     IQueryBuilder builder = _sqlHelper.Query(PokemonDb.Evolutions.Table).SelectAll(PokemonDb.Evolutions.Table)
       .ApplyIdFilter(PokemonDb.Evolutions.Id, payload.Ids);
-    //_sqlHelper.ApplyTextSearch(builder, payload.Search, PokemonDb.Evolutions.UniqueName, PokemonDb.Evolutions.DisplayName); // TODO(fpion): complete
 
     if (payload.SourceId.HasValue)
     {
-      // TODO(fpion): implement
+      builder.Where(PokemonDb.Evolutions.SourceUid, Operators.IsEqualTo(payload.SourceId.Value));
     }
     if (payload.TargetId.HasValue)
     {
-      // TODO(fpion): implement
+      builder.Where(PokemonDb.Evolutions.TargetUid, Operators.IsEqualTo(payload.TargetId.Value));
     }
-    if (payload.TargetId.HasValue)
+    if (payload.Trigger.HasValue)
     {
-      // TODO(fpion): implement
+      builder.Where(PokemonDb.Evolutions.Trigger, Operators.IsEqualTo(payload.Trigger.Value));
     }
 
-    IQueryable<EvolutionEntity> query = _evolutions.FromQuery(builder).AsNoTracking();
+    IQueryable<EvolutionEntity> query = _evolutions.FromQuery(builder).AsNoTracking()
+      .Include(x => x.Source).ThenInclude(x => x!.Variety).ThenInclude(x => x!.Species)
+      .Include(x => x.Target).ThenInclude(x => x!.Variety).ThenInclude(x => x!.Species)
+      .Include(x => x.Item).ThenInclude(x => x!.Move)
+      .Include(x => x.HeldItem).ThenInclude(x => x!.Move)
+      .Include(x => x.KnownMove);
     long total = await query.LongCountAsync(cancellationToken);
 
     IOrderedQueryable<EvolutionEntity>? ordered = null;
