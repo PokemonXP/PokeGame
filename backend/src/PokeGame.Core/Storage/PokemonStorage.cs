@@ -45,11 +45,11 @@ public class PokemonStorage : AggregateRoot
   {
     if (pokemon.Ownership is null || pokemon.Ownership.TrainerId != TrainerId)
     {
-      throw new NotImplementedException(); // TODO(fpion): implement
+      throw new ArgumentException($"The Pokémon current trainer 'Id={pokemon.Ownership?.TrainerId.Value ?? "<null>"}' must be 'Id={TrainerId}'.", nameof(pokemon));
     }
     else if (!_pokemon.ContainsKey(pokemon.Id))
     {
-      var slot = FindFirstAvailable();
+      PokemonSlot slot = FindFirstAvailable();
       Raise(new PokemonStored(pokemon.Id, slot), actorId);
     }
   }
@@ -93,6 +93,7 @@ public class PokemonStorage : AggregateRoot
         }
       }
     }
-    throw new NotImplementedException(); // TODO(fpion): implement
+
+    throw new PokemonStorageFullException(this);
   }
 }
