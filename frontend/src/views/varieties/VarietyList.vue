@@ -17,6 +17,7 @@ import RefreshButton from "@/components/shared/RefreshButton.vue";
 import SearchInput from "@/components/shared/SearchInput.vue";
 import SortSelect from "@/components/shared/SortSelect.vue";
 import SpeciesFilter from "@/components/species/SpeciesFilter.vue";
+import SpeciesIcon from "@/components/icons/SpeciesIcon.vue";
 import StatusBlock from "@/components/shared/StatusBlock.vue";
 import type { SearchResults } from "@/types/search";
 import type { Variety, VarietySort, SearchVarietiesPayload } from "@/types/varieties";
@@ -179,7 +180,7 @@ watch(
             </td>
             <td>
               <RouterLink :to="{ name: 'SpeciesEdit', params: { id: variety.species.id } }">
-                {{ variety.species.displayName ?? variety.species.uniqueName }}
+                <SpeciesIcon /> {{ variety.species.displayName ?? variety.species.uniqueName }}
                 <template v-if="variety.isDefault || variety.species.displayName">
                   <br />
                   <DefaultBadge v-if="variety.isDefault" />

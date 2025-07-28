@@ -168,7 +168,15 @@ internal class PokemonEntity : AggregateEntity
   {
     Update(@event);
 
-    // TODO(fpion): Heal
+    int constitution = GetStatistics().HP.Value;
+    Vitality = constitution;
+    Stamina = constitution;
+    StatusCondition = null;
+
+    foreach (PokemonMoveEntity move in Moves)
+    {
+      move.RestorePowerPoints();
+    }
   }
 
   public void HoldItem(ItemEntity item, PokemonItemHeld @event)

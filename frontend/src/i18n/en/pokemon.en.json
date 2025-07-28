@@ -51,6 +51,7 @@
     }
   },
   "heal": "Heal",
+  "healed": "The Pokémon has been fully restored.",
   "identification": {
     "title": "Identification"
   },

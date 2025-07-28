@@ -67,6 +67,11 @@ internal class PokemonMoveEntity
     Position = null;
   }
 
+  public void RestorePowerPoints()
+  {
+    CurrentPowerPoints = MaximumPowerPoints;
+  }
+
   public void Switch(PokemonMoveEntity other)
   {
     if (Position.HasValue && other.Position.HasValue)
