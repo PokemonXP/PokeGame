@@ -1,4 +1,4 @@
-import type { Aggregate } from "./aggregate";
+import type { Aggregate, Change } from "./aggregate";
 import type { Item } from "./items";
 import type { Move } from "./moves";
 import type { PokemonGender } from "./pokemon";
@@ -23,7 +23,7 @@ export type Evolution = Aggregate & {
   source: Form;
   target: Form;
   trigger: EvolutionTrigger;
-  item: Item;
+  item?: Item | null;
   level: number;
   friendship: boolean;
   gender?: PokemonGender | null;
@@ -49,3 +49,13 @@ export type SearchEvolutionsPayload = SearchPayload & {
 };
 
 export type TimeOfDay = "Day" | "Evening" | "Morning" | "Night";
+
+export type UpdateEvolutionPayload = {
+  level?: number;
+  friendship?: boolean;
+  gender?: Change<PokemonGender>;
+  heldItem?: Change<string>;
+  knownMove?: Change<string>;
+  location?: Change<string>;
+  timeOfDay?: Change<TimeOfDay>;
+};

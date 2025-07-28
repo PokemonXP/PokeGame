@@ -58,6 +58,7 @@ async function submit(): Promise<void> {
         :items="items"
         :model-value="selectedItem?.id"
         required
+        @error="$emit('error', $event)"
         @selected="selectedItem = $event"
       />
       <QuantityInput class="col" :id="category ? `quantity-${category}` : undefined" v-model="quantity">

@@ -18,7 +18,12 @@ public record SearchEvolutionsParameters : SearchParameters
 
   public virtual SearchEvolutionsPayload ToPayload()
   {
-    SearchEvolutionsPayload payload = new();
+    SearchEvolutionsPayload payload = new()
+    {
+      SourceId = SourceId,
+      TargetId = TargetId,
+      Trigger = Trigger
+    };
     Fill(payload);
 
     foreach (SortOption sort in ((SearchPayload)payload).Sort)

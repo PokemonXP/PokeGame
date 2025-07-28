@@ -18,6 +18,7 @@ import { formatForm } from "@/helpers/format";
 import { handleErrorKey } from "@/inject";
 import { readForm } from "@/api/forms";
 import { useToastStore } from "@/stores/toast";
+import PokemonFormEvolutions from "@/components/pokemon/forms/PokemonFormEvolutions.vue";
 
 const handleError = inject(handleErrorKey) as (e: unknown) => void;
 const route = useRoute();
@@ -122,6 +123,9 @@ onMounted(async () => {
         </TarTab>
         <TarTab id="metadata" :title="t('metadata')">
           <PokemonFormMetadata :form="form" @error="handleError" @updated="onMetadataUpdate" />
+        </TarTab>
+        <TarTab id="evolutions" :title="t('evolutions.title')">
+          <PokemonFormEvolutions :form="form" @error="handleError" />
         </TarTab>
       </TarTabs>
     </template>

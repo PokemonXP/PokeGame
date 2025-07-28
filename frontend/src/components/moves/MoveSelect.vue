@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { SelectOption } from "logitar-vue3-ui";
-import { arrayUtils } from "logitar-js";
+import { arrayUtils, parsingUtils } from "logitar-js";
 import { computed, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 
@@ -11,6 +11,7 @@ import { formatMove } from "@/helpers/format";
 import { searchMoves } from "@/api/moves";
 
 const { orderBy } = arrayUtils;
+const { parseBoolean } = parsingUtils;
 const { t } = useI18n();
 
 const props = withDefaults(
@@ -33,6 +34,7 @@ const props = withDefaults(
 
 const moves = ref<Move[]>([]);
 
+const isDisabled = computed<boolean>(() => parseBoolean(props.disabled) ?? false);
 const options = computed<SelectOption[]>(() =>
   orderBy(
     moves.value
@@ -77,7 +79,7 @@ onMounted(async () => {
 
 <template>
   <FormSelect
-    :disabled="!options.length || disabled"
+    :disabled="isDisabled || !options.length"
     :id="id"
     :label="t(label)"
     :model-value="modelValue"

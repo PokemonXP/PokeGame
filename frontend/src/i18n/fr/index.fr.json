@@ -34,6 +34,7 @@
       "label": "Nom unique"
     }
   },
+  "none": "Aucun",
   "notFound": {
     "help": "La page demandée n’a pu être trouvée.",
     "lead": "Page introuvable",

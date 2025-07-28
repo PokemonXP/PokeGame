@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using FluentValidation.Results;
 using Krakenar.Core;
 using Logitar.EventSourcing;
 using PokeGame.Core.Evolutions.Models;
@@ -64,6 +65,15 @@ internal class CreateOrReplaceEvolutionHandler : ICommandHandler<CreateOrReplace
         ?? throw new FormNotFoundException(payload.Source, nameof(payload.Source));
       Form target = await _formRepository.LoadAsync(payload.Target, cancellationToken)
         ?? throw new FormNotFoundException(payload.Target, nameof(payload.Target));
+      if (source.Equals(target))
+      {
+        ValidationFailure failure = new(nameof(payload.Target), "The source and target form must be different.", payload.Target)
+        {
+          ErrorCode = "EvolutionValidator"
+        };
+        throw new ValidationException([failure]);
+      }
+
       Item? item = string.IsNullOrWhiteSpace(payload.Item) ? null
         : (await _itemRepository.LoadAsync(payload.Item, cancellationToken) ?? throw new ItemNotFoundException(payload.Item, nameof(payload.Item)));
 

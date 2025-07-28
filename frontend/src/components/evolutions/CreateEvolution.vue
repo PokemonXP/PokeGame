@@ -1,16 +1,32 @@
 <script setup lang="ts">
 import { TarButton, TarModal } from "logitar-vue3-ui";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 
-import type { CreateOrReplaceEvolutionPayload, Evolution } from "@/types/evolutions";
+import EvolutionTriggerSelect from "./EvolutionTriggerSelect.vue";
+import ItemSelect from "@/components/items/ItemSelect.vue";
+import PokemonFormSelect from "@/components/pokemon/forms/PokemonFormSelect.vue";
+import type { CreateOrReplaceEvolutionPayload, Evolution, EvolutionTrigger } from "@/types/evolutions";
+import type { Form } from "@/types/pokemon-forms";
+import type { Item } from "@/types/items";
 import { createEvolution } from "@/api/evolutions";
 import { useForm } from "@/forms";
 
 const { t } = useI18n();
 
+const props = defineProps<{
+  forms: Form[];
+}>();
+
 const isLoading = ref<boolean>(false);
+const item = ref<Item>();
 const modalRef = ref<InstanceType<typeof TarModal> | null>(null);
+const source = ref<Form>();
+const target = ref<Form>();
+const trigger = ref<string>("");
+
+const sources = computed<Form[]>(() => props.forms.filter(({ id }) => !target.value || id !== target.value.id));
+const targets = computed<Form[]>(() => props.forms.filter(({ id }) => !source.value || id !== source.value.id));
 
 function hide(): void {
   modalRef.value?.hide();
@@ -27,11 +43,12 @@ async function submit(): Promise<void> {
     isLoading.value = true;
     try {
       validate();
-      if (isValid.value) {
+      if (isValid.value && source.value && target.value) {
         const payload: CreateOrReplaceEvolutionPayload = {
-          source: "", // TODO(fpion): implement
-          target: "", // TODO(fpion): implement
-          trigger: "Level", // TODO(fpion): implement
+          source: source.value.id,
+          target: target.value.id,
+          trigger: trigger.value as EvolutionTrigger,
+          item: item.value?.id,
           level: 0,
           friendship: false,
         };
@@ -53,16 +70,44 @@ function onCancel(): void {
   hide();
 }
 function onReset(): void {
+  source.value = undefined;
+  target.value = undefined;
+  trigger.value = "";
+  item.value = undefined;
   reset();
+}
+
+function onTriggerChange(value: string): void {
+  trigger.value = value;
+  item.value = undefined;
 }
 </script>
 
 <template>
   <span>
     <TarButton icon="fas fa-plus" :text="t('actions.create')" variant="success" data-bs-toggle="modal" data-bs-target="#create-evolution" />
-    <TarModal :close="t('actions.close')" id="create-evolution" ref="modalRef" size="large" :title="t('evolutions.create')">
+    <TarModal :close="t('actions.close')" id="create-evolution" ref="modalRef" :title="t('evolutions.create')">
       <form @submit.prevent="submit">
-        <!-- TODO(fpion): implement -->
+        <PokemonFormSelect
+          :forms="sources"
+          id="source"
+          label="evolutions.source"
+          :model-value="source?.id"
+          required
+          @error="$emit('error', $event)"
+          @selected="source = $event"
+        />
+        <PokemonFormSelect
+          :forms="targets"
+          id="target"
+          label="evolutions.target"
+          :model-value="target?.id"
+          required
+          @error="$emit('error', $event)"
+          @selected="target = $event"
+        />
+        <EvolutionTriggerSelect required :model-value="trigger" @update:model-value="onTriggerChange" />
+        <ItemSelect v-if="trigger === 'Item'" :model-value="item?.id" required @selected="item = $event" />
       </form>
       <template #footer>
         <TarButton icon="fas fa-ban" :text="t('actions.cancel')" variant="secondary" @click="onCancel" />

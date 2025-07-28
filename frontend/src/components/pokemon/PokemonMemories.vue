@@ -215,11 +215,12 @@ watch(
           :model-value="pokeBall?.id"
           placeholder="pokemon.memories.pokeBall.placeholder"
           required
+          @error="$emit('error', $event)"
           @selected="pokeBall = $event"
         />
       </div>
       <div class="row">
-        <LevelInput class="col" required v-model="level" />
+        <LevelInput class="col" v-model="level" />
         <MetOnInput class="col" v-model="metOn" />
       </div>
       <LocationInput required v-model="location" />

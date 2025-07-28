@@ -20,6 +20,7 @@
   },
   "deleted": "The move has been deleted.",
   "empty": "This list is empty.",
+  "known": "Known Move",
   "power": "Power",
   "powerPoints": {
     "format": "Base: {powerPoints}",

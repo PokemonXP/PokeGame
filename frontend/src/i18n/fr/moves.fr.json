@@ -20,6 +20,7 @@
   },
   "deleted": "L’attaque a été supprimée.",
   "empty": "Cette liste est vide.",
+  "known": "Attaque connue",
   "power": "Puissance",
   "powerPoints": {
     "format": "Base : {powerPoints}",

@@ -1,28 +1,24 @@
 <script setup lang="ts">
-import type { SelectOption } from "logitar-vue3-ui";
-import { arrayUtils, parsingUtils } from "logitar-js";
+import { TarSelect, type SelectOption } from "logitar-vue3-ui";
+import { arrayUtils } from "logitar-js";
 import { computed, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 
-import FormSelect from "@/components/forms/FormSelect.vue";
 import type { Form, SearchFormsPayload } from "@/types/pokemon-forms";
 import type { SearchResults } from "@/types/search";
 import { formatForm } from "@/helpers/format";
 import { searchForms } from "@/api/forms";
 
 const { orderBy } = arrayUtils;
-const { parseBoolean } = parsingUtils;
 const { t } = useI18n();
 
 const props = withDefaults(
   defineProps<{
-    disabled?: boolean | string;
     forms?: Form[];
     id?: string;
     label?: string;
     modelValue?: string;
     placeholder?: string;
-    required?: boolean | string;
   }>(),
   {
     id: "form",
@@ -34,7 +30,6 @@ const props = withDefaults(
 const data = ref<Form[]>([]);
 
 const forms = computed<Form[]>(() => (Array.isArray(props.forms) ? props.forms : data.value));
-const isDisabled = computed<boolean>(() => parseBoolean(props.disabled) ?? false);
 const options = computed<SelectOption[]>(() =>
   orderBy(
     forms.value.map((form) => ({
@@ -80,14 +75,15 @@ onMounted(async () => {
 </script>
 
 <template>
-  <FormSelect
-    :disabled="isDisabled || !options.length"
+  <TarSelect
+    class="mb-3"
+    :disabled="!options.length"
+    floating
     :id="id"
     :label="t(label)"
     :model-value="modelValue"
     :options="options"
     :placeholder="t(placeholder)"
-    :required="required"
     @update:model-value="onModelValueUpdate"
   >
     <template v-if="form" #append>
@@ -95,5 +91,5 @@ onMounted(async () => {
         <img :src="form.sprites.default" :alt="alt" height="40" />
       </RouterLink>
     </template>
-  </FormSelect>
+  </TarSelect>
 </template>

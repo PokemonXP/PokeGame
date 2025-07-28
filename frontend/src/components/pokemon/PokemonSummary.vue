@@ -172,7 +172,7 @@ watch(
         <GenderSelect class="col" disabled :model-value="pokemon.gender ?? ''" />
       </div>
       <ShinyCheckbox v-model="isShiny" />
-      <ItemSelect :model-value="heldItem?.id" @selected="heldItem = $event" />
+      <ItemSelect :model-value="heldItem?.id" @error="$emit('error', $event)" @selected="heldItem = $event" />
       <div class="mb-3">
         <SubmitButton :loading="isLoading" />
       </div>
