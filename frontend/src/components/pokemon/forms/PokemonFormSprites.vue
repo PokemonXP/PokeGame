@@ -3,7 +3,7 @@ import { ref, watch } from "vue";
 
 import SpriteInput from "@/components/shared/SpriteInput.vue";
 import SubmitButton from "@/components/shared/SubmitButton.vue";
-import type { Form, UpdateFormPayload } from "@/types/pokemon-forms";
+import type { Form, Sprites, UpdateFormPayload } from "@/types/pokemon-forms";
 import { updateForm } from "@/api/forms";
 import { useForm } from "@/forms";
 
@@ -11,11 +11,8 @@ const props = defineProps<{
   form: Form;
 }>();
 
-const alternative = ref<string>("");
-const alternativeShiny = ref<string>("");
-const defaultSprite = ref<string>("");
 const isLoading = ref<boolean>(false);
-const shiny = ref<string>("");
+const sprites = ref<Sprites>({ default: "", shiny: "" });
 
 const emit = defineEmits<{
   (e: "error", value: unknown): void;
@@ -30,12 +27,7 @@ async function submit(): Promise<void> {
       validate();
       if (isValid.value) {
         const payload: UpdateFormPayload = {
-          sprites: {
-            default: defaultSprite.value,
-            shiny: shiny.value,
-            alternative: alternative.value || undefined,
-            alternativeShiny: alternativeShiny.value || undefined,
-          },
+          sprites: sprites.value,
         };
         const form: Form = await updateForm(props.form.id, payload);
         reinitialize();
@@ -51,12 +43,7 @@ async function submit(): Promise<void> {
 
 watch(
   () => props.form,
-  (form) => {
-    defaultSprite.value = form.sprites.default;
-    shiny.value = form.sprites.shiny;
-    alternative.value = form.sprites.alternative ?? "";
-    alternativeShiny.value = form.sprites.alternativeShiny ?? "";
-  },
+  (form) => (sprites.value = { ...form.sprites }),
   { deep: true, immediate: true },
 );
 </script>
@@ -64,27 +51,38 @@ watch(
 <template>
   <section>
     <form @submit.prevent="submit">
-      <SpriteInput id="default" label="forms.sprites.default.label" required v-model="defaultSprite" />
-      <SpriteInput id="shiny" label="forms.sprites.default.shiny" required v-model="shiny" />
-      <SpriteInput id="alternative" label="forms.sprites.alternative.label" v-model="alternative" />
-      <SpriteInput id="alternativeShiny" label="forms.sprites.alternative.shiny" v-model="alternativeShiny" />
+      <!-- TODO(fpion): should all be different -->
+      <SpriteInput id="default" label="forms.sprites.default.label" required v-model="sprites.default" />
+      <SpriteInput id="shiny" label="forms.sprites.default.shiny" required v-model="sprites.shiny" />
+      <SpriteInput
+        id="alternative"
+        label="forms.sprites.alternative.label"
+        :model-value="sprites.alternative ?? ''"
+        @update:model-value="sprites.alternative = $event || undefined"
+      />
+      <SpriteInput
+        id="alternativeShiny"
+        label="forms.sprites.alternative.shiny"
+        :model-value="sprites.alternativeShiny ?? ''"
+        @update:model-value="sprites.alternativeShiny = $event || undefined"
+      />
       <div class="mb-3">
         <SubmitButton :loading="isLoading" />
       </div>
       <div class="row">
-        <div v-if="defaultSprite" class="col">
-          <img :src="defaultSprite" alt="Default Sprite" class="img-fluid mx-auto d-block" />
+        <div v-if="sprites.default" class="col">
+          <img :src="sprites.default" alt="Default Sprite" class="img-fluid mx-auto d-block" />
         </div>
-        <div v-if="shiny" class="col">
-          <img :src="shiny" alt="Shiny Sprite" class="img-fluid mx-auto d-block" />
+        <div v-if="sprites.shiny" class="col">
+          <img :src="sprites.shiny" alt="Shiny Sprite" class="img-fluid mx-auto d-block" />
         </div>
       </div>
-      <div class="row" v-if="alternative || alternativeShiny">
-        <div v-if="alternative" class="col">
-          <img :src="alternative" alt="Alternative Sprite" class="img-fluid mx-auto d-block" />
+      <div class="row" v-if="sprites.alternative || sprites.alternativeShiny">
+        <div v-if="sprites.alternative" class="col">
+          <img :src="sprites.alternative" alt="Alternative Sprite" class="img-fluid mx-auto d-block" />
         </div>
-        <div v-if="alternativeShiny" class="col">
-          <img :src="alternativeShiny" alt="Alternative Shiny Sprite" class="img-fluid mx-auto d-block" />
+        <div v-if="sprites.alternativeShiny" class="col">
+          <img :src="sprites.alternativeShiny" alt="Alternative Shiny Sprite" class="img-fluid mx-auto d-block" />
         </div>
       </div>
     </form>

@@ -1,9 +1,14 @@
 import { urlUtils } from "logitar-js";
 
-import type { Form } from "@/types/pokemon-forms";
+import type { CreateOrReplaceFormPayload, Form } from "@/types/pokemon-forms";
 import type { SearchFormsPayload, UpdateFormPayload } from "@/types/pokemon-forms";
 import type { SearchResults } from "@/types/search";
-import { _delete, get, patch } from ".";
+import { _delete, get, patch, post } from ".";
+
+export async function createForm(payload: CreateOrReplaceFormPayload): Promise<Form> {
+  const url: string = new urlUtils.UrlBuilder({ path: "/forms" }).buildRelative();
+  return (await post<CreateOrReplaceFormPayload, Form>(url, payload)).data;
+}
 
 export async function deleteForm(id: string): Promise<Form> {
   const url: string = new urlUtils.UrlBuilder({ path: "/forms/{id}" }).setParameter("id", id).buildRelative();
