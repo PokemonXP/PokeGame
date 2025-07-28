@@ -36,6 +36,17 @@
       "Weight": "Weight"
     }
   },
+  "sprites": {
+    "alternative": {
+      "label": "Alternative",
+      "shiny": "Alternative Shiny"
+    },
+    "default": {
+      "label": "Default",
+      "shiny": "Shiny"
+    },
+    "title": "Sprites"
+  },
   "title": "Forms",
   "updated": "The form has been updated."
 }

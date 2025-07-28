@@ -36,6 +36,17 @@
       "Weight": "Poids"
     }
   },
+  "sprites": {
+    "alternative": {
+      "label": "Alternative",
+      "shiny": "Alternative Chromatique"
+    },
+    "default": {
+      "label": "Défaut",
+      "shiny": "Chromatique"
+    },
+    "title": "Images"
+  },
   "title": "Formes",
   "updated": "La forme a été mise à jour."
 }

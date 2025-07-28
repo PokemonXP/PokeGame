@@ -8,6 +8,7 @@ import AdminBreadcrumb from "@/components/admin/AdminBreadcrumb.vue";
 import DeletePokemonForm from "@/components/pokemon/forms/DeletePokemonForm.vue";
 import PokemonFormGeneral from "@/components/pokemon/forms/PokemonFormGeneral.vue";
 import PokemonFormMetadata from "@/components/pokemon/forms/PokemonFormMetadata.vue";
+import PokemonFormSprites from "@/components/pokemon/forms/PokemonFormSprites.vue";
 import StatusDetail from "@/components/shared/StatusDetail.vue";
 import type { Breadcrumb } from "@/types/components";
 import type { Form } from "@/types/pokemon-forms";
@@ -65,6 +66,13 @@ function onMetadataUpdate(updated: Form): void {
   }
   toasts.success("forms.updated");
 }
+function onSpritesUpdate(updated: Form): void {
+  if (form.value) {
+    updateAggregate(updated);
+    form.value.sprites = { ...updated.sprites };
+  }
+  toasts.success("forms.updated");
+}
 
 onMounted(async () => {
   isLoading.value = true;
@@ -94,8 +102,11 @@ onMounted(async () => {
         <DeletePokemonForm :form="form" @deleted="onDeleted" @error="handleError" />
       </div>
       <TarTabs>
-        <TarTab active id="general" :title="t('general')">
+        <TarTab id="general" :title="t('general')">
           <PokemonFormGeneral :form="form" @error="handleError" @updated="onGeneralUpdated" />
+        </TarTab>
+        <TarTab active id="sprites" :title="t('forms.sprites.title')">
+          <PokemonFormSprites :form="form" @error="handleError" @updated="onSpritesUpdate" />
         </TarTab>
         <TarTab id="metadata" :title="t('metadata')">
           <PokemonFormMetadata :form="form" @error="handleError" @updated="onMetadataUpdate" />
