@@ -11,7 +11,7 @@ import AdminBreadcrumb from "@/components/admin/AdminBreadcrumb.vue";
 import AppPagination from "@/components/shared/AppPagination.vue";
 import CountSelect from "@/components/shared/CountSelect.vue";
 import DefaultBadge from "@/components/pokemon/forms/DefaultBadge.vue";
-import FormBlock from "@/components/pokemon/FormBlock.vue";
+import PokemonFormBlock from "@/components/pokemon/forms/PokemonFormBlock.vue";
 import PokemonTypeFilter from "@/components/pokemon/PokemonTypeFilter.vue";
 import PokemonTypeImage from "@/components/pokemon/PokemonTypeImage.vue";
 import RefreshButton from "@/components/shared/RefreshButton.vue";
@@ -177,7 +177,7 @@ watch(
         </thead>
         <tbody>
           <tr v-for="form in forms" :key="form.id">
-            <td><FormBlock :form="form" /></td>
+            <td><PokemonFormBlock :form="form" /></td>
             <td>
               <RouterLink :to="{ name: 'VarietyEdit', params: { id: form.variety.id } }">
                 <VarietyIcon /> {{ form.variety.displayName ?? form.variety.uniqueName }}

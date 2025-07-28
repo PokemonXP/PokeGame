@@ -12,7 +12,6 @@ import EggCheckbox from "@/components/pokemon/creation/EggCheckbox.vue";
 import EggCyclesInput from "@/components/pokemon/EggCyclesInput.vue";
 import ExperienceInput from "@/components/pokemon/creation/ExperienceInput.vue";
 import ExperienceTableModal from "@/components/pokemon/ExperienceTableModal.vue";
-import FormSelect from "@/components/pokemon/creation/FormSelect.vue";
 import FriendshipInput from "@/components/pokemon/FriendshipInput.vue";
 import GenderSelect from "@/components/pokemon/GenderSelect.vue";
 import GrowthRateSelect from "@/components/species/GrowthRateSelect.vue";
@@ -23,6 +22,7 @@ import NatureSelect from "@/components/pokemon/creation/NatureSelect.vue";
 import NatureTable from "@/components/pokemon/creation/NatureTable.vue";
 import NicknameInput from "@/components/pokemon/NicknameInput.vue";
 import NotesTextarea from "@/components/shared/NotesTextarea.vue";
+import PokemonFormSelect from "@/components/pokemon/forms/PokemonFormSelect.vue";
 import PokemonTypeSelect from "@/components/pokemon/PokemonTypeSelect.vue";
 import ProgressTable from "@/components/pokemon/creation/ProgressTable.vue";
 import ShinyCheckbox from "@/components/pokemon/ShinyCheckbox.vue";
@@ -264,7 +264,7 @@ watch(
       <div class="row">
         <SpeciesSelect class="col" :model-value="species?.id" required @error="handleError" @selected="onSpeciesSelected" />
         <VarietySelect class="col" :model-value="variety?.id" :species="species" @error="handleError" @selected="onVarietySelected" />
-        <FormSelect class="col" :model-value="form?.id" :variety="variety" @error="handleError" @selected="onFormSelected" />
+        <PokemonFormSelect class="col" :model-value="form?.id" :variety="variety" @error="handleError" @selected="onFormSelected" />
       </div>
       <template v-if="form">
         <div class="row">
