@@ -158,6 +158,7 @@ watch(
       </div>
       <h2 class="h5">{{ t("abilities.title") }}</h2>
       <!-- TODO(fpion): should all be different -->
+      <!-- TODO(fpion): refactor, should not load abilities thrice -->
       <div class="row">
         <AbilitySelect class="col" id="primary-ability" label="abilities.slots.Primary" :model-value="primaryAbility?.id" @selected="primaryAbility = $event" />
         <AbilitySelect

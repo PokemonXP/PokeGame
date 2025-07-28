@@ -49,6 +49,17 @@ const router = createRouter({
           path: "abilities/:id",
           component: () => import("./views/abilities/AbilityEdit.vue"),
         },
+        // Evolutions
+        {
+          name: "EvolutionList",
+          path: "evolutions",
+          component: () => import("./views/evolutions/EvolutionList.vue"),
+        },
+        {
+          name: "EvolutionEdit",
+          path: "evolutions/:id",
+          component: () => import("./views/evolutions/EvolutionEdit.vue"),
+        },
         // Forms
         {
           name: "FormList",

@@ -2,6 +2,7 @@
 import { useI18n } from "vue-i18n";
 
 import AbilityIcon from "@/components/icons/AbilityIcon.vue";
+import EvolutionIcon from "@/components/icons/EvolutionIcon.vue";
 import FormIcon from "@/components/icons/FormIcon.vue";
 import ItemIcon from "@/components/icons/ItemIcon.vue";
 import MoveIcon from "@/components/icons/MoveIcon.vue";
@@ -27,6 +28,7 @@ const { t } = useI18n();
         <RouterLink :to="{ name: 'SpeciesList' }" class="tile"><SpeciesIcon class="icon" /> {{ t("species.title") }}</RouterLink>
         <RouterLink :to="{ name: 'VarietyList' }" class="tile"><VarietyIcon class="icon" /> {{ t("varieties.title") }}</RouterLink>
         <RouterLink :to="{ name: 'FormList' }" class="tile"><FormIcon class="icon" /> {{ t("forms.title") }}</RouterLink>
+        <RouterLink :to="{ name: 'EvolutionList' }" class="tile"><EvolutionIcon class="icon" /> {{ t("evolutions.title") }}</RouterLink>
         <RouterLink :to="{ name: 'PokemonList' }" class="tile"><PokemonIcon class="icon" /> {{ t("pokemon.title") }}</RouterLink>
       </div>
     </div>
