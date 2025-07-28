@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { SelectOption } from "logitar-vue3-ui";
 import { arrayUtils, objectUtils } from "logitar-js";
-import { computed, inject, ref, watch } from "vue";
+import { computed, inject, onMounted, ref, watch } from "vue";
 import { parsingUtils } from "logitar-js";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
@@ -11,22 +11,26 @@ import AppPagination from "@/components/shared/AppPagination.vue";
 import CountSelect from "@/components/shared/CountSelect.vue";
 import CreateEvolution from "@/components/evolutions/CreateEvolution.vue";
 import EditIcon from "@/components/icons/EditIcon.vue";
+import EvolutionTriggerFilter from "@/components/evolutions/EvolutionTriggerFilter.vue";
 import EvolutionTriggerIcon from "@/components/evolutions/EvolutionTriggerIcon.vue";
 import FriendshipIcon from "@/components/icons/FriendshipIcon.vue";
 import ItemBlock from "@/components/items/ItemBlock.vue";
 import MoveIcon from "@/components/icons/MoveIcon.vue";
 import PokemonFormBlock from "@/components/pokemon/forms/PokemonFormBlock.vue";
+import PokemonFormFilter from "@/components/pokemon/forms/PokemonFormFilter.vue";
 import PokemonGenderIcon from "@/components/icons/PokemonGenderIcon.vue";
 import RefreshButton from "@/components/shared/RefreshButton.vue";
 import SearchInput from "@/components/shared/SearchInput.vue";
 import SortSelect from "@/components/shared/SortSelect.vue";
 import StatusBlock from "@/components/shared/StatusBlock.vue";
 import TimeOfDayIcon from "@/components/icons/TimeOfDayIcon.vue";
-import type { Evolution, EvolutionSort, SearchEvolutionsPayload } from "@/types/evolutions";
+import type { Evolution, EvolutionSort, EvolutionTrigger, SearchEvolutionsPayload } from "@/types/evolutions";
+import type { Form, SearchFormsPayload } from "@/types/pokemon-forms";
 import type { SearchResults } from "@/types/search";
 import { formatItem, formatMove } from "@/helpers/format";
 import { handleErrorKey } from "@/inject";
 import { searchEvolutions } from "@/api/evolutions";
+import { searchForms } from "@/api/forms";
 import { useToastStore } from "@/stores/toast";
 
 const handleError = inject(handleErrorKey) as (e: unknown) => void;
@@ -39,6 +43,7 @@ const { parseBoolean, parseNumber } = parsingUtils;
 const { rt, t, tm } = useI18n();
 
 const evolutions = ref<Evolution[]>([]);
+const forms = ref<Form[]>([]);
 const isLoading = ref<boolean>(false);
 const timestamp = ref<number>(0);
 const total = ref<number>(0);
@@ -48,6 +53,9 @@ const isDescending = computed<boolean>(() => parseBoolean(route.query.isDescendi
 const page = computed<number>(() => parseNumber(route.query.page?.toString()) || 1);
 const search = computed<string>(() => route.query.search?.toString() ?? "");
 const sort = computed<string>(() => route.query.sort?.toString() ?? "");
+const sourceId = computed<string>(() => route.query.source?.toString() ?? "");
+const targetId = computed<string>(() => route.query.target?.toString() ?? "");
+const trigger = computed<string>(() => route.query.trigger?.toString() ?? "");
 
 const sortOptions = computed<SelectOption[]>(() =>
   orderBy(
@@ -58,6 +66,9 @@ const sortOptions = computed<SelectOption[]>(() =>
 
 async function refresh(): Promise<void> {
   const payload: SearchEvolutionsPayload = {
+    sourceId: sourceId.value,
+    targetId: targetId.value,
+    trigger: trigger.value as EvolutionTrigger,
     ids: [],
     search: {
       terms: search.value
@@ -92,6 +103,9 @@ function setQuery(key: string, value: string): void {
   const query = { ...route.query, [key]: value };
   switch (key) {
     case "search":
+    case "source":
+    case "target":
+    case "trigger":
     case "count":
       query.page = "1";
       break;
@@ -121,6 +135,9 @@ watch(
           query: isEmpty(query)
             ? {
                 search: "",
+                source: "",
+                target: "",
+                trigger: "",
                 sort: "UpdatedOn",
                 isDescending: "true",
                 page: 1,
@@ -139,6 +156,22 @@ watch(
   },
   { deep: true, immediate: true },
 );
+
+onMounted(async () => {
+  try {
+    const payload: SearchFormsPayload = {
+      ids: [],
+      search: { terms: [], operator: "And" },
+      sort: [],
+      skip: 0,
+      limit: 0,
+    };
+    const results: SearchResults<Form> = await searchForms(payload);
+    forms.value = [...results.items];
+  } catch (e: unknown) {
+    handleError(e);
+  }
+});
 </script>
 
 <template>
@@ -147,10 +180,28 @@ watch(
     <AdminBreadcrumb :current="t('evolutions.title')" />
     <div class="my-3">
       <RefreshButton class="me-1" :disabled="isLoading" :loading="isLoading" @click="refresh()" />
-      <CreateEvolution class="ms-1" @created="onCreated" @error="handleError" />
+      <CreateEvolution class="ms-1" :forms="forms" @created="onCreated" @error="handleError" />
     </div>
     <div class="row">
-      <!-- TODO(fion): source, target & trigger filters -->
+      <PokemonFormFilter
+        class="col"
+        :forms="forms"
+        id="source"
+        label="evolutions.source"
+        :model-value="sourceId"
+        placeholder="any"
+        @update:model-value="setQuery('source', $event)"
+      />
+      <PokemonFormFilter
+        class="col"
+        :forms="forms"
+        id="target"
+        label="evolutions.target"
+        :model-value="targetId"
+        placeholder="any"
+        @update:model-value="setQuery('target', $event)"
+      />
+      <EvolutionTriggerFilter class="col" :model-value="trigger" placeholder="any" @update:model-value="setQuery('trigger', $event)" />
     </div>
     <div class="mb-3 row">
       <SearchInput class="col" :model-value="search" @update:model-value="setQuery('search', $event)" />

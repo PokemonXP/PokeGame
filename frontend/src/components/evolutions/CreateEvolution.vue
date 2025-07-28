@@ -1,22 +1,23 @@
 <script setup lang="ts">
 import { TarButton, TarModal } from "logitar-vue3-ui";
-import { computed, onMounted, ref } from "vue";
+import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 
 import EvolutionTriggerSelect from "./EvolutionTriggerSelect.vue";
 import ItemSelect from "@/components/items/ItemSelect.vue";
 import PokemonFormSelect from "@/components/pokemon/forms/PokemonFormSelect.vue";
 import type { CreateOrReplaceEvolutionPayload, Evolution, EvolutionTrigger } from "@/types/evolutions";
-import type { Form, SearchFormsPayload } from "@/types/pokemon-forms";
+import type { Form } from "@/types/pokemon-forms";
 import type { Item } from "@/types/items";
-import type { SearchResults } from "@/types/search";
 import { createEvolution } from "@/api/evolutions";
-import { searchForms } from "@/api/forms";
 import { useForm } from "@/forms";
 
 const { t } = useI18n();
 
-const forms = ref<Form[]>([]);
+const props = defineProps<{
+  forms: Form[];
+}>();
+
 const isLoading = ref<boolean>(false);
 const item = ref<Item>();
 const modalRef = ref<InstanceType<typeof TarModal> | null>(null);
@@ -24,8 +25,8 @@ const source = ref<Form>();
 const target = ref<Form>();
 const trigger = ref<string>("");
 
-const sources = computed<Form[]>(() => forms.value.filter(({ id }) => !target.value || id !== target.value.id));
-const targets = computed<Form[]>(() => forms.value.filter(({ id }) => !source.value || id !== source.value.id));
+const sources = computed<Form[]>(() => props.forms.filter(({ id }) => !target.value || id !== target.value.id));
+const targets = computed<Form[]>(() => props.forms.filter(({ id }) => !source.value || id !== source.value.id));
 
 function hide(): void {
   modalRef.value?.hide();
@@ -80,22 +81,6 @@ function onTriggerChange(value: string): void {
   trigger.value = value;
   item.value = undefined;
 }
-
-onMounted(async () => {
-  try {
-    const payload: SearchFormsPayload = {
-      ids: [],
-      search: { terms: [], operator: "And" },
-      sort: [],
-      skip: 0,
-      limit: 0,
-    };
-    const results: SearchResults<Form> = await searchForms(payload);
-    forms.value = [...results.items];
-  } catch (e: unknown) {
-    emit("error", e);
-  }
-});
 </script>
 
 <template>
