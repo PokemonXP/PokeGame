@@ -9,7 +9,8 @@ import StatusConditionSelect from "./StatusConditionSelect.vue";
 import SubmitButton from "@/components/shared/SubmitButton.vue";
 import VitalityInput from "./VitalityInput.vue";
 import type { Ability } from "@/types/abilities";
-import type { BaseStatistics, Form, Pokemon, StatusCondition, UpdatePokemonPayload } from "@/types/pokemon";
+import type { BaseStatistics, Form } from "@/types/pokemon-forms";
+import type { Pokemon, StatusCondition, UpdatePokemonPayload } from "@/types/pokemon";
 import { updatePokemon } from "@/api/pokemon";
 import { useForm } from "@/forms";
 

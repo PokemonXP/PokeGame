@@ -5,12 +5,11 @@ import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 
 import FormSelect from "@/components/forms/FormSelect.vue";
-import type { Form } from "@/types/pokemon";
-import type { SearchFormsPayload } from "@/types/pokemon/forms";
+import type { Form, SearchFormsPayload } from "@/types/pokemon-forms";
 import type { SearchResults } from "@/types/search";
 import type { Variety } from "@/types/varieties";
 import { formatForm } from "@/helpers/format";
-import { searchForms } from "@/api/pokemon/forms";
+import { searchForms } from "@/api/forms";
 
 const { orderBy } = arrayUtils;
 const { t } = useI18n();

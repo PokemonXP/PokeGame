@@ -38,11 +38,10 @@ import VarietyMoveTable from "@/components/pokemon/creation/VarietyMoveTable.vue
 import VarietySelect from "@/components/varieties/VarietySelect.vue";
 import VitalityInput from "@/components/pokemon/VitalityInput.vue";
 import type { AbilitySlot } from "@/types/abilities";
+import type { BaseStatistics, Form } from "@/types/pokemon-forms";
 import type {
-  BaseStatistics,
   CreatePokemonPayload,
   EffortValues,
-  Form,
   IndividualValues,
   Pokemon,
   PokemonGender,

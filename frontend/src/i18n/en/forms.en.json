@@ -4,9 +4,30 @@
     "submit": "Change Form",
     "title": "Change Form"
   },
+  "create": "New Form",
+  "created": "The form has been created.",
   "default": "Default",
+  "delete": {
+    "confirm": "To delete the form, enter its name in the field below.",
+    "title": "Delete Form"
+  },
+  "deleted": "The form has been deleted.",
+  "empty": "This list is empty.",
   "select": {
     "label": "Form",
     "placeholder": "Select a Pokémon form"
-  }
+  },
+  "sort": {
+    "options": {
+      "CreatedOn": "Created on",
+      "DisplayName": "Display Name",
+      "ExperienceYield": "Experience Yield",
+      "Height": "Height",
+      "UniqueName": "Unique Name",
+      "UpdatedOn": "Updated on",
+      "Weight": "Weight"
+    }
+  },
+  "title": "Forms",
+  "updated": "The form has been updated."
 }

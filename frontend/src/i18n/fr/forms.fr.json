@@ -4,9 +4,30 @@
     "submit": "Métamorphoser",
     "title": "Métamorphose"
   },
+  "create": "Nouvelle forme",
+  "created": "La forme a été créée.",
   "default": "Par défaut",
+  "delete": {
+    "confirm": "Afin de supprimer la forme, veuillez entrer son nom dans le champs suivant.",
+    "title": "Supprimer la forme"
+  },
+  "deleted": "La forme a été supprimée.",
+  "empty": "Cette liste est vide.",
   "select": {
     "label": "Forme",
     "placeholder": "Sélectionnez une forme de Pokémon"
-  }
+  },
+  "sort": {
+    "options": {
+      "CreatedOn": "Date de création",
+      "DisplayName": "Nom d’affichage",
+      "ExperienceYield": "Gain d’expérience",
+      "Height": "Hauteur",
+      "UniqueName": "Nom unique",
+      "UpdatedOn": "Dernière modification",
+      "Weight": "Poids"
+    }
+  },
+  "title": "Formes",
+  "updated": "La forme a été mise à jour."
 }

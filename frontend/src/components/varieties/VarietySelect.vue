@@ -6,11 +6,11 @@ import { useI18n } from "vue-i18n";
 
 import FormSelect from "@/components/forms/FormSelect.vue";
 import type { SearchResults } from "@/types/search";
+import type { SearchVarietiesPayload } from "@/types/varieties";
 import type { Species } from "@/types/species";
 import type { Variety } from "@/types/varieties";
 import { formatVariety } from "@/helpers/format";
 import { searchVarieties } from "@/api/varieties";
-import type { SearchVarietiesPayload } from "@/types/varieties";
 
 const { orderBy } = arrayUtils;
 const { t } = useI18n();

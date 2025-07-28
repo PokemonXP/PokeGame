@@ -1,8 +1,7 @@
 import { EFFORT_VALUE_MAXIMUM, EFFORT_VALUE_MINIMUM, INDIVIDUAL_VALUE_MAXIMUM, INDIVIDUAL_VALUE_MINIMUM, LEVEL_MAXIMUM, LEVEL_MINIMUM } from "@/types/pokemon";
+import type { BaseStatistics, Form, Sprites } from "@/types/pokemon-forms";
 import type {
-  BaseStatistics,
   EffortValues,
-  Form,
   IndividualValues,
   Pokemon,
   PokemonNature,
@@ -10,7 +9,6 @@ import type {
   PokemonSizeCategory,
   PokemonStatistic,
   PokemonStatistics,
-  Sprites,
   StatisticValues,
 } from "@/types/pokemon";
 import type { GrowthRate } from "@/types/species";

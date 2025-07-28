@@ -8,7 +8,10 @@
   "deleted": "The ability has been deleted.",
   "empty": "This list is empty.",
   "label": "Ability",
-  "location": "Location",
+  "select": {
+    "label": "Ability",
+    "placeholder": "Select an ability"
+  },
   "slots": {
     "Hidden": "Hidden",
     "Primary": "Primary",

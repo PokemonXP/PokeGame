@@ -1,9 +1,9 @@
 import { urlUtils } from "logitar-js";
 
+import type { Form } from "@/types/pokemon-forms";
+import type { SearchFormsPayload } from "@/types/pokemon-forms";
 import type { SearchResults } from "@/types/search";
-import type { Form } from "@/types/pokemon";
-import { get } from "..";
-import type { SearchFormsPayload } from "@/types/pokemon/forms";
+import { get } from ".";
 
 export async function searchForms(payload: SearchFormsPayload): Promise<SearchResults<Form>> {
   const url: string = new urlUtils.UrlBuilder({ path: "/forms" })
