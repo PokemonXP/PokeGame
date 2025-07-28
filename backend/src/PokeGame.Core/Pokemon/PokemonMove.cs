@@ -11,4 +11,10 @@ public record PokemonMove(
   Level Level,
   MoveLearningMethod Method,
   ItemId? ItemId,
-  Notes? Notes);
+  Notes? Notes)
+{
+  public PokemonMove RestorePowerPoints()
+  {
+    return new PokemonMove(CurrentPowerPoints: MaximumPowerPoints, MaximumPowerPoints, ReferencePowerPoints, IsMastered, Level, Method, ItemId, Notes);
+  }
+}

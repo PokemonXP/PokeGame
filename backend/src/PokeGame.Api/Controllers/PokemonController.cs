@@ -77,6 +77,13 @@ public class PokemonController : ControllerBase
     return pokemon is null ? NotFound() : Ok(pokemon);
   }
 
+  [HttpPatch("{id}/heal")]
+  public async Task<ActionResult<PokemonModel>> HealAsync(Guid id, CancellationToken cancellationToken)
+  {
+    PokemonModel? pokemon = await _pokemonService.HealAsync(id, cancellationToken);
+    return pokemon is null ? NotFound() : Ok(pokemon);
+  }
+
   [HttpPatch("{id}/move")]
   public async Task<ActionResult<PokemonModel>> MoveAsync(Guid id, [FromBody] MovePokemonPayload payload, CancellationToken cancellationToken)
   {

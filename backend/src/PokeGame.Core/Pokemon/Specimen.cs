@@ -79,10 +79,11 @@ public class Specimen : AggregateRoot
     {
       ArgumentOutOfRangeException.ThrowIfNegative(value, nameof(Vitality));
 
-      if (_vitality != value)
+      int vitality = Math.Min(value, Statistics.HP);
+      if (_vitality != vitality)
       {
-        _vitality = Math.Min(value, Statistics.HP);
-        _updated.Vitality = value;
+        _vitality = vitality;
+        _updated.Vitality = vitality;
       }
     }
   }
@@ -94,10 +95,11 @@ public class Specimen : AggregateRoot
     {
       ArgumentOutOfRangeException.ThrowIfNegative(value, nameof(Stamina));
 
+      int stamina = Math.Min(value, Statistics.HP);
       if (_stamina != value)
       {
-        _stamina = Math.Min(value, Statistics.HP);
-        _updated.Stamina = value;
+        _stamina = stamina;
+        _updated.Stamina = stamina;
       }
     }
   }
@@ -496,7 +498,16 @@ public class Specimen : AggregateRoot
   }
   protected virtual void Handle(PokemonHealed _)
   {
-    // TODO(fpion): Heal
+    int constitution = Statistics.HP;
+    _vitality = constitution;
+    _stamina = constitution;
+    _statusCondition = null;
+
+    List<KeyValuePair<MoveId, PokemonMove>> moves = _learnedMoves.ToList();
+    foreach (KeyValuePair<MoveId, PokemonMove> move in moves)
+    {
+      _learnedMoves[move.Key] = move.Value.RestorePowerPoints();
+    }
   }
 
   public void HoldItem(Item item, ActorId? actorId = null) => HoldItem(item.Id, actorId);
