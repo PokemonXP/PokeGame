@@ -1,4 +1,5 @@
 {
+  "catchRate": "Catch Rate",
   "category": {
     "label": "Category",
     "options": {
@@ -36,7 +37,10 @@
         "Water1": "Water 1",
         "Water2": "Water 2",
         "Water3": "Water 3"
-      }
+      },
+      "placeholder": "Select an egg group",
+      "primary": "Primary Egg Group",
+      "secondary": "Secondary Egg Group"
     }
   },
   "empty": "This list is empty.",

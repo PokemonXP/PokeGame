@@ -69,7 +69,7 @@ watch(
     <form @submit.prevent="submit">
       <div class="row">
         <CatchMultiplierInput class="col" required v-model="catchMultiplier" />
-        <FriendshipInput class="col" label="pokemon.friendship.base" v-model="baseFriendship" />
+        <FriendshipInput class="col" label="pokemon.friendship.base" required v-model="baseFriendship" />
         <FriendshipMultiplierInput class="col" required v-model="friendshipMultiplier" />
       </div>
       <HealCheckbox v-model="heal" />
