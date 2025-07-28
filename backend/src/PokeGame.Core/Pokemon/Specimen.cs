@@ -804,13 +804,13 @@ public class Specimen : AggregateRoot
   {
     OriginalTrainerId = @event.TrainerId;
     Ownership = new Ownership(OwnershipKind.Caught, @event.TrainerId, @event.PokeBallId, @event.Level, @event.Location, @event.MetOn ?? @event.OccurredOn, @event.Description);
-    //Slot = @event.Slot; // TODO(fpion): remove some day
+    Slot = @event.Slot; // TODO(fpion): remove some day
   }
   protected virtual void Handle(PokemonReceived @event)
   {
     OriginalTrainerId ??= @event.TrainerId;
     Ownership = new Ownership(OwnershipKind.Received, @event.TrainerId, @event.PokeBallId, @event.Level, @event.Location, @event.MetOn ?? @event.OccurredOn, @event.Description);
-    //Slot = @event.Slot; // TODO(fpion): remove some day
+    Slot = @event.Slot; // TODO(fpion): remove some day
   }
 
   public override string ToString() => $"{Nickname?.Value ?? UniqueName.Value} | {base.ToString()}";
