@@ -20,7 +20,7 @@ export type BerryProperties = {
   isHealingPercentage: boolean;
   statusCondition?: StatusCondition | null;
   allConditions: boolean;
-  cureConfusion: boolean
+  cureConfusion: boolean;
   powerPoints: number;
   attack: number;
   defense: number;
@@ -30,8 +30,8 @@ export type BerryProperties = {
   accuracy: number;
   evasion: number;
   critical: number;
-  lowerEffortValues?: PokemonStatistic | null
-  raiseFriendship: boolean
+  lowerEffortValues?: PokemonStatistic | null;
+  raiseFriendship: boolean;
 };
 
 export type CreateOrReplaceItemPayload = {
