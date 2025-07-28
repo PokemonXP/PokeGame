@@ -15,7 +15,7 @@ import ExperienceTableModal from "@/components/pokemon/ExperienceTableModal.vue"
 import FormSelect from "@/components/pokemon/creation/FormSelect.vue";
 import FriendshipInput from "@/components/pokemon/FriendshipInput.vue";
 import GenderSelect from "@/components/pokemon/GenderSelect.vue";
-import GrowthRateSelect from "@/components/pokemon/creation/GrowthRateSelect.vue";
+import GrowthRateSelect from "@/components/species/GrowthRateSelect.vue";
 import IndividualValuesEdit from "@/components/pokemon/creation/IndividualValuesEdit.vue";
 import ItemSelect from "@/components/items/ItemSelect.vue";
 import LevelInput from "@/components/pokemon/LevelInput.vue";
@@ -292,7 +292,7 @@ watch(
         <h2 class="h3">{{ t("pokemon.progress.title") }}</h2>
         <EggCheckbox :model-value="isEgg" @update:model-value="onEggUpdate" />
         <div class="row">
-          <GrowthRateSelect class="col" :model-value="growthRate">
+          <GrowthRateSelect class="col" disabled :model-value="growthRate">
             <template #append>
               <TarButton
                 icon="fas fa-table"

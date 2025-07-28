@@ -23,7 +23,6 @@ withDefaults(
     id: "egg-cycles",
     label: "species.egg.cycles",
     min: 1,
-    required: true,
     step: 1,
     type: "number",
   },

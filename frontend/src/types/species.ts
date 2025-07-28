@@ -89,7 +89,7 @@ export type UpdateSpeciesPayload = {
   displayName?: Change<string>;
   baseFriendship?: number;
   catchRate?: number;
-  growthRate?: number;
+  growthRate?: GrowthRate;
   eggCycles?: number;
   eggGroups?: EggGroups;
   url?: Change<string>;

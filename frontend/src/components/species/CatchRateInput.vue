@@ -10,7 +10,6 @@ const { t } = useI18n();
 
 withDefaults(
   defineProps<{
-    disabled?: boolean | string;
     id?: string;
     label?: string;
     max?: number | string;
@@ -22,8 +21,8 @@ withDefaults(
   }>(),
   {
     id: "number",
-    label: "species.number.label",
-    max: 9999,
+    label: "species.catchRate",
+    max: 255,
     min: 1,
     step: 1,
     type: "number",
@@ -31,13 +30,12 @@ withDefaults(
 );
 
 defineEmits<{
-  (e: "update:model-value", number: number): void;
+  (e: "update:model-value", catchMultiplier: number): void;
 }>();
 </script>
 
 <template>
   <FormInput
-    :disabled="disabled"
     :id="id"
     :label="t(label)"
     :min="min"

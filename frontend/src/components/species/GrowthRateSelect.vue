@@ -19,7 +19,6 @@ withDefaults(
     required?: boolean | string;
   }>(),
   {
-    disabled: true,
     id: "growth-rate",
     label: "species.growthRate.label",
     placeholder: "species.growthRate.placeholder",

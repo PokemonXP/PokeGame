@@ -1,4 +1,5 @@
 {
+  "catchRate": "Taux de capture",
   "category": {
     "label": "Catégorie",
     "options": {
@@ -36,7 +37,10 @@
         "Water1": "Aquatique 1",
         "Water2": "Aquatique 2",
         "Water3": "Aquatique 3"
-      }
+      },
+      "placeholder": "Sélectionnez un groupe d’œufs",
+      "primary": "Groupe d’œufs primaire",
+      "secondary": "Groupe d’œufs secondaire"
     }
   },
   "empty": "Cette liste est vide.",

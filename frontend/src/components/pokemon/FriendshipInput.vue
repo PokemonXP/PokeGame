@@ -24,7 +24,6 @@ withDefaults(
     label: "pokemon.friendship.label",
     max: 255,
     min: 0,
-    required: true,
     step: 1,
     type: "number",
   },

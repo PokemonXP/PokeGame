@@ -115,7 +115,7 @@ watch(
       </div>
       <div class="row">
         <StatusConditionSelect class="col" v-model="statusCondition" />
-        <FriendshipInput class="col" v-model="friendship" />
+        <FriendshipInput class="col" required v-model="friendship" />
       </div>
       <h2 class="h3">{{ t("abilities.label") }}</h2>
       <div class="row mb-3">
