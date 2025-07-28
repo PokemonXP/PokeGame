@@ -111,10 +111,10 @@ onMounted(async () => {
         <DeletePokemonForm :form="form" @deleted="onDeleted" @error="handleError" />
       </div>
       <TarTabs>
-        <TarTab id="general" :title="t('general')">
+        <TarTab active id="general" :title="t('general')">
           <PokemonFormGeneral :form="form" @error="handleError" @updated="onGeneralUpdated" />
         </TarTab>
-        <TarTab active id="statistics" :title="t('pokemon.statistic.title')">
+        <TarTab id="statistics" :title="t('pokemon.statistic.title')">
           <PokemonFormStatistics :form="form" @error="handleError" @updated="onStatisticsUpdate" />
         </TarTab>
         <TarTab id="sprites" :title="t('forms.sprites.title')">

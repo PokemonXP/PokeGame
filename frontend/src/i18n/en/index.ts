@@ -1,5 +1,6 @@
 import abilities from "./abilities.en.json";
 import errors from "./errors.en.json";
+import evolutions from "./evolutions.en.json";
 import forms from "./forms.en.json";
 import index from "./index.en.json";
 import items from "./items.en.json";
@@ -15,6 +16,7 @@ export default {
   ...index,
   abilities,
   errors,
+  evolutions,
   forms,
   items,
   moves,

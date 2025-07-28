@@ -158,8 +158,16 @@ watch(
       </div>
       <h2 class="h5">{{ t("abilities.title") }}</h2>
       <!-- TODO(fpion): should all be different -->
+      <!-- TODO(fpion): refactor, should not load abilities thrice -->
       <div class="row">
-        <AbilitySelect class="col" id="primary-ability" label="abilities.slots.Primary" :model-value="primaryAbility?.id" @selected="primaryAbility = $event" />
+        <AbilitySelect
+          class="col"
+          id="primary-ability"
+          label="abilities.slots.Primary"
+          :model-value="primaryAbility?.id"
+          required
+          @selected="primaryAbility = $event"
+        />
         <AbilitySelect
           class="col"
           id="secondary-ability"
@@ -170,7 +178,7 @@ watch(
       </div>
       <div class="row">
         <AbilitySelect class="col" id="hidden-ability" label="abilities.slots.Hidden" :model-value="hiddenAbility?.id" @selected="hiddenAbility = $event" />
-        <ExperienceYieldInput class="col" v-model="experienceYield" />
+        <ExperienceYieldInput class="col" required v-model="experienceYield" />
       </div>
       <DescriptionTextarea v-model="description" />
       <div class="mb-3">

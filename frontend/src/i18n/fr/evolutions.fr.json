@@ -1,0 +1,43 @@
+{
+  "create": "Nouvelle évolution",
+  "created": "L’évolution a été créée.",
+  "delete": {
+    "confirm": "Afin de supprimer l’évolution, veuillez entrer son nom dans le champs suivant.",
+    "title": "Supprimer l’évolution"
+  },
+  "deleted": "L’évolution a été supprimée.",
+  "empty": "Cette liste est vide.",
+  "requirements": {
+    "friendship": "Bonheur élevé",
+    "level": "Niveau {level}+",
+    "title": "Requis"
+  },
+  "sort": {
+    "options": {
+      "CreatedOn": "Date de création",
+      "Level": "Niveau",
+      "UpdatedOn": "Dernière modification"
+    }
+  },
+  "source": "Source",
+  "target": "Cible",
+  "timeOfDay": {
+    "options": {
+      "Day": "Jour",
+      "Evening": "Soir",
+      "Morning": "Matin",
+      "Night": "Nuit"
+    }
+  },
+  "title": "Évolutions",
+  "trigger": {
+    "label": "Déclencheur",
+    "options": {
+      "Item": "Objet",
+      "Level": "Gain de niveau",
+      "Trade": "Échange"
+    },
+    "placeholder": "Sélectionnez un déclencheur d’évolution"
+  },
+  "updated": "L’évolution a été mise à jour."
+}
