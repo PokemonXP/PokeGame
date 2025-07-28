@@ -1,7 +1,7 @@
 import type { Aggregate, Change } from "./aggregate";
 import type { Move } from "./moves";
 import type { SearchPayload, SortOption } from "./search";
-import type { StatusCondition } from "./pokemon";
+import type { PokemonStatistic, StatusCondition } from "./pokemon";
 
 export type BattleItemProperties = {
   attack: number;
@@ -15,7 +15,24 @@ export type BattleItemProperties = {
   guardTurns: number;
 };
 
-export type BerryProperties = {};
+export type BerryProperties = {
+  healing: number;
+  isHealingPercentage: boolean;
+  statusCondition?: StatusCondition | null;
+  allConditions: boolean;
+  cureConfusion: boolean
+  powerPoints: number;
+  attack: number;
+  defense: number;
+  specialAttack: number;
+  specialDefense: number;
+  speed: number;
+  accuracy: number;
+  evasion: number;
+  critical: number;
+  lowerEffortValues?: PokemonStatistic | null
+  raiseFriendship: boolean
+};
 
 export type CreateOrReplaceItemPayload = {
   uniqueName: string;

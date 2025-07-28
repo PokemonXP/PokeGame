@@ -3,8 +3,8 @@ import { TarInput } from "logitar-vue3-ui";
 import { onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 
-import HeightInput from "./HeightInput.vue";
-import WeightInput from "./WeightInput.vue";
+import HeightScalarInput from "./HeightScalarInput.vue";
+import WeightScalarInput from "./WeightScalarInput.vue";
 import type { PokemonSizePayload } from "@/types/pokemon";
 import { getSizeCategory } from "@/helpers/pokemon";
 import { randomInteger } from "@/helpers/random";
@@ -39,8 +39,8 @@ onMounted(() => {
 
 <template>
   <div class="row">
-    <HeightInput class="col" :model-value="modelValue.height" @update:model-value="onHeightChange" />
-    <WeightInput class="col" :model-value="modelValue.weight" @update:model-value="onWeightChange" />
+    <HeightScalarInput class="col" :model-value="modelValue.height" @update:model-value="onHeightChange" />
+    <WeightScalarInput class="col" :model-value="modelValue.weight" @update:model-value="onWeightChange" />
     <TarInput
       class="col"
       disabled

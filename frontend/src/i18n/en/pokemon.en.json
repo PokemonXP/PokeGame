@@ -269,6 +269,7 @@
     },
     "randomize": "Randomize",
     "select": {
+      "label": "Statistic",
       "options": {
         "Accuracy": "Accuracy",
         "Attack": "Attack",
@@ -278,7 +279,8 @@
         "SpecialAttack": "Sp. Attack",
         "SpecialDefense": "Sp. Defense",
         "Speed": "Speed"
-      }
+      },
+      "placeholder": "Select a Pokémon statistic"
     },
     "stage": {
       "format": "{stat} Stages"

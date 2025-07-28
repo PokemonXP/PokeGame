@@ -1,5 +1,5 @@
 import type { Ability } from "./abilities";
-import type { Aggregate } from "./aggregate";
+import type { Aggregate, Change } from "./aggregate";
 import type { PokemonType } from "./pokemon";
 import type { SearchPayload, SortOption } from "./search";
 import type { Variety } from "./varieties";
@@ -86,6 +86,23 @@ export type Sprites = {
   shiny: string;
   alternative?: string | null;
   alternativeShiny?: string | null;
+};
+
+export type UpdateFormPayload = {
+  uniqueName?: string;
+  displayName?: Change<string>;
+  description?: Change<string>;
+  isBattleOnly?: boolean;
+  isMega?: boolean;
+  height?: number;
+  weight?: number;
+  types?: FormTypes;
+  abilities?: FormAbilitiesPayload;
+  baseStatistics?: BaseStatistics;
+  yield?: Yield;
+  sprites?: Sprites;
+  url?: Change<string>;
+  notes?: Change<string>;
 };
 
 export type Yield = {
