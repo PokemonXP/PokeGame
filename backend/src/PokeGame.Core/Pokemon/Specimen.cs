@@ -494,7 +494,11 @@ public class Specimen : AggregateRoot
 
   public void Heal(ActorId? actorId = null)
   {
-    Raise(new PokemonHealed(), actorId);
+    int constitution = Statistics.HP;
+    if (Vitality != constitution || Stamina != constitution || StatusCondition.HasValue || LearnedMoves.Values.Any(move => move.CurrentPowerPoints < move.MaximumPowerPoints))
+    {
+      Raise(new PokemonHealed(), actorId);
+    }
   }
   protected virtual void Handle(PokemonHealed _)
   {
