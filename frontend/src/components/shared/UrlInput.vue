@@ -12,6 +12,7 @@ withDefaults(
     label?: string;
     max?: number | string;
     modelValue?: string;
+    required?: boolean | string;
     type?: InputType;
   }>(),
   {
@@ -28,7 +29,15 @@ defineEmits<{
 </script>
 
 <template>
-  <FormInput :id="id" :label="t(label)" :max="max" :model-value="modelValue" :type="type" @update:model-value="$emit('update:model-value', $event)">
+  <FormInput
+    :id="id"
+    :label="t(label)"
+    :max="max"
+    :model-value="modelValue"
+    :required="required"
+    :type="type"
+    @update:model-value="$emit('update:model-value', $event)"
+  >
     <template #append>
       <a v-if="modelValue" :href="modelValue" target="_blank" class="btn btn-info">
         <font-awesome-icon icon="fas fa-arrow-up-right-from-square" />
