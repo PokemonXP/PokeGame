@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { SelectOption } from "logitar-vue3-ui";
-import { arrayUtils } from "logitar-js";
+import { arrayUtils, parsingUtils } from "logitar-js";
 import { computed, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 
@@ -12,10 +12,12 @@ import { formatSpecies } from "@/helpers/format";
 import { searchSpecies } from "@/api/species";
 
 const { orderBy } = arrayUtils;
+const { parseBoolean } = parsingUtils;
 const { t } = useI18n();
 
-withDefaults(
+const props = withDefaults(
   defineProps<{
+    disabled?: boolean | string;
     id?: string;
     label?: string;
     modelValue?: string;
@@ -26,12 +28,12 @@ withDefaults(
     id: "species",
     label: "species.select.label",
     placeholder: "species.select.placeholder",
-    required: true,
   },
 );
 
 const species = ref<Species[]>([]);
 
+const isDisabled = computed<boolean>(() => parseBoolean(props.disabled) ?? false);
 const options = computed<SelectOption[]>(() =>
   orderBy(
     species.value.map((species) => ({
@@ -74,7 +76,7 @@ onMounted(async () => {
 
 <template>
   <FormSelect
-    :disabled="!options.length"
+    :disabled="isDisabled || !options.length"
     :id="id"
     :label="t(label)"
     :model-value="modelValue"
@@ -82,5 +84,9 @@ onMounted(async () => {
     :placeholder="t(placeholder)"
     :required="required"
     @update:model-value="onModelValueUpdate"
-  />
+  >
+    <template #append>
+      <slot name="append"></slot>
+    </template>
+  </FormSelect>
 </template>

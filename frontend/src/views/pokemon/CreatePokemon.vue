@@ -263,7 +263,7 @@ watch(
     <form @submit.prevent="submit">
       <h2 class="h3">{{ t("pokemon.identification.title") }}</h2>
       <div class="row">
-        <SpeciesSelect class="col" :model-value="species?.id" @error="handleError" @selected="onSpeciesSelected" />
+        <SpeciesSelect class="col" :model-value="species?.id" required @error="handleError" @selected="onSpeciesSelected" />
         <VarietySelect class="col" :model-value="variety?.id" :species="species" @error="handleError" @selected="onVarietySelected" />
         <FormSelect class="col" :model-value="form?.id" :variety="variety" @error="handleError" @selected="onFormSelected" />
       </div>

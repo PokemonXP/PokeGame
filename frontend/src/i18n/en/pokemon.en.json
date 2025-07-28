@@ -46,9 +46,9 @@
       "options": {
         "Female": "Female",
         "Male": "Male"
-      },
-      "placeholder": "Unknown"
-    }
+      }
+    },
+    "unknown": "Unknown"
   },
   "heal": "Heal",
   "healed": "The Pokémon has been fully restored.",
