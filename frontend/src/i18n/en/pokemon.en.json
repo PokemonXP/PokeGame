@@ -253,6 +253,15 @@
   },
   "statistic": {
     "base": "Base Values",
+    "battle": {
+      "Accuracy": "Accuracy",
+      "Attack": "Attack",
+      "Defense": "Defense",
+      "Evasion": "Evasion",
+      "SpecialAttack": "Sp. Attack",
+      "SpecialDefense": "Sp. Defense",
+      "Speed": "Speed"
+    },
     "critical": "Critical",
     "effort": {
       "title": "Effort Values (EVs)",
@@ -272,10 +281,8 @@
     "select": {
       "label": "Statistic",
       "options": {
-        "Accuracy": "Accuracy",
         "Attack": "Attack",
         "Defense": "Defense",
-        "Evasion": "Evasion",
         "HP": "HP",
         "SpecialAttack": "Sp. Attack",
         "SpecialDefense": "Sp. Defense",

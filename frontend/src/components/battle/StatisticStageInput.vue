@@ -52,7 +52,7 @@ const inputLabel = computed<string>(() => {
   if (!label) {
     label = "pokemon.statistic.stage.format";
   }
-  return t(label, { stat: t(`pokemon.statistic.select.options.${props.statistic}`) });
+  return t(label, { stat: t(`pokemon.statistic.battle.${props.statistic}`) });
 });
 
 defineEmits<{
