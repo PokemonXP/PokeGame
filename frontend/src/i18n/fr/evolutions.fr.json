@@ -2,10 +2,12 @@
   "create": "Nouvelle évolution",
   "created": "L’évolution a été créée.",
   "delete": {
-    "confirm": "Afin de supprimer l’évolution, veuillez entrer son nom dans le champs suivant.",
+    "check": "Je confirme que je désire supprimer cette évolution.",
+    "confirm": "Afin de supprimer l’évolution, veuillez cocher la case ci-dessous.",
     "title": "Supprimer l’évolution"
   },
   "deleted": "L’évolution a été supprimée.",
+  "edit": "Éditer l’évolution",
   "empty": "Cette liste est vide.",
   "requirements": {
     "friendship": "Bonheur élevé",
@@ -22,12 +24,14 @@
   "source": "Source",
   "target": "Cible",
   "timeOfDay": {
+    "label": "Moment de la journée",
     "options": {
       "Day": "Jour",
       "Evening": "Soir",
       "Morning": "Matin",
       "Night": "Nuit"
-    }
+    },
+    "placeholder": "Sélectionnez un moment de la journée"
   },
   "title": "Évolutions",
   "trigger": {

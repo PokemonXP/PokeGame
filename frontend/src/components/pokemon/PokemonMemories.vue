@@ -220,7 +220,7 @@ watch(
         />
       </div>
       <div class="row">
-        <LevelInput class="col" required v-model="level" />
+        <LevelInput class="col" v-model="level" />
         <MetOnInput class="col" v-model="metOn" />
       </div>
       <LocationInput required v-model="location" />

@@ -1,8 +1,8 @@
 import { urlUtils } from "logitar-js";
 
-import type { CreateOrReplaceEvolutionPayload, Evolution, SearchEvolutionsPayload } from "@/types/evolutions";
+import type { CreateOrReplaceEvolutionPayload, Evolution, SearchEvolutionsPayload, UpdateEvolutionPayload } from "@/types/evolutions";
 import type { SearchResults } from "@/types/search";
-import { _delete, get, post } from ".";
+import { _delete, get, patch, post } from ".";
 
 export async function createEvolution(payload: CreateOrReplaceEvolutionPayload): Promise<Evolution> {
   const url: string = new urlUtils.UrlBuilder({ path: "/evolutions" }).buildRelative();
@@ -38,4 +38,9 @@ export async function searchEvolutions(payload: SearchEvolutionsPayload): Promis
     .setQuery("limit", payload.limit.toString())
     .buildRelative();
   return (await get<SearchResults<Evolution>>(url)).data;
+}
+
+export async function updateEvolution(id: string, payload: UpdateEvolutionPayload): Promise<Evolution> {
+  const url: string = new urlUtils.UrlBuilder({ path: "/evolutions/{id}" }).setParameter("id", id).buildRelative();
+  return (await patch<UpdateEvolutionPayload, Evolution>(url, payload)).data;
 }

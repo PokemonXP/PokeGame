@@ -21,7 +21,6 @@ withDefaults(
   {
     id: "level",
     label: "pokemon.level.label",
-    required: true,
     step: 1,
     type: "number",
   },
@@ -36,7 +35,7 @@ defineEmits<{
   <FormInput
     :id="id"
     :label="t(label)"
-    :min="LEVEL_MINIMUM"
+    :min="required ? LEVEL_MINIMUM : 0"
     :max="LEVEL_MAXIMUM"
     :model-value="modelValue?.toString()"
     :required="required"

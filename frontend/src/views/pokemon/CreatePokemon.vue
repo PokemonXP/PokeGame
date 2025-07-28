@@ -303,7 +303,7 @@ watch(
             </template>
           </GrowthRateSelect>
           <EggCyclesInput v-if="isEgg" class="col" :max="species?.eggCycles" required v-model="eggCycles" />
-          <LevelInput v-else class="col" :model-value="level" @update:model-value="onLevelUpdate" />
+          <LevelInput v-else class="col" :model-value="level" required @update:model-value="onLevelUpdate" />
           <ExperienceInput class="col" :disabled="isEgg" :model-value="experience" @update:model-value="onExperienceUpdate" />
         </div>
         <ExperienceTableModal :growth-rate="growthRate" />

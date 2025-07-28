@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { TarCheckbox } from "logitar-vue3-ui";
 import { computed, inject, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
@@ -8,6 +7,7 @@ import AbilitySelect from "@/components/abilities/AbilitySelect.vue";
 import AdminBreadcrumb from "@/components/admin/AdminBreadcrumb.vue";
 import BaseStatisticInput from "@/components/pokemon/forms/BaseStatisticInput.vue";
 import BattleOnlyCheckbox from "@/components/pokemon/forms/BattleOnlyCheckbox.vue";
+import DefaultCheckbox from "@/components/pokemon/forms/DefaultCheckbox.vue";
 import DescriptionTextarea from "@/components/shared/DescriptionTextarea.vue";
 import DisplayNameInput from "@/components/shared/DisplayNameInput.vue";
 import ExperienceYieldInput from "@/components/pokemon/forms/ExperienceYieldInput.vue";
@@ -123,7 +123,7 @@ async function submit(): Promise<void> {
         <VarietySelect class="col" :model-value="variety?.id" required @selected="variety = $event">
           <template #append>
             <div class="input-group-text">
-              <TarCheckbox id="default" :label="t('forms.default')" v-model="isDefault" />
+              <DefaultCheckbox v-model="isDefault" />
             </div>
           </template>
         </VarietySelect>
