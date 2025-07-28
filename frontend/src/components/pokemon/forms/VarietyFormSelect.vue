@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import type { SelectOption } from "logitar-vue3-ui";
 import { arrayUtils } from "logitar-js";
-import { computed, onMounted, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 
 import FormSelect from "@/components/forms/FormSelect.vue";
 import type { Form, SearchFormsPayload } from "@/types/pokemon-forms";
 import type { SearchResults } from "@/types/search";
+import type { Variety } from "@/types/varieties";
 import { formatForm } from "@/helpers/format";
 import { searchForms } from "@/api/forms";
 
@@ -15,23 +16,31 @@ const { t } = useI18n();
 
 const props = withDefaults(
   defineProps<{
-    forms?: Form[];
     id?: string;
     label?: string;
     modelValue?: string;
     placeholder?: string;
     required?: boolean | string;
+    variety?: Variety;
   }>(),
   {
     id: "form",
     label: "forms.select.label",
     placeholder: "forms.select.placeholder",
+    required: true,
   },
 );
 
-const data = ref<Form[]>([]);
+const forms = ref<Form[]>([]);
+const selectRef = ref<InstanceType<typeof FormSelect> | null>(null);
 
-const forms = computed<Form[]>(() => (Array.isArray(props.forms) ? props.forms : data.value));
+const isDefault = computed<boolean>(() => {
+  if (props.modelValue) {
+    const form: Form | undefined = forms.value.find(({ id }) => id === props.modelValue);
+    return form?.isDefault ?? false;
+  }
+  return false;
+});
 const options = computed<SelectOption[]>(() =>
   orderBy(
     forms.value.map((form) => ({
@@ -41,8 +50,6 @@ const options = computed<SelectOption[]>(() =>
     "text",
   ),
 );
-const form = computed<Form | undefined>(() => (props.modelValue ? forms.value.find(({ id }) => id === props.modelValue) : undefined));
-const alt = computed<string>(() => (form.value ? t("sprite.alt", { name: form.value.displayName ?? form.value.uniqueName }) : ""));
 
 const emit = defineEmits<{
   (e: "error", error: unknown): void;
@@ -53,27 +60,37 @@ const emit = defineEmits<{
 function onModelValueUpdate(id: string): void {
   emit("update:model-value", id);
 
-  const selectedForm: Form | undefined = forms.value.find((form) => form.id === id);
-  emit("selected", selectedForm);
+  const form: Form | undefined = forms.value.find((form) => form.id === id);
+  emit("selected", form);
 }
 
-onMounted(async () => {
-  if (!Array.isArray(props.forms)) {
-    try {
-      const payload: SearchFormsPayload = {
-        ids: [],
-        search: { terms: [], operator: "And" },
-        sort: [],
-        limit: 0,
-        skip: 0,
-      };
-      const results: SearchResults<Form> = await searchForms(payload);
-      data.value = [...results.items];
-    } catch (e: unknown) {
-      emit("error", e);
+watch(
+  () => props.variety,
+  async (variety) => {
+    if (variety) {
+      try {
+        const payload: SearchFormsPayload = {
+          ids: [],
+          search: { terms: [], operator: "And" },
+          varietyId: variety.id,
+          sort: [],
+          limit: 0,
+          skip: 0,
+        };
+        const results: SearchResults<Form> = await searchForms(payload);
+        forms.value = [...results.items];
+
+        const defaultForm: Form | undefined = forms.value.find(({ isDefault }) => isDefault);
+        selectRef.value?.change(defaultForm?.id ?? "");
+      } catch (e: unknown) {
+        emit("error", e);
+      }
+    } else {
+      forms.value = [];
     }
-  }
-});
+  },
+  { deep: true, immediate: true },
+);
 </script>
 
 <template>
@@ -84,13 +101,15 @@ onMounted(async () => {
     :model-value="modelValue"
     :options="options"
     :placeholder="t(placeholder)"
+    ref="selectRef"
     :required="required"
     @update:model-value="onModelValueUpdate"
   >
-    <template v-if="form" #append>
-      <RouterLink class="input-group-text" :to="{ name: 'FormEdit', params: { id: form.id } }" target="_blank">
-        <img :src="form.sprites.default" :alt="alt" height="40" />
-      </RouterLink>
+    <template #append>
+      <span v-if="isDefault" class="input-group-text">
+        <font-awesome-icon class="me-1" icon="fas fa-check" />
+        {{ t("forms.default") }}
+      </span>
     </template>
   </FormSelect>
 </template>

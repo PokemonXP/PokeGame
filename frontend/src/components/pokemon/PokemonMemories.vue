@@ -215,6 +215,7 @@ watch(
           :model-value="pokeBall?.id"
           placeholder="pokemon.memories.pokeBall.placeholder"
           required
+          @error="$emit('error', $event)"
           @selected="pokeBall = $event"
         />
       </div>

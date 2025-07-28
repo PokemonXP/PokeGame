@@ -149,6 +149,9 @@ watch(
       <RefreshButton class="me-1" :disabled="isLoading" :loading="isLoading" @click="refresh()" />
       <CreateEvolution class="ms-1" @created="onCreated" @error="handleError" />
     </div>
+    <div class="row">
+      <!-- TODO(fion): source, target & trigger filters -->
+    </div>
     <div class="mb-3 row">
       <SearchInput class="col" :model-value="search" @update:model-value="setQuery('search', $event)" />
       <SortSelect

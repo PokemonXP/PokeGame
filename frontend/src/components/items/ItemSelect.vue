@@ -45,7 +45,7 @@ const options = computed<SelectOption[]>(() =>
   ),
 );
 const item = computed<Item | undefined>(() => (props.modelValue ? filteredItems.value.find(({ id }) => id === props.modelValue) : undefined));
-const alt = computed<string>(() => `${item.value ? (item.value.displayName ?? item.value.uniqueName) : ""}'s Sprite'`);
+const alt = computed<string>(() => (item.value ? t("sprite.alt", { name: item.value.displayName ?? item.value.uniqueName }) : ""));
 
 const emit = defineEmits<{
   (e: "error", error: unknown): void;

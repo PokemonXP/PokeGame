@@ -22,7 +22,6 @@ import NatureSelect from "@/components/pokemon/creation/NatureSelect.vue";
 import NatureTable from "@/components/pokemon/creation/NatureTable.vue";
 import NicknameInput from "@/components/pokemon/NicknameInput.vue";
 import NotesTextarea from "@/components/shared/NotesTextarea.vue";
-import PokemonFormSelect from "@/components/pokemon/forms/PokemonFormSelect.vue";
 import PokemonTypeSelect from "@/components/pokemon/PokemonTypeSelect.vue";
 import ProgressTable from "@/components/pokemon/creation/ProgressTable.vue";
 import ShinyCheckbox from "@/components/pokemon/ShinyCheckbox.vue";
@@ -35,6 +34,7 @@ import TotalStatisticsView from "@/components/pokemon/creation/TotalStatisticsVi
 import UniqueNameAlreadyUsed from "@/components/shared/UniqueNameAlreadyUsed.vue";
 import UniqueNameInput from "@/components/shared/UniqueNameInput.vue";
 import UrlInput from "@/components/shared/UrlInput.vue";
+import VarietyFormSelect from "@/components/pokemon/forms/VarietyFormSelect.vue";
 import VarietyMoveTable from "@/components/pokemon/creation/VarietyMoveTable.vue";
 import VitalityInput from "@/components/pokemon/VitalityInput.vue";
 import type { AbilitySlot } from "@/types/abilities";
@@ -264,7 +264,7 @@ watch(
       <div class="row">
         <SpeciesSelect class="col" :model-value="species?.id" required @error="handleError" @selected="onSpeciesSelected" />
         <SpeciesVarietySelect class="col" :model-value="variety?.id" required :species="species" @error="handleError" @selected="onVarietySelected" />
-        <PokemonFormSelect class="col" :model-value="form?.id" :variety="variety" @error="handleError" @selected="onFormSelected" />
+        <VarietyFormSelect class="col" :model-value="form?.id" :variety="variety" @error="handleError" @selected="onFormSelected" />
       </div>
       <template v-if="form">
         <div class="row">
@@ -326,7 +326,7 @@ watch(
         <NatureSelect :model-value="nature?.name" @selected="nature = $event" />
         <NatureTable v-if="nature" :nature="nature" />
         <h2 class="h3">{{ t("items.held") }}</h2>
-        <ItemSelect id="held-item" :model-value="heldItem?.id" @selected="heldItem = $event" />
+        <ItemSelect id="held-item" :model-value="heldItem?.id" @error="handleError" @selected="heldItem = $event" />
         <h2 class="h3">{{ t("abilities.label") }}</h2>
         <AbilitySlotSelect :abilities="form.abilities" v-model="abilitySlot" />
         <template v-if="variety">
