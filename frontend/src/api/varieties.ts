@@ -1,7 +1,7 @@
 import { urlUtils } from "logitar-js";
 
 import type { SearchResults } from "@/types/search";
-import type { CreateOrReplaceVarietyPayload, Variety, SearchVarietiesPayload, UpdateVarietyPayload } from "@/types/varieties";
+import type { CreateOrReplaceVarietyPayload, SearchVarietiesPayload, UpdateVarietyPayload, Variety } from "@/types/varieties";
 import { _delete, get, patch, post } from ".";
 
 export async function createVariety(payload: CreateOrReplaceVarietyPayload): Promise<Variety> {

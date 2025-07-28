@@ -79,7 +79,7 @@ function onReset(): void {
     <TarModal :close="t('actions.close')" id="create-variety" ref="modalRef" size="large" :title="t('varieties.create')">
       <UniqueNameAlreadyUsed v-model="uniqueNameAlreadyUsed" />
       <form @submit.prevent="submit">
-        <SpeciesSelect v-model="species" />
+        <SpeciesSelect required v-model="species" />
         <DefaultCheckbox v-model="isDefault" />
         <UniqueNameInput required v-model="uniqueName" />
       </form>

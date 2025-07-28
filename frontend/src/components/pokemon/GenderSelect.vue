@@ -23,7 +23,7 @@ const props = withDefaults(
   {
     id: "gender",
     label: "pokemon.gender.select.label",
-    placeholder: "pokemon.gender.select.placeholder",
+    placeholder: "pokemon.gender.unknown",
   },
 );
 

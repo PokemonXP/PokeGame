@@ -12,7 +12,7 @@ import CountSelect from "@/components/shared/CountSelect.vue";
 import CreateVariety from "@/components/varieties/CreateVariety.vue";
 import DefaultBadge from "@/components/varieties/DefaultBadge.vue";
 import EditIcon from "@/components/icons/EditIcon.vue";
-import GenderBar from "./GenderBar.vue";
+import GenderBar from "@/components/varieties/GenderBar.vue";
 import RefreshButton from "@/components/shared/RefreshButton.vue";
 import SearchInput from "@/components/shared/SearchInput.vue";
 import SortSelect from "@/components/shared/SortSelect.vue";

@@ -8,6 +8,7 @@
   },
   "deleted": "The variety has been deleted.",
   "empty": "This list is empty.",
+  "genderRatio": "Gender Ratio (Male)",
   "genus": "Genus",
   "select": {
     "label": "Variety",

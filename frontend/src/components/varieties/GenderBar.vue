@@ -10,12 +10,12 @@ const props = defineProps<{
 }>();
 
 const isGenderUnknown = computed<boolean>(() => typeof props.gender !== "number");
-const percentage = computed<number>(() => (typeof props.gender === "number" ? props.gender / 8 : 0));
+const percentage = computed<number>(() => (typeof props.gender !== "number" || props.gender < 0 ? 0 : Math.min(props.gender, 8) / 8));
 </script>
 
 <template>
   <div>
-    <template v-if="isGenderUnknown">{{ t("pokemon.gender.select.placeholder") }}</template>
+    <template v-if="isGenderUnknown">{{ t("pokemon.gender.unknown") }}</template>
     <template v-else>
       <div class="d-flex align-items-center gap-2">
         <font-awesome-icon icon="fas fa-venus" />

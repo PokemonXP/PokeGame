@@ -8,6 +8,7 @@
   },
   "deleted": "La variété a été supprimée.",
   "empty": "Cette liste est vide.",
+  "genderRatio": "Taux de genre (mâle)",
   "genus": "Genre",
   "select": {
     "label": "Variété",
