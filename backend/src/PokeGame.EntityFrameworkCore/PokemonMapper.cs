@@ -69,6 +69,7 @@ internal class PokemonMapper
 
     EvolutionModel destination = new()
     {
+      Id = source.Id,
       Source = ToForm(source.Source),
       Target = ToForm(source.Target),
       Trigger = source.Trigger,
