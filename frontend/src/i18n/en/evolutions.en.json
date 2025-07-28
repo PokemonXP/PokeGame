@@ -9,6 +9,8 @@
   "deleted": "The evolution has been deleted.",
   "edit": "Edit Evolution",
   "empty": "This list is empty.",
+  "incoming": "Incoming",
+  "outgoing": "Outgoing",
   "requirements": {
     "friendship": "High Friendship",
     "level": "Level {level}+",

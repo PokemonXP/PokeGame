@@ -9,6 +9,8 @@
   "deleted": "L’évolution a été supprimée.",
   "edit": "Éditer l’évolution",
   "empty": "Cette liste est vide.",
+  "incoming": "Entrante",
+  "outgoing": "Sortante",
   "requirements": {
     "friendship": "Bonheur élevé",
     "level": "Niveau {level}+",
