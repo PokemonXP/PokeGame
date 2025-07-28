@@ -66,7 +66,7 @@ internal class EvolutionQuerier : IEvolutionQuerier
     }
     if (payload.Trigger.HasValue)
     {
-      builder.Where(PokemonDb.Evolutions.Trigger, Operators.IsEqualTo(payload.Trigger.Value));
+      builder.Where(PokemonDb.Evolutions.Trigger, Operators.IsEqualTo(payload.Trigger.Value.ToString()));
     }
 
     IQueryable<EvolutionEntity> query = _evolutions.FromQuery(builder).AsNoTracking()
