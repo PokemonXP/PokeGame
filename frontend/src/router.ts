@@ -49,6 +49,22 @@ const router = createRouter({
           path: "abilities/:id",
           component: () => import("./views/abilities/AbilityEdit.vue"),
         },
+        // Forms
+        {
+          name: "FormList",
+          path: "forms",
+          component: () => import("./views/forms/FormList.vue"),
+        },
+        {
+          name: "CreateForm",
+          path: "forms/create",
+          component: () => import("./views/forms/CreateForm.vue"),
+        },
+        {
+          name: "FormEdit",
+          path: "forms/:id",
+          component: () => import("./views/forms/FormEdit.vue"),
+        },
         // Items
         {
           name: "ItemList",

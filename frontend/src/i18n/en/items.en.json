@@ -18,6 +18,7 @@
   },
   "create": "New Item",
   "created": "The item has been created.",
+  "cureConfusion": "Cure Confusion",
   "delete": {
     "confirm": "To delete the item, enter its name in the field below.",
     "title": "Delete Item"
@@ -38,6 +39,7 @@
     "value": "Restore Power Points"
   },
   "price": "Price",
+  "raiseFriendship": "Raise Friendship",
   "select": {
     "label": "Item",
     "placeholder": "Select an item"

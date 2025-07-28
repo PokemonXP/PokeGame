@@ -1,5 +1,5 @@
 {
-  "allConditions": "All Status Conditions",
+  "allConditions": "Tous problèmes d’état",
   "catchMultiplier": "Facteur de capture",
   "category": {
     "label": "Catégorie",
@@ -18,6 +18,7 @@
   },
   "create": "Nouvel objet",
   "created": "L’objet a été créé.",
+  "cureConfusion": "Traite la confusion",
   "delete": {
     "confirm": "Afin de supprimer l’objet, veuillez entrer son nom dans le champs suivant.",
     "title": "Supprimer l’objet"
@@ -38,6 +39,7 @@
     "value": "Restauration de points de pouvoir"
   },
   "price": "Prix",
+  "raiseFriendship": "Augmente le Bonheur",
   "select": {
     "label": "Objet",
     "placeholder": "Sélectionnez un objet"

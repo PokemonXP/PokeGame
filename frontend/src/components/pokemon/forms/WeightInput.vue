@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import type { InputType } from "logitar-vue3-ui";
+import { parsingUtils } from "logitar-js";
 import { useI18n } from "vue-i18n";
 
 import FormInput from "@/components/forms/FormInput.vue";
 
+const { parseNumber } = parsingUtils;
 const { t } = useI18n();
 
 withDefaults(
@@ -11,20 +13,23 @@ withDefaults(
     id?: string;
     label?: string;
     max?: number | string;
-    modelValue?: string;
+    min?: number | string;
+    modelValue?: number | string;
     required?: boolean | string;
+    step?: number | string;
     type?: InputType;
   }>(),
   {
-    id: "url",
-    label: "url",
-    max: 2048,
-    type: "url",
+    id: "weight",
+    label: "pokemon.size.weight.label",
+    min: 0.1,
+    step: 0.1,
+    type: "number",
   },
 );
 
 defineEmits<{
-  (e: "update:model-value", value: string): void;
+  (e: "update:model-value", number: number): void;
 }>();
 </script>
 
@@ -32,17 +37,16 @@ defineEmits<{
   <FormInput
     :id="id"
     :label="t(label)"
+    :min="min"
     :max="max"
-    :model-value="modelValue"
+    :model-value="modelValue?.toString()"
     :required="required"
+    :step="step"
     :type="type"
-    @update:model-value="$emit('update:model-value', $event)"
+    @update:model-value="$emit('update:model-value', parseNumber($event) ?? 0)"
   >
     <template #append>
-      <a v-if="modelValue" :href="modelValue" target="_blank" class="btn btn-info">
-        <font-awesome-icon icon="fas fa-arrow-up-right-from-square" />
-      </a>
-      <slot name="append"></slot>
+      <span class="input-group-text">kg</span>
     </template>
   </FormInput>
 </template>

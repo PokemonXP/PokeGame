@@ -24,7 +24,8 @@
     "table": {
       "open": "Table",
       "title": "Experience Table"
-    }
+    },
+    "yield": "Gain d’expérience"
   },
   "flavor": {
     "options": {
@@ -251,7 +252,7 @@
     "label": "Énergie"
   },
   "statistic": {
-    "base": "Base Values",
+    "base": "Valeurs de base",
     "critical": "Critique",
     "effort": {
       "title": "Effort Values (EVs)",
@@ -269,6 +270,7 @@
     },
     "randomize": "Randomize",
     "select": {
+      "label": "Statistique",
       "options": {
         "Accuracy": "Précision",
         "Attack": "Attaque",
@@ -278,13 +280,15 @@
         "SpecialAttack": "Attaque Sp.",
         "SpecialDefense": "Défense Sp.",
         "Speed": "Vitesse"
-      }
+      },
+      "placeholder": "Sélectionnez une statistique Pokémon"
     },
     "stage": {
       "format": "Étages de {stat}"
     },
     "title": "Statistiques",
-    "total": "Total Values"
+    "total": "Total Values",
+    "yield": "Gain d’Effort Values (EVs)"
   },
   "status": {
     "condition": {

@@ -24,7 +24,8 @@
     "table": {
       "open": "Table",
       "title": "Experience Table"
-    }
+    },
+    "yield": "Experience Yield"
   },
   "flavor": {
     "options": {
@@ -269,6 +270,7 @@
     },
     "randomize": "Randomize",
     "select": {
+      "label": "Statistic",
       "options": {
         "Accuracy": "Accuracy",
         "Attack": "Attack",
@@ -278,13 +280,15 @@
         "SpecialAttack": "Sp. Attack",
         "SpecialDefense": "Sp. Defense",
         "Speed": "Speed"
-      }
+      },
+      "placeholder": "Select a Pokémon statistic"
     },
     "stage": {
       "format": "{stat} Stages"
     },
     "title": "Statistics",
-    "total": "Total Values"
+    "total": "Total Values",
+    "yield": "Effort Value (EV) Yield"
   },
   "status": {
     "condition": {

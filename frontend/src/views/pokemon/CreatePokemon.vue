@@ -12,7 +12,6 @@ import EggCheckbox from "@/components/pokemon/creation/EggCheckbox.vue";
 import EggCyclesInput from "@/components/pokemon/EggCyclesInput.vue";
 import ExperienceInput from "@/components/pokemon/creation/ExperienceInput.vue";
 import ExperienceTableModal from "@/components/pokemon/ExperienceTableModal.vue";
-import FormSelect from "@/components/pokemon/creation/FormSelect.vue";
 import FriendshipInput from "@/components/pokemon/FriendshipInput.vue";
 import GenderSelect from "@/components/pokemon/GenderSelect.vue";
 import GrowthRateSelect from "@/components/species/GrowthRateSelect.vue";
@@ -23,11 +22,13 @@ import NatureSelect from "@/components/pokemon/creation/NatureSelect.vue";
 import NatureTable from "@/components/pokemon/creation/NatureTable.vue";
 import NicknameInput from "@/components/pokemon/NicknameInput.vue";
 import NotesTextarea from "@/components/shared/NotesTextarea.vue";
+import PokemonFormSelect from "@/components/pokemon/forms/PokemonFormSelect.vue";
 import PokemonTypeSelect from "@/components/pokemon/PokemonTypeSelect.vue";
 import ProgressTable from "@/components/pokemon/creation/ProgressTable.vue";
 import ShinyCheckbox from "@/components/pokemon/ShinyCheckbox.vue";
 import SizeEdit from "@/components/pokemon/creation/SizeEdit.vue";
 import SpeciesSelect from "@/components/species/SpeciesSelect.vue";
+import SpeciesVarietySelect from "@/components/varieties/SpeciesVarietySelect.vue";
 import StaminaInput from "@/components/pokemon/StaminaInput.vue";
 import SubmitButton from "@/components/shared/SubmitButton.vue";
 import TotalStatisticsView from "@/components/pokemon/creation/TotalStatisticsView.vue";
@@ -35,14 +36,12 @@ import UniqueNameAlreadyUsed from "@/components/shared/UniqueNameAlreadyUsed.vue
 import UniqueNameInput from "@/components/shared/UniqueNameInput.vue";
 import UrlInput from "@/components/shared/UrlInput.vue";
 import VarietyMoveTable from "@/components/pokemon/creation/VarietyMoveTable.vue";
-import VarietySelect from "@/components/varieties/VarietySelect.vue";
 import VitalityInput from "@/components/pokemon/VitalityInput.vue";
 import type { AbilitySlot } from "@/types/abilities";
+import type { BaseStatistics, Form } from "@/types/pokemon-forms";
 import type {
-  BaseStatistics,
   CreatePokemonPayload,
   EffortValues,
-  Form,
   IndividualValues,
   Pokemon,
   PokemonGender,
@@ -264,8 +263,8 @@ watch(
       <h2 class="h3">{{ t("pokemon.identification.title") }}</h2>
       <div class="row">
         <SpeciesSelect class="col" :model-value="species?.id" required @error="handleError" @selected="onSpeciesSelected" />
-        <VarietySelect class="col" :model-value="variety?.id" :species="species" @error="handleError" @selected="onVarietySelected" />
-        <FormSelect class="col" :model-value="form?.id" :variety="variety" @error="handleError" @selected="onFormSelected" />
+        <SpeciesVarietySelect class="col" :model-value="variety?.id" required :species="species" @error="handleError" @selected="onVarietySelected" />
+        <PokemonFormSelect class="col" :model-value="form?.id" :variety="variety" @error="handleError" @selected="onFormSelected" />
       </div>
       <template v-if="form">
         <div class="row">

@@ -14,14 +14,14 @@ import SubmitButton from "@/components/shared/SubmitButton.vue";
 import UniqueNameAlreadyUsed from "@/components/shared/UniqueNameAlreadyUsed.vue";
 import UniqueNameInput from "@/components/shared/UniqueNameInput.vue";
 import VarietyIcon from "@/components/icons/VarietyIcon.vue";
-import type { Form, Pokemon, PokemonSize, UpdatePokemonPayload } from "@/types/pokemon";
+import type { Form } from "@/types/pokemon-forms";
 import type { Item } from "@/types/items";
+import type { Pokemon, PokemonSize, UpdatePokemonPayload } from "@/types/pokemon";
 import type { Species } from "@/types/species";
 import type { Variety } from "@/types/varieties";
 import { ErrorCodes, StatusCodes } from "@/types/api";
 import { calculateSize, getMaximumExperience } from "@/helpers/pokemon";
 import { formatForm, formatSpecies, formatVariety } from "@/helpers/format";
-import { getFormUrl } from "@/helpers/cms";
 import { isError } from "@/helpers/error";
 import { updatePokemon } from "@/api/pokemon";
 import { useForm } from "@/forms";
@@ -118,7 +118,7 @@ watch(
             <RouterLink :to="{ name: 'VarietyEdit', params: { id: variety.id } }" target="_blank"><VarietyIcon /> {{ formatVariety(variety) }}</RouterLink>
           </td>
           <td>
-            <a :href="getFormUrl(form)" target="_blank"><FormIcon /> {{ formatForm(form) }}</a>
+            <RouterLink :to="{ name: 'FormEdit', params: { id: form.id } }" target="_blank"><FormIcon /> {{ formatForm(form) }}</RouterLink>
           </td>
         </tr>
         <tr>

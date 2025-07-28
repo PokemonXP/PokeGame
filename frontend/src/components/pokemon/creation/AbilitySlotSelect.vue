@@ -3,7 +3,7 @@ import { watch } from "vue";
 
 import AbilityCard from "./AbilityCard.vue";
 import type { AbilitySlot } from "@/types/abilities";
-import type { FormAbilities } from "@/types/pokemon";
+import type { FormAbilities } from "@/types/pokemon-forms";
 import { randomInteger } from "@/helpers/random";
 
 const props = defineProps<{

@@ -5,7 +5,8 @@ import NotesTextarea from "@/components/shared/NotesTextarea.vue";
 import SpriteInput from "@/components/shared/SpriteInput.vue";
 import SubmitButton from "@/components/shared/SubmitButton.vue";
 import UrlInput from "@/components/shared/UrlInput.vue";
-import type { Form, Pokemon, UpdatePokemonPayload } from "@/types/pokemon";
+import type { Form } from "@/types/pokemon-forms";
+import type { Pokemon, UpdatePokemonPayload } from "@/types/pokemon";
 import { updatePokemon } from "@/api/pokemon";
 import { useForm } from "@/forms";
 

@@ -14,7 +14,7 @@ import type {
   UpdatePokemonPayload,
 } from "@/types/pokemon";
 import type { SearchResults } from "@/types/search";
-import { _delete, get, patch, post } from "..";
+import { _delete, get, patch, post } from ".";
 
 export async function catchPokemon(id: string, payload: CatchPokemonPayload): Promise<Pokemon> {
   const url: string = new urlUtils.UrlBuilder({ path: "/pokemon/{id}/catch" }).setParameter("id", id).buildRelative();

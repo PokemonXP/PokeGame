@@ -1,12 +1,12 @@
-import type { Ability, AbilitySlot } from "../abilities";
-import type { Aggregate, Change } from "../aggregate";
-import type { Item } from "../items";
-import type { Move, MoveLearningMethod } from "../moves";
-import type { Region } from "../regions";
-import type { SearchPayload, SortOption } from "../search";
-import type { GrowthRate } from "../species";
-import type { Trainer } from "../trainers";
-import type { Variety } from "../varieties";
+import type { AbilitySlot } from "./abilities";
+import type { Aggregate, Change } from "./aggregate";
+import type { Form } from "./pokemon-forms";
+import type { GrowthRate } from "./species";
+import type { Item } from "./items";
+import type { Move, MoveLearningMethod } from "./moves";
+import type { Region } from "./regions";
+import type { SearchPayload, SortOption } from "./search";
+import type { Trainer } from "./trainers";
 
 export const EFFORT_VALUE_MAXIMUM: number = 255;
 export const EFFORT_VALUE_MINIMUM: number = 0;
@@ -18,16 +18,6 @@ export const INDIVIDUAL_VALUE_LIMIT: number = 6 * INDIVIDUAL_VALUE_MAXIMUM;
 
 export const LEVEL_MAXIMUM: number = 100;
 export const LEVEL_MINIMUM: number = 1;
-
-export type BaseStatistics = {
-  hp: number;
-  attack: number;
-  defense: number;
-  specialAttack: number;
-  specialDefense: number;
-  speed: number;
-};
-
 export type BattleStatistic = "Accuracy" | "Attack" | "Defense" | "Evasion" | "SpecialAttack" | "SpecialDefense" | "Speed";
 
 export type CatchPokemonPayload = {
@@ -77,36 +67,6 @@ export type EffortValues = {
 };
 
 export type Flavor = "Bitter" | "Dry" | "Sour" | "Spicy" | "Sweet";
-
-export type Form = Aggregate & {
-  variety: Variety;
-  isDefault: boolean;
-  uniqueName: string;
-  displayName?: string | null;
-  description?: string | null;
-  isBattleOnly: boolean;
-  isMega: boolean;
-  height: number;
-  weight: number;
-  types: FormTypes;
-  abilities: FormAbilities;
-  baseStatistics: BaseStatistics;
-  yield: Yield;
-  sprites: Sprites;
-  url?: string | null;
-  notes?: string | null;
-};
-
-export type FormAbilities = {
-  primary: Ability;
-  secondary?: Ability | null;
-  hidden?: Ability | null;
-};
-
-export type FormTypes = {
-  primary: PokemonType;
-  secondary?: PokemonType | null;
-};
 
 export type IndividualValues = {
   hp: number;
@@ -271,13 +231,6 @@ export type SearchPokemonPayload = SearchPayload & {
   sort: PokemonSortOption[];
 };
 
-export type Sprites = {
-  default: string;
-  shiny: string;
-  alternative?: string | null;
-  alternativeShiny?: string | null;
-};
-
 export type StatisticChanges = {
   hp: number;
   attack: number;
@@ -320,14 +273,4 @@ export type UpdatePokemonPayload = {
   sprite?: Change<string>;
   url?: Change<string>;
   notes?: Change<string>;
-};
-
-export type Yield = {
-  experience: number;
-  hp: number;
-  attack: number;
-  defense: number;
-  specialAttack: number;
-  specialDefense: number;
-  speed: number;
 };

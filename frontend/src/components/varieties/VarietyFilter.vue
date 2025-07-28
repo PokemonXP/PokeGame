@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import type { SelectOption } from "logitar-vue3-ui";
-import { arrayUtils, parsingUtils } from "logitar-js";
+import { TarSelect, type SelectOption } from "logitar-vue3-ui";
+import { arrayUtils } from "logitar-js";
 import { computed, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 
-import FormSelect from "@/components/forms/FormSelect.vue";
 import type { SearchResults } from "@/types/search";
 import type { SearchVarietiesPayload } from "@/types/varieties";
 import type { Variety } from "@/types/varieties";
@@ -12,17 +11,14 @@ import { formatVariety } from "@/helpers/format";
 import { searchVarieties } from "@/api/varieties";
 
 const { orderBy } = arrayUtils;
-const { parseBoolean } = parsingUtils;
 const { t } = useI18n();
 
-const props = withDefaults(
+withDefaults(
   defineProps<{
-    disabled?: boolean | string;
     id?: string;
     label?: string;
     modelValue?: string;
     placeholder?: string;
-    required?: boolean | string;
   }>(),
   {
     id: "variety",
@@ -31,10 +27,8 @@ const props = withDefaults(
   },
 );
 
-const selectRef = ref<InstanceType<typeof FormSelect> | null>(null);
 const varieties = ref<Variety[]>([]);
 
-const isDisabled = computed<boolean>(() => parseBoolean(props.disabled) ?? false);
 const options = computed<SelectOption[]>(() =>
   orderBy(
     varieties.value.map((variety) => ({
@@ -59,36 +53,28 @@ function onModelValueUpdate(id: string): void {
 }
 
 onMounted(async () => {
-  try {
-    const payload: SearchVarietiesPayload = {
-      ids: [],
-      search: { terms: [], operator: "And" },
-      sort: [],
-      limit: 0,
-      skip: 0,
-    };
-    const results: SearchResults<Variety> = await searchVarieties(payload);
-    varieties.value = [...results.items];
-  } catch (e: unknown) {
-    emit("error", e);
-  }
+  const payload: SearchVarietiesPayload = {
+    ids: [],
+    search: { terms: [], operator: "And" },
+    sort: [],
+    limit: 0,
+    skip: 0,
+  };
+  const results: SearchResults<Variety> = await searchVarieties(payload);
+  varieties.value = [...results.items];
 });
 </script>
 
 <template>
-  <FormSelect
-    :disabled="isDisabled || !options.length"
+  <TarSelect
+    class="mb-3"
+    :disabled="!options.length"
+    floating
     :id="id"
     :label="label ? t(label) : undefined"
     :model-value="modelValue"
-    ref="selectRef"
     :options="options"
     :placeholder="placeholder ? t(placeholder) : undefined"
-    :required="required"
     @update:model-value="onModelValueUpdate"
-  >
-    <template #append>
-      <slot name="append"></slot>
-    </template>
-  </FormSelect>
+  />
 </template>

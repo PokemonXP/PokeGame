@@ -8,7 +8,10 @@
   "deleted": "La capacité a été supprimée.",
   "empty": "Cette liste est vide.",
   "label": "Capacité",
-  "location": "Emplacement",
+  "select": {
+    "label": "Capacité",
+    "placeholder": "Sélectionnez une capacité"
+  },
   "slots": {
     "Hidden": "Cachée",
     "Primary": "Primaire",

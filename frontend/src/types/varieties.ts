@@ -1,5 +1,5 @@
 import type { Aggregate, Change } from "./aggregate";
-import type { Form } from "./pokemon";
+import type { Form } from "./pokemon-forms";
 import type { Move } from "./moves";
 import type { SearchPayload, SortOption } from "./search";
 import type { Species } from "./species";

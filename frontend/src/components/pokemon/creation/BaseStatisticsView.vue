@@ -2,7 +2,7 @@
 import { TarInput } from "logitar-vue3-ui";
 import { useI18n } from "vue-i18n";
 
-import type { BaseStatistics } from "@/types/pokemon";
+import type { BaseStatistics } from "@/types/pokemon-forms";
 
 const items: (keyof BaseStatistics)[] = ["hp", "attack", "defense", "specialAttack", "specialDefense", "speed"];
 const { t } = useI18n();

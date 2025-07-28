@@ -57,7 +57,25 @@ async function submit(): Promise<void> {
                   guardTurns: 0,
                 }
               : undefined,
-          berry: category.value === "Berry" ? {} : undefined,
+          berry:
+            category.value === "Berry"
+              ? {
+                  healing: 0,
+                  isHealingPercentage: false,
+                  allConditions: false,
+                  cureConfusion: false,
+                  powerPoints: 0,
+                  attack: 0,
+                  defense: 0,
+                  specialAttack: 0,
+                  specialDefense: 0,
+                  speed: 0,
+                  accuracy: 0,
+                  evasion: 0,
+                  critical: 0,
+                  raiseFriendship: false,
+                }
+              : undefined,
           keyItem: category.value === "KeyItem" ? {} : undefined,
           material: category.value === "Material" ? {} : undefined,
           medicine:

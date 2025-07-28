@@ -66,7 +66,6 @@ async function submit(): Promise<void> {
         if ((typeof props.variety.genderRatio !== "number") !== isGenderUnknown.value || props.variety.genderRatio !== genderRatio.value) {
           payload.genderRatio = { value: isGenderUnknown.value ? undefined : genderRatio.value };
         }
-        // TODO(fpion): genderRatio
         const variety: Variety = await updateVariety(props.variety.id, payload);
         reinitialize();
         emit("updated", variety);
