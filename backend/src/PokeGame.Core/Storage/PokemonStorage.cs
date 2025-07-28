@@ -1,4 +1,6 @@
-﻿using Logitar.EventSourcing;
+﻿using FluentValidation;
+using FluentValidation.Results;
+using Logitar.EventSourcing;
 using PokeGame.Core.Pokemon;
 using PokeGame.Core.Storage.Events;
 using PokeGame.Core.Trainers;
@@ -16,23 +18,6 @@ public class PokemonStorage : AggregateRoot
   private readonly Dictionary<PokemonSlot, PokemonId> _pokemon = [];
   public IReadOnlyDictionary<PokemonSlot, PokemonId> Pokemon => _pokemon.AsReadOnly();
 
-  private readonly List<PokemonId> _party = [];
-  public IReadOnlyCollection<PokemonId> Party => _party.AsReadOnly();
-
-  private readonly Dictionary<Box, Dictionary<Position, PokemonId>> _boxes = [];
-  public IReadOnlyDictionary<Box, IReadOnlyDictionary<Position, PokemonId>> Boxes
-  {
-    get
-    {
-      Dictionary<Box, IReadOnlyDictionary<Position, PokemonId>> boxes = new(capacity: _boxes.Count);
-      foreach (var box in _boxes)
-      {
-        boxes[box.Key] = box.Value.ToDictionary(x => x.Key, x => x.Value).AsReadOnly();
-      }
-      return boxes.AsReadOnly();
-    }
-  }
-
   public PokemonStorage() : base()
   {
   }
@@ -41,35 +26,32 @@ public class PokemonStorage : AggregateRoot
   {
   }
 
+  protected virtual void Handle(PokemonStored @event)
+  {
+    if (_slots.TryGetValue(@event.PokemonId, out PokemonSlot? previousSlot))
+    {
+      _pokemon.Remove(previousSlot);
+    }
+
+    _slots[@event.PokemonId] = @event.Slot;
+    _pokemon[@event.Slot] = @event.PokemonId;
+  }
+
   public void Add(Specimen pokemon, ActorId? actorId = null)
   {
-    if (pokemon.Ownership is null || pokemon.Ownership.TrainerId != TrainerId)
-    {
-      throw new ArgumentException($"The Pokémon current trainer 'Id={pokemon.Ownership?.TrainerId.Value ?? "<null>"}' must be 'Id={TrainerId}'.", nameof(pokemon));
-    }
-    else if (!_slots.ContainsKey(pokemon.Id))
+    ValidateOwnership(pokemon);
+
+    if (!_slots.ContainsKey(pokemon.Id))
     {
       PokemonSlot slot = FindFirstAvailable();
+      pokemon.Move(slot, actorId);
       Raise(new PokemonStored(pokemon.Id, slot), actorId);
     }
   }
-  protected virtual void Handle(PokemonStored @event)
-  {
-    _slots[@event.PokemonId] = @event.Slot;
-    _pokemon[@event.Slot] = @event.PokemonId;
 
-    if (@event.Slot.Box is null)
-    {
-      _party.Add(@event.PokemonId);
-    }
-  }
-
-  public void Deposit(Specimen pokemon, IEnumerable<Specimen> party, ActorId? actorId = null)
+  public void Deposit(Specimen pokemon, IReadOnlyDictionary<PokemonId, Specimen> party, ActorId? actorId = null)
   {
-    if (pokemon.Ownership is null || pokemon.Ownership.TrainerId != TrainerId)
-    {
-      throw new ArgumentException($"The Pokémon current trainer 'Id={pokemon.Ownership?.TrainerId.Value ?? "<null>"}' must be 'Id={TrainerId}'.", nameof(pokemon));
-    }
+    ValidateOwnership(pokemon);
 
     PokemonSlot existingSlot = _slots[pokemon.Id];
     if (existingSlot.Box is not null)
@@ -77,46 +59,105 @@ public class PokemonStorage : AggregateRoot
       return;
     }
 
-    if (!pokemon.IsEgg)
+    IReadOnlyCollection<PokemonId> partyIds = GetParty();
+    if (!pokemon.IsEgg && !partyIds.Any(id => id != pokemon.Id && !party[id].IsEgg))
     {
-      // TODO(fpion): s’assurer qu’il y a au moins un autre Pokémon non-œuf dans le groupe.
+      ValidationFailure failure = new("PokemonId", "The trainer Pokémon party must contain at least another non-egg Pokémon.", pokemon.Id.ToGuid())
+      {
+        ErrorCode = "NonEmptyPartyValidator"
+      };
+      throw new ValidationException([failure]);
     }
 
-    // TODO(fpion): décaler la position (-1) des autres Pokémon du party après le Pokémon déposé.
+    PokemonSlot newSlot = FindBoxFirstAvailable();
 
-    // TODO(fpion): raise event
+    foreach (PokemonId memberId in partyIds)
+    {
+      Specimen member = party[memberId];
+      if (!member.Equals(pokemon))
+      {
+        PokemonSlot memberSlot = _slots[member.Id];
+        if (memberSlot.Position.Value > existingSlot.Position.Value)
+        {
+          memberSlot = new PokemonSlot(new Position(memberSlot.Position.Value - 1));
+          member.Move(memberSlot, actorId);
+          Raise(new PokemonStored(member.Id, memberSlot), actorId);
+        }
+      }
+    }
+
+    pokemon.Deposit(newSlot, actorId);
+    Raise(new PokemonStored(pokemon.Id, newSlot), actorId);
   }
+
+  public IReadOnlyDictionary<Box, IReadOnlyDictionary<Position, PokemonId>> GetBoxes()
+  {
+    Dictionary<Box, Dictionary<Position, PokemonId>> boxes = new(capacity: Box.Count);
+    foreach (KeyValuePair<PokemonSlot, PokemonId> pokemon in _pokemon)
+    {
+      if (pokemon.Key.Box is not null)
+      {
+        if (!boxes.TryGetValue(pokemon.Key.Box, out Dictionary<Position, PokemonId>? box))
+        {
+          box = [];
+          boxes[pokemon.Key.Box] = box;
+        }
+        box[pokemon.Key.Position] = pokemon.Value;
+      }
+    }
+    return boxes.ToDictionary(x => x.Key, x => (IReadOnlyDictionary<Position, PokemonId>)x.Value.AsReadOnly()).AsReadOnly();
+  }
+  public IReadOnlyCollection<PokemonId> GetParty() => _pokemon
+    .Where(x => x.Key.Box is null)
+    .OrderBy(x => x.Key.Position.Value)
+    .Select(x => x.Value).ToList().AsReadOnly();
 
   private PokemonSlot FindFirstAvailable()
   {
-    var position = FindPartyFirstAvailable();
+    Position? position = FindPartyFirstAvailable();
     return position is null ? FindBoxFirstAvailable() : new PokemonSlot(position);
   }
   private Position? FindPartyFirstAvailable()
   {
-    var count = _party.Count;
+    int count = GetParty().Count;
     return count < PokemonSlot.PartySize ? new Position(count) : null;
   }
   private PokemonSlot FindBoxFirstAvailable()
   {
-    for (var boxNumber = 0; boxNumber < Box.Count; boxNumber++)
+    IReadOnlyDictionary<Box, IReadOnlyDictionary<Position, PokemonId>> boxes = GetBoxes();
+
+    for (int boxNumber = 0; boxNumber < Box.Count; boxNumber++)
     {
       Box box = new(boxNumber);
-      if (!_boxes.TryGetValue(box, out var positions))
+      if (!boxes.TryGetValue(box, out IReadOnlyDictionary<Position, PokemonId>? positions))
       {
         return new PokemonSlot(new Position(0), box);
       }
 
-      for (var positionNumber = 0; positionNumber < Box.Size; positionNumber++)
+      for (int positionNumber = 0; positionNumber < Box.Size; positionNumber++)
       {
         Position position = new(positionNumber);
         if (!positions.ContainsKey(position))
         {
           return new PokemonSlot(position, box);
+
         }
       }
     }
 
     throw new PokemonStorageFullException(this);
+  }
+
+  private void ValidateOwnership(Specimen pokemon)
+  {
+    if (pokemon.Ownership is null || pokemon.Ownership.TrainerId != TrainerId)
+    {
+      ValidationFailure failure = new("PokemonId", $"The Pokémon current trainer must be 'Id={TrainerId.ToGuid()}'.", pokemon.Id.ToGuid())
+      {
+        CustomState = new { TrainerId = pokemon.Ownership?.TrainerId.ToGuid() },
+        ErrorCode = "OwnershipValidator",
+      };
+      throw new ValidationException([failure]);
+    }
   }
 }

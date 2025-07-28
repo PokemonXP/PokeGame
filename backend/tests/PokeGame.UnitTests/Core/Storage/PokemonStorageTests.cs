@@ -69,8 +69,8 @@ public class PokemonStorageTests
     PokemonSlot slot = new(new Position(0));
     Assert.Equal(slot, _storage.Slots[_pokemon.Id]);
     Assert.Equal(_pokemon.Id, _storage.Pokemon[slot]);
-    Assert.Equal([_pokemon.Id], _storage.Party);
-    Assert.Empty(_storage.Boxes);
+    Assert.Equal([_pokemon.Id], _storage.GetParty());
+    Assert.Empty(_storage.GetBoxes());
 
     _storage.ClearChanges();
     _storage.Add(_pokemon);
