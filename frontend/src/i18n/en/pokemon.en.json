@@ -287,7 +287,8 @@
       "format": "{stat} Stages"
     },
     "title": "Statistics",
-    "total": "Total Values"
+    "total": "Total Values",
+    "yield": "Effort Value (EV) Yield"
   },
   "status": {
     "condition": {
