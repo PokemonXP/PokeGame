@@ -9,6 +9,7 @@ import DeletePokemonForm from "@/components/pokemon/forms/DeletePokemonForm.vue"
 import PokemonFormGeneral from "@/components/pokemon/forms/PokemonFormGeneral.vue";
 import PokemonFormMetadata from "@/components/pokemon/forms/PokemonFormMetadata.vue";
 import PokemonFormSprites from "@/components/pokemon/forms/PokemonFormSprites.vue";
+import PokemonFormStatistics from "@/components/pokemon/forms/PokemonFormStatistics.vue";
 import StatusDetail from "@/components/shared/StatusDetail.vue";
 import type { Breadcrumb } from "@/types/components";
 import type { Form } from "@/types/pokemon-forms";
@@ -73,6 +74,14 @@ function onSpritesUpdate(updated: Form): void {
   }
   toasts.success("forms.updated");
 }
+function onStatisticsUpdate(updated: Form): void {
+  if (form.value) {
+    updateAggregate(updated);
+    form.value.baseStatistics = { ...updated.baseStatistics };
+    form.value.yield = { ...updated.yield };
+  }
+  toasts.success("forms.updated");
+}
 
 onMounted(async () => {
   isLoading.value = true;
@@ -105,7 +114,10 @@ onMounted(async () => {
         <TarTab id="general" :title="t('general')">
           <PokemonFormGeneral :form="form" @error="handleError" @updated="onGeneralUpdated" />
         </TarTab>
-        <TarTab active id="sprites" :title="t('forms.sprites.title')">
+        <TarTab active id="statistics" :title="t('pokemon.statistic.title')">
+          <PokemonFormStatistics :form="form" @error="handleError" @updated="onStatisticsUpdate" />
+        </TarTab>
+        <TarTab id="sprites" :title="t('forms.sprites.title')">
           <PokemonFormSprites :form="form" @error="handleError" @updated="onSpritesUpdate" />
         </TarTab>
         <TarTab id="metadata" :title="t('metadata')">

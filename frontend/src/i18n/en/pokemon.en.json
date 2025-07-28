@@ -24,7 +24,8 @@
     "table": {
       "open": "Table",
       "title": "Experience Table"
-    }
+    },
+    "yield": "Experience Yield"
   },
   "flavor": {
     "options": {
