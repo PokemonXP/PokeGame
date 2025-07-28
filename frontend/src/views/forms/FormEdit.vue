@@ -53,6 +53,7 @@ function onGeneralUpdated(updated: Form): void {
     form.value.weight = updated.weight;
     form.value.types = { ...updated.types };
     form.value.abilities = { ...updated.abilities };
+    form.value.yield.experience = updated.yield.experience;
   }
   toasts.success("forms.updated");
 }

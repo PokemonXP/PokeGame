@@ -6,6 +6,7 @@ import AbilitySelect from "@/components/abilities/AbilitySelect.vue";
 import BattleOnlyCheckbox from "./BattleOnlyCheckbox.vue";
 import DescriptionTextarea from "@/components/shared/DescriptionTextarea.vue";
 import DisplayNameInput from "@/components/shared/DisplayNameInput.vue";
+import ExperienceYieldInput from "./ExperienceYieldInput.vue";
 import HeightInput from "./HeightInput.vue";
 import MegaEvolutionCheckbox from "./MegaEvolutionCheckbox.vue";
 import PokemonTypeSelect from "@/components/pokemon/PokemonTypeSelect.vue";
@@ -14,13 +15,13 @@ import UniqueNameAlreadyUsed from "@/components/shared/UniqueNameAlreadyUsed.vue
 import UniqueNameInput from "@/components/shared/UniqueNameInput.vue";
 import VarietySelect from "@/components/varieties/VarietySelect.vue";
 import WeightInput from "./WeightInput.vue";
+import type { Ability } from "@/types/abilities";
 import type { Form, UpdateFormPayload } from "@/types/pokemon-forms";
 import type { PokemonType } from "@/types/pokemon";
 import { ErrorCodes, StatusCodes } from "@/types/api";
 import { isError } from "@/helpers/error";
 import { updateForm } from "@/api/forms";
 import { useForm } from "@/forms";
-import type { Ability } from "@/types/abilities";
 
 const { t } = useI18n();
 
@@ -30,6 +31,7 @@ const props = defineProps<{
 
 const description = ref<string>("");
 const displayName = ref<string>("");
+const experienceYield = ref<number>(0);
 const height = ref<number>(0);
 const hiddenAbility = ref<Ability>();
 const isBattleOnly = ref<boolean>(false);
@@ -82,6 +84,9 @@ async function submit(): Promise<void> {
             hidden: hiddenAbility.value?.id,
           };
         }
+        if (props.form.yield.experience !== experienceYield.value) {
+          payload.yield = { ...props.form.yield, experience: experienceYield.value };
+        }
         const form: Form = await updateForm(props.form.id, payload);
         reinitialize();
         emit("updated", form);
@@ -103,6 +108,7 @@ watch(
   (form) => {
     description.value = form.description ?? "";
     displayName.value = form.displayName ?? "";
+    experienceYield.value = form.yield.experience;
     height.value = form.height / 10;
     hiddenAbility.value = form.abilities.hidden ? { ...form.abilities.hidden } : undefined;
     isBattleOnly.value = form.isBattleOnly;
@@ -164,6 +170,7 @@ watch(
       </div>
       <div class="row">
         <AbilitySelect class="col" id="hidden-ability" label="abilities.slots.Hidden" :model-value="hiddenAbility?.id" @selected="hiddenAbility = $event" />
+        <ExperienceYieldInput class="col" v-model="experienceYield" />
       </div>
       <DescriptionTextarea v-model="description" />
       <div class="mb-3">
