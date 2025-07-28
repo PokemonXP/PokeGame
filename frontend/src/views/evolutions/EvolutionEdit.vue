@@ -167,7 +167,7 @@ watch(
         <HighFriendshipCheckbox v-model="friendship" />
         <div class="row">
           <ItemSelect class="col" id="held-item" :items="items" label="items.held" :model-value="heldItem?.id" @selected="heldItem = $event" />
-          <MoveSelect class="col" id="known-move" label="moves.known" :model-value="knownMove?.id" @selected="knownMove = $event" />
+          <MoveSelect class="col" id="known-move" label="moves.known" :model-value="knownMove?.id" @error="handleError" @selected="knownMove = $event" />
         </div>
         <div class="row">
           <LocationInput class="col" v-model="location" />
