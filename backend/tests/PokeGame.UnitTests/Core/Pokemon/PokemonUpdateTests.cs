@@ -43,6 +43,26 @@ public class PokemonUpdateTests
       PokemonGender.Male);
   }
 
+  [Fact(DisplayName = "It should handle Friendship changes correctly.")]
+  public void Given_Pokemon_When_Friendship_Then_Changed()
+  {
+    ActorId actorId = ActorId.NewId();
+
+    Friendship friendship = new(200);
+    _pokemon.Friendship = friendship;
+    Assert.Equal(friendship, _pokemon.Friendship);
+    _pokemon.Update(actorId);
+    Assert.True(_pokemon.HasChanges);
+    Assert.Contains(_pokemon.Changes, change => change is PokemonUpdated updated && updated.ActorId == actorId && updated.Friendship == friendship);
+
+    _pokemon.ClearChanges();
+    _pokemon.Friendship = friendship;
+    Assert.Equal(friendship, _pokemon.Friendship);
+    _pokemon.Update(actorId);
+    Assert.False(_pokemon.HasChanges);
+    Assert.Empty(_pokemon.Changes);
+  }
+
   [Fact(DisplayName = "It should handle Notes changes correctly.")]
   public void Given_Pokemon_When_Notes_Then_Changed()
   {
@@ -67,6 +87,26 @@ public class PokemonUpdateTests
     _pokemon.Update(actorId);
     Assert.True(_pokemon.HasChanges);
     Assert.Contains(_pokemon.Changes, change => change is PokemonUpdated updated && updated.ActorId == actorId && updated.Notes == new Change<Notes>(null));
+  }
+
+  [Fact(DisplayName = "It should handle Shinyness changes correctly.")]
+  public void Given_Pokemon_When_Shinyness_Then_Changed()
+  {
+    ActorId actorId = ActorId.NewId();
+
+    bool isShiny = !_pokemon.IsShiny;
+    _pokemon.IsShiny = isShiny;
+    Assert.Equal(isShiny, _pokemon.IsShiny);
+    _pokemon.Update(actorId);
+    Assert.True(_pokemon.HasChanges);
+    Assert.Contains(_pokemon.Changes, change => change is PokemonUpdated updated && updated.ActorId == actorId && updated.IsShiny == isShiny);
+
+    _pokemon.ClearChanges();
+    _pokemon.IsShiny = isShiny;
+    Assert.Equal(isShiny, _pokemon.IsShiny);
+    _pokemon.Update(actorId);
+    Assert.False(_pokemon.HasChanges);
+    Assert.Empty(_pokemon.Changes);
   }
 
   [Fact(DisplayName = "It should handle Sprite changes correctly.")]
@@ -95,6 +135,55 @@ public class PokemonUpdateTests
     Assert.Contains(_pokemon.Changes, change => change is PokemonUpdated updated && updated.ActorId == actorId && updated.Sprite == new Change<Url>(null));
   }
 
+  [Fact(DisplayName = "It should handle Stamina changes correctly.")]
+  public void Given_Pokemon_When_Stamina_Then_Changed()
+  {
+    ActorId actorId = ActorId.NewId();
+
+    int stamina = _pokemon.Stamina / 2;
+    _pokemon.Stamina = stamina;
+    Assert.Equal(stamina, _pokemon.Stamina);
+    _pokemon.Update(actorId);
+    Assert.Contains(_pokemon.Changes, change => change is PokemonUpdated updated && updated.ActorId == actorId && updated.Stamina == stamina);
+
+    _pokemon.ClearChanges();
+    _pokemon.Stamina = stamina;
+    Assert.Equal(stamina, _pokemon.Stamina);
+    _pokemon.Update(actorId);
+    Assert.False(_pokemon.HasChanges);
+
+    _pokemon.Stamina = int.MaxValue;
+    _pokemon.Update(actorId);
+    int constitution = _pokemon.Statistics.HP;
+    Assert.Equal(constitution, _pokemon.Stamina);
+    Assert.True(_pokemon.HasChanges);
+    Assert.Contains(_pokemon.Changes, change => change is PokemonUpdated updated && updated.ActorId == actorId && updated.Stamina == constitution);
+  }
+
+  [Fact(DisplayName = "It should handle Status Condition changes correctly.")]
+  public void Given_Pokemon_When_StatusCondition_Then_Changed()
+  {
+    ActorId actorId = ActorId.NewId();
+
+    StatusCondition statusCondition = StatusCondition.Sleep;
+    _pokemon.StatusCondition = statusCondition;
+    Assert.Equal(statusCondition, _pokemon.StatusCondition);
+    _pokemon.Update(actorId);
+    Assert.Contains(_pokemon.Changes, change => change is PokemonUpdated updated && updated.ActorId == actorId && updated.StatusCondition == new Change<StatusCondition?>(statusCondition));
+
+    _pokemon.ClearChanges();
+    _pokemon.StatusCondition = statusCondition;
+    Assert.Equal(statusCondition, _pokemon.StatusCondition);
+    _pokemon.Update(actorId);
+    Assert.False(_pokemon.HasChanges);
+
+    _pokemon.StatusCondition = null;
+    Assert.Null(_pokemon.StatusCondition);
+    Assert.Null(_pokemon.StatusCondition); _pokemon.Update(actorId);
+    Assert.True(_pokemon.HasChanges);
+    Assert.Contains(_pokemon.Changes, change => change is PokemonUpdated updated && updated.ActorId == actorId && updated.StatusCondition == new Change<StatusCondition?>(null));
+  }
+
   [Fact(DisplayName = "It should handle Url changes correctly.")]
   public void Given_Pokemon_When_Url_Then_Changed()
   {
@@ -118,9 +207,28 @@ public class PokemonUpdateTests
     Assert.Contains(_pokemon.Changes, change => change is PokemonUpdated updated && updated.ActorId == actorId && updated.Url == new Change<Url>(null));
   }
 
-  // TODO(fpion): Is Shiny
-  // TODO(fpion): Vitality
-  // TODO(fpion): Stamina
-  // TODO(fpion): Status Condition
-  // TODO(fpion): Friendship
+  [Fact(DisplayName = "It should handle Vitality changes correctly.")]
+  public void Given_Pokemon_When_Vitality_Then_Changed()
+  {
+    ActorId actorId = ActorId.NewId();
+
+    int vitality = _pokemon.Vitality / 2;
+    _pokemon.Vitality = vitality;
+    Assert.Equal(vitality, _pokemon.Vitality);
+    _pokemon.Update(actorId);
+    Assert.Contains(_pokemon.Changes, change => change is PokemonUpdated updated && updated.ActorId == actorId && updated.Vitality == vitality);
+
+    _pokemon.ClearChanges();
+    _pokemon.Vitality = vitality;
+    Assert.Equal(vitality, _pokemon.Vitality);
+    _pokemon.Update(actorId);
+    Assert.False(_pokemon.HasChanges);
+
+    _pokemon.Vitality = int.MaxValue;
+    _pokemon.Update(actorId);
+    int constitution = _pokemon.Statistics.HP;
+    Assert.Equal(constitution, _pokemon.Vitality);
+    Assert.True(_pokemon.HasChanges);
+    Assert.Contains(_pokemon.Changes, change => change is PokemonUpdated updated && updated.ActorId == actorId && updated.Vitality == constitution);
+  }
 }
