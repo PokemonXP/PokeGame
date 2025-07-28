@@ -1,4 +1,8 @@
 {
+  "battleOnly": {
+    "is": "Is Battle Only",
+    "label": "Battle Only"
+  },
   "change": {
     "can": "Can Change Form",
     "submit": "Change Form",
@@ -13,6 +17,10 @@
   },
   "deleted": "The form has been deleted.",
   "empty": "This list is empty.",
+  "mega": {
+    "is": "Is Mega Evolution",
+    "label": "Mega Evolution"
+  },
   "select": {
     "label": "Form",
     "placeholder": "Select a Pokémon form"

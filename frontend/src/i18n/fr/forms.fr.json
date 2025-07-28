@@ -1,4 +1,8 @@
 {
+  "battleOnly": {
+    "is": "Combat seulement",
+    "label": "Combat seulement"
+  },
   "change": {
     "can": "Métamorphose possible",
     "submit": "Métamorphoser",
@@ -13,6 +17,10 @@
   },
   "deleted": "La forme a été supprimée.",
   "empty": "Cette liste est vide.",
+  "mega": {
+    "is": "Méga Evolution",
+    "label": "Méga Evolution"
+  },
   "select": {
     "label": "Forme",
     "placeholder": "Sélectionnez une forme de Pokémon"

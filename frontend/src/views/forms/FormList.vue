@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { SelectOption } from "logitar-vue3-ui";
+import { TarBadge, type SelectOption } from "logitar-vue3-ui";
 import { arrayUtils, objectUtils } from "logitar-js";
 import { computed, inject, ref, watch } from "vue";
 import { parsingUtils } from "logitar-js";
@@ -169,6 +169,7 @@ watch(
           <tr>
             <th scope="col">{{ t("name.label") }}</th>
             <th scope="col">{{ t("varieties.select.label") }}</th>
+            <th scope="col">{{ t("properties") }}</th>
             <th scope="col">{{ t("pokemon.type.title") }}</th>
             <th scope="col">{{ t("pokemon.size.title") }}</th>
             <th scope="col">{{ t("forms.sort.options.UpdatedOn") }}</th>
@@ -186,6 +187,14 @@ watch(
                   <template v-else>{{ form.variety.uniqueName }}</template>
                 </template>
               </RouterLink>
+            </td>
+            <td>
+              <template v-if="form.isBattleOnly || form.isMega">
+                <TarBadge v-if="form.isBattleOnly"> <font-awesome-icon icon="fas fa-hand-fist" /> {{ t("forms.battleOnly.label") }} </TarBadge>
+                <br v-if="form.isBattleOnly && form.isMega" />
+                <TarBadge v-if="form.isMega"> <font-awesome-icon icon="fas fa-spaghetti-monster-flying" /> {{ t("forms.mega.label") }} </TarBadge>
+              </template>
+              <span v-else class="text-muted">{{ "—" }}</span>
             </td>
             <td>
               <PokemonTypeImage :type="form.types.primary" height="20" />
