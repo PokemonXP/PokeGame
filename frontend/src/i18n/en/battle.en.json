@@ -11,6 +11,16 @@
   "filters": "Filters",
   "create": "Create Battle",
   "help": "Pick the opponent kind.",
+  "opponents": {
+    "pokemon": {
+      "help": "Select the opposing wild Pokémon.",
+      "warning": "Some selected Pokémon are hidden. Reset filters to see those Pokémon."
+    },
+    "title": "Opponents",
+    "trainers": {
+      "help": "Select the opposing trainers."
+    }
+  },
   "remember": "Remember my selection",
   "title": "Battle"
 }

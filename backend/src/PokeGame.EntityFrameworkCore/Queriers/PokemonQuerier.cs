@@ -138,6 +138,10 @@ internal class PokemonQuerier : IPokemonQuerier
       builder.Where(PokemonDb.Pokemon.CurrentTrainerUid, Operators.IsEqualTo(payload.TrainerId.Value));
     }
 
+    if (payload.IsWild.HasValue)
+    {
+      builder.Where(PokemonDb.Pokemon.CurrentTrainerId, payload.IsWild.Value ? Operators.IsNull() : Operators.IsNotNull());
+    }
     if (payload.IsEgg.HasValue)
     {
       builder.Where(PokemonDb.Pokemon.EggCycles, payload.IsEgg.Value ? Operators.IsGreaterThan((byte)0) : Operators.IsEqualTo((byte)0));

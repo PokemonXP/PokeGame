@@ -4,7 +4,6 @@ import { arrayUtils } from "logitar-js";
 import { computed, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 
-import SpeciesSelect from "./SpeciesSelect.vue";
 import type { SearchResults } from "@/types/search";
 import type { SearchSpeciesPayload } from "@/types/species";
 import type { Species } from "@/types/species";
