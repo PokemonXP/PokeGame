@@ -21,6 +21,9 @@
       "help": "Sélectionnez les entraîneurs adversaires."
     }
   },
+  "properties": {
+    "help": "Renseignez les propriétés de bataille suivantes."
+  },
   "remember": "Garder ma sélection en mémoire",
   "title": "Bataille"
 }

@@ -7,6 +7,7 @@ import AdminBreadcrumb from "@/components/admin/AdminBreadcrumb.vue";
 import BattleCreationStep1 from "@/components/battle/creation/BattleCreationStep1.vue";
 import BattleCreationStep2 from "@/components/battle/creation/BattleCreationStep2.vue";
 import BattleCreationStep3 from "@/components/battle/creation/BattleCreationStep3.vue";
+import BattleCreationStep4 from "@/components/battle/creation/BattleCreationStep4.vue";
 import type { Breadcrumb } from "@/types/components";
 import { handleErrorKey } from "@/inject";
 import { useBattleCreationStore } from "@/stores/battle/creation";
@@ -29,5 +30,6 @@ const percentage = computed<number>(() => (isLoading.value ? 1 : (battle.step - 
     <BattleCreationStep1 v-if="battle.step === 1" />
     <BattleCreationStep2 v-else-if="battle.step === 2" @error="handleError" />
     <BattleCreationStep3 v-else-if="battle.step === 3" @error="handleError" />
+    <BattleCreationStep4 v-else-if="battle.step === 4" @error="handleError" />
   </main>
 </template>

@@ -21,6 +21,9 @@
       "help": "Select the opposing trainers."
     }
   },
+  "properties": {
+    "help": "Fill the following battle properties."
+  },
   "remember": "Remember my selection",
   "title": "Battle"
 }
