@@ -7,6 +7,7 @@ import { useRoute, useRouter } from "vue-router";
 import AdminBreadcrumb from "@/components/admin/AdminBreadcrumb.vue";
 import DeletePokemon from "@/components/pokemon/DeletePokemon.vue";
 import HealButton from "@/components/pokemon/HealButton.vue";
+import PokemonEvolution from "@/components/pokemon/PokemonEvolution.vue";
 import PokemonFormModal from "@/components/pokemon/PokemonFormModal.vue";
 import PokemonMemories from "@/components/pokemon/PokemonMemories.vue";
 import PokemonMetadata from "@/components/pokemon/PokemonMetadata.vue";
@@ -39,6 +40,10 @@ function updateAggregate(updated: Pokemon): void {
     pokemon.value.updatedBy = updated.updatedBy;
     pokemon.value.updatedOn = updated.updatedOn;
   }
+}
+function onEvolution(updated: Pokemon): void {
+  pokemon.value = { ...updated };
+  toasts.success("pokemon.evolved");
 }
 function onFormChanged(updated: Pokemon): void {
   pokemon.value = { ...updated };
@@ -138,6 +143,9 @@ onMounted(async () => {
         </TarTab>
         <TarTab id="memories" :title="t('pokemon.memories.title')">
           <PokemonMemories :pokemon="pokemon" @error="handleError" @saved="onMemoriesUpdated" />
+        </TarTab>
+        <TarTab :disabled="pokemon.isEgg" id="evolution" :title="t('evolutions.title')">
+          <PokemonEvolution :pokemon="pokemon" @error="handleError" @evolved="onEvolution" />
         </TarTab>
         <TarTab id="metadata" :title="t('metadata')">
           <PokemonMetadata :pokemon="pokemon" @error="handleError" @saved="onMetadataUpdated" />

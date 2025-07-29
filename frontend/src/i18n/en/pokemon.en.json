@@ -11,6 +11,11 @@
     "label": "Egg"
   },
   "empty": "This list is empty.",
+  "evolve": {
+    "submit": "Evolve",
+    "title": "Evolve Pokémon"
+  },
+  "evolved": "The Pokémon has evolved.",
   "experience": {
     "format": "XP: {experience}",
     "label": "Experience",

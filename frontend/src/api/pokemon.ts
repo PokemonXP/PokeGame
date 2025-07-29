@@ -41,6 +41,14 @@ export async function deletePokemon(id: string): Promise<Pokemon> {
   return (await _delete<Pokemon>(url)).data;
 }
 
+export async function evolvePokemon(pokemonId: string, evolutionId: string): Promise<Pokemon> {
+  const url: string = new urlUtils.UrlBuilder({ path: "/pokemon/{pokemonId}/evolve/{evolutionId}" })
+    .setParameter("pokemonId", pokemonId)
+    .setParameter("evolutionId", evolutionId)
+    .buildRelative();
+  return (await patch<void, Pokemon>(url)).data;
+}
+
 export async function healPokemon(id: string): Promise<Pokemon> {
   const url: string = new urlUtils.UrlBuilder({ path: "/pokemon/{id}/heal" }).setParameter("id", id).buildRelative();
   return (await patch<void, Pokemon>(url)).data;

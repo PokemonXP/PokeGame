@@ -22,7 +22,7 @@ const props = withDefaults(
   },
 );
 
-const isEgg = computed<boolean>(() => props.pokemon.level < 1);
+const isEgg = computed<boolean>(() => props.pokemon.isEgg);
 
 defineEmits<{
   (e: "error", error: unknown): void;

@@ -121,11 +121,11 @@ onMounted(async () => {
         <TarTab id="sprites" :title="t('forms.sprites.title')">
           <PokemonFormSprites :form="form" @error="handleError" @updated="onSpritesUpdate" />
         </TarTab>
-        <TarTab id="metadata" :title="t('metadata')">
-          <PokemonFormMetadata :form="form" @error="handleError" @updated="onMetadataUpdate" />
-        </TarTab>
         <TarTab id="evolutions" :title="t('evolutions.title')">
           <PokemonFormEvolutions :form="form" @error="handleError" />
+        </TarTab>
+        <TarTab id="metadata" :title="t('metadata')">
+          <PokemonFormMetadata :form="form" @error="handleError" @updated="onMetadataUpdate" />
         </TarTab>
       </TarTabs>
     </template>

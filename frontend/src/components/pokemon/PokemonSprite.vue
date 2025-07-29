@@ -24,8 +24,7 @@ const classes = computed<string[]>(() => {
   }
   return classes;
 });
-const isEgg = computed<boolean>(() => props.pokemon.level < 1);
-const alt = computed<string>(() => t("sprite.alt", { name: isEgg.value ? t("pokemon.egg.label") : props.pokemon.name }));
+const alt = computed<string>(() => t("sprite.alt", { name: props.pokemon.isEgg ? t("pokemon.egg.label") : props.pokemon.name }));
 </script>
 
 <template>

@@ -34,6 +34,7 @@
       "label": "Unique Name"
     }
   },
+  "no": "No",
   "none": "None",
   "notFound": {
     "help": "The requested page could not be found.",
@@ -81,5 +82,6 @@
   "user": {
     "label": "User",
     "placeholder": "Select a user"
-  }
+  },
+  "yes": "Yes"
 }

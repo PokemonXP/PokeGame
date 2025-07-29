@@ -15,7 +15,7 @@ const props = defineProps<{
 }>();
 
 const heldItem = computed<ItemSummary | undefined>(() => props.pokemon.heldItem ?? undefined);
-const isEgg = computed<boolean>(() => props.pokemon.level < 1);
+const isEgg = computed<boolean>(() => props.pokemon.isEgg);
 const number = computed<string>(() => props.pokemon.number.toString().padStart(4, "0"));
 
 defineEmits<{
