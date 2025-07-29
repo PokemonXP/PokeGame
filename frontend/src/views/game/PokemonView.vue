@@ -10,7 +10,7 @@ import PartyPokemonCard from "@/components/pokemon/PartyPokemonCard.vue";
 import PokemonGameSummary from "@/components/pokemon/PokemonGameSummary.vue";
 import PokemonSprite from "@/components/pokemon/PokemonSprite.vue";
 import type { Breadcrumb } from "@/types/components";
-import type { PokemonCard, PokemonSummary } from "@/types/game";
+import type { MoveSummary, PokemonCard, PokemonSummary } from "@/types/game";
 import { getPokemon, getSummary } from "@/api/game/pokemon";
 import { handleErrorKey } from "@/inject";
 import { onMounted, ref } from "vue";
@@ -34,6 +34,17 @@ const view = ref<ViewMode>("party");
 function close(): void {
   view.value = "party";
   summary.value = undefined;
+}
+
+function movesSwapped(indices: number[]): void {
+  if (summary.value && indices.length === 2 && indices[0] !== indices[1]) {
+    const [i, j] = indices;
+    const temp: MoveSummary = summary.value.moves[i];
+    summary.value.moves.splice(i, 1, summary.value.moves[j]);
+    summary.value.moves.splice(j, 1, temp);
+  }
+  refresh();
+  toasts.success("pokemon.move.swapped");
 }
 
 function nicknamed(nickname: string): void {
@@ -117,7 +128,7 @@ onMounted(refresh);
             <PokemonSprite class="img-fluid mb-2 mx-auto" clickable :pokemon="pokemon" :selected="selected?.id === pokemon.id" @click="select(pokemon)" />
           </div>
         </div>
-        <PokemonGameSummary v-if="view === 'summary' && summary" :pokemon="summary" @error="handleError" @nicknamed="nicknamed" />
+        <PokemonGameSummary v-if="view === 'summary' && summary" :pokemon="summary" @error="handleError" @moves-swapped="movesSwapped" @nicknamed="nicknamed" />
       </section>
     </div>
   </main>

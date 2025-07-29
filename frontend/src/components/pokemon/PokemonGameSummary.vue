@@ -26,6 +26,7 @@ const isEgg = computed<boolean>(() => props.pokemon.isEgg);
 
 defineEmits<{
   (e: "error", error: unknown): void;
+  (e: "moves-swapped", indices: number[]): void;
   (e: "nicknamed", nickname: string): void;
 }>();
 </script>
@@ -42,7 +43,7 @@ defineEmits<{
           <PokemonSkills v-if="!isEgg" :pokemon="pokemon" />
         </TarTab>
         <TarTab id="moves" :disabled="isEgg" :title="t('moves.title')">
-          <PokemonGameMoves v-if="!isEgg" :pokemon="pokemon" />
+          <PokemonGameMoves v-if="!isEgg" :pokemon="pokemon" @error="$emit('error', $event)" @swapped="$emit('moves-swapped', $event)" />
         </TarTab>
         <TarTab id="memories" :title="t('pokemon.memories.title')">
           <PokemonGameMemories :pokemon="pokemon" />
