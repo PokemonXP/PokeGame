@@ -50,7 +50,11 @@ internal class TrainerRepository : Repository, ITrainerRepository
 
   public async Task<TrainerInventory> LoadInventoryAsync(Trainer trainer, CancellationToken cancellationToken)
   {
-    return await LoadAsync<TrainerInventory>(new TrainerInventoryId(trainer.Id).StreamId, cancellationToken) ?? new(trainer);
+    return await LoadInventoryAsync(trainer.Id, cancellationToken);
+  }
+  public async Task<TrainerInventory> LoadInventoryAsync(TrainerId trainerId, CancellationToken cancellationToken)
+  {
+    return await LoadAsync<TrainerInventory>(new TrainerInventoryId(trainerId).StreamId, cancellationToken) ?? new(trainerId);
   }
 
   public async Task SaveAsync(Trainer trainer, CancellationToken cancellationToken)

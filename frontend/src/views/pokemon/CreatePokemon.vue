@@ -325,7 +325,7 @@ watch(
         <h2 class="h3">{{ t("pokemon.nature.select.label") }}</h2>
         <NatureSelect :model-value="nature?.name" @selected="nature = $event" />
         <NatureTable v-if="nature" :nature="nature" />
-        <h2 class="h3">{{ t("items.held") }}</h2>
+        <h2 class="h3">{{ t("items.held.label") }}</h2>
         <ItemSelect id="held-item" :model-value="heldItem?.id" @error="handleError" @selected="heldItem = $event" />
         <h2 class="h3">{{ t("abilities.label") }}</h2>
         <AbilitySlotSelect :abilities="form.abilities" v-model="abilitySlot" />

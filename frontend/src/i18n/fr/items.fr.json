@@ -31,7 +31,11 @@
     "revives": "Ravive",
     "value": "Guérison"
   },
-  "held": "Objet tenu",
+  "held": {
+    "label": "Objet tenu",
+    "take": "Prendre l’objet",
+    "taken": "L’objet a été déplacé vers le sac de l’entraîneur."
+  },
   "herbal": "Phytothérapie",
   "powerPoints": {
     "allMoves": "Toutes attaques",

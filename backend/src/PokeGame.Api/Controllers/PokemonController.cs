@@ -84,6 +84,13 @@ public class PokemonController : ControllerBase
     return pokemon is null ? NotFound() : Ok(pokemon);
   }
 
+  [HttpPatch("{id}/item/held")]
+  public async Task<ActionResult<PokemonModel>> ChangeItemAsync(Guid id, [FromBody] ChangePokemonItemPayload payload, CancellationToken cancellationToken)
+  {
+    PokemonModel? pokemon = await _pokemonService.ChangeItemAsync(id, payload, cancellationToken);
+    return pokemon is null ? NotFound() : Ok(pokemon);
+  }
+
   [HttpPatch("{id}/move")]
   public async Task<ActionResult<PokemonModel>> MoveAsync(Guid id, [FromBody] MovePokemonPayload payload, CancellationToken cancellationToken)
   {
