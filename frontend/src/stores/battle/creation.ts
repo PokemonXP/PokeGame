@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 
-import type { BattleKind } from "@/types/battle";
+import type { BattleKind, BattleProperties } from "@/types/battle";
 
 type Step2 = {
   champions: string[];
@@ -16,6 +16,7 @@ export const useBattleCreationStore = defineStore(
     const champions = ref<string[]>([]);
     const kind = ref<BattleKind>();
     const opponents = ref<string[]>([]);
+    const properties = ref<BattleProperties>()
     const remember = ref<boolean>(false);
     const step = ref<number>(1);
 
@@ -23,6 +24,7 @@ export const useBattleCreationStore = defineStore(
       champions.value = [];
       kind.value = undefined;
       opponents.value = [];
+      properties.value = undefined
       remember.value = false;
       step.value = 1;
     }
@@ -63,8 +65,15 @@ export const useBattleCreationStore = defineStore(
       }
       return false;
     }
+    function saveStep4(value: BattleProperties): boolean {
+      if (step.value === 4) {
+        properties.value = { ...value }
+        return true
+      }
+      return false
+    }
 
-    return { champions, kind, opponents, remember, rememberedChampions, step, clear, next, previous, saveStep1, saveStep2, saveStep3 };
+    return { champions, kind, opponents, properties, remember, rememberedChampions, step, clear, next, previous, saveStep1, saveStep2, saveStep3, saveStep4 };
   },
   {
     persist: true,

@@ -112,7 +112,7 @@ onMounted(() => {
     </p>
     <TrainerSelection v-if="isTrainerBattle" :exclude="battle.champions" :selected="selected" :trainers="trainers" @select="select" @unselect="unselect" />
     <PokemonSelection v-else :pokemon="pokemon" :selected="selected" @error="$emit('error', $event)" @select="select" @unselect="unselect" />
-    <div>
+    <div class="mb-3">
       <TarButton class="float-start" icon="fas fa-arrow-left" :text="t('actions.previous')" @click="battle.previous" />
       <TarButton class="float-end" :disabled="!selected.size" icon="fas fa-arrow-right" :text="t('actions.next')" @click="next" />
     </div>

@@ -20,6 +20,19 @@ const isLoading = ref<boolean>(false);
 
 const breadcrumb = computed<Breadcrumb>(() => ({ to: { name: "BattleList" }, text: t("battle.title") }));
 const percentage = computed<number>(() => (isLoading.value ? 1 : (battle.step - 1) / 4));
+
+async function submit(): Promise<void> {
+  if (!isLoading.value) {
+    isLoading.value = true;
+    try {
+      // TODO(fpion): implement
+    } catch (e: unknown) {
+      handleError(e);
+    } finally {
+      isLoading.value = false;
+    }
+  }
+}
 </script>
 
 <template>
@@ -30,6 +43,6 @@ const percentage = computed<number>(() => (isLoading.value ? 1 : (battle.step - 
     <BattleCreationStep1 v-if="battle.step === 1" />
     <BattleCreationStep2 v-else-if="battle.step === 2" @error="handleError" />
     <BattleCreationStep3 v-else-if="battle.step === 3" @error="handleError" />
-    <BattleCreationStep4 v-else-if="battle.step === 4" @error="handleError" />
+    <BattleCreationStep4 v-else-if="battle.step === 4" :loading="isLoading" @error="handleError" @submit="submit" />
   </main>
 </template>
