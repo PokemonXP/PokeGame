@@ -22,6 +22,14 @@
     },
     "placeholder": "Sélectionnez un genre"
   },
+  "kind": {
+    "label": "Type",
+    "options": {
+      "Npc": "Personnage non-joueur",
+      "Player": "Joueur"
+    },
+    "placeholder": "Sélectionnez un type d’entraîneur"
+  },
   "license": {
     "alreadyUsed": {
       "help": "Veuillez entrer une autre license d’entraîneur.",

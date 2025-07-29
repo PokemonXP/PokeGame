@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useI18n } from "vue-i18n";
 
+import CircleInfoIcon from "@/components/icons/CircleInfoIcon.vue";
 import PokemonIcon from "@/components/icons/PokemonIcon.vue";
 import TrainerIcon from "@/components/icons/TrainerIcon.vue";
 import type { BattleKind } from "@/types/battle";
@@ -16,7 +17,9 @@ function setKind(kind: BattleKind): void {
 
 <template>
   <section>
-    <p>{{ t("battle.help") }}</p>
+    <p>
+      <i><CircleInfoIcon /> {{ t("battle.help") }}</i>
+    </p>
     <div class="d-flex flex-column justify-content-center align-items-center mt-3" style="height: 60vh">
       <div class="grid">
         <a href="#" class="tile" @click="setKind('WildPokemon')"><PokemonIcon class="icon" /> {{ t("pokemon.wild") }}</a>

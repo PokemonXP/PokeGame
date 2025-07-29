@@ -36,6 +36,8 @@ export type Trainer = Aggregate & {
 
 export type TrainerGender = "Female" | "Male";
 
+export type TrainerKind = "Player" | "NPC";
+
 export type TrainerSort = "CreatedOn" | "DisplayName" | "License" | "Money" | "UniqueName" | "UpdatedOn";
 
 export type TrainerSortOption = SortOption & {

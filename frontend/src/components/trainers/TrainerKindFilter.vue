@@ -1,0 +1,62 @@
+<script setup lang="ts">
+import { TarSelect, type SelectOption } from "logitar-vue3-ui";
+import { arrayUtils } from "logitar-js";
+import { computed } from "vue";
+import { useI18n } from "vue-i18n";
+
+const { orderBy } = arrayUtils;
+const { rt, t, tm } = useI18n();
+
+const props = withDefaults(
+  defineProps<{
+    id?: string;
+    label?: string;
+    modelValue?: string;
+    placeholder?: string;
+  }>(),
+  {
+    id: "kind",
+    label: "trainers.kind.label",
+    placeholder: "trainers.kind.placeholder",
+  },
+);
+
+const icon = computed<string>(() => {
+  switch (props.modelValue) {
+    case "Npc":
+      return "fas fa-robot";
+    case "Player":
+      return "fas fa-user-check";
+  }
+  return "";
+});
+const options = computed<SelectOption[]>(() =>
+  orderBy(
+    Object.entries(tm(rt("trainers.kind.options"))).map(([value, text]) => ({ text, value }) as SelectOption),
+    "text",
+  ),
+);
+
+defineEmits<{
+  (e: "update:model-value", value: string): void;
+}>();
+</script>
+
+<template>
+  <TarSelect
+    class="mb-3"
+    floating
+    :id="id"
+    :label="t(label)"
+    :model-value="modelValue"
+    :options="options"
+    :placeholder="t(placeholder)"
+    @update:model-value="$emit('update:model-value', $event)"
+  >
+    <template #append>
+      <span v-if="icon" class="input-group-text">
+        <font-awesome-icon :icon="icon" />
+      </span>
+    </template>
+  </TarSelect>
+</template>
