@@ -15,6 +15,18 @@ public record SearchPokemonParameters : SearchParameters
   [FromQuery(Name = "trainer")]
   public Guid? TrainerId { get; set; }
 
+  [FromQuery(Name = "wild")]
+  public bool? IsWild { get; set; }
+
+  [FromQuery(Name = "egg")]
+  public bool? IsEgg { get; set; }
+
+  [FromQuery(Name = "party")]
+  public bool? InParty { get; set; }
+
+  [FromQuery(Name = "box")]
+  public int? Box { get; set; }
+
   public virtual SearchPokemonPayload ToPayload()
   {
     SearchPokemonPayload payload = new()
