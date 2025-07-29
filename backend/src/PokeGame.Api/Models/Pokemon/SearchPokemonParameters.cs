@@ -33,7 +33,11 @@ public record SearchPokemonParameters : SearchParameters
     {
       SpeciesId = SpeciesId,
       HeldItemId = HeldItemId,
-      TrainerId = TrainerId
+      TrainerId = TrainerId,
+      IsWild = IsWild,
+      IsEgg = IsEgg,
+      InParty = InParty,
+      Box = Box
     };
     Fill(payload);
 
