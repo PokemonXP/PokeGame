@@ -17,7 +17,7 @@ function setKind(kind: BattleKind): void {
 <template>
   <section>
     <p>{{ t("battle.help") }}</p>
-    <div class="d-flex flex-column justify-content-center align-items-center mt-3">
+    <div class="d-flex flex-column justify-content-center align-items-center mt-3" style="height: 60vh">
       <div class="grid">
         <a href="#" class="tile" @click="setKind('WildPokemon')"><PokemonIcon class="icon" /> {{ t("pokemon.wild") }}</a>
         <a href="#" class="tile" @click="setKind('Trainer')"><TrainerIcon class="icon" /> {{ t("trainers.title") }}</a>
