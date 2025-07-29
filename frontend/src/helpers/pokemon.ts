@@ -201,7 +201,7 @@ export function getSizeCategory(heightScalar: number): PokemonSizeCategory {
 }
 
 export function getSpriteUrl(pokemon: Pokemon): string {
-  if (pokemon.eggCycles) {
+  if (pokemon.isEgg) {
     return "/img/egg.png";
   } else if (pokemon.sprite) {
     return pokemon.sprite;

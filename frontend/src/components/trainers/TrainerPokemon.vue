@@ -109,7 +109,7 @@ const canDeposit = computed<boolean>(() => {
     return false; // NOTE(fpion): cannot deposit a Pokémon that is already in a box.
   }
   // NOTE(fpion): can only deposit if at least one other Pokémon in the party that is not an egg.
-  return party.value.filter((pokemon) => !isSelected(pokemon) && !pokemon.eggCycles).length > 0;
+  return party.value.filter((pokemon) => !isSelected(pokemon) && !pokemon.isEgg).length > 0;
 });
 async function deposit(): Promise<void> {
   if (!isLoading.value) {
@@ -147,7 +147,7 @@ const canMove = computed<boolean>(() => {
   const pokemon: Pokemon = (first ?? other)!;
   if (pokemon.ownership && typeof pokemon.ownership.box !== "number") {
     // NOTE(fpion): can only move if at least one other Pokémon in the party that is not an egg.
-    return party.value.filter((pokemon) => !isSelected(pokemon) && !pokemon.eggCycles).length > 0;
+    return party.value.filter((pokemon) => !isSelected(pokemon) && !pokemon.isEgg).length > 0;
   }
   return true;
 });
@@ -189,7 +189,7 @@ const canRelease = computed<boolean>(() => {
   const slot: string = [...selected.value][0];
   const pokemon: Pokemon | null = findPokemon(slot);
   // NOTE(fpion): cannot release an egg Pokémon, or a Pokémon in the party.
-  return Boolean(pokemon && !pokemon.eggCycles && pokemon.ownership && typeof pokemon.ownership.box === "number");
+  return Boolean(pokemon && !pokemon.isEgg && pokemon.ownership && typeof pokemon.ownership.box === "number");
 });
 async function release(): Promise<void> {
   if (!isLoading.value) {
@@ -214,10 +214,10 @@ async function release(): Promise<void> {
 }
 
 function isEggInBox(pokemon: Pokemon): boolean {
-  return Boolean(pokemon.eggCycles && pokemon.ownership && typeof pokemon.ownership.box === "number");
+  return Boolean(pokemon.isEgg && pokemon.ownership && typeof pokemon.ownership.box === "number");
 }
 function isHatchedInParty(pokemon: Pokemon): boolean {
-  return Boolean(!pokemon.eggCycles && pokemon.ownership && typeof pokemon.ownership.box !== "number");
+  return Boolean(!pokemon.isEgg && pokemon.ownership && typeof pokemon.ownership.box !== "number");
 }
 const canSwap = computed<boolean>(() => {
   if (isLoading.value || selected.value.size !== 2) {
@@ -231,7 +231,7 @@ const canSwap = computed<boolean>(() => {
   }
   if ((isEggInBox(first) && isHatchedInParty(other)) || (isEggInBox(other) && isHatchedInParty(first))) {
     // NOTE(fpion): can only swap if at least one other Pokémon in the party that is not an egg.
-    return party.value.filter((pokemon) => !isSelected(pokemon) && !pokemon.eggCycles).length > 0;
+    return party.value.filter((pokemon) => !isSelected(pokemon) && !pokemon.isEgg).length > 0;
   }
   return true;
 });

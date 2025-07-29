@@ -110,6 +110,7 @@ export type Pokemon = Aggregate & {
   abilitySlot: AbilitySlot;
   nature: PokemonNature;
   eggCycles: number;
+  isEgg: boolean;
   growthRate: GrowthRate;
   level: number;
   experience: number;

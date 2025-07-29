@@ -11,6 +11,11 @@
     "label": "Œuf"
   },
   "empty": "This list is empty.",
+  "evolve": {
+    "submit": "Évoluer",
+    "title": "Évoluer le Pokémon"
+  },
+  "evolved": "Le Pokémon a évolué.",
   "experience": {
     "format": "XP: {experience}",
     "label": "Expérience",

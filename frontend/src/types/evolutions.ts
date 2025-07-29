@@ -5,6 +5,8 @@ import type { PokemonGender } from "./pokemon";
 import type { Form } from "./pokemon-forms";
 import type { SearchPayload, SortOption } from "./search";
 
+export const EVOLUTION_FRIENDSHIP: number = 200;
+
 export type CreateOrReplaceEvolutionPayload = {
   source: string;
   target: string;

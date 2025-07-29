@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { TarButton } from "logitar-vue3-ui";
 import { computed } from "vue";
 import { parsingUtils } from "logitar-js";
 import { useI18n } from "vue-i18n";
@@ -7,6 +8,8 @@ import EditIcon from "@/components/icons/EditIcon.vue";
 import EvolutionTriggerIcon from "./EvolutionTriggerIcon.vue";
 import FriendshipIcon from "@/components/icons/FriendshipIcon.vue";
 import ItemBlock from "@/components/items/ItemBlock.vue";
+import LevelIcon from "@/components/icons/LevelIcon.vue";
+import LocationIcon from "@/components/icons/LocationIcon.vue";
 import MoveIcon from "@/components/icons/MoveIcon.vue";
 import PokemonFormBlock from "@/components/pokemon/forms/PokemonFormBlock.vue";
 import PokemonGenderIcon from "@/components/icons/PokemonGenderIcon.vue";
@@ -15,14 +18,21 @@ import TimeOfDayIcon from "@/components/icons/TimeOfDayIcon.vue";
 import type { Evolution } from "@/types/evolutions";
 import { formatItem, formatMove } from "@/helpers/format";
 
+type Mode = "edit" | "evolve";
 const { parseBoolean } = parsingUtils;
 const { t } = useI18n();
 
-const props = defineProps<{
-  evolutions: Evolution[];
-  incoming?: boolean | string;
-  outgoing?: boolean | string;
-}>();
+const props = withDefaults(
+  defineProps<{
+    evolutions: Evolution[];
+    incoming?: boolean | string;
+    mode?: Mode;
+    outgoing?: boolean | string;
+  }>(),
+  {
+    mode: "edit",
+  },
+);
 
 const isIncoming = computed<boolean>(() => parseBoolean(props.incoming) ?? false);
 const isOutgoing = computed<boolean>(() => parseBoolean(props.outgoing) ?? false);
@@ -32,6 +42,10 @@ function hasRequirements(evolution: Evolution): boolean {
     evolution.level || evolution.friendship || evolution.gender || evolution.heldItem || evolution.knownMove || evolution.location || evolution.timeOfDay,
   );
 }
+
+defineEmits<{
+  (e: "evolve", evolution: Evolution): void;
+}>();
 </script>
 
 <template>
@@ -49,7 +63,8 @@ function hasRequirements(evolution: Evolution): boolean {
     <tbody>
       <tr v-for="evolution in evolutions" :key="evolution.id">
         <td>
-          <RouterLink :to="{ name: 'EvolutionEdit', params: { id: evolution.id } }"><EditIcon /> {{ t("actions.edit") }}</RouterLink>
+          <RouterLink v-if="mode === 'edit'" :to="{ name: 'EvolutionEdit', params: { id: evolution.id } }"><EditIcon /> {{ t("actions.edit") }}</RouterLink>
+          <TarButton v-else-if="mode === 'evolve'" icon="fas fa-dna" :text="t('pokemon.evolve.submit')" @click="$emit('evolve', evolution)" />
         </td>
         <td v-if="!isOutgoing">
           <PokemonFormBlock :form="evolution.source" />
@@ -66,9 +81,7 @@ function hasRequirements(evolution: Evolution): boolean {
         </td>
         <td>
           <template v-if="hasRequirements(evolution)">
-            <div v-if="evolution.level">
-              <font-awesome-icon icon="fas fa-arrow-turn-up" /> {{ t("evolutions.requirements.level", { level: evolution.level }) }}
-            </div>
+            <div v-if="evolution.level"><LevelIcon /> {{ t("evolutions.requirements.level", { level: evolution.level }) }}</div>
             <div v-if="evolution.friendship"><FriendshipIcon /> {{ t("evolutions.requirements.friendship") }}</div>
             <div v-if="evolution.gender"><PokemonGenderIcon :gender="evolution.gender" /> {{ t(`pokemon.gender.select.options.${evolution.gender}`) }}</div>
             <div>
@@ -87,7 +100,7 @@ function hasRequirements(evolution: Evolution): boolean {
                 <MoveIcon /> {{ formatMove(evolution.knownMove) }}
               </RouterLink>
             </div>
-            <div v-if="evolution.location"><font-awesome-icon icon="fas fa-location-dot" /> {{ evolution.location }}</div>
+            <div v-if="evolution.location"><LocationIcon /> {{ evolution.location }}</div>
             <div v-if="evolution.timeOfDay"><TimeOfDayIcon :time="evolution.timeOfDay" /> {{ t(`evolutions.timeOfDay.options.${evolution.timeOfDay}`) }}</div>
           </template>
           <span v-else class="text-muted">{{ "—" }}</span>
