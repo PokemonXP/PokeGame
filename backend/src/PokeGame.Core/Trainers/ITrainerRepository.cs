@@ -8,6 +8,7 @@ public interface ITrainerRepository
   Task<Trainer?> LoadAsync(string idOrUniqueName, CancellationToken cancellationToken = default);
 
   Task<TrainerInventory> LoadInventoryAsync(Trainer trainer, CancellationToken cancellationToken = default);
+  Task<TrainerInventory> LoadInventoryAsync(TrainerId trainerId, CancellationToken cancellationToken = default);
 
   Task SaveAsync(Trainer trainer, CancellationToken cancellationToken = default);
   Task SaveAsync(IEnumerable<Trainer> trainers, CancellationToken cancellationToken = default);

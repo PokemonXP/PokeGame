@@ -17,7 +17,10 @@ public class TrainerInventory : AggregateRoot
   {
   }
 
-  public TrainerInventory(Trainer trainer) : base(new TrainerInventoryId(trainer.Id).StreamId)
+  public TrainerInventory(Trainer trainer) : this(trainer.Id)
+  {
+  }
+  public TrainerInventory(TrainerId trainerId) : base(new TrainerInventoryId(trainerId).StreamId)
   {
   }
 
@@ -36,6 +39,21 @@ public class TrainerInventory : AggregateRoot
     _quantities.TryGetValue(@event.ItemId, out int existingQuantity);
     _quantities[@event.ItemId] = existingQuantity + @event.Quantity;
   }
+
+  public void EnsureQuantity(Item item, int quantity) => EnsureQuantity(item.Id, quantity);
+  public void EnsureQuantity(ItemId itemId, int quantity)
+  {
+    if (!HasQuantity(itemId, quantity))
+    {
+      throw new InsufficientInventoryQuantityException(this, itemId, quantity);
+    }
+  }
+
+  public int GetQuantity(Item item) => GetQuantity(item.Id);
+  public int GetQuantity(ItemId itemId) => _quantities.TryGetValue(itemId, out int quantity) ? quantity : 0;
+
+  public bool HasQuantity(Item item, int quantity) => HasQuantity(item.Id, quantity);
+  public bool HasQuantity(ItemId itemId, int quantity) => GetQuantity(itemId) >= quantity;
 
   public void Remove(Item item, int quantity = int.MaxValue, ActorId? actorId = null) => Remove(item.Id, quantity, actorId);
   public void Remove(ItemId itemId, int quantity = int.MaxValue, ActorId? actorId = null)

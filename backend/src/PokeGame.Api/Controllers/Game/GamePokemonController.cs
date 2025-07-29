@@ -68,17 +68,26 @@ public class GamePokemonController : ControllerBase
     return Ok(summary);
   }
 
+  [HttpPatch("{id}/item/held")]
+  public async Task<ActionResult> ChangeItemAsync(Guid id, [FromBody] ChangePokemonItemPayload payload, CancellationToken cancellationToken)
+  {
+    ActionResult? result = await EnsureOwnershipAsync(id, cancellationToken);
+    if (result is not null)
+    {
+      return result;
+    }
+
+    await _pokemonService.ChangeItemAsync(id, payload, cancellationToken);
+    return NoContent();
+  }
+
   [HttpPatch("{id}/moves/swap")]
   public async Task<ActionResult> SwapMovesAsync(Guid id, [FromBody] SwitchPokemonMovesPayload payload, CancellationToken cancellationToken)
   {
-    PokemonModel? pokemon = await _pokemonService.ReadAsync(id, uniqueName: null, cancellationToken);
-    if (pokemon is null)
+    ActionResult? result = await EnsureOwnershipAsync(id, cancellationToken);
+    if (result is not null)
     {
-      return NotFound();
-    }
-    else if (pokemon.Ownership is null || pokemon.Ownership.CurrentTrainer.UserId != HttpContext.GetUserId())
-    {
-      return Forbid();
+      return result;
     }
 
     await _pokemonService.SwitchMovesAsync(id, payload, cancellationToken);
@@ -88,6 +97,22 @@ public class GamePokemonController : ControllerBase
   [HttpPatch("{id}/nickname")]
   public async Task<ActionResult> NicknameAsync(Guid id, [FromBody] NicknamePokemonPayload input, CancellationToken cancellationToken)
   {
+    ActionResult? result = await EnsureOwnershipAsync(id, cancellationToken);
+    if (result is not null)
+    {
+      return result;
+    }
+
+    UpdatePokemonPayload payload = new()
+    {
+      Nickname = new Change<string>(input.Nickname)
+    };
+    await _pokemonService.UpdateAsync(id, payload, cancellationToken);
+    return NoContent();
+  }
+
+  private async Task<ActionResult?> EnsureOwnershipAsync(Guid id, CancellationToken cancellationToken)
+  {
     PokemonModel? pokemon = await _pokemonService.ReadAsync(id, uniqueName: null, cancellationToken);
     if (pokemon is null)
     {
@@ -97,12 +122,6 @@ public class GamePokemonController : ControllerBase
     {
       return Forbid();
     }
-
-    UpdatePokemonPayload payload = new()
-    {
-      Nickname = new Change<string>(input.Nickname)
-    };
-    await _pokemonService.UpdateAsync(id, payload, cancellationToken);
-    return NoContent();
+    return null;
   }
 }
