@@ -11,6 +11,8 @@ import BattleCreationStep4 from "@/components/battle/creation/BattleCreationStep
 import type { Breadcrumb } from "@/types/components";
 import { handleErrorKey } from "@/inject";
 import { useBattleCreationStore } from "@/stores/battle/creation";
+import type { Battle, CreateBattlePayload } from "@/types/battle";
+import { createBattle } from "@/api/battle";
 
 const battle = useBattleCreationStore();
 const handleError = inject(handleErrorKey) as (e: unknown) => void;
@@ -22,10 +24,24 @@ const breadcrumb = computed<Breadcrumb>(() => ({ to: { name: "BattleList" }, tex
 const percentage = computed<number>(() => (isLoading.value ? 1 : (battle.step - 1) / 4));
 
 async function submit(): Promise<void> {
-  if (!isLoading.value) {
+  if (!isLoading.value && battle.kind && battle.properties) {
     isLoading.value = true;
     try {
-      // TODO(fpion): implement
+      const { name, location, url, notes } = battle.properties;
+      const payload: CreateBattlePayload = {
+        kind: battle.kind,
+        name,
+        location,
+        url,
+        notes,
+        champions: battle.champions,
+        opponents: battle.opponents,
+      };
+      const created: Battle = await createBattle(payload);
+      console.log(created); // TODO(fpion): implement
+      // TODO(fpion): clear store
+      // TODO(fpion): toast
+      // TODO(fpion): redirect to battle view
     } catch (e: unknown) {
       handleError(e);
     } finally {
