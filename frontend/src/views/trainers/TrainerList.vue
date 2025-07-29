@@ -12,6 +12,7 @@ import CountSelect from "@/components/shared/CountSelect.vue";
 import CreateTrainer from "@/components/trainers/CreateTrainer.vue";
 import GenderFilter from "@/components/trainers/GenderFilter.vue";
 import PokeDollarIcon from "@/components/items/PokeDollarIcon.vue";
+import PokemonIcon from "@/components/icons/PokemonIcon.vue";
 import RefreshButton from "@/components/shared/RefreshButton.vue";
 import SearchInput from "@/components/shared/SearchInput.vue";
 import SortSelect from "@/components/shared/SortSelect.vue";
@@ -184,6 +185,7 @@ onMounted(async () => {
             <th scope="col">{{ t("name.label") }}</th>
             <th scope="col">{{ t("trainers.sort.options.License") }}</th>
             <th scope="col">{{ t("trainers.sort.options.Money") }}</th>
+            <th scope="col">{{ t("pokemon.party") }}</th>
             <th scope="col">{{ t("user.label") }}</th>
             <th scope="col">{{ t("trainers.sort.options.UpdatedOn") }}</th>
           </tr>
@@ -195,6 +197,7 @@ onMounted(async () => {
             </td>
             <td>{{ trainer.license }}</td>
             <td><PokeDollarIcon height="20" /> {{ n(trainer.money, "integer") }}</td>
+            <td><PokemonIcon /> {{ trainer.partySize }}</td>
             <td>
               <UserBlock v-if="trainer.userId && userIndex.has(trainer.userId)" :user="userIndex.get(trainer.userId)!" />
               <span v-else class="text-muted">{{ "—" }}</span>

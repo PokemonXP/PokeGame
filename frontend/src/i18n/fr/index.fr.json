@@ -7,8 +7,11 @@
     "create": "Créer",
     "delete": "Supprimer",
     "edit": "Éditer",
+    "next": "Suivant",
+    "previous": "Précédent",
     "refresh": "Rafraîchir",
     "remove": "Retirer",
+    "reset": "Réinitialiser",
     "save": "Enregistrer"
   },
   "admin": "Administration",

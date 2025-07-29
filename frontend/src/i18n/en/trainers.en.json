@@ -22,6 +22,14 @@
     },
     "placeholder": "Select a gender"
   },
+  "kind": {
+    "label": "Type",
+    "options": {
+      "Npc": "Non-Player Character",
+      "Player": "Player"
+    },
+    "placeholder": "Select a trainer type"
+  },
   "license": {
     "alreadyUsed": {
       "help": "Please enter a different trainer license.",

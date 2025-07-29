@@ -28,6 +28,7 @@ internal class TrainerEntity : AggregateEntity
 
   public TrainerGender Gender { get; private set; }
   public int Money { get; private set; }
+  public int PartySize { get; private set; }
 
   public string? UserId { get; private set; }
   public Guid? UserUid { get; private set; }

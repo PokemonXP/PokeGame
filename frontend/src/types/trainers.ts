@@ -27,6 +27,7 @@ export type Trainer = Aggregate & {
   description?: string | null;
   gender: TrainerGender;
   money: number;
+  partySize: number;
   userId?: string | null;
   sprite?: string | null;
   url?: string | null;
@@ -34,6 +35,8 @@ export type Trainer = Aggregate & {
 };
 
 export type TrainerGender = "Female" | "Male";
+
+export type TrainerKind = "Player" | "NPC";
 
 export type TrainerSort = "CreatedOn" | "DisplayName" | "License" | "Money" | "UniqueName" | "UpdatedOn";
 

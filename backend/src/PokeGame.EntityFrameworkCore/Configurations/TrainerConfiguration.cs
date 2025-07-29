@@ -26,6 +26,7 @@ internal class TrainerConfiguration : AggregateConfiguration<TrainerEntity>, IEn
     builder.HasIndex(x => x.DisplayName);
     builder.HasIndex(x => x.Gender);
     builder.HasIndex(x => x.Money);
+    builder.HasIndex(x => x.PartySize);
     builder.HasIndex(x => x.UserId);
     builder.HasIndex(x => x.UserUid);
 

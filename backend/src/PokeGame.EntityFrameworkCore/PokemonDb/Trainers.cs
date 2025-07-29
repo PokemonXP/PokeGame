@@ -22,6 +22,7 @@ internal static class Trainers
   public static readonly ColumnId LicenseNormalized = new(nameof(TrainerEntity.LicenseNormalized), Table);
   public static readonly ColumnId Money = new(nameof(TrainerEntity.Money), Table);
   public static readonly ColumnId Notes = new(nameof(TrainerEntity.Notes), Table);
+  public static readonly ColumnId PartySize = new(nameof(TrainerEntity.PartySize), Table);
   public static readonly ColumnId Sprite = new(nameof(TrainerEntity.Sprite), Table);
   public static readonly ColumnId TrainerId = new(nameof(TrainerEntity.TrainerId), Table);
   public static readonly ColumnId UniqueName = new(nameof(TrainerEntity.UniqueName), Table);

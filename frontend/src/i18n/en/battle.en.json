@@ -1,5 +1,16 @@
 {
+  "all": {
+    "select": "Select All",
+    "unselect": "Unselect All"
+  },
+  "champions": {
+    "help": "Select champion trainers, typically player trainers and their allies.",
+    "title": "Champions",
+    "warning": "Some selected trainers are hidden. Reset filters to see those trainers."
+  },
+  "filters": "Filters",
   "create": "Create Battle",
   "help": "Pick the opponent kind.",
+  "remember": "Remember my selection",
   "title": "Battle"
 }

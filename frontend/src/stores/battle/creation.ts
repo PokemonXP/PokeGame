@@ -3,13 +3,25 @@ import { ref } from "vue";
 
 import type { BattleKind } from "@/types/battle";
 
+type Step2 = {
+  champions: string[];
+  remember: boolean;
+};
+
 export const useBattleCreationStore = defineStore(
   "battle-creation",
   () => {
+    const rememberedChampions = ref<string[]>([]);
+
+    const champions = ref<string[]>([]);
     const kind = ref<BattleKind>();
+    const remember = ref<boolean>(false);
     const step = ref<number>(1);
 
     function clear(): void {
+      champions.value = [];
+      kind.value = undefined;
+      remember.value = false;
       step.value = 1;
     }
     function next(): boolean {
@@ -34,8 +46,16 @@ export const useBattleCreationStore = defineStore(
       }
       return false;
     }
+    function saveStep2(data: Step2): boolean {
+      if (step.value === 2) {
+        champions.value = [...data.champions];
+        remember.value = data.remember;
+        return next();
+      }
+      return false;
+    }
 
-    return { kind, step, clear, next, previous, saveStep1 };
+    return { champions, kind, remember, rememberedChampions, step, clear, next, previous, saveStep1, saveStep2 };
   },
   {
     persist: true,

@@ -1,5 +1,16 @@
 {
+  "all": {
+    "select": "Tout sélectionner",
+    "unselect": "Tout désélectionner"
+  },
+  "champions": {
+    "help": "Sélectionnez les entraîneurs champions, typiquement les entraîneurs joueurs et leurs alliés.",
+    "title": "Champions",
+    "warning": "Certains entraîneurs sélectionnés sont cachés. Réinitialisez les filtres pour voir ces entraîneurs."
+  },
+  "filters": "Filtres",
   "create": "Nouvelle bataille",
   "help": "Choisissez le type d’adversaire.",
+  "remember": "Garder ma sélection en mémoire",
   "title": "Bataille"
 }
