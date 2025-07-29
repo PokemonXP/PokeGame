@@ -8,6 +8,10 @@ export type AbilitySummary = {
   description?: string | null;
 };
 
+export type ChangePokemonItemPayload = {
+  heldItem?: string;
+};
+
 export type ExperienceSummary = {
   current: number;
   minimum: number;
@@ -72,6 +76,7 @@ export type OwnershipSummary = {
 };
 
 export type PokemonBase = {
+  id: string;
   isEgg: boolean;
   name: string;
   sprite: string;
@@ -79,7 +84,6 @@ export type PokemonBase = {
 };
 
 export type PokemonCard = PokemonBase & {
-  id: string;
   gender?: PokemonGender | null;
   constitution: number;
   vitality: number;
@@ -88,7 +92,6 @@ export type PokemonCard = PokemonBase & {
 };
 
 export type PokemonSummary = PokemonBase & {
-  id: string;
   number: number;
   nickname?: string | null;
   gender?: PokemonGender | null;

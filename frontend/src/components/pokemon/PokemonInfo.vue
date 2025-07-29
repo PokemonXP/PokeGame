@@ -6,6 +6,7 @@ import { useI18n } from "vue-i18n";
 import ExperienceBar from "./ExperienceBar.vue";
 import NicknameModal from "./NicknameModal.vue";
 import PokemonTypeImage from "./PokemonTypeImage.vue";
+import TakeItemButton from "@/components/game/TakeItemButton.vue";
 import type { ItemSummary, PokemonSummary } from "@/types/game";
 
 const { n, t } = useI18n();
@@ -20,6 +21,7 @@ const number = computed<string>(() => props.pokemon.number.toString().padStart(4
 
 defineEmits<{
   (e: "error", error: unknown): void;
+  (e: "held-item-taken"): void;
   (e: "nicknamed", nickname: string): void;
 }>();
 </script>
@@ -118,7 +120,7 @@ defineEmits<{
       </tbody>
     </table>
     <template v-if="heldItem">
-      <h3 class="h5">{{ t("items.held") }}</h3>
+      <h3 class="h5">{{ t("items.held.label") }}</h3>
       <table class="table table-striped">
         <tbody>
           <tr>
@@ -131,8 +133,9 @@ defineEmits<{
         </tbody>
       </table>
     </template>
-    <div class="my-3">
-      <NicknameModal :pokemon="pokemon" @error="$emit('error', $event)" @nicknamed="$emit('nicknamed', $event)" />
+    <div v-if="!isEgg" class="my-3">
+      <NicknameModal class="me-1" :pokemon="pokemon" @error="$emit('error', $event)" @nicknamed="$emit('nicknamed', $event)" />
+      <TakeItemButton v-if="heldItem" class="ms-1" :pokemon="pokemon" @error="$emit('error', $event)" @success="$emit('held-item-taken')" />
     </div>
   </section>
 </template>

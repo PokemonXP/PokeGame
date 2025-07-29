@@ -31,7 +31,11 @@
     "revives": "Revives",
     "value": "Healing"
   },
-  "held": "Held Item",
+  "held": {
+    "label": "Held Item",
+    "take": "Take Item",
+    "taken": "The item has been taken into the trainer bag."
+  },
   "herbal": "Is Herbal",
   "powerPoints": {
     "allMoves": "All Moves",

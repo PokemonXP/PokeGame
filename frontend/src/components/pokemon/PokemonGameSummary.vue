@@ -26,6 +26,7 @@ const isEgg = computed<boolean>(() => props.pokemon.isEgg);
 
 defineEmits<{
   (e: "error", error: unknown): void;
+  (e: "held-item-taken"): void;
   (e: "moves-swapped", indices: number[]): void;
   (e: "nicknamed", nickname: string): void;
 }>();
@@ -37,7 +38,7 @@ defineEmits<{
     <div class="row">
       <TarTabs class="col" :id="id">
         <TarTab active id="info" :title="t('pokemon.summary.info')">
-          <PokemonInfo :pokemon="pokemon" @error="$emit('error', $event)" @nicknamed="$emit('nicknamed', $event)" />
+          <PokemonInfo :pokemon="pokemon" @error="$emit('error', $event)" @held-item-taken="$emit('held-item-taken')" @nicknamed="$emit('nicknamed', $event)" />
         </TarTab>
         <TarTab id="skills" :disabled="isEgg" :title="t('pokemon.summary.skills')">
           <PokemonSkills v-if="!isEgg" :pokemon="pokemon" />

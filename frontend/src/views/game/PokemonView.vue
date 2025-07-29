@@ -36,6 +36,14 @@ function close(): void {
   summary.value = undefined;
 }
 
+function heldItemTaken(): void {
+  if (summary.value) {
+    summary.value.heldItem = undefined;
+  }
+  refresh();
+  toasts.success("items.held.taken");
+}
+
 function movesSwapped(indices: number[]): void {
   if (summary.value && indices.length === 2 && indices[0] !== indices[1]) {
     const [i, j] = indices;
@@ -128,7 +136,14 @@ onMounted(refresh);
             <PokemonSprite class="img-fluid mb-2 mx-auto" clickable :pokemon="pokemon" :selected="selected?.id === pokemon.id" @click="select(pokemon)" />
           </div>
         </div>
-        <PokemonGameSummary v-if="view === 'summary' && summary" :pokemon="summary" @error="handleError" @moves-swapped="movesSwapped" @nicknamed="nicknamed" />
+        <PokemonGameSummary
+          v-if="view === 'summary' && summary"
+          :pokemon="summary"
+          @error="handleError"
+          @held-item-taken="heldItemTaken"
+          @moves-swapped="movesSwapped"
+          @nicknamed="nicknamed"
+        />
       </section>
     </div>
   </main>
