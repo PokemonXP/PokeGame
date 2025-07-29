@@ -22,7 +22,7 @@ const isEgg = computed<boolean>(() => props.pokemon.isEgg);
         <img v-if="pokemon.caughtBallSprite" :src="pokemon.caughtBallSprite" alt="Poké Ball" height="32" />
         {{ isEgg ? t("pokemon.egg.label") : (pokemon.nickname ?? pokemon.name) }}
       </span>
-      <span v-if="!isEgg" class="float-end"> {{ t("pokemon.level.format", { level: pokemon.level }) }} <PokemonGenderIcon :gender="pokemon.gender" /> </span>
+      <span v-if="!isEgg" class="float-end">{{ t("pokemon.level.format", { level: pokemon.level }) }} <PokemonGenderIcon :gender="pokemon.gender" /></span>
     </h3>
     <PokemonSprite :pokemon="pokemon" />
   </div>

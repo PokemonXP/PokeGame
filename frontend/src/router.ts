@@ -49,6 +49,17 @@ const router = createRouter({
           path: "abilities/:id",
           component: () => import("./views/abilities/AbilityEdit.vue"),
         },
+        // Battle
+        {
+          name: "BattleList",
+          path: "battle",
+          component: () => import("./views/battle/BattleList.vue"),
+        },
+        {
+          name: "CreateBattle",
+          path: "battle/create",
+          component: () => import("./views/battle/CreateBattle.vue"),
+        },
         // Evolutions
         {
           name: "EvolutionList",

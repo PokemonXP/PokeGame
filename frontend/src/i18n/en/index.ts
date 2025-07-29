@@ -1,4 +1,5 @@
 import abilities from "./abilities.en.json";
+import battle from "./battle.en.json";
 import errors from "./errors.en.json";
 import evolutions from "./evolutions.en.json";
 import forms from "./forms.en.json";
@@ -15,6 +16,7 @@ import varieties from "./varieties.en.json";
 export default {
   ...index,
   abilities,
+  battle,
   errors,
   evolutions,
   forms,

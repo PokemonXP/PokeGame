@@ -9,8 +9,10 @@ import { useRoute, useRouter } from "vue-router";
 import AbilityFilter from "@/components/abilities/AbilityFilter.vue";
 import AdminBreadcrumb from "@/components/admin/AdminBreadcrumb.vue";
 import AppPagination from "@/components/shared/AppPagination.vue";
+import BattleIcon from "@/components/icons/BattleIcon.vue";
 import CountSelect from "@/components/shared/CountSelect.vue";
 import DefaultBadge from "@/components/pokemon/forms/DefaultBadge.vue";
+import MegaEvolutionIcon from "@/components/icons/MegaEvolutionIcon.vue";
 import PokemonFormBlock from "@/components/pokemon/forms/PokemonFormBlock.vue";
 import PokemonTypeFilter from "@/components/pokemon/PokemonTypeFilter.vue";
 import PokemonTypeImage from "@/components/pokemon/PokemonTypeImage.vue";
@@ -190,9 +192,9 @@ watch(
             </td>
             <td>
               <template v-if="form.isBattleOnly || form.isMega">
-                <TarBadge v-if="form.isBattleOnly"> <font-awesome-icon icon="fas fa-hand-fist" /> {{ t("forms.battleOnly.label") }} </TarBadge>
+                <TarBadge v-if="form.isBattleOnly"><BattleIcon /> {{ t("forms.battleOnly.label") }}</TarBadge>
                 <br v-if="form.isBattleOnly && form.isMega" />
-                <TarBadge v-if="form.isMega"> <font-awesome-icon icon="fas fa-spaghetti-monster-flying" /> {{ t("forms.mega.label") }} </TarBadge>
+                <TarBadge v-if="form.isMega"><MegaEvolutionIcon /> {{ t("forms.mega.label") }}</TarBadge>
               </template>
               <span v-else class="text-muted">{{ "—" }}</span>
             </td>
