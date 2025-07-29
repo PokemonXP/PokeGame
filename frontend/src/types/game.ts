@@ -72,6 +72,7 @@ export type OwnershipSummary = {
 };
 
 export type PokemonBase = {
+  isEgg: boolean;
   name: string;
   sprite: string;
   level: number;

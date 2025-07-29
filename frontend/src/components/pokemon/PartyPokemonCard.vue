@@ -25,7 +25,7 @@ const classes = computed<string[]>(() => {
   return classes;
 });
 const heldItem = computed<ItemCard | undefined>(() => props.pokemon.heldItem ?? undefined);
-const isEgg = computed<boolean>(() => props.pokemon.level < 1);
+const isEgg = computed<boolean>(() => props.pokemon.isEgg);
 const name = computed<string>(() => (isEgg.value ? t("pokemon.egg.label") : props.pokemon.name));
 </script>
 
