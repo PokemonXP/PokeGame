@@ -154,6 +154,11 @@
     },
     "other": "Other Moves",
     "remember": "Remember",
+    "swap": {
+      "help": "Select another move to swap.",
+      "label": "Swap"
+    },
+    "swapped": "The Pokémon moves have been swapped.",
     "switch": "Switch"
   },
   "name": "Name",

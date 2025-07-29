@@ -68,6 +68,23 @@ public class GamePokemonController : ControllerBase
     return Ok(summary);
   }
 
+  [HttpPatch("{id}/moves/swap")]
+  public async Task<ActionResult> SwapMovesAsync(Guid id, [FromBody] SwitchPokemonMovesPayload payload, CancellationToken cancellationToken)
+  {
+    PokemonModel? pokemon = await _pokemonService.ReadAsync(id, uniqueName: null, cancellationToken);
+    if (pokemon is null)
+    {
+      return NotFound();
+    }
+    else if (pokemon.Ownership is null || pokemon.Ownership.CurrentTrainer.UserId != HttpContext.GetUserId())
+    {
+      return Forbid();
+    }
+
+    await _pokemonService.SwitchMovesAsync(id, payload, cancellationToken);
+    return NoContent();
+  }
+
   [HttpPatch("{id}/nickname")]
   public async Task<ActionResult> NicknameAsync(Guid id, [FromBody] NicknamePokemonPayload input, CancellationToken cancellationToken)
   {

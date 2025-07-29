@@ -154,6 +154,11 @@
     },
     "other": "Other Moves",
     "remember": "Remember",
+    "swap": {
+      "help": "Sélectionnez une autre attaque à échanger.",
+      "label": "Échanger"
+    },
+    "swapped": "Les attaques du Pokémon ont été échangées.",
     "switch": "Switch"
   },
   "name": "Name",

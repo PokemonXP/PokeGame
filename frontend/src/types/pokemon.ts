@@ -257,6 +257,11 @@ export type SwapPokemonPayload = {
   ids: string[];
 };
 
+export type SwapPokemonMovesPayload = {
+  source: number;
+  destination: number;
+};
+
 export type SwitchPokemonMovesPayload = {
   source: number;
   destination: number;
