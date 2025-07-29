@@ -87,6 +87,10 @@ export async function searchPokemon(payload: SearchPokemonPayload): Promise<Sear
     .setQuery("species", payload.speciesId ?? "")
     .setQuery("item", payload.heldItemId ?? "")
     .setQuery("trainer", payload.trainerId ?? "")
+    .setQuery("wild", payload.isWild?.toString() ?? "")
+    .setQuery("egg", payload.isEgg?.toString() ?? "")
+    .setQuery("party", payload.inParty?.toString() ?? "")
+    .setQuery("box", payload.box?.toString() ?? "")
     .setQuery("ids", payload.ids)
     .setQuery(
       "search",

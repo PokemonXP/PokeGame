@@ -15,12 +15,14 @@ export const useBattleCreationStore = defineStore(
 
     const champions = ref<string[]>([]);
     const kind = ref<BattleKind>();
+    const opponents = ref<string[]>([]);
     const remember = ref<boolean>(false);
     const step = ref<number>(1);
 
     function clear(): void {
       champions.value = [];
       kind.value = undefined;
+      opponents.value = [];
       remember.value = false;
       step.value = 1;
     }
@@ -54,8 +56,15 @@ export const useBattleCreationStore = defineStore(
       }
       return false;
     }
+    function saveStep3(selected: string[]): boolean {
+      if (step.value === 3) {
+        opponents.value = [...selected];
+        return next();
+      }
+      return false;
+    }
 
-    return { champions, kind, remember, rememberedChampions, step, clear, next, previous, saveStep1, saveStep2 };
+    return { champions, kind, opponents, remember, rememberedChampions, step, clear, next, previous, saveStep1, saveStep2, saveStep3 };
   },
   {
     persist: true,

@@ -11,6 +11,16 @@
   "filters": "Filtres",
   "create": "Nouvelle bataille",
   "help": "Choisissez le type d’adversaire.",
+  "opponents": {
+    "pokemon": {
+      "help": "Sélectionnez les Pokémon sauvages adversaires.",
+      "warning": "Certains Pokémon sélectionnés sont cachés. Réinitialisez les filtres pour voir ces Pokémon."
+    },
+    "title": "Adversaires",
+    "trainers": {
+      "help": "Sélectionnez les entraîneurs adversaires."
+    }
+  },
   "remember": "Garder ma sélection en mémoire",
   "title": "Bataille"
 }

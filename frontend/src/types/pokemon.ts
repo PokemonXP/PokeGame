@@ -229,6 +229,10 @@ export type SearchPokemonPayload = SearchPayload & {
   speciesId?: string;
   heldItemId?: string;
   trainerId?: string;
+  isWild?: boolean;
+  isEgg?: boolean;
+  inParty?: boolean;
+  box?: number;
   sort: PokemonSortOption[];
 };
 
