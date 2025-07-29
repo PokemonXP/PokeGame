@@ -27,6 +27,7 @@ export type Trainer = Aggregate & {
   description?: string | null;
   gender: TrainerGender;
   money: number;
+  partySize: number;
   userId?: string | null;
   sprite?: string | null;
   url?: string | null;

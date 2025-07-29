@@ -397,6 +397,7 @@ internal class PokemonMapper
       Description = source.Description,
       Gender = source.Gender,
       Money = source.Money,
+      PartySize = source.PartySize,
       UserId = source.UserUid,
       Sprite = source.Sprite,
       Url = source.Url,

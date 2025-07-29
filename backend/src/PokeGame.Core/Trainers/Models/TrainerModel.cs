@@ -12,6 +12,7 @@ public class TrainerModel : AggregateModel
 
   public TrainerGender Gender { get; set; }
   public int Money { get; set; }
+  public int PartySize { get; set; }
 
   public Guid? UserId { get; set; }
 
