@@ -88,7 +88,15 @@ internal class PokemonMapper
       }
     }
 
-    // TODO(fpion): OpponentPokemon
+    foreach (BattlePokemonEntity entity in source.Pokemon)
+    {
+      if (entity.Pokemon is null)
+      {
+        throw new ArgumentException("The Pokémon is required.", nameof(source));
+      }
+      PokemonModel pokemon = ToPokemon(entity.Pokemon);
+      destination.OpponentPokemon.Add(pokemon);
+    }
 
     MapAggregate(source, destination);
 
