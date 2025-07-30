@@ -91,7 +91,7 @@ internal class CreateBattleHandler : ICommandHandler<CreateBattle, BattleModel>
       }
       foreach (string opponent in payload.Opponents)
       {
-        champions.Add(trainers[opponent]);
+        opponents.Add(trainers[opponent]);
       }
     }
 

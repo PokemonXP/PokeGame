@@ -42,7 +42,6 @@ async function submit(): Promise<void> {
         opponents: battle.opponents,
       };
       const created: Battle = await createBattle(payload);
-      console.log(created); // TODO(fpion): implement
       battle.complete();
       toasts.success("battle.created");
       router.push({ name: "BattleEdit", params: { id: created.id } });

@@ -21,32 +21,31 @@ internal class BattleEntity : AggregateEntity
   public List<BattlePokemonEntity> Pokemon { get; private set; } = [];
   public List<BattleTrainerEntity> Trainers { get; private set; } = [];
 
-  public BattleEntity(IEnumerable<TrainerEntity> champions, IEnumerable<TrainerEntity> opponents, TrainerBattleCreated @event)
-    : this(champions, @event)
+  public BattleEntity(IEnumerable<TrainerEntity> champions, IEnumerable<TrainerEntity> opponents, TrainerBattleCreated @event) : this(@event)
   {
     Id = new BattleId(@event.StreamId).ToGuid();
 
     Kind = BattleKind.Trainer;
 
+    AddChampions(champions);
     foreach (TrainerEntity opponent in opponents)
     {
       Trainers.Add(new BattleTrainerEntity(this, opponent, isOpponent: true));
     }
   }
-  public BattleEntity(IEnumerable<TrainerEntity> champions, IEnumerable<PokemonEntity> opponents, WildPokemonBattleCreated @event)
-    : this(champions, @event)
+  public BattleEntity(IEnumerable<TrainerEntity> champions, IEnumerable<PokemonEntity> opponents, WildPokemonBattleCreated @event) : this(@event)
   {
     Id = new BattleId(@event.StreamId).ToGuid();
 
     Kind = BattleKind.WildPokemon;
 
+    AddChampions(champions);
     foreach (PokemonEntity opponent in opponents)
     {
       Pokemon.Add(new BattlePokemonEntity(this, opponent));
     }
   }
-  private BattleEntity(IEnumerable<TrainerEntity> champions, IBattleCreated @event)
-    : base((DomainEvent)@event)
+  private BattleEntity(IBattleCreated @event) : base((DomainEvent)@event)
   {
     Status = BattleStatus.Created;
 
@@ -54,15 +53,18 @@ internal class BattleEntity : AggregateEntity
     Location = @event.Location.Value;
     Url = @event.Url?.Value;
     Notes = @event.Notes?.Value;
-
-    foreach (TrainerEntity champion in champions)
-    {
-      Trainers.Add(new BattleTrainerEntity(this, champion, isOpponent: false));
-    }
   }
 
   private BattleEntity() : base()
   {
+  }
+
+  private void AddChampions(IEnumerable<TrainerEntity> champions)
+  {
+    foreach (TrainerEntity champion in champions)
+    {
+      Trainers.Add(new BattleTrainerEntity(this, champion, isOpponent: false));
+    }
   }
 
   public override string ToString() => $"{Name} | {base.ToString()}";
