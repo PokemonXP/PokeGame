@@ -38,6 +38,10 @@
     "label": "License"
   },
   "money": "Money",
+  "select": {
+    "label": "Trainer",
+    "placeholder": "Select a trainer"
+  },
   "sort": {
     "options": {
       "CreatedOn": "Created on",

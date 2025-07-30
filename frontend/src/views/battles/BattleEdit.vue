@@ -9,8 +9,10 @@ import DeleteBattle from "@/components/battle/DeleteBattle.vue";
 import DisplayNameInput from "@/components/shared/DisplayNameInput.vue";
 import LocationInput from "@/components/regions/LocationInput.vue";
 import NotesTextarea from "@/components/shared/NotesTextarea.vue";
+import PokemonTable from "@/components/battle/PokemonTable.vue";
 import StatusDetail from "@/components/shared/StatusDetail.vue";
 import SubmitButton from "@/components/shared/SubmitButton.vue";
+import TrainerTable from "@/components/battle/TrainerTable.vue";
 import UrlInput from "@/components/shared/UrlInput.vue";
 import type { Battle } from "@/types/battle";
 import type { Breadcrumb } from "@/types/components";
@@ -119,6 +121,11 @@ onMounted(async () => {
           <SubmitButton :loading="isLoading" />
         </div>
       </form>
+      <h2 class="h3">{{ t("battle.champions.title") }}</h2>
+      <TrainerTable :trainers="battle.champions" />
+      <h2 class="h3">{{ t("battle.opponents.title") }}</h2>
+      <PokemonTable v-if="battle.opponentPokemon.length" :pokemon="battle.opponentPokemon" />
+      <TrainerTable v-if="battle.opponentTrainers.length" :trainers="battle.opponentTrainers" />
     </template>
   </main>
 </template>

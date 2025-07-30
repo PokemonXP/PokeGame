@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { TarAvatar, type SelectOption } from "logitar-vue3-ui";
+import type { SelectOption } from "logitar-vue3-ui";
 import { arrayUtils, objectUtils } from "logitar-js";
 import { computed, inject, ref, watch } from "vue";
 import { parsingUtils } from "logitar-js";
@@ -9,10 +9,9 @@ import { useRoute, useRouter } from "vue-router";
 import AdminBreadcrumb from "@/components/admin/AdminBreadcrumb.vue";
 import AppPagination from "@/components/shared/AppPagination.vue";
 import CountSelect from "@/components/shared/CountSelect.vue";
-import EditIcon from "@/components/icons/EditIcon.vue";
 import ItemBlock from "@/components/items/ItemBlock.vue";
 import ItemFilter from "@/components/items/ItemFilter.vue";
-import PokemonGenderIcon from "@/components/icons/PokemonGenderIcon.vue";
+import PokemonBlock from "@/components/pokemon/PokemonBlock.vue";
 import RefreshButton from "@/components/shared/RefreshButton.vue";
 import SearchInput from "@/components/shared/SearchInput.vue";
 import SortSelect from "@/components/shared/SortSelect.vue";
@@ -22,7 +21,6 @@ import TrainerBlock from "@/components/trainers/TrainerBlock.vue";
 import TrainerFilter from "@/components/trainers/TrainerFilter.vue";
 import type { Pokemon, PokemonSort, SearchPokemonPayload } from "@/types/pokemon";
 import type { SearchResults } from "@/types/search";
-import { getSpriteUrl } from "@/helpers/pokemon";
 import { handleErrorKey } from "@/inject";
 import { searchPokemon } from "@/api/pokemon";
 
@@ -170,7 +168,7 @@ watch(
             <th scope="col">{{ t("pokemon.name") }}</th>
             <th scope="col">{{ t("pokemon.progress.title") }}</th>
             <th scope="col">{{ t("items.held.label") }}</th>
-            <th scope="col">{{ t("pokemon.trainer.label") }}</th>
+            <th scope="col">{{ t("trainers.select.label") }}</th>
             <th scope="col">
               {{ t("pokemon.memories.position.label") }}
               {{ "/" }}
@@ -181,31 +179,7 @@ watch(
         </thead>
         <tbody>
           <tr v-for="pokemon in pokemonList" :key="pokemon.id">
-            <td>
-              <div class="d-flex">
-                <div class="d-flex">
-                  <div class="align-content-center flex-wrap mx-1">
-                    <RouterLink :to="{ name: 'PokemonEdit', params: { id: pokemon.id } }">
-                      <TarAvatar :display-name="pokemon.nickname ?? pokemon.uniqueName" icon="fas fa-dog" size="40" :url="getSpriteUrl(pokemon)" />
-                    </RouterLink>
-                  </div>
-                </div>
-                <div>
-                  <RouterLink :to="{ name: 'PokemonEdit', params: { id: pokemon.id } }">
-                    <template v-if="pokemon.nickname">
-                      <EditIcon /> {{ pokemon.nickname }}
-                      <br />
-                      <PokemonGenderIcon :gender="pokemon.gender" /> {{ pokemon.uniqueName }}
-                    </template>
-                    <template v-else>
-                      <EditIcon /> {{ pokemon.nickname }}
-                      {{ pokemon.uniqueName }}
-                      <PokemonGenderIcon :gender="pokemon.gender" />
-                    </template>
-                  </RouterLink>
-                </div>
-              </div>
-            </td>
+            <td><PokemonBlock :pokemon="pokemon" /></td>
             <td>
               {{ t("pokemon.level.format", { level: pokemon.level }) }}
               <br />

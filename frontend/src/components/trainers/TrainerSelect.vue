@@ -23,8 +23,8 @@ const props = withDefaults(
   }>(),
   {
     id: "trainer",
-    label: "pokemon.trainer.label",
-    placeholder: "pokemon.trainer.placeholder",
+    label: "trainers.select.label",
+    placeholder: "trainers.select.placeholder",
   },
 );
 

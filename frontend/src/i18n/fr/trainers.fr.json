@@ -38,6 +38,10 @@
     "label": "Licence"
   },
   "money": "Richesse",
+  "select": {
+    "label": "Entraîneur",
+    "placeholder": "Sélectionnez un entraîneur"
+  },
   "sort": {
     "options": {
       "CreatedOn": "Date de création",
