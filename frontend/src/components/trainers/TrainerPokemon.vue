@@ -245,7 +245,8 @@ async function swap(): Promise<void> {
         const other: Pokemon | null = findPokemon(slots[1]);
         if (first && other) {
           const payload: SwapPokemonPayload = {
-            ids: [first.id, other.id],
+            source: first.id,
+            destination: other.id,
           };
           const swapped: Pokemon[] = await swapPokemon(payload);
           swapped.forEach((swapped) => pokemon.value.set(swapped.id, swapped));
@@ -355,7 +356,7 @@ watch(() => props.trainer, refresh, { deep: true, immediate: true });
         icon="fas fa-rotate"
         :loading="isLoading"
         :status="t('loading')"
-        :text="t('pokemon.memories.box.swap')"
+        :text="t('pokemon.position.swap.label')"
         @click="swap"
       />
       <TarButton

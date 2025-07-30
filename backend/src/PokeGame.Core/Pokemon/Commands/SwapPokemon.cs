@@ -33,33 +33,34 @@ internal class SwapPokemonHandler : ICommandHandler<SwapPokemon, IReadOnlyCollec
     SwapPokemonPayload payload = command.Payload;
     new SwapPokemonValidator().ValidateAndThrow(payload);
 
-    IEnumerable<PokemonId> pokemonIds = payload.Ids.Select(id => new PokemonId(id));
-    IReadOnlyCollection<Specimen> specimens = await _pokemonRepository.LoadAsync(pokemonIds, cancellationToken);
+    Specimen source = await _pokemonRepository.LoadAsync(payload.Source, cancellationToken)
+      ?? throw new PokemonNotFoundException([payload.Source], nameof(payload.Source));
+    Specimen destination = await _pokemonRepository.LoadAsync(payload.Destination, cancellationToken)
+      ?? throw new PokemonNotFoundException([payload.Destination], nameof(payload.Destination));
 
-    IEnumerable<Guid> missingIds = payload.Ids.Except(specimens.Select(pokemon => pokemon.Id.ToGuid())).Distinct();
-    if (missingIds.Any())
-    {
-      throw new PokemonNotFoundException(missingIds, nameof(payload.Ids));
-    }
-
-    List<ValidationFailure> failures = new(capacity: specimens.Count + 1);
+    Specimen[] specimens = [source, destination];
+    List<ValidationFailure> failures = new(capacity: specimens.Length + 1);
     foreach (Specimen pokemon in specimens)
     {
       if (pokemon.Ownership is null || pokemon.Slot is null)
       {
-        ValidationFailure failure = new(nameof(payload.Ids), "The Pokémon is not owned by any trainer.", pokemon.Id.ToGuid())
+        ValidationFailure failure = new("PokemonId", "The Pokémon is not owned by any trainer.", pokemon.Id.ToGuid())
         {
           ErrorCode = "PokemonHasNoOwner"
         };
         failures.Add(failure);
       }
     }
-    Specimen pokemon1 = specimens.First();
-    Specimen pokemon2 = specimens.Last();
-    if (pokemon1.Ownership is not null && pokemon2.Ownership is not null && pokemon1.Ownership.TrainerId != pokemon2.Ownership.TrainerId)
+    if (source.Ownership is not null && destination.Ownership is not null && source.Ownership.TrainerId != destination.Ownership.TrainerId)
     {
-      ValidationFailure failure = new(nameof(payload.Ids), "The Pokémon are not owned by the same trainer.", payload.Ids)
+      Guid[] pokemonIds = [source.Id.ToGuid(), destination.Id.ToGuid()];
+      ValidationFailure failure = new("PokemonIds", "The Pokémon are not owned by the same trainer.", pokemonIds)
       {
+        CustomState = new
+        {
+          SourceTrainerId = source.Ownership.TrainerId.ToGuid(),
+          DestinationTrainerId = destination.Ownership.TrainerId.ToGuid()
+        },
         ErrorCode = "PokemonOwnersAreDifferent"
       };
       failures.Add(failure);
@@ -69,11 +70,11 @@ internal class SwapPokemonHandler : ICommandHandler<SwapPokemon, IReadOnlyCollec
       throw new ValidationException(failures);
     }
 
-    if ((IsEggInBox(pokemon1) && IsHatchedInParty(pokemon2)) || (IsEggInBox(pokemon2) && IsHatchedInParty(pokemon1)))
+    if ((IsEggInBox(source) && IsHatchedInParty(destination)) || (IsEggInBox(destination) && IsHatchedInParty(source)))
     {
-      TrainerId trainerId = pokemon1.Ownership?.TrainerId ?? new();
+      TrainerId trainerId = source.Ownership?.TrainerId ?? new();
       Storage storage = await _pokemonQuerier.GetStorageAsync(trainerId, cancellationToken);
-      IEnumerable<PokemonId> partyIds = storage.Party.Except([pokemon1.Id, pokemon2.Id]);
+      IEnumerable<PokemonId> partyIds = storage.Party.Except([source.Id, destination.Id]);
       IReadOnlyCollection<Specimen> partyPokemon = await _pokemonRepository.LoadAsync(partyIds, cancellationToken);
       if (!partyPokemon.Any(p => !p.IsEgg))
       {
@@ -85,11 +86,12 @@ internal class SwapPokemonHandler : ICommandHandler<SwapPokemon, IReadOnlyCollec
       }
     }
 
-    pokemon1.Swap(pokemon2, actorId);
-    await _pokemonRepository.SaveAsync([pokemon1, pokemon2], cancellationToken);
+    source.Swap(destination, actorId);
+    await _pokemonRepository.SaveAsync([source, destination], cancellationToken);
 
     SearchPokemonPayload search = new();
-    search.Ids.AddRange(payload.Ids);
+    search.Ids.Add(source.Id.ToGuid());
+    search.Ids.Add(destination.Id.ToGuid());
     SearchResults<PokemonModel> results = await _pokemonQuerier.SearchAsync(search, cancellationToken);
     return results.Items­.AsReadOnly();
   }

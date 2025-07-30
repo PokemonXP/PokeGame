@@ -134,10 +134,10 @@ defineEmits<{
         </tbody>
       </table>
     </template>
-    <div v-if="!isEgg" class="my-3">
-      <NicknameModal class="me-1" :pokemon="pokemon" @error="$emit('error', $event)" @nicknamed="$emit('nicknamed', $event)" />
-      <TakeItemButton v-if="heldItem" class="mx-1" :pokemon="pokemon" @error="$emit('error', $event)" @success="$emit('held-item')" />
-      <ChangeHeldItem class="ms-1" :pokemon="pokemon" @changed="$emit('held-item', $event)" />
+    <div v-if="!isEgg" class="my-3 d-flex gap-2">
+      <NicknameModal :pokemon="pokemon" @error="$emit('error', $event)" @nicknamed="$emit('nicknamed', $event)" />
+      <ChangeHeldItem :pokemon="pokemon" @changed="$emit('held-item', $event)" />
+      <TakeItemButton v-if="heldItem" :pokemon="pokemon" @error="$emit('error', $event)" @success="$emit('held-item')" />
     </div>
   </section>
 </template>

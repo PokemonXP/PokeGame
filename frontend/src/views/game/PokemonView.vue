@@ -5,13 +5,14 @@ import { stringUtils } from "logitar-js";
 import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
 
+import CircleInfoIcon from "@/components/icons/CircleInfoIcon.vue";
 import GameBreadcrumb from "@/components/game/GameBreadcrumb.vue";
 import PartyPokemonCard from "@/components/pokemon/PartyPokemonCard.vue";
 import PokemonGameSummary from "@/components/pokemon/PokemonGameSummary.vue";
 import PokemonSprite from "@/components/pokemon/PokemonSprite.vue";
 import type { Breadcrumb } from "@/types/components";
 import type { InventoryItem, MoveSummary, PokemonCard, PokemonSummary } from "@/types/game";
-import { getPokemon, getSummary } from "@/api/game/pokemon";
+import { getPokemon, getSummary, swapPokemon } from "@/api/game/pokemon";
 import { handleErrorKey } from "@/inject";
 import { onMounted, ref } from "vue";
 import { useToastStore } from "@/stores/toast";
@@ -25,6 +26,7 @@ const { cleanTrim } = stringUtils;
 const { t } = useI18n();
 
 const isLoading = ref<boolean>(false);
+const isSwapping = ref<boolean>(false);
 const party = ref<PokemonCard[]>([]);
 const parent = ref<Breadcrumb>({ text: t("menu"), to: { name: "GameMenu" } });
 const selected = ref<PokemonCard>();
@@ -84,9 +86,28 @@ async function openSummary(): Promise<void> {
   }
 }
 
+async function swap(pokemon: PokemonCard): Promise<void> {
+  if (!isLoading.value && selected.value) {
+    isLoading.value = true;
+    try {
+      await swapPokemon(selected.value.id, pokemon.id);
+      isSwapping.value = false;
+      refresh();
+      toasts.success("pokemon.position.swap.success");
+    } catch (e: unknown) {
+      handleError(e);
+    } finally {
+      isLoading.value = false;
+    }
+  }
+}
+
 function select(pokemon: PokemonCard): void {
   if (selected.value?.id === pokemon.id) {
+    isSwapping.value = false;
     selected.value = undefined;
+  } else if (isSwapping.value) {
+    swap(pokemon);
   } else {
     selected.value = pokemon;
   }
@@ -113,18 +134,34 @@ onMounted(refresh);
     <h1 class="text-center">{{ t("pokemon.title") }}</h1>
     <GameBreadcrumb :current="t('pokemon.title')" :parent="parent" />
     <div class="mb-3">
-      <TarButton
-        v-if="selected"
-        :disabled="isLoading || summary?.id === selected.id"
-        icon="fas fa-id-card"
-        :loading="isLoading"
-        size="large"
-        :status="t('loading')"
-        :text="t('pokemon.summary.title')"
-        @click="openSummary"
-      />
+      <template v-if="selected">
+        <TarButton
+          class="me-1"
+          :disabled="isLoading || summary?.id === selected.id"
+          icon="fas fa-id-card"
+          :loading="isLoading"
+          size="large"
+          :status="t('loading')"
+          :text="t('pokemon.summary.title')"
+          @click="openSummary"
+        />
+        <TarButton
+          class="ms-1"
+          :disabled="isLoading"
+          icon="fas fa-rotate"
+          :loading="isLoading"
+          :outline="!isSwapping"
+          size="large"
+          :status="t('loading')"
+          :text="t('pokemon.position.swap.label')"
+          @click="isSwapping = !isSwapping"
+        />
+      </template>
       <TarButton v-if="summary" class="float-end" icon="fas fa-times" size="large" :text="t('actions.close')" variant="secondary" @click="close" />
     </div>
+    <p v-if="isSwapping">
+      <i><CircleInfoIcon /> {{ t("pokemon.position.swap.help") }}</i>
+    </p>
     <div class="row">
       <section class="col-3">
         <h2 class="h3">{{ t("pokemon.party") }}</h2>

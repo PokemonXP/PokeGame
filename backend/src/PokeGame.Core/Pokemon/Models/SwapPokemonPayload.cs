@@ -2,5 +2,16 @@
 
 public record SwapPokemonPayload
 {
-  public List<Guid> Ids { get; set; } = [];
+  public string Source { get; set; }
+  public string Destination { get; set; }
+
+  public SwapPokemonPayload() : this(string.Empty, string.Empty)
+  {
+  }
+
+  public SwapPokemonPayload(string source, string destination)
+  {
+    Source = source;
+    Destination = destination;
+  }
 }

@@ -27,6 +27,14 @@ export async function nicknamePokemon(id: string, payload: NicknamePokemonPayloa
   await patch<NicknamePokemonPayload, void>(url, payload);
 }
 
+export async function swapPokemon(sourceId: string, destinationId: string): Promise<void> {
+  const url: string = new urlUtils.UrlBuilder({ path: "/game/pokemon/{sourceId}/swap/{destinationId}" })
+    .setParameter("sourceId", sourceId)
+    .setParameter("destinationId", destinationId)
+    .buildRelative();
+  await patch<void, void>(url);
+}
+
 export async function swapPokemonMoves(id: string, payload: SwapPokemonMovesPayload): Promise<void> {
   const url: string = new urlUtils.UrlBuilder({ path: "/game/pokemon/{id}/moves/swap" }).setParameter("id", id).buildRelative();
   await patch<SwapPokemonMovesPayload, void>(url, payload);
