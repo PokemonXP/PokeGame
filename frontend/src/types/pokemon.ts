@@ -266,11 +266,6 @@ export type SwapPokemonMovesPayload = {
   destination: number;
 };
 
-export type SwitchPokemonMovesPayload = {
-  source: number;
-  destination: number;
-};
-
 export type UpdatePokemonPayload = {
   uniqueName?: string;
   nickname?: Change<string>;

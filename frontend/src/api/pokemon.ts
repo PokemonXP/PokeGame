@@ -9,8 +9,8 @@ import type {
   ReceivePokemonPayload,
   RememberPokemonMovePayload,
   SearchPokemonPayload,
+  SwapPokemonMovesPayload,
   SwapPokemonPayload,
-  SwitchPokemonMovesPayload,
   UpdatePokemonPayload,
 } from "@/types/pokemon";
 import type { SearchResults } from "@/types/search";
@@ -112,9 +112,9 @@ export async function swapPokemon(payload: SwapPokemonPayload): Promise<Pokemon[
   return (await patch<SwapPokemonPayload, Pokemon[]>(url, payload)).data;
 }
 
-export async function switchPokemonMoves(id: string, payload: SwitchPokemonMovesPayload): Promise<Pokemon> {
+export async function swapPokemonMoves(id: string, payload: SwapPokemonMovesPayload): Promise<Pokemon> {
   const url: string = new urlUtils.UrlBuilder({ path: "/pokemon/{id}/moves/switch" }).setParameter("id", id).buildRelative();
-  return (await patch<SwitchPokemonMovesPayload, Pokemon>(url, payload)).data;
+  return (await patch<SwapPokemonMovesPayload, Pokemon>(url, payload)).data;
 }
 
 export async function updatePokemon(id: string, payload: UpdatePokemonPayload): Promise<Pokemon> {

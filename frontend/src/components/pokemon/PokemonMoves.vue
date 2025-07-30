@@ -4,9 +4,9 @@ import { arrayUtils } from "logitar-js";
 import { useI18n } from "vue-i18n";
 
 import MoveTable from "./MoveTable.vue";
-import type { MoveDisplayMove, Pokemon, PokemonMove, RememberPokemonMovePayload, SwitchPokemonMovesPayload } from "@/types/pokemon";
+import type { MoveDisplayMove, Pokemon, PokemonMove, RememberPokemonMovePayload, SwapPokemonMovesPayload } from "@/types/pokemon";
 import { computed, ref } from "vue";
-import { rememberPokemonMove, switchPokemonMoves } from "@/api/pokemon";
+import { rememberPokemonMove, swapPokemonMoves } from "@/api/pokemon";
 
 const { orderBy } = arrayUtils;
 const { t } = useI18n();
@@ -56,15 +56,15 @@ async function onRemember(move: PokemonMove): Promise<void> {
     }
   }
 }
-async function onSwitch(destination: number): Promise<void> {
+async function onSwap(destination: number): Promise<void> {
   if (!isLoading.value) {
     isLoading.value = true;
     try {
-      const payload: SwitchPokemonMovesPayload = {
+      const payload: SwapPokemonMovesPayload = {
         source: selectedPosition.value ?? destination,
         destination,
       };
-      const pokemon: Pokemon = await switchPokemonMoves(props.pokemon.id, payload);
+      const pokemon: Pokemon = await swapPokemonMoves(props.pokemon.id, payload);
       selectedPosition.value = undefined;
       emit("saved", pokemon);
     } catch (e: unknown) {
@@ -95,7 +95,7 @@ async function onSwitch(destination: number): Promise<void> {
       :moves="currentMoves"
       :selected="selectedPosition"
       @selected="selectedPosition = $event"
-      @switch="onSwitch"
+      @switch="onSwap"
     />
     <h2 class="h3">{{ t("pokemon.move.other") }}</h2>
     <MoveTable :loading="isLoading" :mode="mode" :moves="otherMoves" :selected="selectedPosition" @remember="onRemember" />

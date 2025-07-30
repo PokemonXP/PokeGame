@@ -16,7 +16,7 @@ public interface IPokemonService
   Task<PokemonModel?> UpdateAsync(Guid id, UpdatePokemonPayload payload, CancellationToken cancellationToken = default);
 
   Task<PokemonModel?> RememberMoveAsync(Guid pokemonId, Guid moveId, RememberPokemonMovePayload payload, CancellationToken cancellationToken = default);
-  Task<PokemonModel?> SwitchMovesAsync(Guid id, SwitchPokemonMovesPayload payload, CancellationToken cancellationToken = default);
+  Task<PokemonModel?> SwapMovesAsync(Guid id, SwapPokemonMovesPayload payload, CancellationToken cancellationToken = default);
 
   Task<PokemonModel?> ChangeItemAsync(Guid id, ChangePokemonItemPayload payload, CancellationToken cancellationToken = default);
 
@@ -53,7 +53,7 @@ internal class PokemonService : IPokemonService
     services.AddTransient<ICommandHandler<ReleasePokemon, PokemonModel?>, ReleasePokemonHandler>();
     services.AddTransient<ICommandHandler<RememberPokemonMove, PokemonModel?>, RememberPokemonMoveHandler>();
     services.AddTransient<ICommandHandler<SwapPokemon, IReadOnlyCollection<PokemonModel>>, SwapPokemonHandler>();
-    services.AddTransient<ICommandHandler<SwitchPokemonMoves, PokemonModel?>, SwitchPokemonMovesHandler>();
+    services.AddTransient<ICommandHandler<SwapPokemonMoves, PokemonModel?>, SwapPokemonMovesHandler>();
     services.AddTransient<ICommandHandler<UpdatePokemon, PokemonModel?>, UpdatePokemonHandler>();
     services.AddTransient<ICommandHandler<WithdrawPokemon, PokemonModel?>, WithdrawPokemonHandler>();
     services.AddTransient<IQueryHandler<ReadPokemon, PokemonModel?>, ReadPokemonHandler>();
@@ -111,9 +111,9 @@ internal class PokemonService : IPokemonService
     return await _commandBus.ExecuteAsync(command, cancellationToken);
   }
 
-  public async Task<PokemonModel?> SwitchMovesAsync(Guid id, SwitchPokemonMovesPayload payload, CancellationToken cancellationToken)
+  public async Task<PokemonModel?> SwapMovesAsync(Guid id, SwapPokemonMovesPayload payload, CancellationToken cancellationToken)
   {
-    SwitchPokemonMoves command = new(id, payload);
+    SwapPokemonMoves command = new(id, payload);
     return await _commandBus.ExecuteAsync(command, cancellationToken);
   }
 

@@ -82,7 +82,7 @@ public class GamePokemonController : ControllerBase
   }
 
   [HttpPatch("{id}/moves/swap")]
-  public async Task<ActionResult> SwapMovesAsync(Guid id, [FromBody] SwitchPokemonMovesPayload payload, CancellationToken cancellationToken)
+  public async Task<ActionResult> SwapMovesAsync(Guid id, [FromBody] SwapPokemonMovesPayload payload, CancellationToken cancellationToken)
   {
     ActionResult? result = await EnsureOwnershipAsync(id, cancellationToken);
     if (result is not null)
@@ -90,7 +90,7 @@ public class GamePokemonController : ControllerBase
       return result;
     }
 
-    await _pokemonService.SwitchMovesAsync(id, payload, cancellationToken);
+    await _pokemonService.SwapMovesAsync(id, payload, cancellationToken);
     return NoContent();
   }
 

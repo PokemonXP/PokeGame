@@ -274,7 +274,7 @@ internal class PokemonEntity : AggregateEntity
     SetSlot(@event.Slot);
   }
 
-  public void SwitchMoves(PokemonMoveSwitched @event)
+  public void SwapMoves(PokemonMoveSwapped @event)
   {
     Update(@event);
 
@@ -282,7 +282,7 @@ internal class PokemonEntity : AggregateEntity
     PokemonMoveEntity? destination = Moves.SingleOrDefault(x => x.Position == @event.Destination);
     if (source is not null && destination is not null)
     {
-      source.Switch(destination);
+      source.Swap(destination);
     }
   }
 
