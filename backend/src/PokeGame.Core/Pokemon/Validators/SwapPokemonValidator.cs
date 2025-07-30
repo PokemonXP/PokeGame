@@ -7,10 +7,7 @@ internal class SwapPokemonValidator : AbstractValidator<SwapPokemonPayload>
 {
   public SwapPokemonValidator()
   {
-    RuleFor(x => x.Ids).Must(BeValidIds)
-      .WithErrorCode("SwapPokemonValidator")
-      .WithMessage("'{PropertyName}' must contain exactly 2 distinct elements.");
+    RuleFor(x => x.Source).NotEmpty();
+    RuleFor(x => x.Destination).NotEmpty();
   }
-
-  private static bool BeValidIds(IEnumerable<Guid> ids) => ids.Distinct().Count() == 2;
 }

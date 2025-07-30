@@ -258,7 +258,8 @@ export type StatisticValues = {
 export type StatusCondition = "Burn" | "Freeze" | "Paralysis" | "Poison" | "Sleep";
 
 export type SwapPokemonPayload = {
-  ids: string[];
+  source: string;
+  destination: string;
 };
 
 export type SwapPokemonMovesPayload = {

@@ -245,7 +245,8 @@ async function swap(): Promise<void> {
         const other: Pokemon | null = findPokemon(slots[1]);
         if (first && other) {
           const payload: SwapPokemonPayload = {
-            ids: [first.id, other.id],
+            source: first.id,
+            destination: other.id,
           };
           const swapped: Pokemon[] = await swapPokemon(payload);
           swapped.forEach((swapped) => pokemon.value.set(swapped.id, swapped));
