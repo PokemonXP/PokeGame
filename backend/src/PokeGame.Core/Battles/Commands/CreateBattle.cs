@@ -10,6 +10,7 @@ namespace PokeGame.Core.Battles.Commands;
 
 internal record CreateBattle(CreateBattlePayload Payload) : ICommand<BattleModel>;
 
+/// <exception cref="IdAlreadyUsedException{T}"></exception>
 /// <exception cref="PokemonNotFoundException"></exception>
 /// <exception cref="TrainersNotFoundException"></exception>
 /// <exception cref="ValidationException"></exception>

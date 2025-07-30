@@ -15,7 +15,13 @@ internal class CreateBattleValidator : AbstractValidator<CreateBattlePayload>
     When(x => !string.IsNullOrWhiteSpace(x.Url), () => RuleFor(x => x.Url!).Url());
     When(x => !string.IsNullOrWhiteSpace(x.Notes), () => RuleFor(x => x.Notes!).Notes());
 
-    // TODO(fpion): Champions
-    // TODO(fpion): Opponents
+    RuleFor(x => x.Champions).Must(HaveAtLeastOneNonEmptyElement)
+      .WithErrorCode("NotEmptyValidator")
+      .WithMessage("'{PropertyName}' must contain at least one non-empty element.");
+    RuleFor(x => x.Opponents).Must(HaveAtLeastOneNonEmptyElement)
+      .WithErrorCode("NotEmptyValidator")
+      .WithMessage("'{PropertyName}' must contain at least one non-empty element.");
   }
+
+  private static bool HaveAtLeastOneNonEmptyElement(IEnumerable<string> elements) => elements.Any(e => !string.IsNullOrWhiteSpace(e));
 }

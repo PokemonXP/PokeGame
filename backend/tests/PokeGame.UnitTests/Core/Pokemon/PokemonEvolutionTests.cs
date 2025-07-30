@@ -194,7 +194,7 @@ public class PokemonEvolutionTests
     Item pokeBall = new(new UniqueName(_uniqueNameSettings, "poke-ball"), new PokeBallProperties());
     Location location = new("La Forest");
 
-    Trainer original = new(new License("Q-123456-3"), new UniqueName(_uniqueNameSettings, "adrianna"), TrainerGender.Female);
+    Trainer original = new(new License("Q-123456-3"), new UniqueName(_uniqueNameSettings, "regina"), TrainerGender.Female);
     pokemon.Catch(original, pokeBall, location);
 
     Trainer current = new(new License("Q-590921-8"), new UniqueName(_uniqueNameSettings, "jean-guy-bowlpacker"), TrainerGender.Male);
