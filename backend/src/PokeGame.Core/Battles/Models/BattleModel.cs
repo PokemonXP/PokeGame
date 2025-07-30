@@ -1,4 +1,5 @@
-﻿using PokeGame.Core.Pokemon.Models;
+﻿using Krakenar.Contracts.Actors;
+using PokeGame.Core.Pokemon.Models;
 using PokeGame.Core.Trainers.Models;
 using AggregateModel = Krakenar.Contracts.Aggregate;
 
@@ -8,6 +9,9 @@ public class BattleModel : AggregateModel
 {
   public BattleKind Kind { get; set; }
   public BattleStatus Status { get; set; }
+
+  public Actor? StartedBy { get; set; }
+  public DateTime? StartedOn { get; set; }
 
   public string Name { get; set; } = string.Empty;
   public string Location { get; set; } = string.Empty;

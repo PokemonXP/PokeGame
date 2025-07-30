@@ -18,6 +18,7 @@ namespace PokeGame.Core.Battles;
 [Trait(Traits.Category, Categories.Unit)]
 public class BattleTests
 {
+  private readonly ActorId _actorId = ActorId.NewId();
   private readonly IPokemonRandomizer _randomizer = PokemonRandomizer.Instance;
   private readonly UniqueNameSettings _uniqueNameSetings = new();
 
@@ -45,6 +46,24 @@ public class BattleTests
     _trainer = new Trainer(new License("Q-123456-3"), new UniqueName(_uniqueNameSetings, "elliotto"));
   }
 
+  [Fact(DisplayName = "Start: it should start the battle.")]
+  public void Given_NotStarted_When_Start_Then_Started()
+  {
+    DisplayName name = new("My First Battle");
+    Location location = new("Collège de l’Épervier");
+    Battle battle = Battle.WildPokemon(name, location, [_trainer], [_pokemon]);
+
+    battle.Start(_actorId);
+    Assert.Equal(BattleStatus.Started, battle.Status);
+    Assert.True(battle.HasChanges);
+    Assert.Contains(battle.Changes, change => change is BattleStarted started && started.ActorId == _actorId);
+
+    battle.ClearChanges();
+    battle.Start();
+    Assert.False(battle.HasChanges);
+    Assert.Empty(battle.Changes);
+  }
+
   [Fact(DisplayName = "Trainer: it should create a trainer battle.")]
   public void Given_Valid_When_Trainer_Then_Battle()
   {
@@ -52,12 +71,11 @@ public class BattleTests
 
     DisplayName name = new("My First Battle");
     Location location = new("Collège de l’Épervier");
-    ActorId actorId = ActorId.NewId();
     BattleId battleId = BattleId.NewId();
-    Battle battle = Battle.Trainer(name, location, [_trainer], [opponent], url: null, notes: null, actorId, battleId);
+    Battle battle = Battle.Trainer(name, location, [_trainer], [opponent], url: null, notes: null, _actorId, battleId);
 
     Assert.True(battle.HasChanges);
-    Assert.Contains(battle.Changes, change => change is TrainerBattleCreated created && created.ActorId == actorId);
+    Assert.Contains(battle.Changes, change => change is TrainerBattleCreated created && created.ActorId == _actorId);
 
     Assert.Equal(battleId, battle.Id);
     Assert.Equal(BattleKind.Trainer, battle.Kind);
@@ -109,12 +127,11 @@ public class BattleTests
     Location location = new("Collège de l’Épervier");
     Url url = new("https://bulbapedia.bulbagarden.net/wiki/Pok%C3%A9mon_battle");
     Notes notes = new("This is my first battle.");
-    ActorId actorId = ActorId.NewId();
     BattleId battleId = BattleId.NewId();
-    Battle battle = Battle.WildPokemon(name, location, [_trainer], [_pokemon], url, notes, actorId, battleId);
+    Battle battle = Battle.WildPokemon(name, location, [_trainer], [_pokemon], url, notes, _actorId, battleId);
 
     Assert.True(battle.HasChanges);
-    Assert.Contains(battle.Changes, change => change is WildPokemonBattleCreated created && created.ActorId == actorId);
+    Assert.Contains(battle.Changes, change => change is WildPokemonBattleCreated created && created.ActorId == _actorId);
 
     Assert.Equal(battleId, battle.Id);
     Assert.Equal(BattleKind.WildPokemon, battle.Kind);

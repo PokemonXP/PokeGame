@@ -102,6 +102,11 @@ internal class BattleQuerier : IBattleQuerier
             ? (sort.IsDescending ? query.OrderByDescending(x => x.Name) : query.OrderBy(x => x.Name))
             : (sort.IsDescending ? ordered.ThenByDescending(x => x.Name) : ordered.ThenBy(x => x.Name));
           break;
+        case BattleSort.StartedOn:
+          ordered = ordered is null
+            ? (sort.IsDescending ? query.OrderByDescending(x => x.StartedOn) : query.OrderBy(x => x.StartedOn))
+            : (sort.IsDescending ? ordered.ThenByDescending(x => x.StartedOn) : ordered.ThenBy(x => x.StartedOn));
+          break;
         case BattleSort.UpdatedOn:
           ordered = ordered is null
             ? (sort.IsDescending ? query.OrderByDescending(x => x.UpdatedOn) : query.OrderBy(x => x.UpdatedOn))

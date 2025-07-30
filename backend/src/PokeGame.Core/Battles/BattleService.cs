@@ -13,6 +13,7 @@ public interface IBattleService
   Task<BattleModel?> DeleteAsync(Guid id, CancellationToken cancellationToken = default);
   Task<BattleModel?> ReadAsync(Guid id, CancellationToken cancellationToken = default);
   Task<SearchResults<BattleModel>> SearchAsync(SearchBattlesPayload payload, CancellationToken cancellationToken = default);
+  Task<BattleModel?> StartAsync(Guid id, CancellationToken cancellationToken = default);
 }
 
 internal class BattleService : IBattleService
@@ -22,6 +23,7 @@ internal class BattleService : IBattleService
     services.AddTransient<IBattleService, BattleService>();
     services.AddTransient<ICommandHandler<CreateBattle, BattleModel>, CreateBattleHandler>();
     services.AddTransient<ICommandHandler<DeleteBattle, BattleModel?>, DeleteBattleHandler>();
+    services.AddTransient<ICommandHandler<StartBattle, BattleModel?>, StartBattleHandler>();
     services.AddTransient<IQueryHandler<ReadBattle, BattleModel?>, ReadBattleHandler>();
     services.AddTransient<IQueryHandler<SearchBattles, SearchResults<BattleModel>>, SearchBattlesHandler>();
   }
@@ -57,5 +59,11 @@ internal class BattleService : IBattleService
   {
     SearchBattles query = new(payload);
     return await _queryBus.ExecuteAsync(query, cancellationToken);
+  }
+
+  public async Task<BattleModel?> StartAsync(Guid id, CancellationToken cancellationToken)
+  {
+    StartBattle command = new(id);
+    return await _commandBus.ExecuteAsync(command, cancellationToken);
   }
 }

@@ -21,6 +21,8 @@ internal class BattleConfiguration : AggregateConfiguration<BattleEntity>, IEnti
     builder.HasIndex(x => x.Id).IsUnique();
     builder.HasIndex(x => x.Kind);
     builder.HasIndex(x => x.Status);
+    builder.HasIndex(x => x.StartedBy);
+    builder.HasIndex(x => x.StartedOn);
     builder.HasIndex(x => x.Name);
     builder.HasIndex(x => x.Location);
     builder.HasIndex(x => x.ChampionCount);

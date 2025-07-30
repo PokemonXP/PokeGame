@@ -169,5 +169,17 @@ public class Battle : AggregateRoot
     }
   }
 
+  public void Start(ActorId? actorId = null)
+  {
+    if (Status == BattleStatus.Created)
+    {
+      Raise(new BattleStarted(), actorId);
+    }
+  }
+  protected virtual void Handle(BattleStarted _)
+  {
+    Status = BattleStatus.Started;
+  }
+
   public override string ToString() => $"{Name} | {base.ToString()}";
 }

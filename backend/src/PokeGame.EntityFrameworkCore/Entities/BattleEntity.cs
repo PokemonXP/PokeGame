@@ -1,4 +1,5 @@
-﻿using Logitar.EventSourcing;
+﻿using Logitar;
+using Logitar.EventSourcing;
 using PokeGame.Core.Battles;
 using PokeGame.Core.Battles.Events;
 using AggregateEntity = Krakenar.EntityFrameworkCore.Relational.Entities.Aggregate;
@@ -12,6 +13,9 @@ internal class BattleEntity : AggregateEntity
 
   public BattleKind Kind { get; private set; }
   public BattleStatus Status { get; private set; }
+
+  public string? StartedBy { get; private set; }
+  public DateTime? StartedOn { get; private set; }
 
   public string Name { get; private set; } = string.Empty;
   public string Location { get; private set; } = string.Empty;
@@ -62,6 +66,16 @@ internal class BattleEntity : AggregateEntity
 
   private BattleEntity() : base()
   {
+  }
+
+  public void Start(BattleStarted @event)
+  {
+    Update(@event);
+
+    Status = BattleStatus.Started;
+
+    StartedBy = @event.ActorId?.Value;
+    StartedOn = @event.OccurredOn.AsUniversalTime();
   }
 
   private void AddChampions(IEnumerable<TrainerEntity> champions)
