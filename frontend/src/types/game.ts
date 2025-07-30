@@ -26,6 +26,7 @@ export type Inventory = {
 };
 
 export type InventoryItem = {
+  id: string;
   category: ItemCategory;
   name: string;
   description?: string | null;

@@ -3,11 +3,12 @@ import { TarAvatar } from "logitar-vue3-ui";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 
+import ChangeHeldItem from "@/components/game/ChangeHeldItem.vue";
 import ExperienceBar from "./ExperienceBar.vue";
 import NicknameModal from "./NicknameModal.vue";
 import PokemonTypeImage from "./PokemonTypeImage.vue";
 import TakeItemButton from "@/components/game/TakeItemButton.vue";
-import type { ItemSummary, PokemonSummary } from "@/types/game";
+import type { InventoryItem, ItemSummary, PokemonSummary } from "@/types/game";
 
 const { n, t } = useI18n();
 
@@ -21,7 +22,7 @@ const number = computed<string>(() => props.pokemon.number.toString().padStart(4
 
 defineEmits<{
   (e: "error", error: unknown): void;
-  (e: "held-item-taken"): void;
+  (e: "held-item", item?: InventoryItem): void;
   (e: "nicknamed", nickname: string): void;
 }>();
 </script>
@@ -135,7 +136,8 @@ defineEmits<{
     </template>
     <div v-if="!isEgg" class="my-3">
       <NicknameModal class="me-1" :pokemon="pokemon" @error="$emit('error', $event)" @nicknamed="$emit('nicknamed', $event)" />
-      <TakeItemButton v-if="heldItem" class="ms-1" :pokemon="pokemon" @error="$emit('error', $event)" @success="$emit('held-item-taken')" />
+      <TakeItemButton v-if="heldItem" class="mx-1" :pokemon="pokemon" @error="$emit('error', $event)" @success="$emit('held-item')" />
+      <ChangeHeldItem class="ms-1" :pokemon="pokemon" @changed="$emit('held-item', $event)" />
     </div>
   </section>
 </template>

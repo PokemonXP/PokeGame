@@ -6,10 +6,13 @@ namespace PokeGame.Api.Models.Game;
 
 public record InventoryItem
 {
+  public Guid Id { get; set; }
+
   public ItemCategory Category { get; set; }
   public string Name { get; set; }
   public string? Description { get; set; }
   public string? Sprite { get; set; }
+
   public int Quantity { get; set; }
 
   public InventoryItem() : this(string.Empty)
@@ -23,6 +26,8 @@ public record InventoryItem
 
   public InventoryItem(InventoryItemModel model)
   {
+    Id = model.Item.Id;
+
     ItemModel item = model.Item;
     Category = item.Category;
     Name = item.DisplayName ?? item.UniqueName;

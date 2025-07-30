@@ -32,7 +32,11 @@
     "value": "Healing"
   },
   "held": {
+    "give": "Give Item",
+    "given": "The item has been given to the Pokémon.",
     "label": "Held Item",
+    "swap": "Swap Item",
+    "swapped": "The item has been swapped.",
     "take": "Take Item",
     "taken": "The item has been taken into the trainer bag."
   },

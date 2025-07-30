@@ -7,7 +7,7 @@ import GameBreadcrumb from "@/components/game/GameBreadcrumb.vue";
 import TrainerGameBag from "@/components/inventory/TrainerGameBag.vue";
 import type { Breadcrumb } from "@/types/components";
 import type { Inventory } from "@/types/game";
-import { getInventory } from "@/api/trainers";
+import { getInventory } from "@/api/game/trainers";
 import { handleErrorKey } from "@/inject";
 
 const handleError = inject(handleErrorKey) as (e: unknown) => void;
