@@ -65,6 +65,20 @@ internal class BattleQuerier : IBattleQuerier
       .ApplyIdFilter(PokemonDb.Battles.Id, payload.Ids);
     _sqlHelper.ApplyTextSearch(builder, payload.Search, PokemonDb.Battles.Name, PokemonDb.Battles.Location);
 
+    if (payload.Kind.HasValue)
+    {
+      builder.Where(PokemonDb.Battles.Kind, Operators.IsEqualTo(payload.Kind.Value.ToString()));
+    }
+    if (payload.Status.HasValue)
+    {
+      builder.Where(PokemonDb.Battles.Status, Operators.IsEqualTo(payload.Status.Value.ToString()));
+    }
+    if (payload.TrainerId.HasValue)
+    {
+      builder.Join(PokemonDb.BattleTrainers.BattleId, PokemonDb.Battles.BattleId)
+        .Where(PokemonDb.BattleTrainers.TrainerUid, Operators.IsEqualTo(payload.TrainerId.Value));
+    }
+
     IQueryable<BattleEntity> query = _battles.FromQuery(builder).AsNoTracking();
     long total = await query.LongCountAsync(cancellationToken);
 
