@@ -48,6 +48,11 @@ internal class TrainerRepository : Repository, ITrainerRepository
     return await LoadAsync(trainerId, cancellationToken);
   }
 
+  public async Task<IReadOnlyCollection<Trainer>> LoadAsync(IEnumerable<TrainerId> ids, CancellationToken cancellationToken)
+  {
+    return await LoadAsync<Trainer>(ids.Select(id => id.StreamId), cancellationToken);
+  }
+
   public async Task<TrainerInventory> LoadInventoryAsync(Trainer trainer, CancellationToken cancellationToken)
   {
     return await LoadInventoryAsync(trainer.Id, cancellationToken);

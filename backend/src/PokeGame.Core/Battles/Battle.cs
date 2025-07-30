@@ -13,6 +13,7 @@ public class Battle : AggregateRoot
   public new BattleId Id => new(base.Id);
 
   public BattleKind Kind { get; private set; }
+  public BattleStatus Status { get; private set; }
 
   private DisplayName? _name = null;
   public DisplayName Name => _name ?? throw new InvalidOperationException("The battle has not been initialized.");
@@ -156,6 +157,8 @@ public class Battle : AggregateRoot
 
   protected virtual void Handle(IBattleCreated @event)
   {
+    Status = BattleStatus.Created;
+
     _name = @event.Name;
     _location = @event.Location;
     Url = @event.Url;
