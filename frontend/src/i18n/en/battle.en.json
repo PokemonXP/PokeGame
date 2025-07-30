@@ -10,8 +10,18 @@
   },
   "create": "Create Battle",
   "created": "The battle has been created.",
+  "empty": "This list is empty.",
+  "delete": {
+    "confirm": "To delete the battle, enter its name in the field below.",
+    "title": "Delete Battle"
+  },
+  "deleted": "The battle has been deleted.",
   "filters": "Filters",
   "help": "Pick the opponent kind.",
+  "kind": {
+    "label": "Type",
+    "placeholder": "Select a battle type"
+  },
   "opponents": {
     "pokemon": {
       "help": "Select the opposing wild Pokémon.",
@@ -26,5 +36,20 @@
     "help": "Fill the following battle properties."
   },
   "remember": "Remember my selection",
+  "sort": {
+    "options": {
+      "CreatedOn": "Created on",
+      "Location": "Location",
+      "Name": "Name",
+      "UpdatedOn": "Updated on"
+    }
+  },
+  "status": {
+    "label": "Status",
+    "options": {
+      "Created": "Created"
+    },
+    "placeholder": "Select a battle status"
+  },
   "title": "Battles"
 }

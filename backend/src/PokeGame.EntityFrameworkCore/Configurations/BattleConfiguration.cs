@@ -23,6 +23,8 @@ internal class BattleConfiguration : AggregateConfiguration<BattleEntity>, IEnti
     builder.HasIndex(x => x.Status);
     builder.HasIndex(x => x.Name);
     builder.HasIndex(x => x.Location);
+    builder.HasIndex(x => x.ChampionCount);
+    builder.HasIndex(x => x.OpponentCount);
 
     builder.Property(x => x.Kind).HasMaxLength(byte.MaxValue).HasConversion(new EnumToStringConverter<BattleKind>());
     builder.Property(x => x.Status).HasMaxLength(byte.MaxValue).HasConversion(new EnumToStringConverter<BattleStatus>());

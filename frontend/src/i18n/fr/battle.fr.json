@@ -10,8 +10,18 @@
   },
   "create": "Nouvelle bataille",
   "created": "La bataille a été créée.",
+  "delete": {
+    "confirm": "Afin de supprimer la bataille, veuillez entrer son nom dans le champs suivant.",
+    "title": "Supprimer la bataille"
+  },
+  "deleted": "La bataille a été supprimée.",
+  "empty": "Cette liste est vide.",
   "filters": "Filtres",
   "help": "Choisissez le type d’adversaire.",
+  "kind": {
+    "label": "Type",
+    "placeholder": "Sélectionnez un type de bataille"
+  },
   "opponents": {
     "pokemon": {
       "help": "Sélectionnez les Pokémon sauvages adversaires.",
@@ -26,5 +36,20 @@
     "help": "Renseignez les propriétés de bataille suivantes."
   },
   "remember": "Garder ma sélection en mémoire",
+  "sort": {
+    "options": {
+      "CreatedOn": "Date de création",
+      "Location": "Emplacement",
+      "Name": "Nom",
+      "UpdatedOn": "Dernière modification"
+    }
+  },
+  "status": {
+    "label": "Statut",
+    "options": {
+      "Created": "Créée"
+    },
+    "placeholder": "Sélectionnez un statut de bataille"
+  },
   "title": "Batailles"
 }

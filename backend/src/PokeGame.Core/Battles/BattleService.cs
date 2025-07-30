@@ -1,13 +1,16 @@
-﻿using Krakenar.Core;
+﻿using Krakenar.Contracts.Search;
+using Krakenar.Core;
 using Microsoft.Extensions.DependencyInjection;
 using PokeGame.Core.Battles.Commands;
 using PokeGame.Core.Battles.Models;
+using PokeGame.Core.Battles.Queries;
 
 namespace PokeGame.Core.Battles;
 
 public interface IBattleService
 {
   Task<BattleModel> CreateAsync(CreateBattlePayload payload, CancellationToken cancellationToken = default);
+  Task<SearchResults<BattleModel>> SearchAsync(SearchBattlesPayload payload, CancellationToken cancellationToken = default);
 }
 
 internal class BattleService : IBattleService
@@ -16,6 +19,7 @@ internal class BattleService : IBattleService
   {
     services.AddTransient<IBattleService, BattleService>();
     services.AddTransient<ICommandHandler<CreateBattle, BattleModel>, CreateBattleHandler>();
+    services.AddTransient<IQueryHandler<SearchBattles, SearchResults<BattleModel>>, SearchBattlesHandler>();
   }
 
   private readonly ICommandBus _commandBus;
@@ -31,5 +35,11 @@ internal class BattleService : IBattleService
   {
     CreateBattle command = new(payload);
     return await _commandBus.ExecuteAsync(command, cancellationToken);
+  }
+
+  public async Task<SearchResults<BattleModel>> SearchAsync(SearchBattlesPayload payload, CancellationToken cancellationToken)
+  {
+    SearchBattles query = new(payload);
+    return await _queryBus.ExecuteAsync(query, cancellationToken);
   }
 }

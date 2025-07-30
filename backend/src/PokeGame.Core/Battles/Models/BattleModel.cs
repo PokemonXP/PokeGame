@@ -14,7 +14,9 @@ public class BattleModel : AggregateModel
   public string? Url { get; set; }
   public string? Notes { get; set; }
 
+  public int ChampionCount { get; set; }
   public List<TrainerModel> Champions { get; set; } = [];
+  public int OpponentCount { get; set; }
   public List<TrainerModel> OpponentTrainers { get; set; } = [];
   public List<PokemonModel> OpponentPokemon { get; set; } = [];
 

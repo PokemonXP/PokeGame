@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Krakenar.Contracts.Search;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PokeGame.Api.Constants;
+using PokeGame.Api.Models.Battle;
 using PokeGame.Core.Battles;
 using PokeGame.Core.Battles.Models;
 
@@ -24,5 +26,13 @@ public class BattleController : ControllerBase
     BattleModel battle = await _battleService.CreateAsync(payload, cancellationToken);
     Uri location = new($"{Request.Scheme}://{Request.Host}/battles/{battle.Id}");
     return Created(location, battle);
+  }
+
+  [HttpGet]
+  public async Task<ActionResult<SearchResults<BattleModel>>> SearchAsync([FromQuery] SearchBattlesParameters parameters, CancellationToken cancellationToken)
+  {
+    SearchBattlesPayload payload = parameters.ToPayload();
+    SearchResults<BattleModel> battles = await _battleService.SearchAsync(payload, cancellationToken);
+    return Ok(battles);
   }
 }

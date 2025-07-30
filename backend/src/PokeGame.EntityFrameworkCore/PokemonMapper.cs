@@ -67,7 +67,9 @@ internal class PokemonMapper
       Name = source.Name,
       Location = source.Location,
       Url = source.Url,
-      Notes = source.Notes
+      Notes = source.Notes,
+      ChampionCount = source.ChampionCount,
+      OpponentCount = source.OpponentCount
     };
 
     foreach (BattleTrainerEntity entity in source.Trainers)

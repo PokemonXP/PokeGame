@@ -1,9 +1,31 @@
 import { urlUtils } from "logitar-js";
 
-import type { CreateBattlePayload, Battle } from "@/types/battle";
-import { post } from ".";
+import type { CreateBattlePayload, Battle, SearchBattlesPayload } from "@/types/battle";
+import { get, post } from ".";
+import type { SearchResults } from "@/types/search";
 
 export async function createBattle(payload: CreateBattlePayload): Promise<Battle> {
   const url: string = new urlUtils.UrlBuilder({ path: "/battles" }).buildRelative();
   return (await post<CreateBattlePayload, Battle>(url, payload)).data;
+}
+
+export async function searchBattles(payload: SearchBattlesPayload): Promise<SearchResults<Battle>> {
+  const url: string = new urlUtils.UrlBuilder({ path: "/battles" })
+    .setQuery("kind", payload.kind ?? "")
+    .setQuery("status", payload.status ?? "")
+    .setQuery("trainer", payload.trainerId ?? "")
+    .setQuery("ids", payload.ids)
+    .setQuery(
+      "search",
+      payload.search.terms.map(({ value }) => value),
+    )
+    .setQuery("search_operator", payload.search.operator)
+    .setQuery(
+      "sort",
+      payload.sort.map(({ field, isDescending }) => (isDescending ? `DESC.${field}` : field)),
+    )
+    .setQuery("skip", payload.skip.toString())
+    .setQuery("limit", payload.limit.toString())
+    .buildRelative();
+  return (await get<SearchResults<Battle>>(url)).data;
 }
