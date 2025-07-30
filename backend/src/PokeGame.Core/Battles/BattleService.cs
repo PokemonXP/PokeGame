@@ -10,6 +10,8 @@ namespace PokeGame.Core.Battles;
 public interface IBattleService
 {
   Task<BattleModel> CreateAsync(CreateBattlePayload payload, CancellationToken cancellationToken = default);
+  Task<BattleModel?> DeleteAsync(Guid id, CancellationToken cancellationToken = default);
+  Task<BattleModel?> ReadAsync(Guid id, CancellationToken cancellationToken = default);
   Task<SearchResults<BattleModel>> SearchAsync(SearchBattlesPayload payload, CancellationToken cancellationToken = default);
 }
 
@@ -19,6 +21,8 @@ internal class BattleService : IBattleService
   {
     services.AddTransient<IBattleService, BattleService>();
     services.AddTransient<ICommandHandler<CreateBattle, BattleModel>, CreateBattleHandler>();
+    services.AddTransient<ICommandHandler<DeleteBattle, BattleModel?>, DeleteBattleHandler>();
+    services.AddTransient<IQueryHandler<ReadBattle, BattleModel?>, ReadBattleHandler>();
     services.AddTransient<IQueryHandler<SearchBattles, SearchResults<BattleModel>>, SearchBattlesHandler>();
   }
 
@@ -35,6 +39,18 @@ internal class BattleService : IBattleService
   {
     CreateBattle command = new(payload);
     return await _commandBus.ExecuteAsync(command, cancellationToken);
+  }
+
+  public async Task<BattleModel?> DeleteAsync(Guid id, CancellationToken cancellationToken)
+  {
+    DeleteBattle command = new(id);
+    return await _commandBus.ExecuteAsync(command, cancellationToken);
+  }
+
+  public async Task<BattleModel?> ReadAsync(Guid id, CancellationToken cancellationToken)
+  {
+    ReadBattle query = new(id);
+    return await _queryBus.ExecuteAsync(query, cancellationToken);
   }
 
   public async Task<SearchResults<BattleModel>> SearchAsync(SearchBattlesPayload payload, CancellationToken cancellationToken)

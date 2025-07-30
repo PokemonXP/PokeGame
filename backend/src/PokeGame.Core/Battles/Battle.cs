@@ -161,5 +161,13 @@ public class Battle : AggregateRoot
     _champions.AddRange(@event.ChampionIds);
   }
 
+  public void Delete(ActorId? actorId = null)
+  {
+    if (!IsDeleted)
+    {
+      Raise(new BattleDeleted(), actorId);
+    }
+  }
+
   public override string ToString() => $"{Name} | {base.ToString()}";
 }
