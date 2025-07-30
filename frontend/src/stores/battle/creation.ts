@@ -16,7 +16,7 @@ export const useBattleCreationStore = defineStore(
     const champions = ref<string[]>([]);
     const kind = ref<BattleKind>();
     const opponents = ref<string[]>([]);
-    const properties = ref<BattleProperties>()
+    const properties = ref<BattleProperties>();
     const remember = ref<boolean>(false);
     const step = ref<number>(1);
 
@@ -24,15 +24,15 @@ export const useBattleCreationStore = defineStore(
       champions.value = [];
       kind.value = undefined;
       opponents.value = [];
-      properties.value = undefined
+      properties.value = undefined;
       remember.value = false;
       step.value = 1;
     }
     function complete(): void {
       if (remember.value) {
-        rememberedChampions.value = [...champions.value]
+        rememberedChampions.value = [...champions.value];
       }
-      clear()
+      clear();
     }
     function next(): boolean {
       if (step.value < 4) {
@@ -73,13 +73,29 @@ export const useBattleCreationStore = defineStore(
     }
     function saveStep4(value: BattleProperties): boolean {
       if (step.value === 4) {
-        properties.value = { ...value }
-        return true
+        properties.value = { ...value };
+        return true;
       }
-      return false
+      return false;
     }
 
-    return { champions, kind, opponents, properties, remember, rememberedChampions, step, clear, complete, next, previous, saveStep1, saveStep2, saveStep3, saveStep4 };
+    return {
+      champions,
+      kind,
+      opponents,
+      properties,
+      remember,
+      rememberedChampions,
+      step,
+      clear,
+      complete,
+      next,
+      previous,
+      saveStep1,
+      saveStep2,
+      saveStep3,
+      saveStep4,
+    };
   },
   {
     persist: true,
