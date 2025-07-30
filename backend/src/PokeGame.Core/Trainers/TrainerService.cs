@@ -3,7 +3,7 @@ using Krakenar.Core;
 using Microsoft.Extensions.DependencyInjection;
 using PokeGame.Core.Trainers.Commands;
 using PokeGame.Core.Trainers.Models;
-using PokeGame.Core.Trainers.Models.Queries;
+using PokeGame.Core.Trainers.Queries;
 
 namespace PokeGame.Core.Trainers;
 
