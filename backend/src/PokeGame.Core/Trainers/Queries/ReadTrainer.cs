@@ -22,7 +22,7 @@ internal class ReadTrainerHandler : IQueryHandler<ReadTrainer, TrainerModel?>
 
     if (query.Id.HasValue)
     {
-      var trainer = await _trainerQuerier.ReadAsync(query.Id.Value, cancellationToken);
+      TrainerModel? trainer = await _trainerQuerier.ReadAsync(query.Id.Value, cancellationToken);
       if (trainer is not null)
       {
         trainers[trainer.Id] = trainer;
@@ -31,7 +31,7 @@ internal class ReadTrainerHandler : IQueryHandler<ReadTrainer, TrainerModel?>
 
     if (!string.IsNullOrWhiteSpace(query.UniqueName))
     {
-      var trainer = await _trainerQuerier.ReadAsync(query.UniqueName, cancellationToken);
+      TrainerModel? trainer = await _trainerQuerier.ReadAsync(query.UniqueName, cancellationToken);
       if (trainer is not null)
       {
         trainers[trainer.Id] = trainer;
@@ -40,7 +40,7 @@ internal class ReadTrainerHandler : IQueryHandler<ReadTrainer, TrainerModel?>
 
     if (!string.IsNullOrWhiteSpace(query.License))
     {
-      var trainer = await _trainerQuerier.ReadByLicenseAsync(query.License, cancellationToken);
+      TrainerModel? trainer = await _trainerQuerier.ReadByLicenseAsync(query.License, cancellationToken);
       if (trainer is not null)
       {
         trainers[trainer.Id] = trainer;
