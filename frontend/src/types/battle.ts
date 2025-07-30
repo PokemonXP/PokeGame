@@ -11,7 +11,9 @@ export type Battle = Aggregate & {
   location: string;
   url?: string | null;
   notes?: string | null;
+  championCount: number;
   champions: Trainer[];
+  opponentCount: number;
   opponentTrainers: Trainer[];
   opponentPokemon: Pokemon[];
 };
