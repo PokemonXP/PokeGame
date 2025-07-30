@@ -141,10 +141,10 @@ public class PokemonController : ControllerBase
     return Ok(regions);
   }
 
-  [HttpPatch("{id}/moves/switch")]
-  public async Task<ActionResult<PokemonModel>> SwitchMovesAsync(Guid id, [FromBody] SwitchPokemonMovesPayload payload, CancellationToken cancellationToken)
+  [HttpPatch("{id}/moves/swap")]
+  public async Task<ActionResult<PokemonModel>> SwapMovesAsync(Guid id, [FromBody] SwapPokemonMovesPayload payload, CancellationToken cancellationToken)
   {
-    PokemonModel? pokemon = await _pokemonService.SwitchMovesAsync(id, payload, cancellationToken);
+    PokemonModel? pokemon = await _pokemonService.SwapMovesAsync(id, payload, cancellationToken);
     return pokemon is null ? NotFound() : Ok(pokemon);
   }
 

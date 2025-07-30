@@ -115,7 +115,7 @@ defineEmits<{
                 icon="fas fa-rotate"
                 :loading="loading"
                 :status="t('loading')"
-                :text="t('pokemon.move.switch')"
+                :text="t('pokemon.move.swap.label')"
                 @click="$emit('switch', index)"
               />
               <TarButton

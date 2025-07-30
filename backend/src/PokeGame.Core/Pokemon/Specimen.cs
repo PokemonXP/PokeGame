@@ -698,7 +698,7 @@ public class Specimen : AggregateRoot
     Slot = @event.Slot;
   }
 
-  public void SwitchMoves(int source, int destination, ActorId? actorId = null)
+  public void SwapMoves(int source, int destination, ActorId? actorId = null)
   {
     ArgumentOutOfRangeException.ThrowIfNegative(source, nameof(source));
     ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(source, MoveLimit, nameof(source));
@@ -708,10 +708,10 @@ public class Specimen : AggregateRoot
 
     if (source != destination && source < _currentMoves.Count && destination < _currentMoves.Count)
     {
-      Raise(new PokemonMoveSwitched(source, destination), actorId);
+      Raise(new PokemonMoveSwapped(source, destination), actorId);
     }
   }
-  protected virtual void Handle(PokemonMoveSwitched @event)
+  protected virtual void Handle(PokemonMoveSwapped @event)
   {
     MoveId source = _currentMoves[@event.Source];
     MoveId destination = _currentMoves[@event.Destination];

@@ -158,8 +158,7 @@
       "help": "Sélectionnez une autre attaque à échanger.",
       "label": "Échanger"
     },
-    "swapped": "Les attaques du Pokémon ont été échangées.",
-    "switch": "Switch"
+    "swapped": "Les attaques du Pokémon ont été échangées."
   },
   "name": "Name",
   "nature": {

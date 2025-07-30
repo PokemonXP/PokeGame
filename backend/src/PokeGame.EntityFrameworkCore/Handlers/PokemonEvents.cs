@@ -17,7 +17,7 @@ internal class PokemonEvents : IEventHandler<PokemonCreated>,
   IEventHandler<PokemonItemRemoved>,
   IEventHandler<PokemonMoveLearned>,
   IEventHandler<PokemonMoveRemembered>,
-  IEventHandler<PokemonMoveSwitched>,
+  IEventHandler<PokemonMoveSwapped>,
   IEventHandler<PokemonNicknamed>,
   IEventHandler<PokemonUniqueNameChanged>,
   IEventHandler<PokemonUpdated>
@@ -33,7 +33,7 @@ internal class PokemonEvents : IEventHandler<PokemonCreated>,
     services.AddScoped<IEventHandler<PokemonItemRemoved>, PokemonEvents>();
     services.AddScoped<IEventHandler<PokemonMoveLearned>, PokemonEvents>();
     services.AddScoped<IEventHandler<PokemonMoveRemembered>, PokemonEvents>();
-    services.AddScoped<IEventHandler<PokemonMoveSwitched>, PokemonEvents>();
+    services.AddScoped<IEventHandler<PokemonMoveSwapped>, PokemonEvents>();
     services.AddScoped<IEventHandler<PokemonNicknamed>, PokemonEvents>();
     services.AddScoped<IEventHandler<PokemonUniqueNameChanged>, PokemonEvents>();
     services.AddScoped<IEventHandler<PokemonUpdated>, PokemonEvents>();
@@ -209,7 +209,7 @@ internal class PokemonEvents : IEventHandler<PokemonCreated>,
     }
   }
 
-  public async Task HandleAsync(PokemonMoveSwitched @event, CancellationToken cancellationToken)
+  public async Task HandleAsync(PokemonMoveSwapped @event, CancellationToken cancellationToken)
   {
     PokemonEntity? pokemon = await _context.Pokemon
       .Include(x => x.Moves).ThenInclude(x => x.Move)
@@ -220,7 +220,7 @@ internal class PokemonEvents : IEventHandler<PokemonCreated>,
       return;
     }
 
-    pokemon.SwitchMoves(@event);
+    pokemon.SwapMoves(@event);
 
     await _context.SaveChangesAsync(cancellationToken);
   }

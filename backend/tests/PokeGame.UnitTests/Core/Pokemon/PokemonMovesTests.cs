@@ -181,8 +181,8 @@ public class PokemonMovesTests
     Assert.Equal("position", exception.ParamName);
   }
 
-  [Fact(DisplayName = "SwitchMoves: it should exchange two moves.")]
-  public void Given_SourceAndDestinationMoves_When_SwitchMoves_Then_MovesExchanged()
+  [Fact(DisplayName = "SwapMoves: it should exchange two moves.")]
+  public void Given_SourceAndDestinationMoves_When_SwapMoves_Then_MovesExchanged()
   {
     ActorId actorId = ActorId.NewId();
 
@@ -196,8 +196,8 @@ public class PokemonMovesTests
 
     int source = 0;
     int destination = 2;
-    _pokemon.SwitchMoves(source, destination, actorId);
-    Assert.Contains(_pokemon.Changes, change => change is PokemonMoveSwitched switched && switched.ActorId == actorId
+    _pokemon.SwapMoves(source, destination, actorId);
+    Assert.Contains(_pokemon.Changes, change => change is PokemonMoveSwapped switched && switched.ActorId == actorId
       && switched.Source == source && switched.Destination == destination);
 
     Assert.Equal(ember.Id, _pokemon.CurrentMoves.ElementAt(0).Key);
@@ -205,57 +205,57 @@ public class PokemonMovesTests
     Assert.Equal(tackle.Id, _pokemon.CurrentMoves.ElementAt(2).Key);
   }
 
-  [Fact(DisplayName = "SwitchMoves: it should not do anything when the destination move is empty.")]
-  public void Given_SourceEqualDestination_When_SwitchMoves_Then_NoChange()
+  [Fact(DisplayName = "SwapMoves: it should not do anything when the destination move is empty.")]
+  public void Given_SourceEqualDestination_When_SwapMoves_Then_NoChange()
   {
     Move ember = new(PokemonType.Fire, MoveCategory.Special, new UniqueName(_uniqueNameSettings, "ember"), new Accuracy(100), new Power(40), new PowerPoints(25));
     _pokemon.LearnMove(ember);
     _pokemon.ClearChanges();
 
-    _pokemon.SwitchMoves(source: 0, destination: 1);
+    _pokemon.SwapMoves(source: 0, destination: 1);
     Assert.False(_pokemon.HasChanges);
     Assert.Empty(_pokemon.Changes);
   }
 
-  [Fact(DisplayName = "SwitchMoves: it should not do anything when the source and destination moves are the same.")]
-  public void Given_SourceNotCurrent_When_SwitchMoves_Then_NoChange()
+  [Fact(DisplayName = "SwapMoves: it should not do anything when the source and destination moves are the same.")]
+  public void Given_SourceNotCurrent_When_SwapMoves_Then_NoChange()
   {
     Move ember = new(PokemonType.Fire, MoveCategory.Special, new UniqueName(_uniqueNameSettings, "ember"), new Accuracy(100), new Power(40), new PowerPoints(25));
     _pokemon.LearnMove(ember);
     _pokemon.ClearChanges();
 
-    _pokemon.SwitchMoves(source: 0, destination: 0);
+    _pokemon.SwapMoves(source: 0, destination: 0);
     Assert.False(_pokemon.HasChanges);
     Assert.Empty(_pokemon.Changes);
   }
 
-  [Fact(DisplayName = "SwitchMoves: it should not do anything when the source move is empty.")]
-  public void Given_DestinationNotCurrent_When_SwitchMoves_Then_NoChange()
+  [Fact(DisplayName = "SwapMoves: it should not do anything when the source move is empty.")]
+  public void Given_DestinationNotCurrent_When_SwapMoves_Then_NoChange()
   {
     Move ember = new(PokemonType.Fire, MoveCategory.Special, new UniqueName(_uniqueNameSettings, "ember"), new Accuracy(100), new Power(40), new PowerPoints(25));
     _pokemon.LearnMove(ember);
     _pokemon.ClearChanges();
 
-    _pokemon.SwitchMoves(source: 1, destination: 0);
+    _pokemon.SwapMoves(source: 1, destination: 0);
     Assert.False(_pokemon.HasChanges);
     Assert.Empty(_pokemon.Changes);
   }
 
-  [Theory(DisplayName = "SwitchMoves: it should throw ArgumentOutOfRangeException when the destination is out of bounds.")]
+  [Theory(DisplayName = "SwapMoves: it should throw ArgumentOutOfRangeException when the destination is out of bounds.")]
   [InlineData(-1)]
   [InlineData(4)]
-  public void Given_DestinationOutOfBounds_When_SwitchMoves_Then_ArgumentOutOfRangeException(int destination)
+  public void Given_DestinationOutOfBounds_When_SwapMoves_Then_ArgumentOutOfRangeException(int destination)
   {
-    var exception = Assert.Throws<ArgumentOutOfRangeException>(() => _pokemon.SwitchMoves(source: 0, destination));
+    var exception = Assert.Throws<ArgumentOutOfRangeException>(() => _pokemon.SwapMoves(source: 0, destination));
     Assert.Equal("destination", exception.ParamName);
   }
 
-  [Theory(DisplayName = "SwitchMoves: it should throw ArgumentOutOfRangeException when the source is out of bounds.")]
+  [Theory(DisplayName = "SwapMoves: it should throw ArgumentOutOfRangeException when the source is out of bounds.")]
   [InlineData(-1)]
   [InlineData(4)]
-  public void Given_SourceOutOfBounds_When_SwitchMoves_Then_ArgumentOutOfRangeException(int source)
+  public void Given_SourceOutOfBounds_When_SwapMoves_Then_ArgumentOutOfRangeException(int source)
   {
-    var exception = Assert.Throws<ArgumentOutOfRangeException>(() => _pokemon.SwitchMoves(source, destination: 0));
+    var exception = Assert.Throws<ArgumentOutOfRangeException>(() => _pokemon.SwapMoves(source, destination: 0));
     Assert.Equal("source", exception.ParamName);
   }
 }

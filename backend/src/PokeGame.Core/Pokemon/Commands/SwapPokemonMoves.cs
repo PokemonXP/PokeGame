@@ -6,17 +6,17 @@ using PokeGame.Core.Pokemon.Validators;
 
 namespace PokeGame.Core.Pokemon.Commands;
 
-internal record SwitchPokemonMoves(Guid Id, SwitchPokemonMovesPayload Payload) : ICommand<PokemonModel?>;
+internal record SwapPokemonMoves(Guid Id, SwapPokemonMovesPayload Payload) : ICommand<PokemonModel?>;
 
 /// <exception cref="ValidationException"></exception>
-internal class SwitchPokemonMovesHandler : ICommandHandler<SwitchPokemonMoves, PokemonModel?>
+internal class SwapPokemonMovesHandler : ICommandHandler<SwapPokemonMoves, PokemonModel?>
 {
   private readonly IApplicationContext _applicationContext;
   private readonly IPokemonManager _pokemonManager;
   private readonly IPokemonQuerier _pokemonQuerier;
   private readonly IPokemonRepository _pokemonRepository;
 
-  public SwitchPokemonMovesHandler(
+  public SwapPokemonMovesHandler(
     IApplicationContext applicationContext,
     IPokemonManager pokemonManager,
     IPokemonQuerier pokemonQuerier,
@@ -28,12 +28,12 @@ internal class SwitchPokemonMovesHandler : ICommandHandler<SwitchPokemonMoves, P
     _pokemonRepository = pokemonRepository;
   }
 
-  public async Task<PokemonModel?> HandleAsync(SwitchPokemonMoves command, CancellationToken cancellationToken)
+  public async Task<PokemonModel?> HandleAsync(SwapPokemonMoves command, CancellationToken cancellationToken)
   {
     ActorId? actorId = _applicationContext.ActorId;
 
-    SwitchPokemonMovesPayload payload = command.Payload;
-    new SwitchPokemonMovesValidator().ValidateAndThrow(payload);
+    SwapPokemonMovesPayload payload = command.Payload;
+    new SwapPokemonMovesValidator().ValidateAndThrow(payload);
 
     PokemonId pokemonId = new(command.Id);
     Specimen? pokemon = await _pokemonRepository.LoadAsync(pokemonId, cancellationToken);
@@ -42,7 +42,7 @@ internal class SwitchPokemonMovesHandler : ICommandHandler<SwitchPokemonMoves, P
       return null;
     }
 
-    pokemon.SwitchMoves(payload.Source, payload.Destination, actorId);
+    pokemon.SwapMoves(payload.Source, payload.Destination, actorId);
     await _pokemonManager.SaveAsync(pokemon, cancellationToken);
 
     return await _pokemonQuerier.ReadAsync(pokemon, cancellationToken);
