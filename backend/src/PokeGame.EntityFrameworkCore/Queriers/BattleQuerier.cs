@@ -1,5 +1,8 @@
 ﻿using Krakenar.Contracts.Actors;
+using Krakenar.Contracts.Search;
 using Krakenar.Core.Actors;
+using Krakenar.EntityFrameworkCore.Relational;
+using Logitar.Data;
 using Logitar.EventSourcing;
 using Microsoft.EntityFrameworkCore;
 using PokeGame.Core.Battles;
@@ -13,12 +16,14 @@ internal class BattleQuerier : IBattleQuerier
   private readonly IActorService _actorService;
   private readonly DbSet<BattleEntity> _battles;
   private readonly DbSet<PokemonEntity> _pokemon;
+  private readonly ISqlHelper _sqlHelper;
 
-  public BattleQuerier(IActorService actorService, PokemonContext context)
+  public BattleQuerier(IActorService actorService, PokemonContext context, ISqlHelper sqlHelper)
   {
     _actorService = actorService;
     _battles = context.Battles;
     _pokemon = context.Pokemon;
+    _sqlHelper = sqlHelper;
   }
 
   public async Task<BattleModel> ReadAsync(Battle battle, CancellationToken cancellationToken)
@@ -52,6 +57,52 @@ internal class BattleQuerier : IBattleQuerier
 
     await FillAsync(battle, cancellationToken);
     return await MapAsync(battle, cancellationToken);
+  }
+
+  public async Task<SearchResults<BattleModel>> SearchAsync(SearchBattlesPayload payload, CancellationToken cancellationToken)
+  {
+    IQueryBuilder builder = _sqlHelper.Query(PokemonDb.Battles.Table).SelectAll(PokemonDb.Battles.Table)
+      .ApplyIdFilter(PokemonDb.Battles.Id, payload.Ids);
+    _sqlHelper.ApplyTextSearch(builder, payload.Search, PokemonDb.Battles.Name, PokemonDb.Battles.Location);
+
+    IQueryable<BattleEntity> query = _battles.FromQuery(builder).AsNoTracking();
+    long total = await query.LongCountAsync(cancellationToken);
+
+    IOrderedQueryable<BattleEntity>? ordered = null;
+    foreach (BattleSortOption sort in payload.Sort)
+    {
+      switch (sort.Field)
+      {
+        case BattleSort.CreatedOn:
+          ordered = ordered is null
+            ? (sort.IsDescending ? query.OrderByDescending(x => x.CreatedOn) : query.OrderBy(x => x.CreatedOn))
+            : (sort.IsDescending ? ordered.ThenByDescending(x => x.CreatedOn) : ordered.ThenBy(x => x.CreatedOn));
+          break;
+        case BattleSort.Location:
+          ordered = ordered is null
+            ? (sort.IsDescending ? query.OrderByDescending(x => x.Location) : query.OrderBy(x => x.Location))
+            : (sort.IsDescending ? ordered.ThenByDescending(x => x.Location) : ordered.ThenBy(x => x.Location));
+          break;
+        case BattleSort.Name:
+          ordered = ordered is null
+            ? (sort.IsDescending ? query.OrderByDescending(x => x.Name) : query.OrderBy(x => x.Name))
+            : (sort.IsDescending ? ordered.ThenByDescending(x => x.Name) : ordered.ThenBy(x => x.Name));
+          break;
+        case BattleSort.UpdatedOn:
+          ordered = ordered is null
+            ? (sort.IsDescending ? query.OrderByDescending(x => x.UpdatedOn) : query.OrderBy(x => x.UpdatedOn))
+            : (sort.IsDescending ? ordered.ThenByDescending(x => x.UpdatedOn) : ordered.ThenBy(x => x.UpdatedOn));
+          break;
+      }
+    }
+    query = ordered ?? query;
+
+    query = query.ApplyPaging(payload);
+
+    BattleEntity[] entities = await query.ToArrayAsync(cancellationToken);
+    IReadOnlyCollection<BattleModel> battles = await MapAsync(entities, cancellationToken);
+
+    return new SearchResults<BattleModel>(battles, total);
   }
 
   private async Task FillAsync(BattleEntity battle, CancellationToken cancellationToken)
