@@ -37,6 +37,7 @@ internal class TrainerEntity : AggregateEntity
   public string? Url { get; private set; }
   public string? Notes { get; private set; }
 
+  public List<BattleTrainerEntity> Battles { get; private set; } = [];
   public List<PokemonEntity> CurrentPokemon { get; private set; } = [];
   public List<PokemonEntity> OriginalPokemon { get; private set; } = [];
   public List<InventoryEntity> Inventory { get; private set; } = [];

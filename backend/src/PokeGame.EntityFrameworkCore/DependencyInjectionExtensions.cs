@@ -3,6 +3,7 @@ using Krakenar.EntityFrameworkCore.Relational;
 using Krakenar.Infrastructure.Commands;
 using Microsoft.Extensions.DependencyInjection;
 using PokeGame.Core.Abilities;
+using PokeGame.Core.Battles;
 using PokeGame.Core.Evolutions;
 using PokeGame.Core.Forms;
 using PokeGame.Core.Inventory;
@@ -53,6 +54,7 @@ public static class DependencyInjectionExtensions
   {
     return services
       .AddScoped<IAbilityQuerier, AbilityQuerier>()
+      .AddScoped<IBattleQuerier, BattleQuerier>()
       .AddScoped<IEvolutionQuerier, EvolutionQuerier>()
       .AddScoped<IFormQuerier, FormQuerier>()
       .AddScoped<IInventoryQuerier, InventoryQuerier>()
@@ -69,6 +71,7 @@ public static class DependencyInjectionExtensions
   {
     return services
       .AddScoped<IAbilityRepository, AbilityRepository>()
+      .AddScoped<IBattleRepository, BattleRepository>()
       .AddScoped<IEvolutionRepository, EvolutionRepository>()
       .AddScoped<IFormRepository, FormRepository>()
       .AddScoped<IItemRepository, ItemRepository>()
