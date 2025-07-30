@@ -1,4 +1,5 @@
-﻿using PokeGame.Core.Trainers.Models;
+﻿using PokeGame.Core.Pokemon.Models;
+using PokeGame.Core.Trainers.Models;
 using AggregateModel = Krakenar.Contracts.Aggregate;
 
 namespace PokeGame.Core.Battles.Models;
@@ -14,7 +15,8 @@ public class BattleModel : AggregateModel
   public string? Notes { get; set; }
 
   public List<TrainerModel> Champions { get; set; } = [];
-  // TODO(fpion): Opponents
+  public List<TrainerModel> OpponentTrainers { get; set; } = [];
+  public List<PokemonModel> OpponentPokemon { get; set; } = [];
 
   public override string ToString() => $"{Name} | {base.ToString()}";
 }
