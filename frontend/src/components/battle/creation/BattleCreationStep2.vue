@@ -81,7 +81,7 @@ onMounted(async () => {
       <i><CircleInfoIcon /> {{ t("battle.champions.help") }}</i>
     </p>
     <TrainerSelection :remember="remember" :selected="selected" :trainers="trainers" @remember="remember = $event" @select="select" @unselect="unselect" />
-    <div>
+    <div class="mb-3">
       <TarButton class="float-start" icon="fas fa-arrow-left" :text="t('actions.previous')" @click="battle.previous" />
       <TarButton class="float-end" :disabled="!selected.size" icon="fas fa-arrow-right" :text="t('actions.next')" @click="next" />
     </div>

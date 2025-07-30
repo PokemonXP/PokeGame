@@ -41,6 +41,13 @@ internal class PokemonQuerier : IPokemonQuerier
     return streamId is null ? null : new PokemonId(streamId);
   }
 
+  public async Task<IReadOnlyCollection<PokemonKey>> GetKeysAsync(CancellationToken cancellationToken)
+  {
+    var keys = await _pokemon.AsNoTracking()
+      .Select(x => new { x.StreamId, x.Id, x.UniqueName })
+      .ToArrayAsync(cancellationToken);
+    return keys.Select(key => new PokemonKey(new PokemonId(key.StreamId), key.Id, key.UniqueName)).ToList().AsReadOnly();
+  }
   public async Task<Storage> GetStorageAsync(TrainerId trainerId, CancellationToken cancellationToken)
   {
     Guid trainerUid = trainerId.ToGuid();

@@ -6,6 +6,7 @@ public interface ITrainerRepository
 {
   Task<Trainer?> LoadAsync(TrainerId trainerId, CancellationToken cancellationToken = default);
   Task<Trainer?> LoadAsync(string idOrUniqueName, CancellationToken cancellationToken = default);
+  Task<IReadOnlyCollection<Trainer>> LoadAsync(IEnumerable<TrainerId> trainerIds, CancellationToken cancellationToken = default);
 
   Task<TrainerInventory> LoadInventoryAsync(Trainer trainer, CancellationToken cancellationToken = default);
   Task<TrainerInventory> LoadInventoryAsync(TrainerId trainerId, CancellationToken cancellationToken = default);

@@ -3,6 +3,7 @@ using Logitar;
 using Logitar.EventSourcing;
 using PokeGame.Core.Abilities;
 using PokeGame.Core.Abilities.Models;
+using PokeGame.Core.Battles.Models;
 using PokeGame.Core.Evolutions.Models;
 using PokeGame.Core.Forms.Models;
 using PokeGame.Core.Inventory.Models;
@@ -50,6 +51,52 @@ internal class PokemonMapper
       Url = source.Url,
       Notes = source.Notes
     };
+
+    MapAggregate(source, destination);
+
+    return destination;
+  }
+
+  public BattleModel ToBattle(BattleEntity source)
+  {
+    BattleModel destination = new()
+    {
+      Id = source.Id,
+      Kind = source.Kind,
+      Status = source.Status,
+      Name = source.Name,
+      Location = source.Location,
+      Url = source.Url,
+      Notes = source.Notes
+    };
+
+    foreach (BattleTrainerEntity entity in source.Trainers)
+    {
+      if (entity.Trainer is null)
+      {
+        throw new ArgumentException("The trainer is required.", nameof(source));
+      }
+      TrainerModel trainer = ToTrainer(entity.Trainer);
+
+      if (entity.IsOpponent)
+      {
+        destination.OpponentTrainers.Add(trainer);
+      }
+      else
+      {
+        destination.Champions.Add(trainer);
+      }
+    }
+
+    foreach (BattlePokemonEntity entity in source.Pokemon)
+    {
+      if (entity.Pokemon is null)
+      {
+        throw new ArgumentException("The Pokémon is required.", nameof(source));
+      }
+      PokemonModel pokemon = ToPokemon(entity.Pokemon);
+      destination.OpponentPokemon.Add(pokemon);
+    }
 
     MapAggregate(source, destination);
 

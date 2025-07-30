@@ -47,6 +47,14 @@ internal class TrainerQuerier : ITrainerQuerier
     return string.IsNullOrWhiteSpace(streamId) ? null : new TrainerId(streamId);
   }
 
+  public async Task<IReadOnlyCollection<TrainerKey>> GetKeysAsync(CancellationToken cancellationToken)
+  {
+    var keys = await _trainers.AsNoTracking()
+      .Select(x => new { x.StreamId, x.Id, x.UniqueName })
+      .ToArrayAsync(cancellationToken);
+    return keys.Select(key => new TrainerKey(new TrainerId(key.StreamId), key.Id, key.UniqueName)).ToList().AsReadOnly();
+  }
+
   public async Task<TrainerModel> ReadAsync(Trainer trainer, CancellationToken cancellationToken)
   {
     return await ReadAsync(trainer.Id, cancellationToken) ?? throw new InvalidOperationException($"The trainer entity 'StreamId={trainer.Id}' was not found.");

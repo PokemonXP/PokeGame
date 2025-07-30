@@ -87,6 +87,7 @@ internal class PokemonEntity : AggregateEntity
   public string? Url { get; private set; }
   public string? Notes { get; private set; }
 
+  public List<BattlePokemonEntity> Battles { get; private set; } = [];
   public List<PokemonMoveEntity> Moves { get; private set; } = [];
 
   public PokemonEntity(FormEntity form, PokemonCreated @event) : base(@event)

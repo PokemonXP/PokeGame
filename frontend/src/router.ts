@@ -52,13 +52,18 @@ const router = createRouter({
         // Battle
         {
           name: "BattleList",
-          path: "battle",
-          component: () => import("./views/battle/BattleList.vue"),
+          path: "battles",
+          component: () => import("./views/battles/BattleList.vue"),
         },
         {
           name: "CreateBattle",
-          path: "battle/create",
-          component: () => import("./views/battle/CreateBattle.vue"),
+          path: "battles/create",
+          component: () => import("./views/battles/CreateBattle.vue"),
+        },
+        {
+          name: "BattleEdit",
+          path: "battle/:id",
+          component: () => import("./views/battles/BattleEdit.vue"),
         },
         // Evolutions
         {
