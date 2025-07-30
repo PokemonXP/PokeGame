@@ -2,20 +2,24 @@
 import { TarProgress } from "logitar-vue3-ui";
 import { computed, inject, ref } from "vue";
 import { useI18n } from "vue-i18n";
+import { useRouter } from "vue-router";
 
 import AdminBreadcrumb from "@/components/admin/AdminBreadcrumb.vue";
 import BattleCreationStep1 from "@/components/battle/creation/BattleCreationStep1.vue";
 import BattleCreationStep2 from "@/components/battle/creation/BattleCreationStep2.vue";
 import BattleCreationStep3 from "@/components/battle/creation/BattleCreationStep3.vue";
 import BattleCreationStep4 from "@/components/battle/creation/BattleCreationStep4.vue";
+import type { Battle, CreateBattlePayload } from "@/types/battle";
 import type { Breadcrumb } from "@/types/components";
+import { createBattle } from "@/api/battle";
 import { handleErrorKey } from "@/inject";
 import { useBattleCreationStore } from "@/stores/battle/creation";
-import type { Battle, CreateBattlePayload } from "@/types/battle";
-import { createBattle } from "@/api/battle";
+import { useToastStore } from "@/stores/toast";
 
 const battle = useBattleCreationStore();
 const handleError = inject(handleErrorKey) as (e: unknown) => void;
+const router = useRouter();
+const toasts = useToastStore();
 const { n, t } = useI18n();
 
 const isLoading = ref<boolean>(false);
@@ -39,9 +43,9 @@ async function submit(): Promise<void> {
       };
       const created: Battle = await createBattle(payload);
       console.log(created); // TODO(fpion): implement
-      // TODO(fpion): clear store
-      // TODO(fpion): toast
-      // TODO(fpion): redirect to battle view
+      battle.complete();
+      toasts.success("battle.created");
+      router.push({ name: "BattleEdit", params: { id: created.id } });
     } catch (e: unknown) {
       handleError(e);
     } finally {

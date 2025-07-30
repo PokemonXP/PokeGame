@@ -74,7 +74,7 @@ onMounted(() => {
       <NotesTextarea v-model="notes" />
       <div class="mb-3">
         <TarButton class="float-start" icon="fas fa-arrow-left" :text="t('actions.previous')" @click="battle.previous" />
-        <SubmitButton class="float-end" icon="fas fa-arrow-right" :loading="isLoading" text="actions.next" variant="success" />
+        <SubmitButton class="float-end" icon="fas fa-plus" :loading="isLoading" text="actions.create" variant="success" />
       </div>
     </form>
   </section>

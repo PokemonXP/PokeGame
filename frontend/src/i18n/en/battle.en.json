@@ -8,8 +8,9 @@
     "title": "Champions",
     "warning": "Some selected trainers are hidden. Reset filters to see those trainers."
   },
-  "filters": "Filters",
   "create": "Create Battle",
+  "created": "The battle has been created.",
+  "filters": "Filters",
   "help": "Pick the opponent kind.",
   "opponents": {
     "pokemon": {
@@ -25,5 +26,5 @@
     "help": "Fill the following battle properties."
   },
   "remember": "Remember my selection",
-  "title": "Battle"
+  "title": "Battles"
 }

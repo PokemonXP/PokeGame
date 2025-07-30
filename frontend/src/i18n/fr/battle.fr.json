@@ -8,8 +8,9 @@
     "title": "Champions",
     "warning": "Certains entraîneurs sélectionnés sont cachés. Réinitialisez les filtres pour voir ces entraîneurs."
   },
-  "filters": "Filtres",
   "create": "Nouvelle bataille",
+  "created": "La bataille a été créée.",
+  "filters": "Filtres",
   "help": "Choisissez le type d’adversaire.",
   "opponents": {
     "pokemon": {
@@ -25,5 +26,5 @@
     "help": "Renseignez les propriétés de bataille suivantes."
   },
   "remember": "Garder ma sélection en mémoire",
-  "title": "Bataille"
+  "title": "Batailles"
 }

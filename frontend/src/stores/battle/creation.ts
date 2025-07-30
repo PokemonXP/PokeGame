@@ -28,6 +28,12 @@ export const useBattleCreationStore = defineStore(
       remember.value = false;
       step.value = 1;
     }
+    function complete(): void {
+      if (remember.value) {
+        rememberedChampions.value = [...champions.value]
+      }
+      clear()
+    }
     function next(): boolean {
       if (step.value < 4) {
         step.value++;
@@ -73,7 +79,7 @@ export const useBattleCreationStore = defineStore(
       return false
     }
 
-    return { champions, kind, opponents, properties, remember, rememberedChampions, step, clear, next, previous, saveStep1, saveStep2, saveStep3, saveStep4 };
+    return { champions, kind, opponents, properties, remember, rememberedChampions, step, clear, complete, next, previous, saveStep1, saveStep2, saveStep3, saveStep4 };
   },
   {
     persist: true,
