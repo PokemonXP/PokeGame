@@ -1,20 +1,21 @@
 <script setup lang="ts">
-import { TarAvatar, TarCard } from "logitar-vue3-ui";
-import { arrayUtils } from "logitar-js";
-import { computed, ref } from "vue";
+import { arrayUtils, parsingUtils } from "logitar-js";
+import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 
 import type { InventoryItem } from "@/types/game";
+import InventoryItemCard from "./InventoryItemCard.vue";
 
-const { n, t } = useI18n();
+const { t } = useI18n();
 const { orderBy } = arrayUtils;
+const { parseBoolean } = parsingUtils;
 
 const props = defineProps<{
   category?: string;
+  clickable?: boolean | string;
   items: InventoryItem[];
+  selected?: InventoryItem;
 }>();
-
-const selected = ref<number>();
 
 const filteredItems = computed<InventoryItem[]>(() =>
   orderBy(
@@ -22,44 +23,32 @@ const filteredItems = computed<InventoryItem[]>(() =>
     "name",
   ),
 );
+const isClickable = computed<boolean>(() => parseBoolean(props.clickable) ?? false);
 
-function select(index: number): void {
-  if (selected.value === index) {
-    selected.value = undefined;
-  } else {
-    selected.value = index;
+const emit = defineEmits<{
+  (e: "toggled", item: InventoryItem): void;
+}>();
+
+function onClick(item: InventoryItem): void {
+  if (isClickable.value) {
+    emit("toggled", item);
   }
 }
 </script>
 
 <template>
   <div>
-    <div v-if="filteredItems.length">
-      <TarCard
-        v-for="(item, index) in filteredItems"
-        :key="index"
-        :class="{ clickable: true, 'mb-1': true, selected: selected === index }"
-        @click="select(index)"
-      >
-        <div class="d-flex justify-content-between align-items-center">
-          <div class="d-flex">
-            <div class="d-flex">
-              <div class="align-content-center flex-wrap mx-1">
-                <TarAvatar :display-name="item.name" size="40" icon="fas fa-cart-shopping" :url="item.sprite" />
-              </div>
-            </div>
-            <div>
-              <strong>{{ item.name }}</strong>
-              <template v-if="item.description">
-                <br />
-                {{ item.description }}
-              </template>
-            </div>
-          </div>
-          <strong class="text-end">×{{ n(item.quantity) }}</strong>
-        </div>
-      </TarCard>
-    </div>
+    <template v-if="filteredItems.length">
+      <InventoryItemCard
+        v-for="item in filteredItems"
+        :key="item.id"
+        class="mb-1"
+        :clickable="isClickable"
+        :item="item"
+        :selected="selected?.id === item.id"
+        @click="onClick(item)"
+      />
+    </template>
     <p v-else>{{ t("items.empty") }}</p>
   </div>
 </template>

@@ -62,7 +62,7 @@ const router = createRouter({
         },
         {
           name: "BattleEdit",
-          path: "battle/:id",
+          path: "battles/:id",
           component: () => import("./views/battles/BattleEdit.vue"),
         },
         // Evolutions

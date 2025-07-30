@@ -6,13 +6,15 @@ import { useI18n } from "vue-i18n";
 
 import GameBagItems from "./GameBagItems.vue";
 import PokeDollarIcon from "@/components/items/PokeDollarIcon.vue";
-import type { Inventory } from "@/types/game";
+import type { Inventory, InventoryItem } from "@/types/game";
 
 const { orderBy } = arrayUtils;
 const { n, rt, t, tm } = useI18n();
 
 defineProps<{
+  clickable?: boolean | string;
   inventory: Inventory;
+  selected?: InventoryItem;
 }>();
 
 type Category = {
@@ -25,6 +27,10 @@ const categories = computed<Category[]>(() =>
     "text",
   ),
 );
+
+defineEmits<{
+  (e: "toggled", item: InventoryItem): void;
+}>();
 </script>
 
 <template>
@@ -41,7 +47,7 @@ const categories = computed<Category[]>(() =>
     </table>
     <TarTabs class="justify-content-center nav-fill" id="inventory">
       <TarTab v-for="(category, index) in categories" :key="category.value" :active="index === 0" :id="category.value" :title="category.text">
-        <GameBagItems :category="category.value" :items="inventory.items" />
+        <GameBagItems :category="category.value" :clickable="clickable" :items="inventory.items" :selected="selected" @toggled="$emit('toggled', $event)" />
       </TarTab>
     </TarTabs>
   </section>

@@ -10,7 +10,7 @@ import PartyPokemonCard from "@/components/pokemon/PartyPokemonCard.vue";
 import PokemonGameSummary from "@/components/pokemon/PokemonGameSummary.vue";
 import PokemonSprite from "@/components/pokemon/PokemonSprite.vue";
 import type { Breadcrumb } from "@/types/components";
-import type { MoveSummary, PokemonCard, PokemonSummary } from "@/types/game";
+import type { InventoryItem, MoveSummary, PokemonCard, PokemonSummary } from "@/types/game";
 import { getPokemon, getSummary } from "@/api/game/pokemon";
 import { handleErrorKey } from "@/inject";
 import { onMounted, ref } from "vue";
@@ -36,12 +36,20 @@ function close(): void {
   summary.value = undefined;
 }
 
-function heldItemTaken(): void {
+function heldItemChanged(item?: InventoryItem): void {
+  let swap: boolean = false;
   if (summary.value) {
-    summary.value.heldItem = undefined;
+    swap = Boolean(summary.value.heldItem);
+    summary.value.heldItem = item
+      ? {
+          name: item.name,
+          description: item.description,
+          sprite: item.sprite,
+        }
+      : undefined;
   }
   refresh();
-  toasts.success("items.held.taken");
+  toasts.success(item ? (swap ? "items.held.swapped" : "items.held.given") : "items.held.taken");
 }
 
 function movesSwapped(indices: number[]): void {
@@ -51,7 +59,6 @@ function movesSwapped(indices: number[]): void {
     summary.value.moves.splice(i, 1, summary.value.moves[j]);
     summary.value.moves.splice(j, 1, temp);
   }
-  refresh();
   toasts.success("pokemon.move.swapped");
 }
 
@@ -140,7 +147,7 @@ onMounted(refresh);
           v-if="view === 'summary' && summary"
           :pokemon="summary"
           @error="handleError"
-          @held-item-taken="heldItemTaken"
+          @held-item="heldItemChanged"
           @moves-swapped="movesSwapped"
           @nicknamed="nicknamed"
         />

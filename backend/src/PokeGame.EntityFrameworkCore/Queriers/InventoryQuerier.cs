@@ -22,7 +22,7 @@ internal class InventoryQuerier : IInventoryQuerier
   public async Task<InventoryItemModel?> ReadAsync(Guid trainerId, Guid itemId, CancellationToken cancellationToken)
   {
     InventoryEntity? inventory = await _inventory.AsNoTracking()
-      .Include(x => x.Item)
+      .Include(x => x.Item).ThenInclude(x => x!.Move)
       .SingleOrDefaultAsync(x => x.TrainerUid == trainerId && x.ItemUid == itemId, cancellationToken);
     return inventory is null ? null : await MapAsync(inventory, cancellationToken);
   }
@@ -30,7 +30,7 @@ internal class InventoryQuerier : IInventoryQuerier
   public async Task<IReadOnlyCollection<InventoryItemModel>> ReadAsync(Guid trainerId, CancellationToken cancellationToken)
   {
     InventoryEntity[] inventory = await _inventory.AsNoTracking()
-      .Include(x => x.Item)
+      .Include(x => x.Item).ThenInclude(x => x!.Move)
       .Where(x => x.TrainerUid == trainerId)
       .ToArrayAsync(cancellationToken);
     return await MapAsync(inventory, cancellationToken);

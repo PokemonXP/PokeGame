@@ -32,7 +32,11 @@
     "value": "Guérison"
   },
   "held": {
+    "give": "Donner un objet",
+    "given": "L’objet a été donné au Pokémon.",
     "label": "Objet tenu",
+    "swap": "Échanger l’objet",
+    "swapped": "L’objet a été échangé.",
     "take": "Prendre l’objet",
     "taken": "L’objet a été déplacé vers le sac de l’entraîneur."
   },
