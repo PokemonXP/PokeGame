@@ -1,4 +1,6 @@
-﻿using Krakenar.Core;
+﻿using FluentValidation;
+using FluentValidation.Results;
+using Krakenar.Core;
 using Logitar;
 using Logitar.EventSourcing;
 using PokeGame.Core.Battles.Events;
@@ -55,19 +57,16 @@ public class Battle : AggregateRoot
     }
     if (opponents.Count < 1)
     {
-      throw new ArgumentException("At least one opponent trainer must be provided.", nameof(champions));
+      throw new ArgumentException("At least one opponent trainer must be provided.", nameof(opponents));
     }
 
     IEnumerable<Trainer> intersection = champions.Intersect(opponents);
     if (intersection.Any())
     {
-      StringBuilder message = new();
-      message.AppendLine("The following trainers have been provided in champions and opponents. A trainer may only appear on one side.");
-      foreach (Trainer trainer in intersection)
+      throw new ValidationException(intersection.Select(trainer => new ValidationFailure("TrainerId", "The trainer cannot appear on both sides of the battle.", trainer.Id.ToGuid())
       {
-        message.Append(" - ").Append(trainer).AppendLine();
-      }
-      throw new InvalidOperationException(message.ToString());
+        ErrorCode = "TrainerBattleValidator"
+      }));
     }
 
     Battle battle = new(battleId);
@@ -102,7 +101,7 @@ public class Battle : AggregateRoot
     }
     if (opponents.Count < 1)
     {
-      throw new ArgumentException("At least one opponent Pokémon must be provided.", nameof(champions));
+      throw new ArgumentException("At least one opponent Pokémon must be provided.", nameof(opponents));
     }
 
     List<Specimen> trainerPokemon = new(capacity: opponents.Count);
@@ -120,23 +119,17 @@ public class Battle : AggregateRoot
     }
     if (trainerPokemon.Count > 0)
     {
-      StringBuilder message = new();
-      message.AppendLine("The following Pokémon are not wild Pokémon.");
-      foreach (Specimen pokemon in trainerPokemon)
+      throw new ValidationException(trainerPokemon.Select(pokemon => new ValidationFailure("Opponents", "The Pokémon must be a wild Pokémon.", pokemon.Id.ToGuid())
       {
-        message.Append(" - ").Append(pokemon).AppendLine();
-      }
-      throw new ArgumentException(message.ToString(), nameof(opponents));
+        ErrorCode = "WildPokemonValidator"
+      }));
     }
     if (eggPokemon.Count > 0)
     {
-      StringBuilder message = new();
-      message.AppendLine("The following Pokémon are still egg Pokémon.");
-      foreach (Specimen pokemon in trainerPokemon)
+      throw new ValidationException(eggPokemon.Select(pokemon => new ValidationFailure("Opponents", "The Pokémon must not be an egg.", pokemon.Id.ToGuid())
       {
-        message.Append(" - ").Append(pokemon).AppendLine();
-      }
-      throw new ArgumentException(message.ToString(), nameof(opponents));
+        ErrorCode = "EggValidator"
+      }));
     }
 
     Battle battle = new(battleId);
@@ -167,4 +160,6 @@ public class Battle : AggregateRoot
     _champions.Clear();
     _champions.AddRange(@event.ChampionIds);
   }
+
+  public override string ToString() => $"{Name} | {base.ToString()}";
 }
