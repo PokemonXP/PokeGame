@@ -36,6 +36,7 @@ public static class DependencyInjectionExtensions
   private static IServiceCollection AddEventHandlers(this IServiceCollection services)
   {
     AbilityEvents.Register(services);
+    BattleEvents.Register(services);
     EvolutionEvents.Register(services);
     FormEvents.Register(services);
     InventoryEvents.Register(services);

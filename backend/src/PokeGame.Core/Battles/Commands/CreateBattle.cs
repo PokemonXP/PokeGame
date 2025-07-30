@@ -169,7 +169,7 @@ internal class CreateBattleHandler : ICommandHandler<CreateBattle, BattleModel>
       if (!string.IsNullOrWhiteSpace(idOrUniqueName))
       {
         if ((Guid.TryParse(idOrUniqueName, out Guid id) && trainerByIds.TryGetValue(id, out TrainerId trainerId))
-        || trainerByNames.TryGetValue(Normalize(idOrUniqueName), out trainerId))
+          || trainerByNames.TryGetValue(Normalize(idOrUniqueName), out trainerId))
         {
           foundTrainers[idOrUniqueName] = trainerId;
         }

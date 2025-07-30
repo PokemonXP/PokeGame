@@ -21,7 +21,8 @@ internal class BattleEntity : AggregateEntity
   public List<BattlePokemonEntity> Pokemon { get; private set; } = [];
   public List<BattleTrainerEntity> Trainers { get; private set; } = [];
 
-  public BattleEntity(List<TrainerEntity> champions, List<TrainerEntity> opponents, TrainerBattleCreated @event) : this(champions, @event)
+  public BattleEntity(IEnumerable<TrainerEntity> champions, IEnumerable<TrainerEntity> opponents, TrainerBattleCreated @event)
+    : this(champions, @event)
   {
     Id = new BattleId(@event.StreamId).ToGuid();
 
@@ -32,7 +33,8 @@ internal class BattleEntity : AggregateEntity
       Trainers.Add(new BattleTrainerEntity(this, opponent, isOpponent: true));
     }
   }
-  public BattleEntity(List<TrainerEntity> champions, List<PokemonEntity> opponents, WildPokemonBattleCreated @event) : this(champions, @event)
+  public BattleEntity(IEnumerable<TrainerEntity> champions, IEnumerable<PokemonEntity> opponents, WildPokemonBattleCreated @event)
+    : this(champions, @event)
   {
     Id = new BattleId(@event.StreamId).ToGuid();
 
@@ -43,7 +45,8 @@ internal class BattleEntity : AggregateEntity
       Pokemon.Add(new BattlePokemonEntity(this, opponent));
     }
   }
-  private BattleEntity(List<TrainerEntity> champions, IBattleCreated @event) : base((DomainEvent)@event)
+  private BattleEntity(IEnumerable<TrainerEntity> champions, IBattleCreated @event)
+    : base((DomainEvent)@event)
   {
     Status = BattleStatus.Created;
 
