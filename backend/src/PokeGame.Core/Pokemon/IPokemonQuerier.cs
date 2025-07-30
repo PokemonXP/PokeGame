@@ -9,6 +9,7 @@ public interface IPokemonQuerier
 {
   Task<PokemonId?> FindIdAsync(UniqueName uniqueName, CancellationToken cancellationToken = default);
 
+  Task<IReadOnlyCollection<PokemonKey>> GetKeysAsync(CancellationToken cancellationToken = default);
   Task<Storage> GetStorageAsync(TrainerId trainerId, CancellationToken cancellationToken = default);
 
   Task<PokemonModel> ReadAsync(Specimen pokemon, CancellationToken cancellationToken = default);

@@ -9,6 +9,8 @@ public interface ITrainerQuerier
   Task<TrainerId?> FindIdAsync(License license, CancellationToken cancellationToken = default);
   Task<TrainerId?> FindIdAsync(UniqueName uniqueName, CancellationToken cancellationToken = default);
 
+  Task<IReadOnlyCollection<TrainerKey>> GetKeysAsync(CancellationToken cancellationToken = default);
+
   Task<TrainerModel> ReadAsync(Trainer trainer, CancellationToken cancellationToken = default);
   Task<TrainerModel?> ReadAsync(TrainerId id, CancellationToken cancellationToken = default);
   Task<TrainerModel?> ReadAsync(Guid id, CancellationToken cancellationToken = default);

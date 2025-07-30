@@ -2,7 +2,7 @@
 using Krakenar.Core;
 using PokeGame.Core.Trainers.Models;
 
-namespace PokeGame.Core.Trainers.Queries;
+namespace PokeGame.Core.Trainers.Models.Queries;
 
 internal record ReadTrainer(Guid? Id, string? UniqueName, string? License) : IQuery<TrainerModel?>;
 
@@ -22,7 +22,7 @@ internal class ReadTrainerHandler : IQueryHandler<ReadTrainer, TrainerModel?>
 
     if (query.Id.HasValue)
     {
-      TrainerModel? trainer = await _trainerQuerier.ReadAsync(query.Id.Value, cancellationToken);
+      var trainer = await _trainerQuerier.ReadAsync(query.Id.Value, cancellationToken);
       if (trainer is not null)
       {
         trainers[trainer.Id] = trainer;
@@ -31,7 +31,7 @@ internal class ReadTrainerHandler : IQueryHandler<ReadTrainer, TrainerModel?>
 
     if (!string.IsNullOrWhiteSpace(query.UniqueName))
     {
-      TrainerModel? trainer = await _trainerQuerier.ReadAsync(query.UniqueName, cancellationToken);
+      var trainer = await _trainerQuerier.ReadAsync(query.UniqueName, cancellationToken);
       if (trainer is not null)
       {
         trainers[trainer.Id] = trainer;
@@ -40,7 +40,7 @@ internal class ReadTrainerHandler : IQueryHandler<ReadTrainer, TrainerModel?>
 
     if (!string.IsNullOrWhiteSpace(query.License))
     {
-      TrainerModel? trainer = await _trainerQuerier.ReadByLicenseAsync(query.License, cancellationToken);
+      var trainer = await _trainerQuerier.ReadByLicenseAsync(query.License, cancellationToken);
       if (trainer is not null)
       {
         trainers[trainer.Id] = trainer;

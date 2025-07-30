@@ -2,7 +2,7 @@
 using Krakenar.Core;
 using PokeGame.Core.Trainers.Models;
 
-namespace PokeGame.Core.Trainers.Queries;
+namespace PokeGame.Core.Trainers.Models.Queries;
 
 internal record SearchTrainers(SearchTrainersPayload Payload) : IQuery<SearchResults<TrainerModel>>;
 
