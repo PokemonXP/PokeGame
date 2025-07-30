@@ -18,6 +18,9 @@ internal class BattleEntity : AggregateEntity
   public string? Url { get; private set; }
   public string? Notes { get; private set; }
 
+  public int ChampionCount { get; private set; }
+  public int OpponentCount { get; private set; }
+
   public List<BattlePokemonEntity> Pokemon { get; private set; } = [];
   public List<BattleTrainerEntity> Trainers { get; private set; } = [];
 
@@ -32,6 +35,7 @@ internal class BattleEntity : AggregateEntity
     {
       Trainers.Add(new BattleTrainerEntity(this, opponent, isOpponent: true));
     }
+    OpponentCount = opponents.Count();
   }
   public BattleEntity(IEnumerable<TrainerEntity> champions, IEnumerable<PokemonEntity> opponents, WildPokemonBattleCreated @event) : this(@event)
   {
@@ -44,6 +48,7 @@ internal class BattleEntity : AggregateEntity
     {
       Pokemon.Add(new BattlePokemonEntity(this, opponent));
     }
+    OpponentCount = opponents.Count();
   }
   private BattleEntity(IBattleCreated @event) : base((DomainEvent)@event)
   {
@@ -65,6 +70,7 @@ internal class BattleEntity : AggregateEntity
     {
       Trainers.Add(new BattleTrainerEntity(this, champion, isOpponent: false));
     }
+    ChampionCount = champions.Count();
   }
 
   public override string ToString() => $"{Name} | {base.ToString()}";

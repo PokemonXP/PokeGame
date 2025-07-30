@@ -15,11 +15,13 @@ internal static class Battles
   public static readonly ColumnId Version = new(nameof(BattleEntity.Version), Table);
 
   public static readonly ColumnId BattleId = new(nameof(BattleEntity.BattleId), Table);
+  public static readonly ColumnId ChampionCount = new(nameof(BattleEntity.ChampionCount), Table);
   public static readonly ColumnId Id = new(nameof(BattleEntity.Id), Table);
   public static readonly ColumnId Kind = new(nameof(BattleEntity.Kind), Table);
   public static readonly ColumnId Location = new(nameof(BattleEntity.Location), Table);
   public static readonly ColumnId Name = new(nameof(BattleEntity.Name), Table);
   public static readonly ColumnId Notes = new(nameof(BattleEntity.Notes), Table);
+  public static readonly ColumnId OpponentCount = new(nameof(BattleEntity.OpponentCount), Table);
   public static readonly ColumnId Status = new(nameof(BattleEntity.Status), Table);
   public static readonly ColumnId Url = new(nameof(BattleEntity.Url), Table);
 }
