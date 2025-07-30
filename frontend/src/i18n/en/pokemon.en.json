@@ -72,7 +72,6 @@
       "label": "Box",
       "move": "Move",
       "release": "Release",
-      "swap": "Swap",
       "withdraw": "Withdraw"
     },
     "characteristic": {
@@ -212,6 +211,13 @@
   "pokedex": {
     "number": "Pokédex No.",
     "title": "Pokédex"
+  },
+  "position": {
+    "swap": {
+      "help": "Select another Pokémon to swap.",
+      "label": "Swap",
+      "success": "The Pokémon have been swapped."
+    }
   },
   "progress": {
     "title": "Progress"

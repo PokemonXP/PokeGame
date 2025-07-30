@@ -111,6 +111,25 @@ public class GamePokemonController : ControllerBase
     return NoContent();
   }
 
+  [HttpPatch("{sourceId}/swap/{destinationId}")]
+  public async Task<ActionResult> SwapAsync(Guid sourceId, Guid destinationId, CancellationToken cancellationToken)
+  {
+    ActionResult? result = await EnsureOwnershipAsync(sourceId, cancellationToken);
+    if (result is not null)
+    {
+      return result;
+    }
+    result = await EnsureOwnershipAsync(destinationId, cancellationToken);
+    if (result is not null)
+    {
+      return result;
+    }
+
+    SwapPokemonPayload payload = new(sourceId.ToString(), destinationId.ToString());
+    await _pokemonService.SwapAsync(payload, cancellationToken);
+    return NoContent();
+  }
+
   private async Task<ActionResult?> EnsureOwnershipAsync(Guid id, CancellationToken cancellationToken)
   {
     PokemonModel? pokemon = await _pokemonService.ReadAsync(id, uniqueName: null, cancellationToken);

@@ -2,6 +2,16 @@
 
 public record SwapPokemonPayload
 {
-  public string Source { get; set; } = string.Empty;
-  public string Destination { get; set; } = string.Empty;
+  public string Source { get; set; }
+  public string Destination { get; set; }
+
+  public SwapPokemonPayload() : this(string.Empty, string.Empty)
+  {
+  }
+
+  public SwapPokemonPayload(string source, string destination)
+  {
+    Source = source;
+    Destination = destination;
+  }
 }

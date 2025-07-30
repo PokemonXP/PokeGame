@@ -356,7 +356,7 @@ watch(() => props.trainer, refresh, { deep: true, immediate: true });
         icon="fas fa-rotate"
         :loading="isLoading"
         :status="t('loading')"
-        :text="t('pokemon.memories.box.swap')"
+        :text="t('pokemon.position.swap.label')"
         @click="swap"
       />
       <TarButton
