@@ -3,7 +3,7 @@ import { TarBadge } from "logitar-vue3-ui";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 
-import BattleKindIcon from "@/views/battles/BattleKindIcon.vue";
+import BattleKindIcon from "./BattleKindIcon.vue";
 import type { BattleKind } from "@/types/battle";
 
 const { t } = useI18n();

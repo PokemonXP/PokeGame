@@ -28,6 +28,20 @@ public class BattleController : ControllerBase
     return Created(location, battle);
   }
 
+  [HttpDelete("{id}")]
+  public async Task<ActionResult<BattleModel>> DeleteAsync(Guid id, CancellationToken cancellationToken)
+  {
+    BattleModel? battle = await _battleService.DeleteAsync(id, cancellationToken);
+    return battle is null ? NotFound() : Ok(battle);
+  }
+
+  [HttpGet("{id}")]
+  public async Task<ActionResult<BattleModel>> ReadAsync(Guid id, CancellationToken cancellationToken)
+  {
+    BattleModel? battle = await _battleService.ReadAsync(id, cancellationToken);
+    return battle is null ? NotFound() : Ok(battle);
+  }
+
   [HttpGet]
   public async Task<ActionResult<SearchResults<BattleModel>>> SearchAsync([FromQuery] SearchBattlesParameters parameters, CancellationToken cancellationToken)
   {

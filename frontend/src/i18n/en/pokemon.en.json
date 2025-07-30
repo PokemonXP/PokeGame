@@ -330,10 +330,6 @@
     "title": "Summary"
   },
   "title": "Pokémon",
-  "trainer": {
-    "label": "Trainer",
-    "placeholder": "Select a trainer"
-  },
   "type": {
     "label": "Type",
     "none": "None",

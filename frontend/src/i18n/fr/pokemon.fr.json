@@ -63,7 +63,7 @@
   },
   "level": {
     "format": "Nv. {level}",
-    "label": "Level"
+    "label": "Niveau"
   },
   "memories": {
     "box": {
@@ -330,10 +330,6 @@
     "title": "Résumé"
   },
   "title": "Pokémon",
-  "trainer": {
-    "label": "Trainer",
-    "placeholder": "Select a trainer"
-  },
   "type": {
     "label": "Type",
     "none": "None",

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useI18n } from "vue-i18n";
 
-import BattleKindIcon from "@/views/battles/BattleKindIcon.vue";
+import BattleKindIcon from "@/components/battle/BattleKindIcon.vue";
 import CircleInfoIcon from "@/components/icons/CircleInfoIcon.vue";
 import type { BattleKind } from "@/types/battle";
 import { useBattleCreationStore } from "@/stores/battle/creation";
