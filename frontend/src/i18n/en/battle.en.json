@@ -1,4 +1,5 @@
 {
+  "action": "Action",
   "active": "Active",
   "all": {
     "select": "Select All",
@@ -17,12 +18,16 @@
     "title": "Delete Battle"
   },
   "deleted": "The battle has been deleted.",
+  "ended": "The battle has ended.",
+  "externalLink": "External Link",
   "filters": "Filters",
   "help": "Pick the opponent kind.",
   "kind": {
     "label": "Type",
     "placeholder": "Select a battle type"
   },
+  "leave": "Leave",
+  "notStarted": "The battle has not started yet.",
   "opponents": {
     "pokemon": {
       "help": "Select the opposing wild Pokémon.",
@@ -36,6 +41,7 @@
   "properties": {
     "help": "Fill the following battle properties."
   },
+  "rejoin": "Rejoin",
   "remember": "Remember my selection",
   "sort": {
     "options": {

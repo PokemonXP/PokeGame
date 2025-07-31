@@ -1,5 +1,6 @@
 import { EFFORT_VALUE_MAXIMUM, EFFORT_VALUE_MINIMUM, INDIVIDUAL_VALUE_MAXIMUM, INDIVIDUAL_VALUE_MINIMUM, LEVEL_MAXIMUM, LEVEL_MINIMUM } from "@/types/pokemon";
-import type { BaseStatistics, Form, Sprites } from "@/types/pokemon-forms";
+import type { Ability } from "@/types/abilities";
+import type { BaseStatistics, Form, FormAbilities, Sprites } from "@/types/pokemon-forms";
 import type {
   EffortValues,
   IndividualValues,
@@ -211,6 +212,27 @@ export function getSpriteUrl(pokemon: Pokemon): string {
     return sprites.alternativeShiny && pokemon.gender === "Female" ? sprites.alternativeShiny : sprites.shiny;
   }
   return sprites.alternative && pokemon.gender === "Female" ? sprites.alternative : sprites.default;
+}
+
+export function getAbility(pokemon: Pokemon): Ability {
+  const abilities: FormAbilities = pokemon.form.abilities;
+  switch (pokemon.abilitySlot) {
+    case "Secondary":
+      if (abilities.secondary) {
+        return abilities.secondary;
+      }
+      break;
+    case "Hidden":
+      if (abilities.hidden) {
+        return abilities.hidden;
+      }
+      break;
+  }
+  return abilities.primary;
+}
+
+export function getUrl(pokemon: Pokemon): string | undefined {
+  return pokemon.url ?? pokemon.form.url ?? pokemon.form.variety.url ?? pokemon.form.variety.species.url ?? undefined;
 }
 
 // TODO(fpion): unit tests

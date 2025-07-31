@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { TarTab, TarTabs } from "logitar-vue3-ui";
 import { computed, inject, onMounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
@@ -7,22 +8,15 @@ import AdminBreadcrumb from "@/components/admin/AdminBreadcrumb.vue";
 import BattleKindBadge from "@/components/battle/BattleKindBadge.vue";
 import BattleStatus from "@/components/battle/BattleStatus.vue";
 import DeleteBattle from "@/components/battle/DeleteBattle.vue";
-import DisplayNameInput from "@/components/shared/DisplayNameInput.vue";
-import LocationInput from "@/components/regions/LocationInput.vue";
-import NotesTextarea from "@/components/shared/NotesTextarea.vue";
-import PokemonTable from "@/components/battle/PokemonTable.vue";
 import StartBattle from "@/components/battle/StartBattle.vue";
 import StatusDetail from "@/components/shared/StatusDetail.vue";
-import SubmitButton from "@/components/shared/SubmitButton.vue";
-import TrainerTable from "@/components/battle/TrainerTable.vue";
-import UrlInput from "@/components/shared/UrlInput.vue";
 import type { Battle } from "@/types/battle";
 import type { Breadcrumb } from "@/types/components";
 import { StatusCodes, type ApiFailure } from "@/types/api";
 import { handleErrorKey } from "@/inject";
 import { readBattle } from "@/api/battle";
-import { useForm } from "@/forms";
 import { useToastStore } from "@/stores/toast";
+import BattleGeneral from "@/components/battle/BattleGeneral.vue";
 
 const handleError = inject(handleErrorKey) as (e: unknown) => void;
 const route = useRoute();
@@ -44,27 +38,27 @@ function onDeleted(): void {
   router.push({ name: "BattleList" });
 }
 
-function started(battle: Battle): void {
+function onStarted(battle: Battle): void {
   toasts.success("battle.started.success");
-  console.log(battle); // TODO(fpion): join!
+  router.push({ name: "BattleView", params: { id: battle.id } });
 }
 
-const { isValid, reinitialize, validate } = useForm();
-async function submit(): Promise<void> {
-  if (!isLoading.value) {
-    isLoading.value = true;
-    try {
-      validate();
-      if (isValid.value) {
-        // TODO(fpion): save
-        reinitialize();
-      }
-    } catch (e: unknown) {
-      handleError(e);
-    } finally {
-      isLoading.value = false;
-    }
+function updateAggregate(updated: Battle): void {
+  if (battle.value) {
+    battle.value.version = updated.version;
+    battle.value.updatedBy = updated.updatedBy;
+    battle.value.updatedOn = updated.updatedOn;
   }
+}
+function onGeneralUpdated(updated: Battle): void {
+  if (battle.value) {
+    updateAggregate(updated);
+    battle.value.name = updated.name;
+    battle.value.location = updated.location;
+    battle.value.url = updated.url;
+    battle.value.notes = updated.notes;
+  }
+  toasts.success("battles.updated");
 }
 
 watch(
@@ -116,19 +110,17 @@ onMounted(async () => {
       </table>
       <div class="mb-3 d-flex gap-2">
         <DeleteBattle :battle="battle" @deleted="onDeleted" @error="handleError" />
-        <StartBattle v-if="battle.status === 'Created'" :battle="battle" @error="handleError" @started="started" />
+        <StartBattle v-if="battle.status === 'Created'" :battle="battle" @error="handleError" @started="onStarted" />
+        <RouterLink v-else-if="battle.status === 'Started'" :to="{ name: 'BattleView', params: { id: battle.id } }" class="btn btn-primary">
+          <font-awesome-icon icon="fas fa-door-open" /> {{ t("battle.rejoin") }}
+        </RouterLink>
       </div>
-      <form @submit.prevent="submit">
-        <div class="row">
-          <DisplayNameInput class="col" id="name" label="name.label" required v-model="name" />
-          <LocationInput class="col" required v-model="location" />
-        </div>
-        <UrlInput v-model="url" />
-        <NotesTextarea v-model="notes" />
-        <div class="mb-3">
-          <SubmitButton :loading="isLoading" />
-        </div>
-      </form>
+      <TarTabs>
+        <TarTab active id="general" :title="t('general')">
+          <BattleGeneral :battle="battle" @error="handleError" @updated="onGeneralUpdated" />
+        </TarTab>
+      </TarTabs>
+      <!-- TODO(fpion): other tabs
       <h2 class="h3">{{ t("battle.champions.title") }}</h2>
       <TrainerTable :trainers="battle.champions" />
       <template v-if="battle.opponents.length">
@@ -139,6 +131,7 @@ onMounted(async () => {
         <h2 class="h3">{{ t("pokemon.title") }}</h2>
         <PokemonTable :battlers="battle.battlers" />
       </template>
+      -->
     </template>
   </main>
 </template>
