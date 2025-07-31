@@ -8,6 +8,7 @@ public class BattleModel : AggregateModel
 {
   public BattleKind Kind { get; set; }
   public BattleStatus Status { get; set; }
+  public BattleResolution? Resolution { get; set; }
 
   public string Name { get; set; } = string.Empty;
   public string Location { get; set; } = string.Empty;
@@ -24,6 +25,8 @@ public class BattleModel : AggregateModel
   public DateTime? StartedOn { get; set; }
   public Actor? CancelledBy { get; set; }
   public DateTime? CancelledOn { get; set; }
+  public Actor? CompletedBy { get; set; }
+  public DateTime? CompletedOn { get; set; }
 
   public override string ToString() => $"{Name} | {base.ToString()}";
 }

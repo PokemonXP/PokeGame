@@ -64,6 +64,7 @@ internal class PokemonMapper
       Id = source.Id,
       Kind = source.Kind,
       Status = source.Status,
+      Resolution = source.Resolution,
       Name = source.Name,
       Location = source.Location,
       Url = source.Url,
@@ -71,7 +72,8 @@ internal class PokemonMapper
       ChampionCount = source.ChampionCount,
       OpponentCount = source.OpponentCount,
       StartedOn = source.StartedOn?.AsUniversalTime(),
-      CancelledOn = source.CancelledOn?.AsUniversalTime()
+      CancelledOn = source.CancelledOn?.AsUniversalTime(),
+      CompletedOn = source.CompletedOn?.AsUniversalTime()
     };
 
     if (!string.IsNullOrWhiteSpace(source.StartedBy))
@@ -81,6 +83,10 @@ internal class PokemonMapper
     if (!string.IsNullOrWhiteSpace(source.CancelledBy))
     {
       destination.CancelledBy = FindActor(source.CancelledBy);
+    }
+    if (!string.IsNullOrWhiteSpace(source.CompletedBy))
+    {
+      destination.CompletedBy = FindActor(source.CompletedBy);
     }
 
     foreach (BattleTrainerEntity entity in source.Trainers)
