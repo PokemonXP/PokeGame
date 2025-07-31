@@ -185,6 +185,9 @@ public class Specimen : AggregateRoot
   public Ownership? Ownership { get; private set; }
   public PokemonSlot? Slot { get; private set; }
 
+  public bool IsEggInBox => IsEgg && Slot?.Box is not null;
+  public bool IsHatchedInParty => !IsEgg && Slot is not null && Slot.Box is null;
+
   public Specimen() : base()
   {
   }
