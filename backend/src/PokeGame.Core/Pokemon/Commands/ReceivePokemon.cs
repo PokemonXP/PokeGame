@@ -5,6 +5,7 @@ using PokeGame.Core.Items;
 using PokeGame.Core.Pokemon.Models;
 using PokeGame.Core.Pokemon.Validators;
 using PokeGame.Core.Regions;
+using PokeGame.Core.Storage;
 using PokeGame.Core.Trainers;
 
 namespace PokeGame.Core.Pokemon.Commands;
@@ -54,9 +55,13 @@ internal class ReceivePokemonHandler : ICommandHandler<ReceivePokemon, PokemonMo
       return null;
     }
 
+    PokemonStorage? previousStorage = pokemon.Ownership is null
+      ? null
+      : await _trainerRepository.LoadStorageAsync(pokemon.Ownership.TrainerId, cancellationToken);
+
     Trainer trainer = await _trainerRepository.LoadAsync(payload.Trainer, cancellationToken)
       ?? throw new TrainerNotFoundException(payload.Trainer, nameof(payload.Trainer));
-    Storage storage = await _pokemonQuerier.GetStorageAsync(trainer.Id, cancellationToken);
+    PokemonStorage storage = await _trainerRepository.LoadStorageAsync(trainer, cancellationToken);
 
     Item pokeBall = await _itemRepository.LoadAsync(payload.PokeBall, cancellationToken)
       ?? throw new ItemNotFoundException(payload.PokeBall, nameof(payload.PokeBall));
@@ -68,11 +73,18 @@ internal class ReceivePokemonHandler : ICommandHandler<ReceivePokemon, PokemonMo
     Location location = new(payload.Location);
     Level? level = payload.Level < 1 ? null : new(payload.Level);
     Description? description = Description.TryCreate(payload.Description);
-    PokemonSlot slot = storage.GetFirstEmptySlot();
+    pokemon.Receive(trainer, pokeBall, location, level, payload.MetOn, description, slot: null, actorId);
 
-    pokemon.Receive(trainer, pokeBall, location, level, payload.MetOn, description, slot, actorId);
+    previousStorage?.Remove(pokemon, actorId);
+    storage.Store(pokemon, actorId);
 
     await _pokemonManager.SaveAsync(pokemon, cancellationToken);
+
+    if (previousStorage is not null)
+    {
+      await _trainerRepository.SaveAsync(previousStorage, cancellationToken);
+    }
+    await _trainerRepository.SaveAsync(storage, cancellationToken);
 
     return await _pokemonQuerier.ReadAsync(pokemon, cancellationToken);
   }
