@@ -3,6 +3,7 @@ using Krakenar.Core;
 using Logitar.EventSourcing;
 using PokeGame.Core.Battles.Models;
 using PokeGame.Core.Battles.Validators;
+using PokeGame.Core.Pokemon;
 using PokeGame.Core.Regions;
 
 namespace PokeGame.Core.Battles.Commands;
