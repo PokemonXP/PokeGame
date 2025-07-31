@@ -212,6 +212,25 @@ public class Battle : AggregateRoot
     _champions.AddRange(@event.ChampionIds);
   }
 
+  public void Cancel(ActorId? actorId = null)
+  {
+    if (Status != BattleStatus.Started)
+    {
+      ValidationFailure failure = new("BattleId", "The battle must have started, but not ended.", Id.ToGuid())
+      {
+        CustomState = new { Status },
+        ErrorCode = "StatusValidator"
+      };
+      throw new ValidationException([failure]);
+    }
+
+    Raise(new BattleCancelled(), actorId);
+  }
+  protected virtual void Handle(BattleCancelled _)
+  {
+    Status = BattleStatus.Cancelled;
+  }
+
   public void Delete(ActorId? actorId = null)
   {
     if (!IsDeleted)

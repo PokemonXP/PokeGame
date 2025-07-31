@@ -8,7 +8,8 @@ using PokeGame.EntityFrameworkCore.Entities;
 
 namespace PokeGame.EntityFrameworkCore.Handlers;
 
-internal class BattleEvents : IEventHandler<BattleDeleted>,
+internal class BattleEvents : IEventHandler<BattleCancelled>,
+  IEventHandler<BattleDeleted>,
   IEventHandler<BattleStarted>,
   IEventHandler<BattleUpdated>,
   IEventHandler<TrainerBattleCreated>,
@@ -16,6 +17,7 @@ internal class BattleEvents : IEventHandler<BattleDeleted>,
 {
   public static void Register(IServiceCollection services)
   {
+    services.AddScoped<IEventHandler<BattleCancelled>, BattleEvents>();
     services.AddScoped<IEventHandler<BattleDeleted>, BattleEvents>();
     services.AddScoped<IEventHandler<BattleStarted>, BattleEvents>();
     services.AddScoped<IEventHandler<BattleUpdated>, BattleEvents>();
@@ -30,6 +32,22 @@ internal class BattleEvents : IEventHandler<BattleDeleted>,
   {
     _context = context;
     _logger = logger;
+  }
+
+  public async Task HandleAsync(BattleCancelled @event, CancellationToken cancellationToken)
+  {
+    BattleEntity? battle = await _context.Battles
+      .SingleOrDefaultAsync(x => x.StreamId == @event.StreamId.Value, cancellationToken);
+    if (battle is null || (battle.Version != (@event.Version - 1)))
+    {
+      _logger.LogUnexpectedVersion(@event, battle);
+      return;
+    }
+
+    battle.Cancel(@event);
+
+    await _context.SaveChangesAsync(cancellationToken);
+    _logger.LogSuccess(@event);
   }
 
   public async Task HandleAsync(BattleDeleted @event, CancellationToken cancellationToken)

@@ -2,6 +2,7 @@
 
 public enum BattleSort
 {
+  CancelledOn,
   CreatedOn,
   Location,
   Name,

@@ -87,6 +87,11 @@ internal class BattleQuerier : IBattleQuerier
     {
       switch (sort.Field)
       {
+        case BattleSort.CancelledOn:
+          ordered = ordered is null
+            ? (sort.IsDescending ? query.OrderByDescending(x => x.CancelledOn) : query.OrderBy(x => x.CancelledOn))
+            : (sort.IsDescending ? ordered.ThenByDescending(x => x.CancelledOn) : ordered.ThenBy(x => x.CancelledOn));
+          break;
         case BattleSort.CreatedOn:
           ordered = ordered is null
             ? (sort.IsDescending ? query.OrderByDescending(x => x.CreatedOn) : query.OrderBy(x => x.CreatedOn))

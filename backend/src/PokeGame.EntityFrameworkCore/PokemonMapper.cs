@@ -64,18 +64,23 @@ internal class PokemonMapper
       Id = source.Id,
       Kind = source.Kind,
       Status = source.Status,
-      StartedOn = source.StartedOn?.AsUniversalTime(),
       Name = source.Name,
       Location = source.Location,
       Url = source.Url,
       Notes = source.Notes,
       ChampionCount = source.ChampionCount,
-      OpponentCount = source.OpponentCount
+      OpponentCount = source.OpponentCount,
+      StartedOn = source.StartedOn?.AsUniversalTime(),
+      CancelledOn = source.CancelledOn?.AsUniversalTime()
     };
 
     if (!string.IsNullOrWhiteSpace(source.StartedBy))
     {
       destination.StartedBy = FindActor(source.StartedBy);
+    }
+    if (!string.IsNullOrWhiteSpace(source.CancelledBy))
+    {
+      destination.CancelledBy = FindActor(source.CancelledBy);
     }
 
     foreach (BattleTrainerEntity entity in source.Trainers)

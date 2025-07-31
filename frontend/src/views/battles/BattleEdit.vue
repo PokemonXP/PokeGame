@@ -5,8 +5,10 @@ import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 
 import AdminBreadcrumb from "@/components/admin/AdminBreadcrumb.vue";
+import BattleGeneral from "@/components/battle/BattleGeneral.vue";
 import BattleKindBadge from "@/components/battle/BattleKindBadge.vue";
 import BattleStatus from "@/components/battle/BattleStatus.vue";
+import CancelBattle from "@/components/battle/CancelBattle.vue";
 import DeleteBattle from "@/components/battle/DeleteBattle.vue";
 import StartBattle from "@/components/battle/StartBattle.vue";
 import StatusDetail from "@/components/shared/StatusDetail.vue";
@@ -16,7 +18,6 @@ import { StatusCodes, type ApiFailure } from "@/types/api";
 import { handleErrorKey } from "@/inject";
 import { readBattle } from "@/api/battle";
 import { useToastStore } from "@/stores/toast";
-import BattleGeneral from "@/components/battle/BattleGeneral.vue";
 
 const handleError = inject(handleErrorKey) as (e: unknown) => void;
 const route = useRoute();
@@ -32,6 +33,11 @@ const notes = ref<string>("");
 const url = ref<string>("");
 
 const breadcrumb = computed<Breadcrumb>(() => ({ to: { name: "BattleList" }, text: t("battle.title") }));
+
+function onCancelled(cancelled: Battle): void {
+  battle.value = cancelled;
+  toasts.success("battle.cancelled.success");
+}
 
 function onDeleted(): void {
   toasts.success("battle.deleted");
@@ -114,6 +120,7 @@ onMounted(async () => {
         <RouterLink v-else-if="battle.status === 'Started'" :to="{ name: 'BattleView', params: { id: battle.id } }" class="btn btn-primary">
           <font-awesome-icon icon="fas fa-door-open" /> {{ t("battle.rejoin") }}
         </RouterLink>
+        <CancelBattle v-if="battle.status === 'Started'" :battle="battle" @cancelled="onCancelled" @error="handleError" />
       </div>
       <TarTabs>
         <TarTab active id="general" :title="t('general')">

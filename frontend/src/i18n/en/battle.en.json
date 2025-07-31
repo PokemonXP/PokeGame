@@ -5,6 +5,14 @@
     "select": "Select All",
     "unselect": "Unselect All"
   },
+  "cancel": {
+    "confirm": "To cancel the battle, enter its name in the field below.",
+    "title": "Cancel Battle"
+  },
+  "cancelled": {
+    "format": "Cancelled on {date} by",
+    "success": "The battle has been cancelled."
+  },
   "champions": {
     "help": "Select champion trainers, typically player trainers and their allies.",
     "title": "Champions",
@@ -45,6 +53,7 @@
   "remember": "Remember my selection",
   "sort": {
     "options": {
+      "CancelledOn": "Cancelled on",
       "CreatedOn": "Created on",
       "Location": "Location",
       "Name": "Name",
@@ -60,6 +69,7 @@
   "status": {
     "label": "Status",
     "options": {
+      "Cancelled": "Cancelled",
       "Created": "Created",
       "Started": "Started"
     },

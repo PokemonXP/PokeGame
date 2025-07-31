@@ -14,6 +14,8 @@ const props = defineProps<{
 
 const variant = computed<BadgeVariant>(() => {
   switch (props.status) {
+    case "Cancelled":
+      return "danger";
     case "Started":
       return "primary";
     default:

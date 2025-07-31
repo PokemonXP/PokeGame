@@ -63,4 +63,11 @@ public class BattleController : ControllerBase
     BattleModel? battle = await _battleService.UpdateAsync(id, payload, cancellationToken);
     return battle is null ? NotFound() : Ok(battle);
   }
+
+  [HttpPatch("{id}/cancel")]
+  public async Task<ActionResult<BattleModel>> CancelAsync(Guid id, CancellationToken cancellationToken)
+  {
+    BattleModel? battle = await _battleService.CancelAsync(id, cancellationToken);
+    return battle is null ? NotFound() : Ok(battle);
+  }
 }

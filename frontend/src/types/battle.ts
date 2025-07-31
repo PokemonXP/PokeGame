@@ -7,8 +7,6 @@ import type { Trainer, TrainerKind } from "./trainers";
 export type Battle = Aggregate & {
   kind: BattleKind;
   status: BattleStatus;
-  startedBy?: Actor | null;
-  startedOn?: string | null;
   name: string;
   location: string;
   url?: string | null;
@@ -18,6 +16,10 @@ export type Battle = Aggregate & {
   champions: Trainer[];
   opponents: Trainer[];
   battlers: Battler[];
+  startedBy?: Actor | null;
+  startedOn?: string | null;
+  cancelledBy?: Actor | null;
+  cancelledOn?: string | null;
 };
 
 export type BattleKind = "WildPokemon" | "Trainer";
@@ -34,13 +36,13 @@ export type BattleProperties = {
   notes?: string;
 };
 
-export type BattleSort = "CreatedOn" | "Location" | "Name" | "StartedOn" | "UpdatedOn";
+export type BattleSort = "CancelledOn" | "CreatedOn" | "Location" | "Name" | "StartedOn" | "UpdatedOn";
 
 export type BattleSortOption = SortOption & {
   field: BattleSort;
 };
 
-export type BattleStatus = "Created" | "Started";
+export type BattleStatus = "Cancelled" | "Created" | "Started";
 
 export type CreateBattlePayload = {
   id?: string;

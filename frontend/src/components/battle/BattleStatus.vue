@@ -15,7 +15,8 @@ defineProps<{
 <template>
   <span>
     <BattleStatusIcon class="me-1" :status="battle.status" />
-    <StatusInfo v-if="battle.startedBy && battle.startedOn" :actor="battle.startedBy" :date="battle.startedOn" format="battle.started.format" />
+    <StatusInfo v-if="battle.cancelledBy && battle.cancelledOn" :actor="battle.cancelledBy" :date="battle.cancelledOn" format="battle.cancelled.format" />
+    <StatusInfo v-else-if="battle.startedBy && battle.startedOn" :actor="battle.startedBy" :date="battle.startedOn" format="battle.started.format" />
     <template v-else>{{ t(`battle.status.options.${battle.status}`) }}</template>
   </span>
 </template>

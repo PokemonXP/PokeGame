@@ -9,6 +9,7 @@ namespace PokeGame.Core.Battles;
 
 public interface IBattleService
 {
+  Task<BattleModel?> CancelAsync(Guid id, CancellationToken cancellationToken = default);
   Task<BattleModel> CreateAsync(CreateBattlePayload payload, CancellationToken cancellationToken = default);
   Task<BattleModel?> DeleteAsync(Guid id, CancellationToken cancellationToken = default);
   Task<BattleModel?> ReadAsync(Guid id, CancellationToken cancellationToken = default);
@@ -22,6 +23,7 @@ internal class BattleService : IBattleService
   public static void RegisterServices(IServiceCollection services)
   {
     services.AddTransient<IBattleService, BattleService>();
+    services.AddTransient<ICommandHandler<CancelBattle, BattleModel?>, CancelBattleHandler>();
     services.AddTransient<ICommandHandler<CreateBattle, BattleModel>, CreateBattleHandler>();
     services.AddTransient<ICommandHandler<DeleteBattle, BattleModel?>, DeleteBattleHandler>();
     services.AddTransient<ICommandHandler<StartBattle, BattleModel?>, StartBattleHandler>();
@@ -37,6 +39,12 @@ internal class BattleService : IBattleService
   {
     _commandBus = commandBus;
     _queryBus = queryBus;
+  }
+
+  public async Task<BattleModel?> CancelAsync(Guid id, CancellationToken cancellationToken)
+  {
+    CancelBattle command = new(id);
+    return await _commandBus.ExecuteAsync(command, cancellationToken);
   }
 
   public async Task<BattleModel> CreateAsync(CreateBattlePayload payload, CancellationToken cancellationToken)
