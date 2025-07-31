@@ -28,6 +28,11 @@ public class PokemonStorage : AggregateRoot
   {
   }
 
+  public IReadOnlyCollection<PokemonId> GetParty() => _slots
+    .Where(x => x.Value.Box is null)
+    .OrderBy(x => x.Value.Position.Value)
+    .Select(x => x.Key).ToList().AsReadOnly();
+
   protected virtual void Handle(PokemonStored @event)
   {
     _pokemon[@event.Slot] = @event.PokemonId; // TODO(fpion): won't work when stored is used to move a Pokémon
@@ -67,6 +72,41 @@ public class PokemonStorage : AggregateRoot
     }
   }
 
+  public void Swap(Specimen source, Specimen destination, IReadOnlyDictionary<PokemonId, Specimen> party, ActorId? actorId = null)
+  {
+    if (!_slots.ContainsKey(source.Id))
+    {
+      throw new ArgumentException($"The Pokémon '{source}' was not found in trainer's 'Id={TrainerId}' storage.", nameof(source));
+    }
+    if (!_slots.ContainsKey(destination.Id))
+    {
+      throw new ArgumentException($"The Pokémon '{destination}' was not found in trainer's 'Id={TrainerId}' storage.", nameof(destination));
+    }
+
+    if ((source.IsEggInBox && destination.IsHatchedInParty) || (destination.IsEggInBox && source.IsHatchedInParty))
+    {
+      bool isValid = GetParty().Any(id => !party[id].IsEgg);
+      if (!isValid)
+      {
+        throw new NotImplementedException(); // TODO(fpion): implement
+      }
+    }
+
+    source.Swap(destination, actorId);
+    Raise(new StoredPokemonSwapped(source.Id, destination.Id), actorId);
+  }
+  protected virtual void Handle(StoredPokemonSwapped @event)
+  {
+    PokemonSlot sourceSlot = _slots[@event.SourceId];
+    PokemonSlot destinationSlot = _slots[@event.DestinationId];
+
+    _pokemon[sourceSlot] = @event.DestinationId;
+    _pokemon[destinationSlot] = @event.SourceId;
+
+    _slots[@event.SourceId] = destinationSlot;
+    _slots[@event.DestinationId] = sourceSlot;
+  }
+
   private PokemonSlot FindFirstAvailable()
   {
     Position? position = FindFirstPartyAvailable();
@@ -94,9 +134,4 @@ public class PokemonStorage : AggregateRoot
     }
     throw new NotImplementedException(); // TODO(fpion): implement
   }
-
-  private IReadOnlyCollection<PokemonId> GetParty() => _slots
-    .Where(x => x.Value.Box is null)
-    .OrderBy(x => x.Value.Position.Value)
-    .Select(x => x.Key).ToList().AsReadOnly();
 }

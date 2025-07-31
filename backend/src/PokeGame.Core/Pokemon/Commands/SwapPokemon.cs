@@ -5,6 +5,7 @@ using Krakenar.Core;
 using Logitar.EventSourcing;
 using PokeGame.Core.Pokemon.Models;
 using PokeGame.Core.Pokemon.Validators;
+using PokeGame.Core.Storage;
 using PokeGame.Core.Trainers;
 
 namespace PokeGame.Core.Pokemon.Commands;
@@ -18,12 +19,18 @@ internal class SwapPokemonHandler : ICommandHandler<SwapPokemon, IReadOnlyCollec
   private readonly IApplicationContext _applicationContext;
   private readonly IPokemonQuerier _pokemonQuerier;
   private readonly IPokemonRepository _pokemonRepository;
+  private readonly ITrainerRepository _trainerRepository;
 
-  public SwapPokemonHandler(IApplicationContext applicationContext, IPokemonQuerier pokemonQuerier, IPokemonRepository pokemonRepository)
+  public SwapPokemonHandler(
+    IApplicationContext applicationContext,
+    IPokemonQuerier pokemonQuerier,
+    IPokemonRepository pokemonRepository,
+    ITrainerRepository trainerRepository)
   {
     _applicationContext = applicationContext;
     _pokemonQuerier = pokemonQuerier;
     _pokemonRepository = pokemonRepository;
+    _trainerRepository = trainerRepository;
   }
 
   public async Task<IReadOnlyCollection<PokemonModel>> HandleAsync(SwapPokemon command, CancellationToken cancellationToken)
@@ -70,24 +77,22 @@ internal class SwapPokemonHandler : ICommandHandler<SwapPokemon, IReadOnlyCollec
       throw new ValidationException(failures);
     }
 
-    if ((IsEggInBox(source) && IsHatchedInParty(destination)) || (IsEggInBox(destination) && IsHatchedInParty(source)))
+    if (source.Ownership is null)
     {
-      TrainerId trainerId = source.Ownership?.TrainerId ?? new();
-      Storage storage = await _pokemonQuerier.GetStorageAsync(trainerId, cancellationToken);
-      IEnumerable<PokemonId> partyIds = storage.Party.Except([source.Id, destination.Id]);
-      IReadOnlyCollection<Specimen> partyPokemon = await _pokemonRepository.LoadAsync(partyIds, cancellationToken);
-      if (!partyPokemon.Any(p => !p.IsEgg))
-      {
-        ValidationFailure failure = new("TrainerId", "The trainer party must contain at least one other hatched Pokémon.", trainerId.ToGuid())
-        {
-          ErrorCode = "CannotEmptyTrainerParty"
-        };
-        throw new ValidationException([failure]);
-      }
+      throw new InvalidOperationException("The Pokémon ownership are required.");
     }
+    PokemonStorage storage = await _trainerRepository.LoadStorageAsync(source.Ownership.TrainerId, cancellationToken);
+    Dictionary<PokemonId, Specimen> party = [];
+    if ((source.IsEggInBox && destination.IsHatchedInParty) || (destination.IsEggInBox && source.IsHatchedInParty))
+    {
+      IEnumerable<PokemonId> partyIds = storage.GetParty().Except([source.Id, destination.Id]);
+      party = (await _pokemonRepository.LoadAsync(partyIds, cancellationToken)).ToDictionary(x => x.Id, x => x);
+    }
+    storage.Swap(source, destination, party.AsReadOnly(), actorId);
 
-    source.Swap(destination, actorId);
     await _pokemonRepository.SaveAsync([source, destination], cancellationToken);
+
+    await _trainerRepository.SaveAsync(storage, cancellationToken);
 
     SearchPokemonPayload search = new();
     search.Ids.Add(source.Id.ToGuid());
@@ -95,7 +100,4 @@ internal class SwapPokemonHandler : ICommandHandler<SwapPokemon, IReadOnlyCollec
     SearchResults<PokemonModel> results = await _pokemonQuerier.SearchAsync(search, cancellationToken);
     return results.Items­.AsReadOnly();
   }
-
-  private static bool IsEggInBox(Specimen pokemon) => pokemon.IsEgg && pokemon.Slot is not null && pokemon.Slot.Box is not null;
-  private static bool IsHatchedInParty(Specimen pokemon) => !pokemon.IsEgg && pokemon.Slot is not null && pokemon.Slot.Box is null;
 }
