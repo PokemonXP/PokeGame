@@ -7,10 +7,6 @@ namespace PokeGame.Core.Storage;
 
 public class PokemonStorage : AggregateRoot
 {
-  public const int BoxCount = 32;
-  public const int BoxSize = 5 * 6;
-  public const int PartySize = 6;
-
   public new PokemonStorageId Id => new(base.Id);
   public TrainerId TrainerId => Id.TrainerId;
 
@@ -45,24 +41,36 @@ public class PokemonStorage : AggregateRoot
 
   public void Deposit(Specimen pokemon, IReadOnlyDictionary<PokemonId, Specimen> party, ActorId? actorId = null)
   {
-    if (!_slots.ContainsKey(pokemon.Id))
+    if (!_slots.TryGetValue(pokemon.Id, out PokemonSlot? previousSlot))
     {
       throw new ArgumentException($"The Pokémon '{pokemon}' was not found in trainer's 'Id={TrainerId}' storage.", nameof(pokemon));
     }
 
+    IReadOnlyCollection<PokemonId> partyIds = GetParty();
+
     #region TODO(fpion): refactor
-    bool isValid = GetParty().Any(id => id != pokemon.Id && !party[id].IsEgg);
+    bool isValid = partyIds.Any(id => id != pokemon.Id && !party[id].IsEgg);
     if (!isValid)
     {
       throw new NotImplementedException(); // TODO(fpion): implement
     }
     #endregion
 
-    // TODO(fpion): move-up every party Pokémon before deposited Pokémon!!!
+    PokemonSlot newSlot = FindFirstBoxAvailable();
+    pokemon.Deposit(newSlot, actorId);
+    Raise(new PokemonStored(pokemon.Id, newSlot));
 
-    PokemonSlot slot = FindFirstBoxAvailable();
-    pokemon.Deposit(slot, actorId);
-    Raise(new PokemonStored(pokemon.Id, slot), actorId);
+    foreach (PokemonId partyId in partyIds)
+    {
+      if (partyId != pokemon.Id)
+      {
+        PokemonSlot slot = _slots[partyId];
+        if (slot.IsGreaterThan(previousSlot))
+        {
+          Raise(new PokemonStored(partyId, slot.Previous()), actorId);
+        }
+      }
+    }
   }
 
   public bool Remove(Specimen pokemon, ActorId? actorId = null)
@@ -143,14 +151,14 @@ public class PokemonStorage : AggregateRoot
   private Position? FindFirstPartyAvailable()
   {
     IReadOnlyCollection<PokemonId> party = GetParty();
-    return party.Count >= PartySize ? null : new Position(party.Count);
+    return party.Count >= PokemonSlot.PartySize ? null : new Position(party.Count);
   }
   private PokemonSlot FindFirstBoxAvailable()
   {
-    for (int boxNumber = 0; boxNumber < BoxCount; boxNumber++)
+    for (int boxNumber = 0; boxNumber < PokemonSlot.BoxCount; boxNumber++)
     {
       Box box = new(boxNumber);
-      for (int positionNumber = 0; positionNumber < BoxSize; positionNumber++)
+      for (int positionNumber = 0; positionNumber < PokemonSlot.BoxSize; positionNumber++)
       {
         Position position = new(positionNumber);
         PokemonSlot slot = new(position, box);
