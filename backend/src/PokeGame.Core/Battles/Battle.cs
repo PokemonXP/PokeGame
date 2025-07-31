@@ -30,8 +30,8 @@ public class Battle : AggregateRoot
   private readonly HashSet<TrainerId> _trainerOpponents = [];
   public IReadOnlyCollection<TrainerId> TrainerOpponents => _trainerOpponents.ToList().AsReadOnly();
 
-  private readonly HashSet<PokemonId> _pokemonOpponents = [];
-  public IReadOnlyCollection<PokemonId> PokemonOpponents => _pokemonOpponents.ToList().AsReadOnly();
+  private readonly HashSet<PokemonId> _pokemon = [];
+  public IReadOnlyCollection<PokemonId> Pokemon => _pokemon.ToList().AsReadOnly();
 
   public Battle() : base()
   {
@@ -145,7 +145,7 @@ public class Battle : AggregateRoot
     Kind = BattleKind.WildPokemon;
 
     Handle((IBattleCreated)@event);
-    _pokemonOpponents.AddRange(@event.OpponentIds);
+    _pokemon.AddRange(@event.OpponentIds);
   }
 
   protected virtual void Handle(IBattleCreated @event)
@@ -169,16 +169,84 @@ public class Battle : AggregateRoot
     }
   }
 
-  public void Start(ActorId? actorId = null)
+  public void Start(IEnumerable<Specimen> pokemon, ActorId? actorId = null)
   {
-    if (Status == BattleStatus.Created)
+    if (Status != BattleStatus.Created)
     {
-      Raise(new BattleStarted(), actorId);
+      ValidationFailure failure = new("BattleId", "The battle must not have started.", Id.ToGuid())
+      {
+        CustomState = new { Status },
+        ErrorCode = "StatusValidator"
+      };
+      throw new ValidationException([failure]);
     }
+
+    HashSet<TrainerId> trainerIds = _champions.Concat(_trainerOpponents).ToHashSet();
+    Dictionary<TrainerId, HashSet<Specimen>> participants = trainerIds.ToDictionary(x => x, x => new HashSet<Specimen>());
+
+    int capacity = pokemon.Count() + trainerIds.Count;
+    List<ValidationFailure> failures = new(capacity);
+    foreach (Specimen specimen in pokemon)
+    {
+      if (specimen.IsEgg)
+      {
+        failures.Add(new ValidationFailure("PokemonId", "The Pokémon must not be an egg.", specimen.Id.ToGuid())
+        {
+          CustomState = new { EggCycles = specimen.EggCycles?.Value },
+          ErrorCode = "NotEggValidator"
+        });
+      }
+      else if (specimen.Ownership is null || !trainerIds.Contains(specimen.Ownership.TrainerId))
+      {
+        failures.Add(new ValidationFailure("PokemonId", "The Pokémon must be owned by a trainer registered in champions or opponents.", specimen.Id.ToGuid())
+        {
+          CustomState = new { TrainerId = specimen.Ownership?.TrainerId.ToGuid() },
+          ErrorCode = "TrainerValidator"
+        });
+      }
+      else if (specimen.Slot?.Box is not null)
+      {
+        failures.Add(new ValidationFailure("PokemonId", "The Pokémon must be in the party of its trainer.", specimen.Id.ToGuid())
+        {
+          CustomState = new { Box = specimen.Slot.Box.Value },
+          ErrorCode = "InPartyValidator"
+        });
+      }
+      else
+      {
+        participants[specimen.Ownership.TrainerId].Add(specimen);
+      }
+    }
+    foreach (KeyValuePair<TrainerId, HashSet<Specimen>> trainer in participants)
+    {
+      if (trainer.Value.Count < 1)
+      {
+        failures.Add(new ValidationFailure("TrainerId", "The trainer must have at least one participating Pokémon.", trainer.Key.ToGuid())
+        {
+          ErrorCode = "NotEmptyPartyValidator"
+        });
+      }
+      else if (trainer.Value.Count > Storage.PartySize)
+      {
+        failures.Add(new ValidationFailure("TrainerId", $"The trainer party has exceeded the limit ({Storage.PartySize}).", trainer.Key.ToGuid())
+        {
+          CustomState = new { Party = trainer.Value.Select(x => x.Id.ToGuid()) },
+          ErrorCode = "TrainerValidator"
+        });
+      }
+    }
+    if (failures.Count > 0)
+    {
+      throw new ValidationException(failures);
+    }
+
+    Raise(new BattleStarted(pokemon.Select(x => x.Id).ToHashSet()), actorId);
   }
-  protected virtual void Handle(BattleStarted _)
+  protected virtual void Handle(BattleStarted @event)
   {
     Status = BattleStatus.Started;
+
+    _pokemon.AddRange(@event.PokemonIds);
   }
 
   public override string ToString() => $"{Name} | {base.ToString()}";

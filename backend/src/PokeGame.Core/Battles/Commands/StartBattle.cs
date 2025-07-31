@@ -1,6 +1,8 @@
 ﻿using Krakenar.Core;
 using Logitar.EventSourcing;
 using PokeGame.Core.Battles.Models;
+using PokeGame.Core.Pokemon;
+using PokeGame.Core.Trainers;
 
 namespace PokeGame.Core.Battles.Commands;
 
@@ -30,7 +32,10 @@ internal class StartBattleHandler : ICommandHandler<StartBattle, BattleModel?>
       return null;
     }
 
-    battle.Start(actorId);
+    IEnumerable<TrainerId> trainerIds = battle.Champions.Concat(battle.TrainerOpponents);
+    Specimen[] pokemon = []; // TODO(fpion): load all non-egg Pokémon in party of trainer IDs
+
+    battle.Start(pokemon, actorId);
 
     await _battleRepository.SaveAsync(battle, cancellationToken);
 

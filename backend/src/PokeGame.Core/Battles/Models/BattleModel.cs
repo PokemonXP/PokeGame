@@ -19,10 +19,10 @@ public class BattleModel : AggregateModel
   public string? Notes { get; set; }
 
   public int ChampionCount { get; set; }
-  public List<TrainerModel> Champions { get; set; } = [];
   public int OpponentCount { get; set; }
-  public List<TrainerModel> OpponentTrainers { get; set; } = [];
-  public List<PokemonModel> OpponentPokemon { get; set; } = [];
+  public List<TrainerModel> Champions { get; set; } = [];
+  public List<TrainerModel> Opponents { get; set; } = [];
+  public List<PokemonModel> Pokemon { get; set; } = [];
 
   public override string ToString() => $"{Name} | {base.ToString()}";
 }
