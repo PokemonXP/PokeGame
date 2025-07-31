@@ -1,4 +1,5 @@
 {
+  "action": "Action",
   "active": "Actif",
   "all": {
     "select": "Tout sélectionner",
@@ -17,12 +18,16 @@
   },
   "deleted": "La bataille a été supprimée.",
   "empty": "Cette liste est vide.",
+  "ended": "La bataille est terminée.",
+  "externalLink": "Lien externe",
   "filters": "Filtres",
   "help": "Choisissez le type d’adversaire.",
   "kind": {
     "label": "Type",
     "placeholder": "Sélectionnez un type de bataille"
   },
+  "leave": "Quitter",
+  "notStarted": "La bataille n’est pas encore lancée.",
   "opponents": {
     "pokemon": {
       "help": "Sélectionnez les Pokémon sauvages adversaires.",
@@ -36,6 +41,7 @@
   "properties": {
     "help": "Renseignez les propriétés de bataille suivantes."
   },
+  "rejoin": "Rejoindre",
   "remember": "Garder ma sélection en mémoire",
   "sort": {
     "options": {
