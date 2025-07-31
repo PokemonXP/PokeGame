@@ -5,6 +5,7 @@ import { parsingUtils } from "logitar-js";
 
 import EditIcon from "@/components/icons/EditIcon.vue";
 import ExternalIcon from "@/components/icons/ExternalIcon.vue";
+import FormIcon from "@/components/icons/FormIcon.vue";
 import type { Form } from "@/types/pokemon-forms";
 
 const { parseBoolean } = parsingUtils;
@@ -46,7 +47,7 @@ const target = computed<string | undefined>(() => (isExternal.value ? "_blank" :
             {{ displayName }}
             <template v-if="form.displayName">
               <br />
-              {{ form.uniqueName }}
+              <FormIcon /> {{ form.uniqueName }}
             </template>
           </RouterLink>
         </slot>

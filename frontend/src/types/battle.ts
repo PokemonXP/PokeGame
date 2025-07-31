@@ -1,3 +1,4 @@
+import type { Ability } from "./abilities";
 import type { Actor, Aggregate, Change } from "./aggregate";
 import type { Pokemon } from "./pokemon";
 import type { SearchPayload, SortOption } from "./search";
@@ -30,6 +31,12 @@ export type BattleKind = "WildPokemon" | "Trainer";
 export type Battler = {
   pokemon: Pokemon;
   isActive: boolean;
+};
+
+export type BattlerDetail = Battler & {
+  order: number;
+  ability: Ability;
+  url?: string;
 };
 
 export type BattleProperties = {
@@ -70,6 +77,11 @@ export type SearchBattlesPayload = SearchPayload & {
   status?: BattleStatus;
   trainerId?: string;
   sort: BattleSortOption[];
+};
+
+export type SwitchBattlePokemonPayload = {
+  active: string;
+  inactive: string;
 };
 
 export type TrainerFilter = {

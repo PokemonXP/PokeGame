@@ -1,5 +1,5 @@
 {
-  "action": "Action",
+  "action": "Aucune action | Action | Actions",
   "active": "Actif",
   "all": {
     "select": "Tout sélectionner",
@@ -39,6 +39,7 @@
   "externalLink": "Lien externe",
   "filters": "Filtres",
   "help": "Choisissez le type d’adversaire.",
+  "inactive": "Aucun | Inactif | Inactifs",
   "kind": {
     "label": "Type",
     "placeholder": "Sélectionnez un type de bataille"
@@ -90,6 +91,10 @@
       "Started": "Lancée"
     },
     "placeholder": "Sélectionnez un statut de bataille"
+  },
+  "switch": {
+    "label": "Échanger",
+    "title": "Échanger le Pokémon"
   },
   "title": "Batailles",
   "updated": "La bataille a été mise à jour."

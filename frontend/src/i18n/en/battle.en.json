@@ -1,5 +1,5 @@
 {
-  "action": "Action",
+  "action": "No action | Action | Actions",
   "active": "Active",
   "all": {
     "select": "Select All",
@@ -39,6 +39,7 @@
   "externalLink": "External Link",
   "filters": "Filters",
   "help": "Pick the opponent kind.",
+  "inactive": "Inactive",
   "kind": {
     "label": "Type",
     "placeholder": "Select a battle type"
@@ -90,6 +91,10 @@
       "Started": "Started"
     },
     "placeholder": "Select a battle status"
+  },
+  "switch": {
+    "label": "Switch",
+    "title": "Switch Pokémon"
   },
   "title": "Battles",
   "updated": "The battle has been updated."

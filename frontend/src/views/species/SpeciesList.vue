@@ -17,6 +17,7 @@ import PokemonCategoryFilter from "@/components/species/PokemonCategoryFilter.vu
 import RefreshButton from "@/components/shared/RefreshButton.vue";
 import SearchInput from "@/components/shared/SearchInput.vue";
 import SortSelect from "@/components/shared/SortSelect.vue";
+import SpeciesIcon from "@/components/icons/SpeciesIcon.vue";
 import StatusBlock from "@/components/shared/StatusBlock.vue";
 import type { EggGroup, GrowthRate, PokemonCategory, Species, SpeciesSort, SearchSpeciesPayload } from "@/types/species";
 import type { SearchResults } from "@/types/search";
@@ -185,7 +186,7 @@ watch(
                 <EditIcon /> {{ species.displayName ?? species.uniqueName }}
                 <template v-if="species.displayName">
                   <br />
-                  {{ species.uniqueName }}
+                  <SpeciesIcon /> {{ species.uniqueName }}
                 </template>
               </RouterLink>
             </td>

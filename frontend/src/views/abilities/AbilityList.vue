@@ -6,6 +6,7 @@ import { parsingUtils } from "logitar-js";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 
+import AbilityIcon from "@/components/icons/AbilityIcon.vue";
 import AdminBreadcrumb from "@/components/admin/AdminBreadcrumb.vue";
 import AppPagination from "@/components/shared/AppPagination.vue";
 import CountSelect from "@/components/shared/CountSelect.vue";
@@ -162,7 +163,7 @@ watch(
                 <EditIcon /> {{ ability.displayName ?? ability.uniqueName }}
                 <template v-if="ability.displayName">
                   <br />
-                  {{ ability.uniqueName }}
+                  <AbilityIcon /> {{ ability.uniqueName }}
                 </template>
               </RouterLink>
             </td>

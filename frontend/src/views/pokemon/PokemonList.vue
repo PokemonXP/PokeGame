@@ -186,11 +186,11 @@ watch(
               {{ t("pokemon.experience.format", { experience: pokemon.experience }) }}
             </td>
             <td>
-              <ItemBlock v-if="pokemon.heldItem" :item="pokemon.heldItem" />
+              <ItemBlock v-if="pokemon.heldItem" external :item="pokemon.heldItem" />
               <span v-else class="text-muted">{{ "—" }}</span>
             </td>
             <td>
-              <TrainerBlock v-if="pokemon.ownership" :trainer="pokemon.ownership.currentTrainer" />
+              <TrainerBlock v-if="pokemon.ownership" external :trainer="pokemon.ownership.currentTrainer" />
               <span v-else class="text-muted">{{ t("pokemon.wild") }}</span>
             </td>
             <td>

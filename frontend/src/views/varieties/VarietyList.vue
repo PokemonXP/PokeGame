@@ -19,6 +19,7 @@ import SortSelect from "@/components/shared/SortSelect.vue";
 import SpeciesFilter from "@/components/species/SpeciesFilter.vue";
 import SpeciesIcon from "@/components/icons/SpeciesIcon.vue";
 import StatusBlock from "@/components/shared/StatusBlock.vue";
+import VarietyIcon from "@/components/icons/VarietyIcon.vue";
 import type { SearchResults } from "@/types/search";
 import type { Variety, VarietySort, SearchVarietiesPayload } from "@/types/varieties";
 import { handleErrorKey } from "@/inject";
@@ -174,17 +175,17 @@ watch(
                 <EditIcon /> {{ variety.displayName ?? variety.uniqueName }}
                 <template v-if="variety.displayName">
                   <br />
-                  {{ variety.uniqueName }}
+                  <VarietyIcon /> {{ variety.uniqueName }}
                 </template>
               </RouterLink>
             </td>
             <td>
-              <RouterLink :to="{ name: 'SpeciesEdit', params: { id: variety.species.id } }">
+              <RouterLink :to="{ name: 'SpeciesEdit', params: { id: variety.species.id } }" target="_blank">
                 <SpeciesIcon /> {{ variety.species.displayName ?? variety.species.uniqueName }}
                 <template v-if="variety.isDefault || variety.species.displayName">
                   <br />
                   <DefaultBadge v-if="variety.isDefault" />
-                  <template v-else>{{ variety.species.uniqueName }}</template>
+                  <template v-else><SpeciesIcon /> {{ variety.species.uniqueName }}</template>
                 </template>
               </RouterLink>
             </td>
