@@ -1,4 +1,5 @@
 ﻿using PokeGame.Core.Inventory;
+using PokeGame.Core.Storage;
 
 namespace PokeGame.Core.Trainers;
 
@@ -11,8 +12,13 @@ public interface ITrainerRepository
   Task<TrainerInventory> LoadInventoryAsync(Trainer trainer, CancellationToken cancellationToken = default);
   Task<TrainerInventory> LoadInventoryAsync(TrainerId trainerId, CancellationToken cancellationToken = default);
 
+  Task<PokemonStorage> LoadStorageAsync(Trainer trainer, CancellationToken cancellationToken = default);
+  Task<PokemonStorage> LoadStorageAsync(TrainerId trainerId, CancellationToken cancellationToken = default);
+
   Task SaveAsync(Trainer trainer, CancellationToken cancellationToken = default);
   Task SaveAsync(IEnumerable<Trainer> trainers, CancellationToken cancellationToken = default);
 
   Task SaveAsync(TrainerInventory inventory, CancellationToken cancellationToken = default);
+
+  Task SaveAsync(PokemonStorage storage, CancellationToken cancellationToken = default);
 }

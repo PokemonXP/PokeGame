@@ -95,7 +95,7 @@ public class Storage
   public PokemonSlot GetFirstEmptySlot()
   {
     Position? position = GetFirstPartyEmptySlot();
-    return position is not null ? new PokemonSlot(position, Box: null) : GetFirstBoxEmptySlot();
+    return position is not null ? new PokemonSlot(position) : GetFirstBoxEmptySlot();
   }
   public Position? GetFirstPartyEmptySlot() => _party.Count < PartySize ? new Position(_party.Count) : null;
   public PokemonSlot GetFirstBoxEmptySlot()

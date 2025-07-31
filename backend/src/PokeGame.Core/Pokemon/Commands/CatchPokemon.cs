@@ -5,6 +5,7 @@ using PokeGame.Core.Items;
 using PokeGame.Core.Pokemon.Models;
 using PokeGame.Core.Pokemon.Validators;
 using PokeGame.Core.Regions;
+using PokeGame.Core.Storage;
 using PokeGame.Core.Trainers;
 
 namespace PokeGame.Core.Pokemon.Commands;
@@ -57,7 +58,7 @@ internal class CatchPokemonHandler : ICommandHandler<CatchPokemon, PokemonModel?
 
     Trainer trainer = await _trainerRepository.LoadAsync(payload.Trainer, cancellationToken)
       ?? throw new TrainerNotFoundException(payload.Trainer, nameof(payload.Trainer));
-    Storage storage = await _pokemonQuerier.GetStorageAsync(trainer.Id, cancellationToken);
+    PokemonStorage storage = await _trainerRepository.LoadStorageAsync(trainer, cancellationToken);
 
     Item pokeBall = await _itemRepository.LoadAsync(payload.PokeBall, cancellationToken)
       ?? throw new ItemNotFoundException(payload.PokeBall, nameof(payload.PokeBall));
@@ -69,11 +70,12 @@ internal class CatchPokemonHandler : ICommandHandler<CatchPokemon, PokemonModel?
     Location location = new(payload.Location);
     Level? level = payload.Level < 1 ? null : new(payload.Level);
     Description? description = Description.TryCreate(payload.Description);
-    PokemonSlot slot = storage.GetFirstEmptySlot();
+    pokemon.Catch(trainer, pokeBall, location, level, payload.MetOn, description, slot: null, actorId);
 
-    pokemon.Catch(trainer, pokeBall, location, level, payload.MetOn, description, slot, actorId);
+    storage.Store(pokemon, actorId);
 
     await _pokemonManager.SaveAsync(pokemon, cancellationToken);
+    await _trainerRepository.SaveAsync(storage, cancellationToken);
 
     return await _pokemonQuerier.ReadAsync(pokemon, cancellationToken);
   }

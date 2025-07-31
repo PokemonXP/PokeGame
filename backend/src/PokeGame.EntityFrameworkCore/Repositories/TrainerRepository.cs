@@ -2,6 +2,7 @@
 using Logitar.EventSourcing;
 using Microsoft.EntityFrameworkCore;
 using PokeGame.Core.Inventory;
+using PokeGame.Core.Storage;
 using PokeGame.Core.Trainers;
 using PokeGame.EntityFrameworkCore.Entities;
 
@@ -62,6 +63,15 @@ internal class TrainerRepository : Repository, ITrainerRepository
     return await LoadAsync<TrainerInventory>(new TrainerInventoryId(trainerId).StreamId, cancellationToken) ?? new(trainerId);
   }
 
+  public async Task<PokemonStorage> LoadStorageAsync(Trainer trainer, CancellationToken cancellationToken)
+  {
+    return await LoadStorageAsync(trainer.Id, cancellationToken);
+  }
+  public async Task<PokemonStorage> LoadStorageAsync(TrainerId trainerId, CancellationToken cancellationToken)
+  {
+    return await LoadAsync<PokemonStorage>(new PokemonStorageId(trainerId).StreamId, cancellationToken) ?? new(trainerId);
+  }
+
   public async Task SaveAsync(Trainer trainer, CancellationToken cancellationToken)
   {
     await base.SaveAsync(trainer, cancellationToken);
@@ -75,5 +85,10 @@ internal class TrainerRepository : Repository, ITrainerRepository
   public async Task SaveAsync(TrainerInventory inventory, CancellationToken cancellationToken)
   {
     await base.SaveAsync(inventory, cancellationToken);
+  }
+
+  public async Task SaveAsync(PokemonStorage storage, CancellationToken cancellationToken)
+  {
+    await base.SaveAsync(storage, cancellationToken);
   }
 }

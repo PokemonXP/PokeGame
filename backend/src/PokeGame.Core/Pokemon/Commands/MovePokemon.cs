@@ -76,7 +76,7 @@ internal class MovePokemonHandler : ICommandHandler<MovePokemon, PokemonModel?>
       {
         if (member.Slot is not null && member.Slot.Box is null && member.Slot.Position.Value > pokemon.Slot.Position.Value)
         {
-          PokemonSlot newSlot = new(new Position(member.Slot.Position.Value - 1), Box: null);
+          PokemonSlot newSlot = new(new Position(member.Slot.Position.Value - 1));
           member.Move(newSlot, actorId);
         }
       }
