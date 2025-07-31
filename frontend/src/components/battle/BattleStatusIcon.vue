@@ -8,6 +8,8 @@ const props = defineProps<{
 
 const icon = computed<string>(() => {
   switch (props.status) {
+    case "Cancelled":
+      return "fas fa-ban";
     case "Created":
       return "fas fa-circle-plus";
     case "Started":

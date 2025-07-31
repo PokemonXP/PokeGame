@@ -5,6 +5,14 @@
     "select": "Tout sélectionner",
     "unselect": "Tout désélectionner"
   },
+  "cancel": {
+    "confirm": "Afin d’annuler la bataille, veuillez entrer son nom dans le champs suivant.",
+    "title": "Annuler la bataille"
+  },
+  "cancelled": {
+    "format": "Annulée le {date} par",
+    "success": "La bataille a été annulée."
+  },
   "champions": {
     "help": "Sélectionnez les entraîneurs champions, typiquement les entraîneurs joueurs et leurs alliés.",
     "title": "Champions",
@@ -45,6 +53,7 @@
   "remember": "Garder ma sélection en mémoire",
   "sort": {
     "options": {
+      "CancelledOn": "Date d’annulation",
       "CreatedOn": "Date de création",
       "Location": "Emplacement",
       "Name": "Nom",
@@ -60,6 +69,7 @@
   "status": {
     "label": "Statut",
     "options": {
+      "Cancelled": "Annulée",
       "Created": "Créée",
       "Started": "Lancée"
     },

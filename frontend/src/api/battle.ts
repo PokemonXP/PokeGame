@@ -4,6 +4,11 @@ import type { CreateBattlePayload, Battle, SearchBattlesPayload, UpdateBattlePay
 import { _delete, get, patch, post } from ".";
 import type { SearchResults } from "@/types/search";
 
+export async function cancelBattle(id: string): Promise<Battle> {
+  const url: string = new urlUtils.UrlBuilder({ path: "/battles/{id}/cancel" }).setParameter("id", id).buildRelative();
+  return (await patch<void, Battle>(url)).data;
+}
+
 export async function createBattle(payload: CreateBattlePayload): Promise<Battle> {
   const url: string = new urlUtils.UrlBuilder({ path: "/battles" }).buildRelative();
   return (await post<CreateBattlePayload, Battle>(url, payload)).data;

@@ -6,6 +6,7 @@ import { useRoute, useRouter } from "vue-router";
 
 import AbilityIcon from "@/components/icons/AbilityIcon.vue";
 import AdminBreadcrumb from "@/components/admin/AdminBreadcrumb.vue";
+import CancelBattle from "@/components/battle/CancelBattle.vue";
 import ExternalLink from "@/components/battle/ExternalLink.vue";
 import ItemBlock from "@/components/items/ItemBlock.vue";
 import PokemonBlock from "@/components/pokemon/PokemonBlock.vue";
@@ -21,10 +22,12 @@ import { StatusCodes, type ApiFailure } from "@/types/api";
 import { getAbility, getUrl } from "@/helpers/pokemon";
 import { handleErrorKey } from "@/inject";
 import { readBattle } from "@/api/battle";
+import { useToastStore } from "@/stores/toast";
 
 const handleError = inject(handleErrorKey) as (e: unknown) => void;
 const route = useRoute();
 const router = useRouter();
+const toasts = useToastStore();
 const { orderByDescending } = arrayUtils;
 const { t } = useI18n();
 
@@ -58,6 +61,15 @@ const breadcrumb = computed<Breadcrumb[]>(() => {
   return breadcrumb;
 });
 
+function onCancelled(cancelled: Battle): void {
+  battle.value = cancelled;
+  toasts.success("battle.cancelled.success");
+}
+function onStarted(started: Battle): void {
+  battle.value = started;
+  toasts.success("battle.started");
+}
+
 onMounted(async () => {
   isLoading.value = true;
   try {
@@ -87,7 +99,8 @@ onMounted(async () => {
         <RouterLink :to="{ name: 'BattleEdit', params: { id: battle.id } }" class="btn btn-secondary">
           <font-awesome-icon icon="fas fa-door-closed" /> {{ t("battle.leave") }}
         </RouterLink>
-        <StartBattle v-if="battle.status === 'Created'" :battle="battle" @error="handleError" @started="battle = $event" />
+        <StartBattle v-if="battle.status === 'Created'" :battle="battle" @error="handleError" @started="onStarted" />
+        <CancelBattle v-if="battle.status === 'Started'" :battle="battle" @cancelled="onCancelled" @error="handleError" />
       </div>
       <table v-if="battle.status === 'Started'" class="table table-striped">
         <thead>
