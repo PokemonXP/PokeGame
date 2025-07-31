@@ -51,6 +51,11 @@
   },
   "rejoin": "Rejoin",
   "remember": "Remember my selection",
+  "reset": {
+    "confirm": "To reset the battle, enter its name in the field below.",
+    "success": "The battle has been reset.",
+    "title": "Reset Battle"
+  },
   "sort": {
     "options": {
       "CancelledOn": "Cancelled on",

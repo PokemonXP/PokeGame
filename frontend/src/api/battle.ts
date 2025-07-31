@@ -24,6 +24,11 @@ export async function readBattle(id: string): Promise<Battle> {
   return (await get<Battle>(url)).data;
 }
 
+export async function resetBattle(id: string): Promise<Battle> {
+  const url: string = new urlUtils.UrlBuilder({ path: "/battles/{id}/reset" }).setParameter("id", id).buildRelative();
+  return (await patch<void, Battle>(url)).data;
+}
+
 export async function searchBattles(payload: SearchBattlesPayload): Promise<SearchResults<Battle>> {
   const url: string = new urlUtils.UrlBuilder({ path: "/battles" })
     .setQuery("kind", payload.kind ?? "")

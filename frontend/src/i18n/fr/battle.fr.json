@@ -51,6 +51,11 @@
   },
   "rejoin": "Rejoindre",
   "remember": "Garder ma sélection en mémoire",
+  "reset": {
+    "confirm": "Afin de réinitialiser la bataille, veuillez entrer son nom dans le champs suivant.",
+    "success": "La bataille a été réinitialisée.",
+    "title": "Réinitialiser la bataille"
+  },
   "sort": {
     "options": {
       "CancelledOn": "Date d’annulation",

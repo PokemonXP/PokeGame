@@ -23,6 +23,7 @@ import { getAbility, getUrl } from "@/helpers/pokemon";
 import { handleErrorKey } from "@/inject";
 import { readBattle } from "@/api/battle";
 import { useToastStore } from "@/stores/toast";
+import ResetBattle from "@/components/battle/ResetBattle.vue";
 
 const handleError = inject(handleErrorKey) as (e: unknown) => void;
 const route = useRoute();
@@ -65,6 +66,10 @@ function onCancelled(cancelled: Battle): void {
   battle.value = cancelled;
   toasts.success("battle.cancelled.success");
 }
+function onReset(reset: Battle): void {
+  battle.value = reset;
+  toasts.success("battle.reset.success");
+}
 function onStarted(started: Battle): void {
   battle.value = started;
   toasts.success("battle.started");
@@ -100,7 +105,10 @@ onMounted(async () => {
           <font-awesome-icon icon="fas fa-door-closed" /> {{ t("battle.leave") }}
         </RouterLink>
         <StartBattle v-if="battle.status === 'Created'" :battle="battle" @error="handleError" @started="onStarted" />
-        <CancelBattle v-if="battle.status === 'Started'" :battle="battle" @cancelled="onCancelled" @error="handleError" />
+        <template v-if="battle.status === 'Started'">
+          <ResetBattle :battle="battle" @error="handleError" @reset="onReset" />
+          <CancelBattle :battle="battle" @cancelled="onCancelled" @error="handleError" />
+        </template>
       </div>
       <table v-if="battle.status === 'Started'" class="table table-striped">
         <thead>

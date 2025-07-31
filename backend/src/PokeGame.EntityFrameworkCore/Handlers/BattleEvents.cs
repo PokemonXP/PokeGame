@@ -10,6 +10,7 @@ namespace PokeGame.EntityFrameworkCore.Handlers;
 
 internal class BattleEvents : IEventHandler<BattleCancelled>,
   IEventHandler<BattleDeleted>,
+  IEventHandler<BattleReset>,
   IEventHandler<BattleStarted>,
   IEventHandler<BattleUpdated>,
   IEventHandler<TrainerBattleCreated>,
@@ -19,6 +20,7 @@ internal class BattleEvents : IEventHandler<BattleCancelled>,
   {
     services.AddScoped<IEventHandler<BattleCancelled>, BattleEvents>();
     services.AddScoped<IEventHandler<BattleDeleted>, BattleEvents>();
+    services.AddScoped<IEventHandler<BattleReset>, BattleEvents>();
     services.AddScoped<IEventHandler<BattleStarted>, BattleEvents>();
     services.AddScoped<IEventHandler<BattleUpdated>, BattleEvents>();
     services.AddScoped<IEventHandler<TrainerBattleCreated>, BattleEvents>();
@@ -61,6 +63,35 @@ internal class BattleEvents : IEventHandler<BattleCancelled>,
     }
 
     _context.Battles.Remove(battle);
+
+    await _context.SaveChangesAsync(cancellationToken);
+    _logger.LogSuccess(@event);
+  }
+
+  public async Task HandleAsync(BattleReset @event, CancellationToken cancellationToken)
+  {
+    BattleEntity? battle = await _context.Battles
+      .Include(x => x.Pokemon).ThenInclude(x => x.Pokemon)
+      .SingleOrDefaultAsync(x => x.StreamId == @event.StreamId.Value, cancellationToken);
+    if (battle is null || (battle.Version != (@event.Version - 1)))
+    {
+      _logger.LogUnexpectedVersion(@event, battle);
+      return;
+    }
+
+    battle.Reset(@event);
+
+    foreach (BattlePokemonEntity battler in battle.Pokemon)
+    {
+      if (battler.Pokemon is null)
+      {
+        throw new InvalidOperationException("The Pokémon are required.");
+      }
+      else if (battler.Pokemon.CurrentTrainerId.HasValue)
+      {
+        _context.BattlePokemon.Remove(battler);
+      }
+    }
 
     await _context.SaveChangesAsync(cancellationToken);
     _logger.LogSuccess(@event);

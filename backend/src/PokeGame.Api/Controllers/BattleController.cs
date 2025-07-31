@@ -70,4 +70,11 @@ public class BattleController : ControllerBase
     BattleModel? battle = await _battleService.CancelAsync(id, cancellationToken);
     return battle is null ? NotFound() : Ok(battle);
   }
+
+  [HttpPatch("{id}/reset")]
+  public async Task<ActionResult<BattleModel>> ResetAsync(Guid id, CancellationToken cancellationToken)
+  {
+    BattleModel? battle = await _battleService.ResetAsync(id, cancellationToken);
+    return battle is null ? NotFound() : Ok(battle);
+  }
 }

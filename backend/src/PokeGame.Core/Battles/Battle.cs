@@ -239,6 +239,32 @@ public class Battle : AggregateRoot
     }
   }
 
+  public void Reset(IReadOnlyDictionary<PokemonId, Specimen> pokemon, ActorId? actorId = null)
+  {
+    if (Status != BattleStatus.Started)
+    {
+      ValidationFailure failure = new("BattleId", "The battle must have started, but not ended.", Id.ToGuid())
+      {
+        CustomState = new { Status },
+        ErrorCode = "StatusValidator"
+      };
+      throw new ValidationException([failure]);
+    }
+
+    HashSet<PokemonId> wildPokemonIds = _pokemon.Where(x => pokemon[x.Key].Ownership is null).Select(x => x.Key).ToHashSet();
+    Raise(new BattleReset(wildPokemonIds), actorId);
+  }
+  protected virtual void Handle(BattleReset @event)
+  {
+    Status = BattleStatus.Created;
+
+    _pokemon.Clear();
+    foreach (PokemonId opponent in @event.OpponentIds)
+    {
+      _pokemon[opponent] = true;
+    }
+  }
+
   public void Start(IEnumerable<Specimen> pokemon, ActorId? actorId = null)
   {
     if (Status != BattleStatus.Created)
