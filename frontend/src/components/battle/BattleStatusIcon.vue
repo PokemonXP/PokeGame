@@ -21,7 +21,7 @@ const icon = computed<string>(() => {
         case "Victory":
           return "fas fa-trophy";
         default:
-          return "";
+          return "fas fa-check";
       }
     case "Created":
       return "fas fa-circle-plus";

@@ -7,7 +7,7 @@ import type { Trainer, TrainerKind } from "./trainers";
 export type Battle = Aggregate & {
   kind: BattleKind;
   status: BattleStatus;
-  resolution?: BattleResolution | null
+  resolution?: BattleResolution | null;
   name: string;
   location: string;
   url?: string | null;
@@ -39,7 +39,7 @@ export type BattleProperties = {
   notes?: string;
 };
 
-export type BattleResolution = 'Defeat' | 'Escape' | 'Victory'
+export type BattleResolution = "Defeat" | "Escape" | "Victory";
 
 export type BattleSort = "CancelledOn" | "CompletedOn" | "CreatedOn" | "Location" | "Name" | "StartedOn" | "UpdatedOn";
 
