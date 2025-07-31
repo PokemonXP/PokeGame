@@ -327,7 +327,7 @@ watch(() => props.trainer, refresh, { deep: true, immediate: true });
         icon="fas fa-box-archive"
         :loading="isLoading"
         :status="t('loading')"
-        :text="t('pokemon.memories.box.deposit')"
+        :text="t('pokemon.boxes.deposit')"
         @click="deposit"
       />
       <TarButton

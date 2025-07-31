@@ -1,6 +1,8 @@
 {
   "boxes": {
     "close": "Fermer les boîtes",
+    "deposit": "Déposer",
+    "deposited": "Le Pokémon a été déposé dans les boîtes.",
     "format": "Boîte {box}",
     "label": "Boîte",
     "open": "Ouvrir les boîtes",
@@ -74,7 +76,6 @@
   },
   "memories": {
     "box": {
-      "deposit": "Deposit",
       "move": "Move",
       "release": "Release",
       "withdraw": "Withdraw"

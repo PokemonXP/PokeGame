@@ -35,8 +35,34 @@ public class PokemonStorage : AggregateRoot
 
   protected virtual void Handle(PokemonStored @event)
   {
-    _pokemon[@event.Slot] = @event.PokemonId; // TODO(fpion): won't work when stored is used to move a Pokémon
+    if (_slots.TryGetValue(@event.PokemonId, out PokemonSlot? previousSlot))
+    {
+      _pokemon.Remove(previousSlot);
+    }
+    _pokemon[@event.Slot] = @event.PokemonId;
     _slots[@event.PokemonId] = @event.Slot;
+  }
+
+  public void Deposit(Specimen pokemon, IReadOnlyDictionary<PokemonId, Specimen> party, ActorId? actorId = null)
+  {
+    if (!_slots.ContainsKey(pokemon.Id))
+    {
+      throw new ArgumentException($"The Pokémon '{pokemon}' was not found in trainer's 'Id={TrainerId}' storage.", nameof(pokemon));
+    }
+
+    #region TODO(fpion): refactor
+    bool isValid = GetParty().Any(id => id != pokemon.Id && !party[id].IsEgg);
+    if (!isValid)
+    {
+      throw new NotImplementedException(); // TODO(fpion): implement
+    }
+    #endregion
+
+    // TODO(fpion): move-up every party Pokémon before deposited Pokémon!!!
+
+    PokemonSlot slot = FindFirstBoxAvailable();
+    pokemon.Deposit(slot, actorId);
+    Raise(new PokemonStored(pokemon.Id, slot), actorId);
   }
 
   public bool Remove(Specimen pokemon, ActorId? actorId = null)
@@ -85,11 +111,13 @@ public class PokemonStorage : AggregateRoot
 
     if ((source.IsEggInBox && destination.IsHatchedInParty) || (destination.IsEggInBox && source.IsHatchedInParty))
     {
-      bool isValid = GetParty().Any(id => !party[id].IsEgg);
+      #region TODO(fpion): refactor
+      bool isValid = GetParty().Any(id => id != source.Id && id != destination.Id && !party[id].IsEgg);
       if (!isValid)
       {
         throw new NotImplementedException(); // TODO(fpion): implement
       }
+      #endregion
     }
 
     source.Swap(destination, actorId);
