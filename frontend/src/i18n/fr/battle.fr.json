@@ -65,5 +65,6 @@
     },
     "placeholder": "Sélectionnez un statut de bataille"
   },
-  "title": "Batailles"
+  "title": "Batailles",
+  "updated": "La bataille a été mise à jour."
 }

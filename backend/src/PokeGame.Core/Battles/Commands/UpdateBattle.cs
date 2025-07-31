@@ -2,21 +2,23 @@
 using Krakenar.Core;
 using Logitar.EventSourcing;
 using PokeGame.Core.Battles.Models;
+using PokeGame.Core.Battles.Validators;
 using PokeGame.Core.Pokemon;
+using PokeGame.Core.Regions;
 
 namespace PokeGame.Core.Battles.Commands;
 
-internal record StartBattle(Guid Id) : ICommand<BattleModel?>;
+internal record UpdateBattle(Guid Id, UpdateBattlePayload Payload) : ICommand<BattleModel?>;
 
 /// <exception cref="ValidationException"></exception>
-internal class StartBattleHandler : ICommandHandler<StartBattle, BattleModel?>
+internal class UpdateBattleHandler : ICommandHandler<UpdateBattle, BattleModel?>
 {
   private readonly IApplicationContext _applicationContext;
   private readonly IBattleQuerier _battleQuerier;
   private readonly IBattleRepository _battleRepository;
   private readonly IPokemonRepository _pokemonRepository;
 
-  public StartBattleHandler(
+  public UpdateBattleHandler(
     IApplicationContext applicationContext,
     IBattleQuerier battleQuerier,
     IBattleRepository battleRepository,
@@ -28,9 +30,12 @@ internal class StartBattleHandler : ICommandHandler<StartBattle, BattleModel?>
     _pokemonRepository = pokemonRepository;
   }
 
-  public async Task<BattleModel?> HandleAsync(StartBattle command, CancellationToken cancellationToken)
+  public async Task<BattleModel?> HandleAsync(UpdateBattle command, CancellationToken cancellationToken)
   {
     ActorId? actorId = _applicationContext.ActorId;
+
+    UpdateBattlePayload payload = command.Payload;
+    new UpdateBattleValidator().ValidateAndThrow(payload);
 
     BattleId battleId = new(command.Id);
     Battle? battle = await _battleRepository.LoadAsync(battleId, cancellationToken);
@@ -39,9 +44,24 @@ internal class StartBattleHandler : ICommandHandler<StartBattle, BattleModel?>
       return null;
     }
 
-    IReadOnlyCollection<Specimen> pokemon = await _pokemonRepository.LoadPartyNonEggsAsync(battle, cancellationToken);
-    battle.Start(pokemon, actorId);
+    if (!string.IsNullOrWhiteSpace(payload.Name))
+    {
+      battle.Name = new DisplayName(payload.Name);
+    }
+    if (!string.IsNullOrWhiteSpace(payload.Location))
+    {
+      battle.Location = new Location(payload.Location);
+    }
+    if (payload.Url is not null)
+    {
+      battle.Url = Url.TryCreate(payload.Url.Value);
+    }
+    if (payload.Notes is not null)
+    {
+      battle.Notes = Notes.TryCreate(payload.Notes.Value);
+    }
 
+    battle.Update(actorId);
     await _battleRepository.SaveAsync(battle, cancellationToken);
 
     return await _battleQuerier.ReadAsync(battle, cancellationToken);

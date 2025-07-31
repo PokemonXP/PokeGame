@@ -6,7 +6,8 @@ import LocationInput from "@/components/regions/LocationInput.vue";
 import NotesTextarea from "@/components/shared/NotesTextarea.vue";
 import SubmitButton from "@/components/shared/SubmitButton.vue";
 import UrlInput from "@/components/shared/UrlInput.vue";
-import type { Battle } from "@/types/battle";
+import type { Battle, UpdateBattlePayload } from "@/types/battle";
+import { updateBattle } from "@/api/battle";
 import { useForm } from "@/forms";
 
 const props = defineProps<{
@@ -31,14 +32,15 @@ async function submit(): Promise<void> {
     try {
       validate();
       if (isValid.value) {
-        // const payload: UpdateBattlePayload = {
-        //   uniqueName: props.battle.uniqueName !== uniqueName.value ? uniqueName.value : undefined,
-        //   displayName: (props.battle.displayName ?? "") !== displayName.value ? { value: displayName.value } : undefined,
-        //   description: (props.battle.description ?? "") !== description.value ? { value: description.value } : undefined,
-        // };
-        // const battle: Battle = await updateBattle(props.battle.id, payload);
+        const payload: UpdateBattlePayload = {
+          name: props.battle.name !== name.value ? name.value : undefined,
+          location: props.battle.location !== location.value ? location.value : undefined,
+          url: (props.battle.url ?? "") !== url.value ? { value: url.value } : undefined,
+          notes: (props.battle.notes ?? "") !== notes.value ? { value: notes.value } : undefined,
+        };
+        const battle: Battle = await updateBattle(props.battle.id, payload);
         reinitialize();
-        // emit("updated", battle); // TODO(fpion): update
+        emit("updated", battle);
       }
     } catch (e: unknown) {
       emit("error", e);
