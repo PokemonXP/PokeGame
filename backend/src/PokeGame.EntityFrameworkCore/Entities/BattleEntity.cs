@@ -2,6 +2,7 @@
 using Logitar.EventSourcing;
 using PokeGame.Core.Battles;
 using PokeGame.Core.Battles.Events;
+using PokeGame.Core.Pokemon;
 using AggregateEntity = Krakenar.EntityFrameworkCore.Relational.Entities.Aggregate;
 
 namespace PokeGame.EntityFrameworkCore.Entities;
@@ -50,7 +51,7 @@ internal class BattleEntity : AggregateEntity
     AddChampions(champions);
     foreach (PokemonEntity opponent in opponents)
     {
-      Pokemon.Add(new BattlePokemonEntity(this, opponent));
+      Pokemon.Add(new BattlePokemonEntity(this, opponent, isActive: true));
     }
     OpponentCount = opponents.Count();
   }
@@ -68,7 +69,7 @@ internal class BattleEntity : AggregateEntity
   {
   }
 
-  public void Start(BattleStarted @event)
+  public void Start(IEnumerable<PokemonEntity> pokemon, BattleStarted @event)
   {
     Update(@event);
 
@@ -76,6 +77,12 @@ internal class BattleEntity : AggregateEntity
 
     StartedBy = @event.ActorId?.Value;
     StartedOn = @event.OccurredOn.AsUniversalTime();
+
+    foreach (PokemonEntity specimen in pokemon)
+    {
+      bool isActive = @event.PokemonIds[new PokemonId(specimen.Id)];
+      Pokemon.Add(new BattlePokemonEntity(this, specimen, isActive));
+    }
   }
 
   private void AddChampions(IEnumerable<TrainerEntity> champions)

@@ -56,7 +56,10 @@ internal class BattleEvents : IEventHandler<BattleDeleted>,
       return;
     }
 
-    battle.Start(@event);
+    HashSet<string> pokemonIds = @event.PokemonIds.Keys.Select(x => x.Value).ToHashSet();
+    PokemonEntity[] pokemon = await _context.Pokemon.Where(x => pokemonIds.Contains(x.StreamId)).ToArrayAsync(cancellationToken);
+
+    battle.Start(pokemon, @event);
 
     await _context.SaveChangesAsync(cancellationToken);
     _logger.LogSuccess(@event);

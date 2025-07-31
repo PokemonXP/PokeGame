@@ -13,6 +13,7 @@ internal class BattlePokemonConfiguration : IEntityTypeConfiguration<BattlePokem
 
     builder.HasIndex(x => new { x.BattleUid, x.PokemonUid }).IsUnique();
     builder.HasIndex(x => x.PokemonUid);
+    builder.HasIndex(x => x.IsActive);
 
     builder.HasOne(x => x.Battle).WithMany(x => x.Pokemon).OnDelete(DeleteBehavior.Cascade);
     builder.HasOne(x => x.Pokemon).WithMany(x => x.Battles).OnDelete(DeleteBehavior.Cascade);

@@ -1,4 +1,5 @@
 {
+  "active": "Active",
   "all": {
     "select": "Select All",
     "unselect": "Unselect All"
@@ -41,13 +42,20 @@
       "CreatedOn": "Created on",
       "Location": "Location",
       "Name": "Name",
+      "StartedOn": "Started on",
       "UpdatedOn": "Updated on"
     }
+  },
+  "start": "Start",
+  "started": {
+    "format": "Started on {date} by",
+    "success": "The battle has started."
   },
   "status": {
     "label": "Status",
     "options": {
-      "Created": "Created"
+      "Created": "Created",
+      "Started": "Started"
     },
     "placeholder": "Select a battle status"
   },

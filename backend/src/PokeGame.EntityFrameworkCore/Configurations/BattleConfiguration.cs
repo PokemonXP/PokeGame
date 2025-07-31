@@ -1,5 +1,6 @@
 ﻿using Krakenar.Core;
 using Krakenar.EntityFrameworkCore.Relational.Configurations;
+using Logitar.EventSourcing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
@@ -30,6 +31,7 @@ internal class BattleConfiguration : AggregateConfiguration<BattleEntity>, IEnti
 
     builder.Property(x => x.Kind).HasMaxLength(byte.MaxValue).HasConversion(new EnumToStringConverter<BattleKind>());
     builder.Property(x => x.Status).HasMaxLength(byte.MaxValue).HasConversion(new EnumToStringConverter<BattleStatus>());
+    builder.Property(x => x.StartedBy).HasMaxLength(ActorId.MaximumLength);
     builder.Property(x => x.Name).HasMaxLength(DisplayName.MaximumLength);
     builder.Property(x => x.Location).HasMaxLength(Location.MaximumLength);
     builder.Property(x => x.Url).HasMaxLength(Url.MaximumLength);

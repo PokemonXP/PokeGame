@@ -10,7 +10,9 @@ internal class BattlePokemonEntity
   public int PokemonId { get; private set; }
   public Guid PokemonUid { get; private set; }
 
-  public BattlePokemonEntity(BattleEntity battle, PokemonEntity pokemon)
+  public bool IsActive { get; private set; }
+
+  public BattlePokemonEntity(BattleEntity battle, PokemonEntity pokemon, bool isActive)
   {
     Battle = battle;
     BattleId = battle.BattleId;
@@ -19,6 +21,8 @@ internal class BattlePokemonEntity
     Pokemon = pokemon;
     PokemonId = pokemon.PokemonId;
     PokemonUid = pokemon.Id;
+
+    IsActive = isActive;
   }
 
   private BattlePokemonEntity()

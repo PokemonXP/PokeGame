@@ -96,14 +96,17 @@ internal class PokemonMapper
       }
     }
 
-    foreach (BattlePokemonEntity entity in source.Pokemon)
+    foreach (BattlePokemonEntity pokemon in source.Pokemon)
     {
-      if (entity.Pokemon is null)
+      if (pokemon.Pokemon is null)
       {
         throw new ArgumentException("The Pokémon is required.", nameof(source));
       }
-      PokemonModel pokemon = ToPokemon(entity.Pokemon);
-      destination.Pokemon.Add(pokemon);
+      destination.Battlers.Add(new BattlerModel
+      {
+        Pokemon = ToPokemon(pokemon.Pokemon),
+        IsActive = pokemon.IsActive
+      });
     }
 
     MapAggregate(source, destination);
