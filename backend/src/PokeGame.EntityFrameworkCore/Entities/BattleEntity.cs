@@ -81,6 +81,16 @@ internal class BattleEntity : AggregateEntity
     CancelledOn = @event.OccurredOn.AsUniversalTime();
   }
 
+  public void Reset(BattleReset @event)
+  {
+    Update(@event);
+
+    Status = BattleStatus.Started;
+
+    StartedBy = null;
+    StartedOn = null;
+  }
+
   public void Start(IEnumerable<PokemonEntity> pokemon, BattleStarted @event)
   {
     Update(@event);
