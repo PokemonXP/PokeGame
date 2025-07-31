@@ -78,6 +78,13 @@ public class BattleController : ControllerBase
     return battle is null ? NotFound() : Ok(battle);
   }
 
+  [HttpPatch("{id}/pokemon/switch")]
+  public async Task<ActionResult<BattleModel>> SwitchPokemonAsync(Guid id, [FromBody] SwitchBattlePokemonPayload payload, CancellationToken cancellationToken)
+  {
+    BattleModel? battle = await _battleService.SwitchPokemonAsync(id, payload, cancellationToken);
+    return battle is null ? NotFound() : Ok(battle);
+  }
+
   [HttpPatch("{id}/reset")]
   public async Task<ActionResult<BattleModel>> ResetAsync(Guid id, CancellationToken cancellationToken)
   {

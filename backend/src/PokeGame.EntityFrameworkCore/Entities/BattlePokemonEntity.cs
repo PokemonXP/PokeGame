@@ -29,6 +29,11 @@ internal class BattlePokemonEntity
   {
   }
 
+  public void Switch(BattlePokemonEntity other)
+  {
+    (other.IsActive, IsActive) = (IsActive, other.IsActive);
+  }
+
   public override bool Equals(object? obj) => obj is BattlePokemonEntity entity && entity.BattleId == BattleId && entity.PokemonId == PokemonId;
   public override int GetHashCode() => HashCode.Combine(BattleId, PokemonId);
   public override string ToString() => $"{GetType()} (BattleId={BattleId}, PokemonId={PokemonId})";
