@@ -19,6 +19,11 @@ export async function deleteBattle(id: string): Promise<Battle> {
   return (await _delete<Battle>(url)).data;
 }
 
+export async function escapeBattle(id: string): Promise<Battle> {
+  const url: string = new urlUtils.UrlBuilder({ path: "/battles/{id}/escape" }).setParameter("id", id).buildRelative();
+  return (await patch<void, Battle>(url)).data;
+}
+
 export async function readBattle(id: string): Promise<Battle> {
   const url: string = new urlUtils.UrlBuilder({ path: "/battles/{id}" }).setParameter("id", id).buildRelative();
   return (await get<Battle>(url)).data;

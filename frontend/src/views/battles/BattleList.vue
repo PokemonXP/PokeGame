@@ -185,7 +185,7 @@ watch(
             </td>
             <td><LocationIcon /> {{ battle.location }}</td>
             <td>
-              <BattleStatusBadge :status="battle.status" />
+              <BattleStatusBadge :resolution="battle.resolution ?? undefined" :status="battle.status" />
               <template v-if="battle.startedOn">
                 <br />
                 {{ d(battle.startedOn, "medium") }}

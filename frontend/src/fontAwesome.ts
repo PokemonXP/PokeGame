@@ -73,6 +73,9 @@ import {
   faVenus,
   faVial,
   faWandSparkles,
+  faPersonRunning,
+  faSkull,
+  faTrophy,
 } from "@fortawesome/free-solid-svg-icons";
 import { faSquare, faSquareCheck } from "@fortawesome/free-regular-svg-icons";
 
@@ -125,6 +128,7 @@ library.add(
   faNoteSticky,
   faPaw,
   faPerson,
+  faPersonRunning,
   faPlay,
   faPlus,
   faQuestion,
@@ -132,6 +136,7 @@ library.add(
   faRotate,
   faSeedling,
   faSignature,
+  faSkull,
   faSpaghettiMonsterFlying,
   faSquare,
   faSquareCheck,
@@ -142,6 +147,7 @@ library.add(
   faTimes,
   faTrash,
   faTriangleExclamation,
+  faTrophy,
   faUser,
   faUserCheck,
   faUserNurse,
