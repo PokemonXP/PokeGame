@@ -85,7 +85,7 @@ internal class BattleEntity : AggregateEntity
   {
     Update(@event);
 
-    Status = BattleStatus.Started;
+    Status = BattleStatus.Created;
 
     StartedBy = null;
     StartedOn = null;

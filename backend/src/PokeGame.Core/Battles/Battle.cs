@@ -256,6 +256,8 @@ public class Battle : AggregateRoot
   }
   protected virtual void Handle(BattleReset @event)
   {
+    Status = BattleStatus.Created;
+
     _pokemon.Clear();
     foreach (PokemonId opponent in @event.OpponentIds)
     {
