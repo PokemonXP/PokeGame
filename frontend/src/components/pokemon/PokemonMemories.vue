@@ -191,7 +191,7 @@ watch(
               {{ "/" }}
               {{ t("pokemon.memories.position.label") }}
               {{ "/" }}
-              {{ t("pokemon.memories.box.label") }}
+              {{ t("pokemon.boxes.label") }}
             </th>
             <td>{{ pokemon.characteristic }}.</td>
             <td>{{ pokemon.ownership.position + 1 }}</td>

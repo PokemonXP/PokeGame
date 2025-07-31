@@ -8,11 +8,9 @@ import PartyPokemonCard from "./PartyPokemonCard.vue";
 import type { MovePokemonPayload, Pokemon, SearchPokemonPayload, SwapPokemonPayload } from "@/types/pokemon";
 import type { SearchResults } from "@/types/search";
 import type { Trainer } from "@/types/trainers";
+import { BOX_SIZE, PARTY_SIZE } from "@/types/pokemon";
 import { depositPokemon, movePokemon, releasePokemon, swapPokemon, withdrawPokemon } from "@/api/pokemon";
 import { searchPokemon } from "@/api/pokemon";
-
-const BOX_SIZE: number = 30;
-const PARTY_SIZE: number = 6;
 
 const { orderBy } = arrayUtils;
 const { t } = useI18n();
@@ -376,7 +374,7 @@ watch(() => props.trainer, refresh, { deep: true, immediate: true });
       </div>
       <div class="col-9">
         <TarTabs>
-          <TarTab v-for="(items, box) in boxes" :key="box" :active="box < 1" :id="`box-${box}`" :title="t(`pokemon.memories.box.format`, { box: box + 1 })">
+          <TarTab v-for="(items, box) in boxes" :key="box" :active="box < 1" :id="`box-${box}`" :title="t(`pokemon.boxes.format`, { box: box + 1 })">
             <div class="row">
               <template v-for="(pokemon, position) in items" :key="position">
                 <PartyPokemonCard v-if="pokemon" class="col-2 mb-2" :pokemon="pokemon" :selected="isSelected(pokemon)" @click="toggle(pokemon)" />

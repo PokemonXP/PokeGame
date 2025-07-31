@@ -172,7 +172,7 @@ watch(
             <th scope="col">
               {{ t("pokemon.memories.position.label") }}
               {{ "/" }}
-              {{ t("pokemon.memories.box.label") }}
+              {{ t("pokemon.boxes.label") }}
             </th>
             <th scope="col">{{ t("pokemon.sort.options.UpdatedOn") }}</th>
           </tr>
@@ -198,7 +198,7 @@ watch(
                 {{ t("pokemon.memories.position.format", { position: pokemon.ownership.position + 1 }) }}
                 <br />
                 <template v-if="typeof pokemon.ownership.box === 'number'">
-                  {{ t("pokemon.memories.box.format", { box: (pokemon.ownership.box ?? 0) + 1 }) }}
+                  {{ t("pokemon.boxes.format", { box: (pokemon.ownership.box ?? 0) + 1 }) }}
                 </template>
                 <span v-else class="text-muted">
                   {{ t("pokemon.party") }}

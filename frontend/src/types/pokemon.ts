@@ -8,6 +8,10 @@ import type { Region } from "./regions";
 import type { SearchPayload, SortOption } from "./search";
 import type { Trainer } from "./trainers";
 
+export const BOX_COUNT: number = 32;
+export const BOX_SIZE: number = 5 * 6;
+export const PARTY_SIZE: number = 6;
+
 export const EFFORT_VALUE_MAXIMUM: number = 255;
 export const EFFORT_VALUE_MINIMUM: number = 0;
 export const EFFORT_VALUE_LIMIT: number = 2 * EFFORT_VALUE_MAXIMUM;

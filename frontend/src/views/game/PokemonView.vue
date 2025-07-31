@@ -8,6 +8,7 @@ import { useRoute } from "vue-router";
 import CircleInfoIcon from "@/components/icons/CircleInfoIcon.vue";
 import GameBreadcrumb from "@/components/game/GameBreadcrumb.vue";
 import PartyPokemonCard from "@/components/pokemon/PartyPokemonCard.vue";
+import PokemonBoxes from "@/components/pokemon/boxes/PokemonBoxes.vue";
 import PokemonGameSummary from "@/components/pokemon/PokemonGameSummary.vue";
 import PokemonSprite from "@/components/pokemon/PokemonSprite.vue";
 import type { Breadcrumb } from "@/types/components";
@@ -17,7 +18,7 @@ import { handleErrorKey } from "@/inject";
 import { onMounted, ref } from "vue";
 import { useToastStore } from "@/stores/toast";
 
-type ViewMode = "party" | "summary";
+type ViewMode = "pokemon" | "summary";
 
 const handleError = inject(handleErrorKey) as (e: unknown) => void;
 const route = useRoute();
@@ -25,18 +26,15 @@ const toasts = useToastStore();
 const { cleanTrim } = stringUtils;
 const { t } = useI18n();
 
+const isBoxes = ref<boolean>(false);
 const isLoading = ref<boolean>(false);
 const isSwapping = ref<boolean>(false);
 const party = ref<PokemonCard[]>([]);
 const parent = ref<Breadcrumb>({ text: t("menu"), to: { name: "GameMenu" } });
 const selected = ref<PokemonCard>();
 const summary = ref<PokemonSummary>();
-const view = ref<ViewMode>("party");
-
-function close(): void {
-  view.value = "party";
-  summary.value = undefined;
-}
+const trainerId = ref<string>();
+const view = ref<ViewMode>("pokemon");
 
 function heldItemChanged(item?: InventoryItem): void {
   let swap: boolean = false;
@@ -85,6 +83,10 @@ async function openSummary(): Promise<void> {
     }
   }
 }
+function closeSummary(): void {
+  view.value = "pokemon";
+  summary.value = undefined;
+}
 
 async function swap(pokemon: PokemonCard): Promise<void> {
   if (!isLoading.value && selected.value) {
@@ -116,9 +118,9 @@ function select(pokemon: PokemonCard): void {
 async function refresh(): Promise<void> {
   isLoading.value = true;
   try {
-    const trainerId: string = route.params.trainer.toString();
-    if (trainerId) {
-      party.value = await getPokemon(trainerId);
+    trainerId.value = route.params.trainer.toString();
+    if (trainerId.value) {
+      party.value = await getPokemon(trainerId.value);
     }
   } catch (e: unknown) {
     handleError(e);
@@ -134,9 +136,17 @@ onMounted(refresh);
     <h1 class="text-center">{{ t("pokemon.title") }}</h1>
     <GameBreadcrumb :current="t('pokemon.title')" :parent="parent" />
     <div class="mb-3">
+      <TarButton
+        class="me-1"
+        :icon="isBoxes ? 'fas fa-dog' : 'fas fa-boxes-stacked'"
+        size="large"
+        :text="t(`pokemon.boxes.${isBoxes ? 'close' : 'open'}`)"
+        :variant="isBoxes ? 'secondary' : 'primary'"
+        @click="isBoxes = !isBoxes"
+      />
       <template v-if="selected">
         <TarButton
-          class="me-1"
+          class="mx-1"
           :disabled="isLoading || summary?.id === selected.id"
           icon="fas fa-id-card"
           :loading="isLoading"
@@ -157,7 +167,6 @@ onMounted(refresh);
           @click="isSwapping = !isSwapping"
         />
       </template>
-      <TarButton v-if="summary" class="float-end" icon="fas fa-times" size="large" :text="t('actions.close')" variant="secondary" @click="close" />
     </div>
     <p v-if="isSwapping">
       <i><CircleInfoIcon /> {{ t("pokemon.position.swap.help") }}</i>
@@ -175,14 +184,18 @@ onMounted(refresh);
         />
       </section>
       <section class="col-9">
-        <div v-if="view === 'party'" class="row">
-          <div v-for="pokemon in party" :key="pokemon.id" class="col-4">
-            <PokemonSprite class="img-fluid mb-2 mx-auto" clickable :pokemon="pokemon" :selected="selected?.id === pokemon.id" @click="select(pokemon)" />
+        <div v-if="view === 'pokemon'">
+          <PokemonBoxes v-if="isBoxes && trainerId" :trainer="trainerId" />
+          <div v-else class="row">
+            <div v-for="pokemon in party" :key="pokemon.id" class="col-4">
+              <PokemonSprite class="img-fluid mb-2 mx-auto" clickable :pokemon="pokemon" :selected="selected?.id === pokemon.id" @click="select(pokemon)" />
+            </div>
           </div>
         </div>
         <PokemonGameSummary
-          v-if="view === 'summary' && summary"
+          v-else-if="view === 'summary' && summary"
           :pokemon="summary"
+          @closed="closeSummary"
           @error="handleError"
           @held-item="heldItemChanged"
           @moves-swapped="movesSwapped"
