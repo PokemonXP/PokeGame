@@ -71,6 +71,13 @@ public class BattleController : ControllerBase
     return battle is null ? NotFound() : Ok(battle);
   }
 
+  [HttpPatch("{id}/escape")]
+  public async Task<ActionResult<BattleModel>> EscapeAsync(Guid id, CancellationToken cancellationToken)
+  {
+    BattleModel? battle = await _battleService.EscapeAsync(id, cancellationToken);
+    return battle is null ? NotFound() : Ok(battle);
+  }
+
   [HttpPatch("{id}/reset")]
   public async Task<ActionResult<BattleModel>> ResetAsync(Guid id, CancellationToken cancellationToken)
   {

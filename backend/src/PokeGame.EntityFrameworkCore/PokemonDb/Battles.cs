@@ -18,12 +18,15 @@ internal static class Battles
   public static readonly ColumnId CancelledBy = new(nameof(BattleEntity.CancelledBy), Table);
   public static readonly ColumnId CancelledOn = new(nameof(BattleEntity.CancelledOn), Table);
   public static readonly ColumnId ChampionCount = new(nameof(BattleEntity.ChampionCount), Table);
+  public static readonly ColumnId CompletedBy = new(nameof(BattleEntity.CompletedBy), Table);
+  public static readonly ColumnId CompletedOn = new(nameof(BattleEntity.CompletedOn), Table);
   public static readonly ColumnId Id = new(nameof(BattleEntity.Id), Table);
   public static readonly ColumnId Kind = new(nameof(BattleEntity.Kind), Table);
   public static readonly ColumnId Location = new(nameof(BattleEntity.Location), Table);
   public static readonly ColumnId Name = new(nameof(BattleEntity.Name), Table);
   public static readonly ColumnId Notes = new(nameof(BattleEntity.Notes), Table);
   public static readonly ColumnId OpponentCount = new(nameof(BattleEntity.OpponentCount), Table);
+  public static readonly ColumnId Resolution = new(nameof(BattleEntity.Resolution), Table);
   public static readonly ColumnId StartedBy = new(nameof(BattleEntity.StartedBy), Table);
   public static readonly ColumnId StartedOn = new(nameof(BattleEntity.StartedOn), Table);
   public static readonly ColumnId Status = new(nameof(BattleEntity.Status), Table);

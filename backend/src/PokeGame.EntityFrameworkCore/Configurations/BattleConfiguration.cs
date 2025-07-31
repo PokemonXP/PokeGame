@@ -22,6 +22,7 @@ internal class BattleConfiguration : AggregateConfiguration<BattleEntity>, IEnti
     builder.HasIndex(x => x.Id).IsUnique();
     builder.HasIndex(x => x.Kind);
     builder.HasIndex(x => x.Status);
+    builder.HasIndex(x => x.Resolution);
     builder.HasIndex(x => x.Name);
     builder.HasIndex(x => x.Location);
     builder.HasIndex(x => x.ChampionCount);
@@ -30,13 +31,17 @@ internal class BattleConfiguration : AggregateConfiguration<BattleEntity>, IEnti
     builder.HasIndex(x => x.StartedOn);
     builder.HasIndex(x => x.CancelledBy);
     builder.HasIndex(x => x.CancelledOn);
+    builder.HasIndex(x => x.CompletedBy);
+    builder.HasIndex(x => x.CompletedOn);
 
     builder.Property(x => x.Kind).HasMaxLength(byte.MaxValue).HasConversion(new EnumToStringConverter<BattleKind>());
     builder.Property(x => x.Status).HasMaxLength(byte.MaxValue).HasConversion(new EnumToStringConverter<BattleStatus>());
+    builder.Property(x => x.Resolution).HasMaxLength(byte.MaxValue).HasConversion(new EnumToStringConverter<BattleResolution>());
     builder.Property(x => x.Name).HasMaxLength(DisplayName.MaximumLength);
     builder.Property(x => x.Location).HasMaxLength(Location.MaximumLength);
     builder.Property(x => x.Url).HasMaxLength(Url.MaximumLength);
     builder.Property(x => x.StartedBy).HasMaxLength(ActorId.MaximumLength);
     builder.Property(x => x.CancelledBy).HasMaxLength(ActorId.MaximumLength);
+    builder.Property(x => x.CompletedBy).HasMaxLength(ActorId.MaximumLength);
   }
 }

@@ -14,6 +14,7 @@ internal class BattleEntity : AggregateEntity
 
   public BattleKind Kind { get; private set; }
   public BattleStatus Status { get; private set; }
+  public BattleResolution? Resolution { get; private set; }
 
   public string Name { get; private set; } = string.Empty;
   public string Location { get; private set; } = string.Empty;
@@ -27,6 +28,8 @@ internal class BattleEntity : AggregateEntity
   public DateTime? StartedOn { get; private set; }
   public string? CancelledBy { get; private set; }
   public DateTime? CancelledOn { get; private set; }
+  public string? CompletedBy { get; private set; }
+  public DateTime? CompletedOn { get; private set; }
 
   public List<BattlePokemonEntity> Pokemon { get; private set; } = [];
   public List<BattleTrainerEntity> Trainers { get; private set; } = [];
@@ -79,6 +82,17 @@ internal class BattleEntity : AggregateEntity
 
     CancelledBy = @event.ActorId?.Value;
     CancelledOn = @event.OccurredOn.AsUniversalTime();
+  }
+
+  public void Escape(BattleEscaped @event)
+  {
+    Update(@event);
+
+    Status = BattleStatus.Completed;
+    Resolution = BattleResolution.Escape;
+
+    CompletedBy = @event.ActorId?.Value;
+    CompletedOn = @event.OccurredOn.AsUniversalTime();
   }
 
   public void Reset(BattleReset @event)

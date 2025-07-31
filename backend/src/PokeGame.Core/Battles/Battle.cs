@@ -19,6 +19,7 @@ public class Battle : AggregateRoot
 
   public BattleKind Kind { get; private set; }
   public BattleStatus Status { get; private set; }
+  public BattleResolution? Resolution { get; private set; }
 
   private DisplayName? _name = null;
   public DisplayName Name
@@ -237,6 +238,35 @@ public class Battle : AggregateRoot
     {
       Raise(new BattleDeleted(), actorId);
     }
+  }
+
+  public void Escape(ActorId? actorId = null)
+  {
+    if (Status != BattleStatus.Started)
+    {
+      ValidationFailure failure = new("BattleId", "The battle must have started, but not ended.", Id.ToGuid())
+      {
+        CustomState = new { Status },
+        ErrorCode = "StatusValidator"
+      };
+      throw new ValidationException([failure]);
+    }
+    else if (Kind != BattleKind.WildPokemon)
+    {
+      ValidationFailure failure = new("BattleId", "The battle must be a wild Pokémon battle.", Id.ToGuid())
+      {
+        CustomState = new { Kind },
+        ErrorCode = "WildPokemonValidator"
+      };
+      throw new ValidationException([failure]);
+    }
+
+    Raise(new BattleEscaped(), actorId);
+  }
+  protected virtual void Handle(BattleEscaped @event)
+  {
+    Status = BattleStatus.Completed;
+    Resolution = BattleResolution.Escape;
   }
 
   public void Reset(IReadOnlyDictionary<PokemonId, Specimen> pokemon, ActorId? actorId = null)
