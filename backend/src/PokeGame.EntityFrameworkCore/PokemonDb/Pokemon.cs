@@ -30,6 +30,7 @@ internal static class Pokemon
   public static readonly ColumnId HeldItemId = new(nameof(PokemonEntity.HeldItemId), Table);
   public static readonly ColumnId HeldItemUid = new(nameof(PokemonEntity.HeldItemUid), Table);
   public static readonly ColumnId Id = new(nameof(PokemonEntity.Id), Table);
+  public static readonly ColumnId IsEgg = new(nameof(PokemonEntity.IsEgg), Table);
   public static readonly ColumnId IsShiny = new(nameof(PokemonEntity.IsShiny), Table);
   public static readonly ColumnId Level = new(nameof(PokemonEntity.Level), Table);
   public static readonly ColumnId MaximumExperience = new(nameof(PokemonEntity.MaximumExperience), Table);

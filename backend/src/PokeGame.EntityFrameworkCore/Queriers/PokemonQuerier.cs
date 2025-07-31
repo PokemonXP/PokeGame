@@ -151,7 +151,7 @@ internal class PokemonQuerier : IPokemonQuerier
     }
     if (payload.IsEgg.HasValue)
     {
-      builder.Where(PokemonDb.Pokemon.EggCycles, payload.IsEgg.Value ? Operators.IsGreaterThan((byte)0) : Operators.IsEqualTo((byte)0));
+      builder.Where(PokemonDb.Pokemon.IsEgg, Operators.IsEqualTo(payload.IsEgg.Value));
     }
     if (payload.InParty.HasValue)
     {

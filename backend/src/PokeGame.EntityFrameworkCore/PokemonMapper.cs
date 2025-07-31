@@ -88,7 +88,7 @@ internal class PokemonMapper
 
       if (entity.IsOpponent)
       {
-        destination.OpponentTrainers.Add(trainer);
+        destination.Opponents.Add(trainer);
       }
       else
       {
@@ -103,7 +103,7 @@ internal class PokemonMapper
         throw new ArgumentException("The Pokémon is required.", nameof(source));
       }
       PokemonModel pokemon = ToPokemon(entity.Pokemon);
-      destination.OpponentPokemon.Add(pokemon);
+      destination.Pokemon.Add(pokemon);
     }
 
     MapAggregate(source, destination);
@@ -302,6 +302,7 @@ internal class PokemonMapper
       AbilitySlot = source.AbilitySlot,
       Nature = new PokemonNatureModel(PokemonNatures.Instance.Find(source.Nature)),
       EggCycles = source.EggCycles,
+      IsEgg = source.IsEgg,
       GrowthRate = source.GrowthRate,
       Level = source.Level,
       Experience = source.Experience,

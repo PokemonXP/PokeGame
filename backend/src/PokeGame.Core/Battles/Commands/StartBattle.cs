@@ -2,7 +2,6 @@
 using Logitar.EventSourcing;
 using PokeGame.Core.Battles.Models;
 using PokeGame.Core.Pokemon;
-using PokeGame.Core.Trainers;
 
 namespace PokeGame.Core.Battles.Commands;
 
@@ -13,12 +12,18 @@ internal class StartBattleHandler : ICommandHandler<StartBattle, BattleModel?>
   private readonly IApplicationContext _applicationContext;
   private readonly IBattleQuerier _battleQuerier;
   private readonly IBattleRepository _battleRepository;
+  private readonly IPokemonRepository _pokemonRepository;
 
-  public StartBattleHandler(IApplicationContext applicationContext, IBattleQuerier battleQuerier, IBattleRepository battleRepository)
+  public StartBattleHandler(
+    IApplicationContext applicationContext,
+    IBattleQuerier battleQuerier,
+    IBattleRepository battleRepository,
+    IPokemonRepository pokemonRepository)
   {
     _applicationContext = applicationContext;
     _battleQuerier = battleQuerier;
     _battleRepository = battleRepository;
+    _pokemonRepository = pokemonRepository;
   }
 
   public async Task<BattleModel?> HandleAsync(StartBattle command, CancellationToken cancellationToken)
@@ -32,9 +37,7 @@ internal class StartBattleHandler : ICommandHandler<StartBattle, BattleModel?>
       return null;
     }
 
-    IEnumerable<TrainerId> trainerIds = battle.Champions.Concat(battle.TrainerOpponents);
-    Specimen[] pokemon = []; // TODO(fpion): load all non-egg Pokémon in party of trainer IDs
-
+    IReadOnlyCollection<Specimen> pokemon = await _pokemonRepository.LoadPartyNonEggsAsync(battle, cancellationToken);
     battle.Start(pokemon, actorId);
 
     await _battleRepository.SaveAsync(battle, cancellationToken);

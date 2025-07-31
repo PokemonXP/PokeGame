@@ -45,6 +45,11 @@ internal class PokemonEntity : AggregateEntity
   public string Nature { get; private set; } = string.Empty;
 
   public byte EggCycles { get; private set; }
+  public bool IsEgg
+  {
+    get => EggCycles > 0;
+    private set { }
+  }
   public GrowthRate GrowthRate { get; private set; }
   public int Level { get; private set; }
   public int Experience { get; private set; }

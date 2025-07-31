@@ -1,6 +1,7 @@
 ﻿using Krakenar.EntityFrameworkCore.Relational.KrakenarDb;
 using Logitar.EventSourcing;
 using Microsoft.EntityFrameworkCore;
+using PokeGame.Core.Battles;
 using PokeGame.Core.Pokemon;
 using PokeGame.EntityFrameworkCore.Entities;
 
@@ -50,6 +51,18 @@ internal class PokemonRepository : Repository, IPokemonRepository
   public async Task<IReadOnlyCollection<Specimen>> LoadAsync(IEnumerable<PokemonId> ids, CancellationToken cancellationToken)
   {
     return await LoadAsync<Specimen>(ids.Select(id => id.StreamId), cancellationToken);
+  }
+
+  public async Task<IReadOnlyCollection<Specimen>> LoadPartyNonEggsAsync(Battle battle, CancellationToken cancellationToken)
+  {
+    HashSet<Guid> trainerUids = battle.Champions.Concat(battle.Opponents).Select(x => x.ToGuid()).ToHashSet();
+
+    string[] streamIds = await _pokemon.AsNoTracking()
+      .Where(x => x.CurrentTrainerUid.HasValue && trainerUids.Contains(x.CurrentTrainerUid.Value) && !x.Box.HasValue && !x.IsEgg)
+      .Select(x => x.StreamId)
+      .ToArrayAsync(cancellationToken);
+
+    return await LoadAsync(streamIds.Select(value => new PokemonId(value)), cancellationToken);
   }
 
   public async Task SaveAsync(Specimen pokemon, CancellationToken cancellationToken)

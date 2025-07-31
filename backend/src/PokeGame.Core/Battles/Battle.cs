@@ -27,8 +27,8 @@ public class Battle : AggregateRoot
   private readonly HashSet<TrainerId> _champions = [];
   public IReadOnlyCollection<TrainerId> Champions => _champions.ToList().AsReadOnly();
 
-  private readonly HashSet<TrainerId> _trainerOpponents = [];
-  public IReadOnlyCollection<TrainerId> TrainerOpponents => _trainerOpponents.ToList().AsReadOnly();
+  private readonly HashSet<TrainerId> _opponents = [];
+  public IReadOnlyCollection<TrainerId> Opponents => _opponents.ToList().AsReadOnly();
 
   private readonly HashSet<PokemonId> _pokemon = [];
   public IReadOnlyCollection<PokemonId> Pokemon => _pokemon.ToList().AsReadOnly();
@@ -82,7 +82,7 @@ public class Battle : AggregateRoot
     Kind = BattleKind.Trainer;
 
     Handle((IBattleCreated)@event);
-    _trainerOpponents.AddRange(@event.OpponentIds);
+    _opponents.AddRange(@event.OpponentIds);
   }
 
   public static Battle WildPokemon(
@@ -181,7 +181,7 @@ public class Battle : AggregateRoot
       throw new ValidationException([failure]);
     }
 
-    HashSet<TrainerId> trainerIds = _champions.Concat(_trainerOpponents).ToHashSet();
+    HashSet<TrainerId> trainerIds = _champions.Concat(_opponents).ToHashSet();
     Dictionary<TrainerId, HashSet<Specimen>> participants = trainerIds.ToDictionary(x => x, x => new HashSet<Specimen>());
 
     int capacity = pokemon.Count() + trainerIds.Count;
@@ -240,7 +240,7 @@ public class Battle : AggregateRoot
       throw new ValidationException(failures);
     }
 
-    Raise(new BattleStarted(pokemon.Select(x => x.Id).ToHashSet()), actorId);
+    Raise(new BattleStarted(pokemon.Select(x => x.Id).ToHashSet()), actorId); // TODO(fpion): currently active Pokémon
   }
   protected virtual void Handle(BattleStarted @event)
   {

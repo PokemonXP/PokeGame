@@ -135,7 +135,7 @@ public class BattleTests
     Assert.Null(battle.Url);
     Assert.Null(battle.Notes);
     Assert.Equal(_trainer.Id, battle.Champions.Single());
-    Assert.Equal(opponent.Id, battle.TrainerOpponents.Single());
+    Assert.Equal(opponent.Id, battle.Opponents.Single());
     Assert.Empty(battle.Pokemon);
   }
 
@@ -183,7 +183,7 @@ public class BattleTests
     Assert.Equal(url, battle.Url);
     Assert.Equal(notes, battle.Notes);
     Assert.Equal(_trainer.Id, battle.Champions.Single());
-    Assert.Empty(battle.TrainerOpponents);
+    Assert.Empty(battle.Opponents);
     Assert.Equal(_pokemon.Id, battle.Pokemon.Single());
   }
 
