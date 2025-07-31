@@ -18,6 +18,9 @@
     "title": "Champions",
     "warning": "Certains entraîneurs sélectionnés sont cachés. Réinitialisez les filtres pour voir ces entraîneurs."
   },
+  "completed": {
+    "format": "Complétée le {date} par"
+  },
   "create": "Nouvelle bataille",
   "created": "La bataille a été créée.",
   "delete": {
@@ -27,6 +30,12 @@
   "deleted": "La bataille a été supprimée.",
   "empty": "Cette liste est vide.",
   "ended": "La bataille est terminée.",
+  "escape": {
+    "confirm": "Afin de fuir la bataille, veuillez entrer son nom dans le champs suivant.",
+    "label": "Fuite",
+    "title": "Fuir la bataille"
+  },
+  "escaped": "Les entraîneurs se sont échappés sains et saufs.",
   "externalLink": "Lien externe",
   "filters": "Filtres",
   "help": "Choisissez le type d’adversaire.",
@@ -59,6 +68,7 @@
   "sort": {
     "options": {
       "CancelledOn": "Date d’annulation",
+      "CompletedOn": "Date de complétion",
       "CreatedOn": "Date de création",
       "Location": "Emplacement",
       "Name": "Nom",
@@ -75,6 +85,7 @@
     "label": "Statut",
     "options": {
       "Cancelled": "Annulée",
+      "Completed": "Complétée",
       "Created": "Créée",
       "Started": "Lancée"
     },

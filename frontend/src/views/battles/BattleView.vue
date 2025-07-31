@@ -7,9 +7,11 @@ import { useRoute, useRouter } from "vue-router";
 import AbilityIcon from "@/components/icons/AbilityIcon.vue";
 import AdminBreadcrumb from "@/components/admin/AdminBreadcrumb.vue";
 import CancelBattle from "@/components/battle/CancelBattle.vue";
+import EscapeBattle from "@/components/battle/EscapeBattle.vue";
 import ExternalLink from "@/components/battle/ExternalLink.vue";
 import ItemBlock from "@/components/items/ItemBlock.vue";
 import PokemonBlock from "@/components/pokemon/PokemonBlock.vue";
+import ResetBattle from "@/components/battle/ResetBattle.vue";
 import StaminaBar from "@/components/pokemon/StaminaBar.vue";
 import StartBattle from "@/components/battle/StartBattle.vue";
 import StatusConditionIcon from "@/components/pokemon/StatusConditionIcon.vue";
@@ -23,7 +25,6 @@ import { getAbility, getUrl } from "@/helpers/pokemon";
 import { handleErrorKey } from "@/inject";
 import { readBattle } from "@/api/battle";
 import { useToastStore } from "@/stores/toast";
-import ResetBattle from "@/components/battle/ResetBattle.vue";
 
 const handleError = inject(handleErrorKey) as (e: unknown) => void;
 const route = useRoute();
@@ -65,6 +66,10 @@ const breadcrumb = computed<Breadcrumb[]>(() => {
 function onCancelled(cancelled: Battle): void {
   battle.value = cancelled;
   toasts.success("battle.cancelled.success");
+}
+function onEscaped(escaped: Battle): void {
+  battle.value = escaped;
+  toasts.success("battle.escaped");
 }
 function onReset(reset: Battle): void {
   battle.value = reset;
@@ -108,6 +113,7 @@ onMounted(async () => {
         <template v-if="battle.status === 'Started'">
           <ResetBattle :battle="battle" @error="handleError" @reset="onReset" />
           <CancelBattle :battle="battle" @cancelled="onCancelled" @error="handleError" />
+          <EscapeBattle v-if="battle.kind === 'WildPokemon'" :battle="battle" @error="handleError" @escaped="onEscaped" />
         </template>
       </div>
       <table v-if="battle.status === 'Started'" class="table table-striped">

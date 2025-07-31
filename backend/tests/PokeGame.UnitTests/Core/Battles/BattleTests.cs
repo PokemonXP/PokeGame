@@ -233,6 +233,7 @@ public class BattleTests
   }
 
   // TODO(fpion): Cancel
+  // TODO(fpion): Escape
   // TODO(fpion): Reset
   // TODO(fpion): Start
   // TODO(fpion): Update

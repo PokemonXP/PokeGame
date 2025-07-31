@@ -13,6 +13,9 @@ public record SearchBattlesParameters : SearchParameters
   [FromQuery(Name = "status")]
   public BattleStatus? Status { get; set; }
 
+  [FromQuery(Name = "resolution")]
+  public BattleResolution? Resolution { get; set; }
+
   [FromQuery(Name = "trainer")]
   public Guid? TrainerId { get; set; }
 
@@ -22,6 +25,7 @@ public record SearchBattlesParameters : SearchParameters
     {
       Kind = Kind,
       Status = Status,
+      Resolution = Resolution,
       TrainerId = TrainerId
     };
     Fill(payload);

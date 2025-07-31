@@ -73,6 +73,10 @@ internal class BattleQuerier : IBattleQuerier
     {
       builder.Where(PokemonDb.Battles.Status, Operators.IsEqualTo(payload.Status.Value.ToString()));
     }
+    if (payload.Resolution.HasValue)
+    {
+      builder.Where(PokemonDb.Battles.Resolution, Operators.IsEqualTo(payload.Resolution.Value.ToString()));
+    }
     if (payload.TrainerId.HasValue)
     {
       builder.Join(PokemonDb.BattleTrainers.BattleId, PokemonDb.Battles.BattleId)
@@ -91,6 +95,11 @@ internal class BattleQuerier : IBattleQuerier
           ordered = ordered is null
             ? (sort.IsDescending ? query.OrderByDescending(x => x.CancelledOn) : query.OrderBy(x => x.CancelledOn))
             : (sort.IsDescending ? ordered.ThenByDescending(x => x.CancelledOn) : ordered.ThenBy(x => x.CancelledOn));
+          break;
+        case BattleSort.CompletedOn:
+          ordered = ordered is null
+            ? (sort.IsDescending ? query.OrderByDescending(x => x.CompletedOn) : query.OrderBy(x => x.CompletedOn))
+            : (sort.IsDescending ? ordered.ThenByDescending(x => x.CompletedOn) : ordered.ThenBy(x => x.CompletedOn));
           break;
         case BattleSort.CreatedOn:
           ordered = ordered is null

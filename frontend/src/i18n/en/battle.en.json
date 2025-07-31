@@ -18,6 +18,9 @@
     "title": "Champions",
     "warning": "Some selected trainers are hidden. Reset filters to see those trainers."
   },
+  "completed": {
+    "format": "Completed on {date} by"
+  },
   "create": "Create Battle",
   "created": "The battle has been created.",
   "empty": "This list is empty.",
@@ -27,6 +30,12 @@
   },
   "deleted": "The battle has been deleted.",
   "ended": "The battle has ended.",
+  "escape": {
+    "confirm": "To escape the battle, enter its name in the field below.",
+    "label": "Escape",
+    "title": "Escape Battle"
+  },
+  "escaped": "The trainers escaped safely.",
   "externalLink": "External Link",
   "filters": "Filters",
   "help": "Pick the opponent kind.",
@@ -59,6 +68,7 @@
   "sort": {
     "options": {
       "CancelledOn": "Cancelled on",
+      "CompletedOn": "Completed on",
       "CreatedOn": "Created on",
       "Location": "Location",
       "Name": "Name",
@@ -75,6 +85,7 @@
     "label": "Status",
     "options": {
       "Cancelled": "Cancelled",
+      "Completed": "Completed",
       "Created": "Created",
       "Started": "Started"
     },
