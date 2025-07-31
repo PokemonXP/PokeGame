@@ -334,7 +334,7 @@ public class Specimen : AggregateRoot
       throw new TrainerPokemonCannotBeCaughtException(this);
     }
 
-    SetOwnership(OwnershipKind.Caught, trainer, pokeBall, location, level, metOn, description, slot, actorId); // TODO(fpion): remove slot
+    SetOwnership(OwnershipKind.Caught, trainer, pokeBall, location, level, metOn, description, slot, actorId);
 
     PokeBallProperties properties = (PokeBallProperties)pokeBall.Properties;
     if (properties.Heal)
@@ -802,7 +802,7 @@ public class Specimen : AggregateRoot
 
     ItemId pokeBallId = Ownership is null ? pokeBall.Id : Ownership.PokeBallId;
     level ??= new(Level);
-    slot ??= new(new Position(0));
+    slot ??= new(new Position(0)); // TODO(fpion): remove slot
 
     switch (kind)
     {

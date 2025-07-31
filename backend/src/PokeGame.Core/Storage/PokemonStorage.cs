@@ -34,11 +34,30 @@ public class PokemonStorage : AggregateRoot
     _slots[@event.PokemonId] = @event.Slot;
   }
 
+  public bool Remove(Specimen pokemon, ActorId? actorId = null)
+  {
+    if (!_slots.ContainsKey(pokemon.Id))
+    {
+      return false;
+    }
+
+    Raise(new PokemonRemoved(pokemon.Id), actorId);
+    return true;
+  }
+  protected virtual void Handle(PokemonRemoved @event)
+  {
+    if (_slots.TryGetValue(@event.PokemonId, out PokemonSlot? slot))
+    {
+      _pokemon.Remove(slot);
+    }
+    _slots.Remove(@event.PokemonId);
+  }
+
   public void Store(Specimen pokemon, ActorId? actorId = null)
   {
     if (pokemon.Ownership is null || pokemon.Ownership.TrainerId != TrainerId)
     {
-      throw new NotImplementedException(); // TODO(fpion): implement
+      throw new ArgumentException($"The Pokémon owner trainer 'Id={pokemon.Ownership?.TrainerId.Value ?? "<null>"}' must be '{TrainerId}'.", nameof(pokemon));
     }
     else if (!_slots.ContainsKey(pokemon.Id))
     {
