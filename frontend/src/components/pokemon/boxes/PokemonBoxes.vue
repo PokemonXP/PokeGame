@@ -4,8 +4,9 @@ import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 
 import BoxInput from "./BoxInput.vue";
+import BoxPokemonCard from "./BoxPokemonCard.vue";
 import type { PokemonCard } from "@/types/game";
-import { BOX_COUNT } from "@/types/pokemon";
+import { BOX_COUNT, BOX_SIZE } from "@/types/pokemon";
 import { getPokemon } from "@/api/game/pokemon";
 
 const { t } = useI18n();
@@ -19,6 +20,11 @@ const boxInput = ref<number>(1);
 const isLoading = ref<boolean>(false);
 const pokemon = ref<PokemonCard[]>([]);
 
+const index = computed<Map<number, PokemonCard>>(() => {
+  const index: Map<number, PokemonCard> = new Map();
+  pokemon.value.forEach((pokemon) => index.set(pokemon.position, pokemon));
+  return index;
+});
 const isFirst = computed<boolean>(() => box.value <= 0);
 const isLast = computed<boolean>(() => box.value >= BOX_COUNT - 1);
 
@@ -64,7 +70,7 @@ watch(
 <template>
   <div>
     <h2 class="h3">{{ t("pokemon.boxes.title") }}</h2>
-    <div class="d-flex justify-content-between align-items-center gap-2">
+    <div class="d-flex justify-content-between align-items-center gap-2 mb-3">
       <div class="d-flex gap-2">
         <TarButton :disabled="isLoading || isFirst" icon="fas fa-backward-fast" :loading="isLoading" :status="t('loading')" @click="first" />
         <TarButton :disabled="isLoading || isFirst" icon="fas fa-backward-step" :loading="isLoading" :status="t('loading')" @click="previous" />
@@ -75,6 +81,11 @@ watch(
       <div class="d-flex gap-2">
         <TarButton :disabled="isLoading || isLast" icon="fas fa-forward-step" :loading="isLoading" :status="t('loading')" @click="next" />
         <TarButton :disabled="isLoading || isLast" icon="fas fa-forward-fast" :loading="isLoading" :status="t('loading')" @click="last" />
+      </div>
+    </div>
+    <div class="row">
+      <div v-for="i in BOX_SIZE" :key="i" class="col-2 mb-2">
+        <BoxPokemonCard :clickable="index.has(i - 1)" :pokemon="index.get(i - 1)" />
       </div>
     </div>
   </div>

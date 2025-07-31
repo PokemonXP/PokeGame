@@ -1,12 +1,17 @@
 import { urlUtils } from "logitar-js";
 
 import type { ChangePokemonItemPayload, NicknamePokemonPayload, PokemonCard, PokemonSummary } from "@/types/game";
-import { get, patch } from "..";
 import type { SwapPokemonMovesPayload } from "@/types/pokemon";
+import { get, patch } from "..";
 
 export async function changeHeldItem(id: string, payload: ChangePokemonItemPayload): Promise<void> {
   const url: string = new urlUtils.UrlBuilder({ path: "/game/pokemon/{id}/item/held" }).setParameter("id", id).buildRelative();
   await patch<ChangePokemonItemPayload, void>(url, payload);
+}
+
+export async function depositPokemon(id: string): Promise<void> {
+  const url: string = new urlUtils.UrlBuilder({ path: "/game/pokemon/{id}/deposit" }).setParameter("id", id).buildRelative();
+  await patch<void, void>(url);
 }
 
 export async function getPokemon(trainerId: string, box?: number): Promise<PokemonCard[]> {

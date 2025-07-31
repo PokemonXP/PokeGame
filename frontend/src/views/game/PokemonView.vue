@@ -13,7 +13,7 @@ import PokemonGameSummary from "@/components/pokemon/PokemonGameSummary.vue";
 import PokemonSprite from "@/components/pokemon/PokemonSprite.vue";
 import type { Breadcrumb } from "@/types/components";
 import type { InventoryItem, MoveSummary, PokemonCard, PokemonSummary } from "@/types/game";
-import { getPokemon, getSummary, swapPokemon } from "@/api/game/pokemon";
+import { depositPokemon, getPokemon, getSummary, swapPokemon } from "@/api/game/pokemon";
 import { handleErrorKey } from "@/inject";
 import { onMounted, ref } from "vue";
 import { useToastStore } from "@/stores/toast";
@@ -88,6 +88,22 @@ function closeSummary(): void {
   summary.value = undefined;
 }
 
+async function deposit(): Promise<void> {
+  if (!isLoading.value && selected.value) {
+    isLoading.value = true;
+    try {
+      await depositPokemon(selected.value.id);
+      refresh();
+      // TODO(fpion): refresh boxes?
+      toasts.success("pokemon.boxes.deposited");
+    } catch (e: unknown) {
+      handleError(e); // TODO(fpion): handle non-empty party error
+    } finally {
+      isLoading.value = false;
+    }
+  }
+}
+
 async function swap(pokemon: PokemonCard): Promise<void> {
   if (!isLoading.value && selected.value) {
     isLoading.value = true;
@@ -116,28 +132,29 @@ function select(pokemon: PokemonCard): void {
 }
 
 async function refresh(): Promise<void> {
-  isLoading.value = true;
-  try {
-    trainerId.value = route.params.trainer.toString();
-    if (trainerId.value) {
+  if (trainerId.value) {
+    isLoading.value = true;
+    try {
       party.value = await getPokemon(trainerId.value);
+    } catch (e: unknown) {
+      handleError(e);
+    } finally {
+      isLoading.value = false;
     }
-  } catch (e: unknown) {
-    handleError(e);
-  } finally {
-    isLoading.value = false;
   }
 }
-onMounted(refresh);
+onMounted(() => {
+  trainerId.value = route.params.trainer.toString();
+  refresh();
+});
 </script>
 
 <template>
   <main class="container-fluid">
     <h1 class="text-center">{{ t("pokemon.title") }}</h1>
     <GameBreadcrumb :current="t('pokemon.title')" :parent="parent" />
-    <div class="mb-3">
+    <div class="mb-3 d-flex gap-2">
       <TarButton
-        class="me-1"
         :icon="isBoxes ? 'fas fa-dog' : 'fas fa-boxes-stacked'"
         size="large"
         :text="t(`pokemon.boxes.${isBoxes ? 'close' : 'open'}`)"
@@ -146,7 +163,6 @@ onMounted(refresh);
       />
       <template v-if="selected">
         <TarButton
-          class="mx-1"
           :disabled="isLoading || summary?.id === selected.id"
           icon="fas fa-id-card"
           :loading="isLoading"
@@ -156,7 +172,6 @@ onMounted(refresh);
           @click="openSummary"
         />
         <TarButton
-          class="ms-1"
           :disabled="isLoading"
           icon="fas fa-rotate"
           :loading="isLoading"
@@ -165,6 +180,16 @@ onMounted(refresh);
           :status="t('loading')"
           :text="t('pokemon.position.swap.label')"
           @click="isSwapping = !isSwapping"
+        />
+        <TarButton
+          v-if="isBoxes"
+          :disabled="isLoading"
+          icon="fas fa-box-archive"
+          :loading="isLoading"
+          size="large"
+          :status="t('loading')"
+          :text="t('pokemon.boxes.deposit')"
+          @click="deposit"
         />
       </template>
     </div>

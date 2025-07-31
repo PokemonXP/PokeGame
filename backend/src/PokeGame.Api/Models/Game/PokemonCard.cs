@@ -20,6 +20,9 @@ public class PokemonCard
 
   public ItemCard? HeldItem { get; set; }
 
+  public int Position { get; set; }
+  public int? Box { get; set; }
+
   public PokemonCard() : this(string.Empty, string.Empty)
   {
   }
@@ -53,6 +56,10 @@ public class PokemonCard
         HeldItem = new ItemCard(pokemon.HeldItem);
       }
     }
+
+    OwnershipModel ownership = pokemon.Ownership ?? throw new ArgumentException($"The {nameof(pokemon.Ownership)} is required.", nameof(pokemon));
+    Position = ownership.Position;
+    Box = ownership.Box;
   }
 
   public override bool Equals(object? obj) => obj is PokemonCard pokemon && pokemon.Id == Id;

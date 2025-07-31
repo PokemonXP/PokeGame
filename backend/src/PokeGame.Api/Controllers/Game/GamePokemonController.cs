@@ -68,6 +68,19 @@ public class GamePokemonController : ControllerBase
     return Ok(summary);
   }
 
+  [HttpPatch("{id}/deposit")]
+  public async Task<ActionResult> DepositAsync(Guid id, CancellationToken cancellationToken)
+  {
+    ActionResult? result = await EnsureOwnershipAsync(id, cancellationToken);
+    if (result is not null)
+    {
+      return result;
+    }
+
+    await _pokemonService.DepositAsync(id, cancellationToken);
+    return NoContent();
+  }
+
   [HttpPatch("{id}/item/held")]
   public async Task<ActionResult> ChangeItemAsync(Guid id, [FromBody] ChangePokemonItemPayload payload, CancellationToken cancellationToken)
   {

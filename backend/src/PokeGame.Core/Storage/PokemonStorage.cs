@@ -7,10 +7,6 @@ namespace PokeGame.Core.Storage;
 
 public class PokemonStorage : AggregateRoot
 {
-  public const int BoxCount = 32;
-  public const int BoxSize = 5 * 6;
-  public const int PartySize = 6;
-
   public new PokemonStorageId Id => new(base.Id);
   public TrainerId TrainerId => Id.TrainerId;
 
@@ -35,8 +31,46 @@ public class PokemonStorage : AggregateRoot
 
   protected virtual void Handle(PokemonStored @event)
   {
-    _pokemon[@event.Slot] = @event.PokemonId; // TODO(fpion): won't work when stored is used to move a Pokémon
+    if (_slots.TryGetValue(@event.PokemonId, out PokemonSlot? previousSlot))
+    {
+      _pokemon.Remove(previousSlot);
+    }
+    _pokemon[@event.Slot] = @event.PokemonId;
     _slots[@event.PokemonId] = @event.Slot;
+  }
+
+  public void Deposit(Specimen pokemon, IReadOnlyDictionary<PokemonId, Specimen> party, ActorId? actorId = null)
+  {
+    if (!_slots.TryGetValue(pokemon.Id, out PokemonSlot? previousSlot))
+    {
+      throw new ArgumentException($"The Pokémon '{pokemon}' was not found in trainer's 'Id={TrainerId}' storage.", nameof(pokemon));
+    }
+
+    IReadOnlyCollection<PokemonId> partyIds = GetParty();
+
+    #region TODO(fpion): refactor
+    bool isValid = partyIds.Any(id => id != pokemon.Id && !party[id].IsEgg);
+    if (!isValid)
+    {
+      throw new NotImplementedException(); // TODO(fpion): implement
+    }
+    #endregion
+
+    PokemonSlot newSlot = FindFirstBoxAvailable();
+    pokemon.Deposit(newSlot, actorId);
+    Raise(new PokemonStored(pokemon.Id, newSlot));
+
+    foreach (PokemonId partyId in partyIds)
+    {
+      if (partyId != pokemon.Id)
+      {
+        PokemonSlot slot = _slots[partyId];
+        if (slot.IsGreaterThan(previousSlot))
+        {
+          Raise(new PokemonStored(partyId, slot.Previous()), actorId);
+        }
+      }
+    }
   }
 
   public bool Remove(Specimen pokemon, ActorId? actorId = null)
@@ -85,11 +119,13 @@ public class PokemonStorage : AggregateRoot
 
     if ((source.IsEggInBox && destination.IsHatchedInParty) || (destination.IsEggInBox && source.IsHatchedInParty))
     {
-      bool isValid = GetParty().Any(id => !party[id].IsEgg);
+      #region TODO(fpion): refactor
+      bool isValid = GetParty().Any(id => id != source.Id && id != destination.Id && !party[id].IsEgg);
       if (!isValid)
       {
         throw new NotImplementedException(); // TODO(fpion): implement
       }
+      #endregion
     }
 
     source.Swap(destination, actorId);
@@ -115,14 +151,14 @@ public class PokemonStorage : AggregateRoot
   private Position? FindFirstPartyAvailable()
   {
     IReadOnlyCollection<PokemonId> party = GetParty();
-    return party.Count >= PartySize ? null : new Position(party.Count);
+    return party.Count >= PokemonSlot.PartySize ? null : new Position(party.Count);
   }
   private PokemonSlot FindFirstBoxAvailable()
   {
-    for (int boxNumber = 0; boxNumber < BoxCount; boxNumber++)
+    for (int boxNumber = 0; boxNumber < PokemonSlot.BoxCount; boxNumber++)
     {
       Box box = new(boxNumber);
-      for (int positionNumber = 0; positionNumber < BoxSize; positionNumber++)
+      for (int positionNumber = 0; positionNumber < PokemonSlot.BoxSize; positionNumber++)
       {
         Position position = new(positionNumber);
         PokemonSlot slot = new(position, box);
