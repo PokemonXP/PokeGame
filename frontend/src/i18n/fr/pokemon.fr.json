@@ -1,4 +1,11 @@
 {
+  "boxes": {
+    "close": "Fermer les boîtes",
+    "format": "Boîte {box}",
+    "label": "Boîte",
+    "open": "Ouvrir les boîtes",
+    "title": "Boîtes"
+  },
   "create": "Create Pokémon",
   "created": "The Pokémon has been created.",
   "delete": {
@@ -68,8 +75,6 @@
   "memories": {
     "box": {
       "deposit": "Deposit",
-      "format": "Box {box}",
-      "label": "Box",
       "move": "Move",
       "release": "Release",
       "withdraw": "Withdraw"
