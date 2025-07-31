@@ -231,4 +231,6 @@ public class BattleTests
     Assert.Contains(exception.Errors, e => e.PropertyName == "Opponents" && e.AttemptedValue?.Equals(pokemon.Id.ToGuid()) == true
       && e.ErrorCode == "EggValidator" && e.ErrorMessage == "The Pokémon must not be an egg.");
   }
+
+  // TODO(fpion): Start
 }
