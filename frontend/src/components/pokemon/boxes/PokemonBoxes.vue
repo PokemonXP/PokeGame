@@ -4,10 +4,10 @@ import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 
 import BoxInput from "./BoxInput.vue";
+import BoxPokemonCard from "./BoxPokemonCard.vue";
 import type { PokemonCard } from "@/types/game";
 import { BOX_COUNT, BOX_SIZE } from "@/types/pokemon";
 import { getPokemon } from "@/api/game/pokemon";
-import BoxPokemonCard from "./BoxPokemonCard.vue";
 
 const { t } = useI18n();
 
