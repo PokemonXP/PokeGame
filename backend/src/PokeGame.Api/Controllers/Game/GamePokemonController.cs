@@ -143,6 +143,19 @@ public class GamePokemonController : ControllerBase
     return NoContent();
   }
 
+  [HttpPatch("{id}/withdraw")]
+  public async Task<ActionResult> WithdrawAsync(Guid id, CancellationToken cancellationToken)
+  {
+    ActionResult? result = await EnsureOwnershipAsync(id, cancellationToken);
+    if (result is not null)
+    {
+      return result;
+    }
+
+    await _pokemonService.WithdrawAsync(id, cancellationToken);
+    return NoContent();
+  }
+
   private async Task<ActionResult?> EnsureOwnershipAsync(Guid id, CancellationToken cancellationToken)
   {
     PokemonModel? pokemon = await _pokemonService.ReadAsync(id, uniqueName: null, cancellationToken);

@@ -3,6 +3,7 @@ using FluentValidation.Results;
 using Krakenar.Core;
 using Logitar.EventSourcing;
 using PokeGame.Core.Pokemon.Models;
+using PokeGame.Core.Storage;
 using PokeGame.Core.Trainers;
 
 namespace PokeGame.Core.Pokemon.Commands;
@@ -15,12 +16,18 @@ internal class WithdrawPokemonHandler : ICommandHandler<WithdrawPokemon, Pokemon
   private readonly IApplicationContext _applicationContext;
   private readonly IPokemonQuerier _pokemonQuerier;
   private readonly IPokemonRepository _pokemonRepository;
+  private readonly ITrainerRepository _trainerRepository;
 
-  public WithdrawPokemonHandler(IApplicationContext applicationContext, IPokemonQuerier pokemonQuerier, IPokemonRepository pokemonRepository)
+  public WithdrawPokemonHandler(
+    IApplicationContext applicationContext,
+    IPokemonQuerier pokemonQuerier,
+    IPokemonRepository pokemonRepository,
+    ITrainerRepository trainerRepository)
   {
     _applicationContext = applicationContext;
     _pokemonQuerier = pokemonQuerier;
     _pokemonRepository = pokemonRepository;
+    _trainerRepository = trainerRepository;
   }
 
   public async Task<PokemonModel?> HandleAsync(WithdrawPokemon command, CancellationToken cancellationToken)
@@ -51,21 +58,12 @@ internal class WithdrawPokemonHandler : ICommandHandler<WithdrawPokemon, Pokemon
       throw new ValidationException([failure]);
     }
 
-    TrainerId trainerId = pokemon.Ownership.TrainerId;
-    Storage storage = await _pokemonQuerier.GetStorageAsync(trainerId, cancellationToken);
-
-    Position? position = storage.GetFirstPartyEmptySlot();
-    if (position is null)
-    {
-      ValidationFailure failure = new("TrainerId", "The trainer party is already full.", trainerId.ToGuid())
-      {
-        ErrorCode = "TrainerPartyFull"
-      };
-      throw new ValidationException([failure]);
-    }
-    pokemon.Withdraw(position, actorId);
+    PokemonStorage storage = await _trainerRepository.LoadStorageAsync(pokemon.Ownership.TrainerId, cancellationToken);
+    storage.Withdraw(pokemon, actorId);
 
     await _pokemonRepository.SaveAsync(pokemon, cancellationToken);
+
+    await _trainerRepository.SaveAsync(storage, cancellationToken);
 
     return await _pokemonQuerier.ReadAsync(pokemon, cancellationToken);
   }
