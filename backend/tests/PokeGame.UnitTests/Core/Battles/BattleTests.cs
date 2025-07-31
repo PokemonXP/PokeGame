@@ -70,8 +70,8 @@ public class BattleTests
     Assert.Equal(BattleStatus.Started, battle.Status);
 
     Assert.Equal(2, battle.Pokemon.Count);
-    Assert.Contains(_pokemon.Id, battle.Pokemon);
-    Assert.Contains(fuckOff.Id, battle.Pokemon);
+    Assert.True(battle.Pokemon[_pokemon.Id]);
+    Assert.True(battle.Pokemon[fuckOff.Id]);
 
     Assert.True(battle.HasChanges);
     Assert.Contains(battle.Changes, change => change is BattleStarted started && started.ActorId == _actorId);
@@ -86,12 +86,17 @@ public class BattleTests
       _randomizer.PokemonNature(), _randomizer.IndividualValues(), _randomizer.PokemonGender(_variety.GenderRatio!));
     fuckOff.Catch(_trainer, _pokeBall, _location);
 
-    battle.Start([fuckOff], _actorId);
+    Specimen other = new(_species, _variety, _form, _species.UniqueName, _randomizer.PokemonSize(),
+      _randomizer.PokemonNature(), _randomizer.IndividualValues(), _randomizer.PokemonGender(_variety.GenderRatio!));
+    other.Catch(_trainer, _pokeBall, _location, slot: new PokemonSlot(new Position(1), Box: null));
+
+    battle.Start([other, fuckOff], _actorId);
     Assert.Equal(BattleStatus.Started, battle.Status);
 
-    Assert.Equal(2, battle.Pokemon.Count);
-    Assert.Contains(_pokemon.Id, battle.Pokemon);
-    Assert.Contains(fuckOff.Id, battle.Pokemon);
+    Assert.Equal(3, battle.Pokemon.Count);
+    Assert.True(battle.Pokemon[_pokemon.Id]);
+    Assert.True(battle.Pokemon[fuckOff.Id]);
+    Assert.False(battle.Pokemon[other.Id]);
 
     Assert.True(battle.HasChanges);
     Assert.Contains(battle.Changes, change => change is BattleStarted started && started.ActorId == _actorId);
@@ -184,7 +189,8 @@ public class BattleTests
     Assert.Equal(notes, battle.Notes);
     Assert.Equal(_trainer.Id, battle.Champions.Single());
     Assert.Empty(battle.Opponents);
-    Assert.Equal(_pokemon.Id, battle.Pokemon.Single());
+    Assert.Single(battle.Pokemon);
+    Assert.True(battle.Pokemon[_pokemon.Id]);
   }
 
   [Fact(DisplayName = "WildPokemon: it should throw ArgumentException when champions are empty.")]

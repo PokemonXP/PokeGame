@@ -30,8 +30,8 @@ public class Battle : AggregateRoot
   private readonly HashSet<TrainerId> _opponents = [];
   public IReadOnlyCollection<TrainerId> Opponents => _opponents.ToList().AsReadOnly();
 
-  private readonly HashSet<PokemonId> _pokemon = [];
-  public IReadOnlyCollection<PokemonId> Pokemon => _pokemon.ToList().AsReadOnly();
+  private readonly Dictionary<PokemonId, bool> _pokemon = [];
+  public IReadOnlyDictionary<PokemonId, bool> Pokemon => _pokemon.AsReadOnly();
 
   public Battle() : base()
   {
@@ -145,7 +145,10 @@ public class Battle : AggregateRoot
     Kind = BattleKind.WildPokemon;
 
     Handle((IBattleCreated)@event);
-    _pokemon.AddRange(@event.OpponentIds);
+    foreach (PokemonId opponent in @event.OpponentIds)
+    {
+      _pokemon[opponent] = true;
+    }
   }
 
   protected virtual void Handle(IBattleCreated @event)
@@ -240,13 +243,23 @@ public class Battle : AggregateRoot
       throw new ValidationException(failures);
     }
 
-    Raise(new BattleStarted(pokemon.Select(x => x.Id).ToHashSet()), actorId); // TODO(fpion): currently active Pokémon
+    Dictionary<PokemonId, bool> pokemonIds = pokemon.GroupBy(x => x.Id).ToDictionary(x => x.Key, x => false);
+    foreach (KeyValuePair<TrainerId, HashSet<Specimen>> trainer in participants)
+    {
+      PokemonId activeId = trainer.Value.OrderBy(x => x.Slot?.Position.Value ?? 0).First().Id;
+      pokemonIds[activeId] = true;
+    }
+
+    Raise(new BattleStarted(pokemonIds.AsReadOnly()), actorId);
   }
   protected virtual void Handle(BattleStarted @event)
   {
     Status = BattleStatus.Started;
 
-    _pokemon.AddRange(@event.PokemonIds);
+    foreach (KeyValuePair<PokemonId, bool> pokemon in @event.PokemonIds)
+    {
+      _pokemon[pokemon.Key] = pokemon.Value;
+    }
   }
 
   public override string ToString() => $"{Name} | {base.ToString()}";
