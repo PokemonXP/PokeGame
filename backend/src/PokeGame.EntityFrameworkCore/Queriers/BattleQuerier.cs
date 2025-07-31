@@ -102,6 +102,11 @@ internal class BattleQuerier : IBattleQuerier
             ? (sort.IsDescending ? query.OrderByDescending(x => x.Name) : query.OrderBy(x => x.Name))
             : (sort.IsDescending ? ordered.ThenByDescending(x => x.Name) : ordered.ThenBy(x => x.Name));
           break;
+        case BattleSort.StartedOn:
+          ordered = ordered is null
+            ? (sort.IsDescending ? query.OrderByDescending(x => x.StartedOn) : query.OrderBy(x => x.StartedOn))
+            : (sort.IsDescending ? ordered.ThenByDescending(x => x.StartedOn) : ordered.ThenBy(x => x.StartedOn));
+          break;
         case BattleSort.UpdatedOn:
           ordered = ordered is null
             ? (sort.IsDescending ? query.OrderByDescending(x => x.UpdatedOn) : query.OrderBy(x => x.UpdatedOn))
@@ -125,9 +130,13 @@ internal class BattleQuerier : IBattleQuerier
     {
       HashSet<int> pokemonIds = battle.Pokemon.Select(x => x.PokemonId).ToHashSet();
       Dictionary<int, PokemonEntity> pokemon = await _pokemon.AsNoTracking()
+        .Include(x => x.CurrentTrainer)
         .Include(x => x.Form).ThenInclude(x => x!.Abilities).ThenInclude(x => x.Ability)
         .Include(x => x.Form).ThenInclude(x => x!.Variety).ThenInclude(x => x!.Species)
         .Include(x => x.HeldItem).ThenInclude(x => x!.Move)
+        .Include(x => x.Moves).ThenInclude(x => x.Move)
+        .Include(x => x.OriginalTrainer)
+        .Include(x => x.PokeBall)
         .Where(x => pokemonIds.Contains(x.PokemonId))
         .ToDictionaryAsync(x => x.PokemonId, x => x, cancellationToken);
       foreach (BattlePokemonEntity entity in battle.Pokemon)

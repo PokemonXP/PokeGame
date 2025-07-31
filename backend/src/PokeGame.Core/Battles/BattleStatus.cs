@@ -2,5 +2,6 @@
 
 public enum BattleStatus
 {
-  Created = 0
+  Created = 0,
+  Started
 }

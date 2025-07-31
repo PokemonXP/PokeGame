@@ -1,7 +1,7 @@
 import { urlUtils } from "logitar-js";
 
 import type { CreateBattlePayload, Battle, SearchBattlesPayload } from "@/types/battle";
-import { _delete, get, post } from ".";
+import { _delete, get, patch, post } from ".";
 import type { SearchResults } from "@/types/search";
 
 export async function createBattle(payload: CreateBattlePayload): Promise<Battle> {
@@ -38,4 +38,9 @@ export async function searchBattles(payload: SearchBattlesPayload): Promise<Sear
     .setQuery("limit", payload.limit.toString())
     .buildRelative();
   return (await get<SearchResults<Battle>>(url)).data;
+}
+
+export async function startBattle(id: string): Promise<Battle> {
+  const url: string = new urlUtils.UrlBuilder({ path: "/battles/{id}/start" }).setParameter("id", id).buildRelative();
+  return (await patch<void, Battle>(url)).data;
 }

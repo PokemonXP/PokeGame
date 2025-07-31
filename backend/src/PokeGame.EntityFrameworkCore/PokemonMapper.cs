@@ -64,6 +64,7 @@ internal class PokemonMapper
       Id = source.Id,
       Kind = source.Kind,
       Status = source.Status,
+      StartedOn = source.StartedOn?.AsUniversalTime(),
       Name = source.Name,
       Location = source.Location,
       Url = source.Url,
@@ -71,6 +72,11 @@ internal class PokemonMapper
       ChampionCount = source.ChampionCount,
       OpponentCount = source.OpponentCount
     };
+
+    if (!string.IsNullOrWhiteSpace(source.StartedBy))
+    {
+      destination.StartedBy = FindActor(source.StartedBy);
+    }
 
     foreach (BattleTrainerEntity entity in source.Trainers)
     {
@@ -82,7 +88,7 @@ internal class PokemonMapper
 
       if (entity.IsOpponent)
       {
-        destination.OpponentTrainers.Add(trainer);
+        destination.Opponents.Add(trainer);
       }
       else
       {
@@ -90,14 +96,17 @@ internal class PokemonMapper
       }
     }
 
-    foreach (BattlePokemonEntity entity in source.Pokemon)
+    foreach (BattlePokemonEntity pokemon in source.Pokemon)
     {
-      if (entity.Pokemon is null)
+      if (pokemon.Pokemon is null)
       {
         throw new ArgumentException("The Pokémon is required.", nameof(source));
       }
-      PokemonModel pokemon = ToPokemon(entity.Pokemon);
-      destination.OpponentPokemon.Add(pokemon);
+      destination.Battlers.Add(new BattlerModel
+      {
+        Pokemon = ToPokemon(pokemon.Pokemon),
+        IsActive = pokemon.IsActive
+      });
     }
 
     MapAggregate(source, destination);
@@ -296,6 +305,7 @@ internal class PokemonMapper
       AbilitySlot = source.AbilitySlot,
       Nature = new PokemonNatureModel(PokemonNatures.Instance.Find(source.Nature)),
       EggCycles = source.EggCycles,
+      IsEgg = source.IsEgg,
       GrowthRate = source.GrowthRate,
       Level = source.Level,
       Experience = source.Experience,

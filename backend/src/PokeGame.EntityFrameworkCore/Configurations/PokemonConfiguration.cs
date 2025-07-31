@@ -31,6 +31,7 @@ internal class PokemonConfiguration : AggregateConfiguration<PokemonEntity>, IEn
     builder.HasIndex(x => x.UniqueNameNormalized).IsUnique();
     builder.HasIndex(x => x.Nickname);
     builder.HasIndex(x => x.EggCycles);
+    builder.HasIndex(x => x.IsEgg);
     builder.HasIndex(x => x.Level);
     builder.HasIndex(x => x.Experience);
     builder.HasIndex(x => x.HeldItemUid);

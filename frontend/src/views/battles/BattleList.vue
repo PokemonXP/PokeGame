@@ -23,6 +23,7 @@ import type { Battle, BattleKind, BattleSort, BattleStatus, SearchBattlesPayload
 import type { SearchResults } from "@/types/search";
 import { handleErrorKey } from "@/inject";
 import { searchBattles } from "@/api/battle";
+import BattleStatusBadge from "@/components/battle/BattleStatusBadge.vue";
 
 const handleError = inject(handleErrorKey) as (e: unknown) => void;
 const route = useRoute();
@@ -30,7 +31,7 @@ const router = useRouter();
 const { isEmpty } = objectUtils;
 const { orderBy } = arrayUtils;
 const { parseBoolean, parseNumber } = parsingUtils;
-const { n, rt, t, tm } = useI18n();
+const { d, n, rt, t, tm } = useI18n();
 
 const battles = ref<Battle[]>([]);
 const isLoading = ref<boolean>(false);
@@ -183,7 +184,13 @@ watch(
               </RouterLink>
             </td>
             <td><LocationIcon /> {{ battle.location }}</td>
-            <td>{{ t(`battle.status.options.${battle.status}`) }}</td>
+            <td>
+              <BattleStatusBadge :status="battle.status" />
+              <template v-if="battle.startedOn">
+                <br />
+                {{ d(battle.startedOn, "medium") }}
+              </template>
+            </td>
             <td>{{ n(battle.championCount, "integer") }}</td>
             <td>{{ n(battle.opponentCount, "integer") }}</td>
             <td><StatusBlock :actor="battle.updatedBy" :date="battle.updatedOn" /></td>

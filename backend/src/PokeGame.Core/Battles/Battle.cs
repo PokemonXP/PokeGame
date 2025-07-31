@@ -27,11 +27,11 @@ public class Battle : AggregateRoot
   private readonly HashSet<TrainerId> _champions = [];
   public IReadOnlyCollection<TrainerId> Champions => _champions.ToList().AsReadOnly();
 
-  private readonly HashSet<TrainerId> _trainerOpponents = [];
-  public IReadOnlyCollection<TrainerId> TrainerOpponents => _trainerOpponents.ToList().AsReadOnly();
+  private readonly HashSet<TrainerId> _opponents = [];
+  public IReadOnlyCollection<TrainerId> Opponents => _opponents.ToList().AsReadOnly();
 
-  private readonly HashSet<PokemonId> _pokemonOpponents = [];
-  public IReadOnlyCollection<PokemonId> PokemonOpponents => _pokemonOpponents.ToList().AsReadOnly();
+  private readonly Dictionary<PokemonId, bool> _pokemon = [];
+  public IReadOnlyDictionary<PokemonId, bool> Pokemon => _pokemon.AsReadOnly();
 
   public Battle() : base()
   {
@@ -82,7 +82,7 @@ public class Battle : AggregateRoot
     Kind = BattleKind.Trainer;
 
     Handle((IBattleCreated)@event);
-    _trainerOpponents.AddRange(@event.OpponentIds);
+    _opponents.AddRange(@event.OpponentIds);
   }
 
   public static Battle WildPokemon(
@@ -145,7 +145,10 @@ public class Battle : AggregateRoot
     Kind = BattleKind.WildPokemon;
 
     Handle((IBattleCreated)@event);
-    _pokemonOpponents.AddRange(@event.OpponentIds);
+    foreach (PokemonId opponent in @event.OpponentIds)
+    {
+      _pokemon[opponent] = true;
+    }
   }
 
   protected virtual void Handle(IBattleCreated @event)
@@ -166,6 +169,96 @@ public class Battle : AggregateRoot
     if (!IsDeleted)
     {
       Raise(new BattleDeleted(), actorId);
+    }
+  }
+
+  public void Start(IEnumerable<Specimen> pokemon, ActorId? actorId = null)
+  {
+    if (Status != BattleStatus.Created)
+    {
+      ValidationFailure failure = new("BattleId", "The battle must not have started.", Id.ToGuid())
+      {
+        CustomState = new { Status },
+        ErrorCode = "StatusValidator"
+      };
+      throw new ValidationException([failure]);
+    }
+
+    HashSet<TrainerId> trainerIds = _champions.Concat(_opponents).ToHashSet();
+    Dictionary<TrainerId, HashSet<Specimen>> participants = trainerIds.ToDictionary(x => x, x => new HashSet<Specimen>());
+
+    int capacity = pokemon.Count() + trainerIds.Count;
+    List<ValidationFailure> failures = new(capacity);
+    foreach (Specimen specimen in pokemon)
+    {
+      if (specimen.IsEgg)
+      {
+        failures.Add(new ValidationFailure("PokemonId", "The Pokémon must not be an egg.", specimen.Id.ToGuid())
+        {
+          CustomState = new { EggCycles = specimen.EggCycles?.Value },
+          ErrorCode = "NotEggValidator"
+        });
+      }
+      else if (specimen.Ownership is null || !trainerIds.Contains(specimen.Ownership.TrainerId))
+      {
+        failures.Add(new ValidationFailure("PokemonId", "The Pokémon must be owned by a trainer registered in champions or opponents.", specimen.Id.ToGuid())
+        {
+          CustomState = new { TrainerId = specimen.Ownership?.TrainerId.ToGuid() },
+          ErrorCode = "TrainerValidator"
+        });
+      }
+      else if (specimen.Slot?.Box is not null)
+      {
+        failures.Add(new ValidationFailure("PokemonId", "The Pokémon must be in the party of its trainer.", specimen.Id.ToGuid())
+        {
+          CustomState = new { Box = specimen.Slot.Box.Value },
+          ErrorCode = "InPartyValidator"
+        });
+      }
+      else
+      {
+        participants[specimen.Ownership.TrainerId].Add(specimen);
+      }
+    }
+    foreach (KeyValuePair<TrainerId, HashSet<Specimen>> trainer in participants)
+    {
+      if (trainer.Value.Count < 1)
+      {
+        failures.Add(new ValidationFailure("TrainerId", "The trainer must have at least one participating Pokémon.", trainer.Key.ToGuid())
+        {
+          ErrorCode = "NotEmptyPartyValidator"
+        });
+      }
+      else if (trainer.Value.Count > Storage.PartySize)
+      {
+        failures.Add(new ValidationFailure("TrainerId", $"The trainer party has exceeded the limit ({Storage.PartySize}).", trainer.Key.ToGuid())
+        {
+          CustomState = new { Party = trainer.Value.Select(x => x.Id.ToGuid()) },
+          ErrorCode = "TrainerValidator"
+        });
+      }
+    }
+    if (failures.Count > 0)
+    {
+      throw new ValidationException(failures);
+    }
+
+    Dictionary<PokemonId, bool> pokemonIds = pokemon.GroupBy(x => x.Id).ToDictionary(x => x.Key, x => false);
+    foreach (KeyValuePair<TrainerId, HashSet<Specimen>> trainer in participants)
+    {
+      PokemonId activeId = trainer.Value.OrderBy(x => x.Slot?.Position.Value ?? 0).First().Id;
+      pokemonIds[activeId] = true;
+    }
+
+    Raise(new BattleStarted(pokemonIds.AsReadOnly()), actorId);
+  }
+  protected virtual void Handle(BattleStarted @event)
+  {
+    Status = BattleStatus.Started;
+
+    foreach (KeyValuePair<PokemonId, bool> pokemon in @event.PokemonIds)
+    {
+      _pokemon[pokemon.Key] = pokemon.Value;
     }
   }
 

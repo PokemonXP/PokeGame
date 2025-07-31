@@ -1,4 +1,4 @@
-﻿using FluentValidation;
+﻿using Bogus;
 using Krakenar.Core;
 using Krakenar.Core.Settings;
 using Logitar.EventSourcing;
@@ -12,19 +12,26 @@ using PokeGame.Core.Regions;
 using PokeGame.Core.Species;
 using PokeGame.Core.Trainers;
 using PokeGame.Core.Varieties;
+using ValidationException = FluentValidation.ValidationException;
 
 namespace PokeGame.Core.Battles;
 
 [Trait(Traits.Category, Categories.Unit)]
 public class BattleTests
 {
+  private readonly ActorId _actorId = ActorId.NewId();
+  private readonly Faker _faker = new();
   private readonly IPokemonRandomizer _randomizer = PokemonRandomizer.Instance;
   private readonly UniqueNameSettings _uniqueNameSetings = new();
+
+  private readonly DisplayName _name = new("My First Battle");
+  private readonly Location _location = new("Collège de l’Épervier");
 
   private readonly PokemonSpecies _species;
   private readonly Variety _variety;
   private readonly Form _form;
   private readonly Specimen _pokemon;
+  private readonly Item _pokeBall;
   private readonly Trainer _trainer;
 
   public BattleTests()
@@ -42,22 +49,88 @@ public class BattleTests
     _pokemon = new Specimen(_species, _variety, _form, _species.UniqueName, _randomizer.PokemonSize(),
       _randomizer.PokemonNature(), _randomizer.IndividualValues(), _randomizer.PokemonGender(_variety.GenderRatio!));
 
-    _trainer = new Trainer(new License("Q-123456-3"), new UniqueName(_uniqueNameSetings, "elliotto"));
+    _pokeBall = new Item(new UniqueName(_uniqueNameSetings, "poke-ball"), new PokeBallProperties());
+
+    _trainer = _faker.Trainer();
+  }
+
+  [Fact(DisplayName = "Start: it should start a trainer battle.")]
+  public void Given_TrainerNotStarted_When_Start_Then_Started()
+  {
+    Trainer opponent = _faker.Trainer();
+    _pokemon.Receive(opponent, _pokeBall, _location);
+
+    Battle battle = Battle.Trainer(_name, _location, [_trainer], [opponent]);
+
+    Specimen fuckOff = new(_species, _variety, _form, _species.UniqueName, _randomizer.PokemonSize(),
+      _randomizer.PokemonNature(), _randomizer.IndividualValues(), _randomizer.PokemonGender(_variety.GenderRatio!));
+    fuckOff.Catch(_trainer, _pokeBall, _location);
+
+    battle.Start([fuckOff, _pokemon], _actorId);
+    Assert.Equal(BattleStatus.Started, battle.Status);
+
+    Assert.Equal(2, battle.Pokemon.Count);
+    Assert.True(battle.Pokemon[_pokemon.Id]);
+    Assert.True(battle.Pokemon[fuckOff.Id]);
+
+    Assert.True(battle.HasChanges);
+    Assert.Contains(battle.Changes, change => change is BattleStarted started && started.ActorId == _actorId);
+  }
+
+  [Fact(DisplayName = "Start: it should start a wild Pokémon battle.")]
+  public void Given_WildNotStarted_When_Start_Then_Started()
+  {
+    Battle battle = Battle.WildPokemon(_name, _location, [_trainer], [_pokemon]);
+
+    Specimen fuckOff = new(_species, _variety, _form, _species.UniqueName, _randomizer.PokemonSize(),
+      _randomizer.PokemonNature(), _randomizer.IndividualValues(), _randomizer.PokemonGender(_variety.GenderRatio!));
+    fuckOff.Catch(_trainer, _pokeBall, _location);
+
+    Specimen other = new(_species, _variety, _form, _species.UniqueName, _randomizer.PokemonSize(),
+      _randomizer.PokemonNature(), _randomizer.IndividualValues(), _randomizer.PokemonGender(_variety.GenderRatio!));
+    other.Catch(_trainer, _pokeBall, _location, slot: new PokemonSlot(new Position(1), Box: null));
+
+    battle.Start([other, fuckOff], _actorId);
+    Assert.Equal(BattleStatus.Started, battle.Status);
+
+    Assert.Equal(3, battle.Pokemon.Count);
+    Assert.True(battle.Pokemon[_pokemon.Id]);
+    Assert.True(battle.Pokemon[fuckOff.Id]);
+    Assert.False(battle.Pokemon[other.Id]);
+
+    Assert.True(battle.HasChanges);
+    Assert.Contains(battle.Changes, change => change is BattleStarted started && started.ActorId == _actorId);
+  }
+
+  [Fact(DisplayName = "Start: it should throw ValidationException when the battle has already started.")]
+  public void Given_AlreadyStarted_When_Start_Then_ValidationException()
+  {
+    Battle battle = Battle.WildPokemon(_name, _location, [_trainer], [_pokemon]);
+
+    Specimen fuckOff = new(_species, _variety, _form, _species.UniqueName, _randomizer.PokemonSize(),
+      _randomizer.PokemonNature(), _randomizer.IndividualValues(), _randomizer.PokemonGender(_variety.GenderRatio!));
+    fuckOff.Catch(_trainer, _pokeBall, _location);
+
+    battle.Start([fuckOff]);
+
+    var exception = Assert.Throws<ValidationException>(() => battle.Start([fuckOff]));
+    Assert.Single(exception.Errors);
+    Assert.Contains(exception.Errors, e => e.PropertyName == "BattleId" && e.AttemptedValue?.Equals(battle.Id.ToGuid()) == true
+      && e.ErrorCode == "StatusValidator" && e.ErrorMessage == "The battle must not have started.");
   }
 
   [Fact(DisplayName = "Trainer: it should create a trainer battle.")]
   public void Given_Valid_When_Trainer_Then_Battle()
   {
-    Trainer opponent = new(new License("Q-123456-3"), new UniqueName(_uniqueNameSetings, "regina"), TrainerGender.Female);
+    Trainer opponent = _faker.Trainer();
 
     DisplayName name = new("My First Battle");
     Location location = new("Collège de l’Épervier");
-    ActorId actorId = ActorId.NewId();
     BattleId battleId = BattleId.NewId();
-    Battle battle = Battle.Trainer(name, location, [_trainer], [opponent], url: null, notes: null, actorId, battleId);
+    Battle battle = Battle.Trainer(name, location, [_trainer], [opponent], url: null, notes: null, _actorId, battleId);
 
     Assert.True(battle.HasChanges);
-    Assert.Contains(battle.Changes, change => change is TrainerBattleCreated created && created.ActorId == actorId);
+    Assert.Contains(battle.Changes, change => change is TrainerBattleCreated created && created.ActorId == _actorId);
 
     Assert.Equal(battleId, battle.Id);
     Assert.Equal(BattleKind.Trainer, battle.Kind);
@@ -67,16 +140,14 @@ public class BattleTests
     Assert.Null(battle.Url);
     Assert.Null(battle.Notes);
     Assert.Equal(_trainer.Id, battle.Champions.Single());
-    Assert.Equal(opponent.Id, battle.TrainerOpponents.Single());
-    Assert.Empty(battle.PokemonOpponents);
+    Assert.Equal(opponent.Id, battle.Opponents.Single());
+    Assert.Empty(battle.Pokemon);
   }
 
   [Fact(DisplayName = "Trainer: it should throw ArgumentException when champions are empty.")]
   public void Given_EmptyChampions_When_Trainer_Then_ArgumentException()
   {
-    DisplayName name = new("My First Battle");
-    Location location = new("Collège de l’Épervier");
-    var exception = Assert.Throws<ArgumentException>(() => Battle.Trainer(name, location, champions: [], opponents: []));
+    var exception = Assert.Throws<ArgumentException>(() => Battle.Trainer(_name, _location, champions: [], opponents: []));
     Assert.Equal("champions", exception.ParamName);
     Assert.StartsWith("At least one champion trainer must be provided.", exception.Message);
   }
@@ -84,9 +155,7 @@ public class BattleTests
   [Fact(DisplayName = "Trainer: it should throw ArgumentException when opponents are empty.")]
   public void Given_EmptyOpponents_When_Trainer_Then_ArgumentException()
   {
-    DisplayName name = new("My First Battle");
-    Location location = new("Collège de l’Épervier");
-    var exception = Assert.Throws<ArgumentException>(() => Battle.Trainer(name, location, champions: [_trainer], opponents: []));
+    var exception = Assert.Throws<ArgumentException>(() => Battle.Trainer(_name, _location, champions: [_trainer], opponents: []));
     Assert.Equal("opponents", exception.ParamName);
     Assert.StartsWith("At least one opponent trainer must be provided.", exception.Message);
   }
@@ -94,9 +163,7 @@ public class BattleTests
   [Fact(DisplayName = "Trainer: it should throw ValidationException when a trainer appears on both sides of the battle.")]
   public void Given_TrainerBothSides_When_Trainer_Then_ValidationException()
   {
-    DisplayName name = new("My First Battle");
-    Location location = new("Collège de l’Épervier");
-    var exception = Assert.Throws<ValidationException>(() => Battle.Trainer(name, location, [_trainer], [_trainer]));
+    var exception = Assert.Throws<ValidationException>(() => Battle.Trainer(_name, _location, [_trainer], [_trainer]));
     Assert.Single(exception.Errors);
     Assert.Contains(exception.Errors, e => e.PropertyName == "TrainerId" && e.AttemptedValue?.Equals(_trainer.Id.ToGuid()) == true
       && e.ErrorCode == "TrainerBattleValidator" && e.ErrorMessage == "The trainer cannot appear on both sides of the battle.");
@@ -105,35 +172,31 @@ public class BattleTests
   [Fact(DisplayName = "WildPokemon: it should create a wild Pokémon battle.")]
   public void Given_Valid_When_WildPokemon_Then_Battle()
   {
-    DisplayName name = new("My First Battle");
-    Location location = new("Collège de l’Épervier");
     Url url = new("https://bulbapedia.bulbagarden.net/wiki/Pok%C3%A9mon_battle");
     Notes notes = new("This is my first battle.");
-    ActorId actorId = ActorId.NewId();
     BattleId battleId = BattleId.NewId();
-    Battle battle = Battle.WildPokemon(name, location, [_trainer], [_pokemon], url, notes, actorId, battleId);
+    Battle battle = Battle.WildPokemon(_name, _location, [_trainer], [_pokemon], url, notes, _actorId, battleId);
 
     Assert.True(battle.HasChanges);
-    Assert.Contains(battle.Changes, change => change is WildPokemonBattleCreated created && created.ActorId == actorId);
+    Assert.Contains(battle.Changes, change => change is WildPokemonBattleCreated created && created.ActorId == _actorId);
 
     Assert.Equal(battleId, battle.Id);
     Assert.Equal(BattleKind.WildPokemon, battle.Kind);
     Assert.Equal(BattleStatus.Created, battle.Status);
-    Assert.Equal(name, battle.Name);
-    Assert.Equal(location, battle.Location);
+    Assert.Equal(_name, battle.Name);
+    Assert.Equal(_location, battle.Location);
     Assert.Equal(url, battle.Url);
     Assert.Equal(notes, battle.Notes);
     Assert.Equal(_trainer.Id, battle.Champions.Single());
-    Assert.Empty(battle.TrainerOpponents);
-    Assert.Equal(_pokemon.Id, battle.PokemonOpponents.Single());
+    Assert.Empty(battle.Opponents);
+    Assert.Single(battle.Pokemon);
+    Assert.True(battle.Pokemon[_pokemon.Id]);
   }
 
   [Fact(DisplayName = "WildPokemon: it should throw ArgumentException when champions are empty.")]
   public void Given_EmptyChampions_When_WildPokemon_Then_ArgumentException()
   {
-    DisplayName name = new("My First Battle");
-    Location location = new("Collège de l’Épervier");
-    var exception = Assert.Throws<ArgumentException>(() => Battle.WildPokemon(name, location, champions: [], opponents: []));
+    var exception = Assert.Throws<ArgumentException>(() => Battle.WildPokemon(_name, _location, champions: [], opponents: []));
     Assert.Equal("champions", exception.ParamName);
     Assert.StartsWith("At least one champion trainer must be provided.", exception.Message);
   }
@@ -141,9 +204,7 @@ public class BattleTests
   [Fact(DisplayName = "WildPokemon: it should throw ArgumentException when opponents are empty.")]
   public void Given_EmptyOpponents_When_WildPokemon_Then_ArgumentException()
   {
-    DisplayName name = new("My First Battle");
-    Location location = new("Collège de l’Épervier");
-    var exception = Assert.Throws<ArgumentException>(() => Battle.WildPokemon(name, location, champions: [_trainer], opponents: []));
+    var exception = Assert.Throws<ArgumentException>(() => Battle.WildPokemon(_name, _location, champions: [_trainer], opponents: []));
     Assert.Equal("opponents", exception.ParamName);
     Assert.StartsWith("At least one opponent Pokémon must be provided.", exception.Message);
   }
@@ -151,13 +212,9 @@ public class BattleTests
   [Fact(DisplayName = "WildPokemon: it should throw ValidationException when a Pokémon has an owner.")]
   public void Given_NotWildPokemon_When_WildPokemon_Then_ValidationException()
   {
-    DisplayName name = new("My First Battle");
-    Location location = new("Collège de l’Épervier");
+    _pokemon.Catch(_trainer, _pokeBall, _location);
 
-    Item pokeBall = new(new UniqueName(_uniqueNameSetings, "poke-ball"), new PokeBallProperties(), new Price(200));
-    _pokemon.Catch(_trainer, pokeBall, location);
-
-    var exception = Assert.Throws<ValidationException>(() => Battle.WildPokemon(name, location, [_trainer], [_pokemon]));
+    var exception = Assert.Throws<ValidationException>(() => Battle.WildPokemon(_name, _location, [_trainer], [_pokemon]));
     Assert.Single(exception.Errors);
     Assert.Contains(exception.Errors, e => e.PropertyName == "Opponents" && e.AttemptedValue?.Equals(_pokemon.Id.ToGuid()) == true
       && e.ErrorCode == "WildPokemonValidator" && e.ErrorMessage == "The Pokémon must be a wild Pokémon.");
@@ -169,11 +226,11 @@ public class BattleTests
     Specimen pokemon = new(_species, _variety, _form, _species.UniqueName, _randomizer.PokemonSize(), _randomizer.PokemonNature(),
       _randomizer.IndividualValues(), _randomizer.PokemonGender(_variety.GenderRatio!), eggCycles: _species.EggCycles);
 
-    DisplayName name = new("My First Battle");
-    Location location = new("Collège de l’Épervier");
-    var exception = Assert.Throws<ValidationException>(() => Battle.WildPokemon(name, location, [_trainer], [pokemon]));
+    var exception = Assert.Throws<ValidationException>(() => Battle.WildPokemon(_name, _location, [_trainer], [pokemon]));
     Assert.Single(exception.Errors);
     Assert.Contains(exception.Errors, e => e.PropertyName == "Opponents" && e.AttemptedValue?.Equals(pokemon.Id.ToGuid()) == true
       && e.ErrorCode == "EggValidator" && e.ErrorMessage == "The Pokémon must not be an egg.");
   }
+
+  // TODO(fpion): Start
 }

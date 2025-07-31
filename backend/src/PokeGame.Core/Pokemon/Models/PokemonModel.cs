@@ -21,7 +21,7 @@ public class PokemonModel : AggregateModel
   public PokemonNatureModel Nature { get; set; } = new();
 
   public byte EggCycles { get; set; }
-  public bool IsEgg => EggCycles > 0;
+  public bool IsEgg { get; set; }
   public GrowthRate GrowthRate { get; set; }
   public int Level { get; set; }
   public int Experience { get; set; }

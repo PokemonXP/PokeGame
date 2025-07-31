@@ -5,11 +5,13 @@ import { useRoute, useRouter } from "vue-router";
 
 import AdminBreadcrumb from "@/components/admin/AdminBreadcrumb.vue";
 import BattleKindBadge from "@/components/battle/BattleKindBadge.vue";
+import BattleStatus from "@/components/battle/BattleStatus.vue";
 import DeleteBattle from "@/components/battle/DeleteBattle.vue";
 import DisplayNameInput from "@/components/shared/DisplayNameInput.vue";
 import LocationInput from "@/components/regions/LocationInput.vue";
 import NotesTextarea from "@/components/shared/NotesTextarea.vue";
 import PokemonTable from "@/components/battle/PokemonTable.vue";
+import StartBattle from "@/components/battle/StartBattle.vue";
 import StatusDetail from "@/components/shared/StatusDetail.vue";
 import SubmitButton from "@/components/shared/SubmitButton.vue";
 import TrainerTable from "@/components/battle/TrainerTable.vue";
@@ -40,6 +42,11 @@ const breadcrumb = computed<Breadcrumb>(() => ({ to: { name: "BattleList" }, tex
 function onDeleted(): void {
   toasts.success("battle.deleted");
   router.push({ name: "BattleList" });
+}
+
+function started(battle: Battle): void {
+  toasts.success("battle.started.success");
+  console.log(battle); // TODO(fpion): join!
 }
 
 const { isValid, reinitialize, validate } = useForm();
@@ -103,12 +110,13 @@ onMounted(async () => {
           </tr>
           <tr>
             <th scope="row">{{ t("battle.status.label") }}</th>
-            <td>{{ t(`battle.status.options.${battle.status}`) }}</td>
+            <td><BattleStatus :battle="battle" /></td>
           </tr>
         </tbody>
       </table>
-      <div class="mb-3">
+      <div class="mb-3 d-flex gap-2">
         <DeleteBattle :battle="battle" @deleted="onDeleted" @error="handleError" />
+        <StartBattle v-if="battle.status === 'Created'" :battle="battle" @error="handleError" @started="started" />
       </div>
       <form @submit.prevent="submit">
         <div class="row">
@@ -123,9 +131,14 @@ onMounted(async () => {
       </form>
       <h2 class="h3">{{ t("battle.champions.title") }}</h2>
       <TrainerTable :trainers="battle.champions" />
-      <h2 class="h3">{{ t("battle.opponents.title") }}</h2>
-      <PokemonTable v-if="battle.opponentPokemon.length" :pokemon="battle.opponentPokemon" />
-      <TrainerTable v-if="battle.opponentTrainers.length" :trainers="battle.opponentTrainers" />
+      <template v-if="battle.opponents.length">
+        <h2 class="h3">{{ t("battle.opponents.title") }}</h2>
+        <TrainerTable :trainers="battle.opponents" />
+      </template>
+      <template v-if="battle.battlers.length">
+        <h2 class="h3">{{ t("pokemon.title") }}</h2>
+        <PokemonTable :battlers="battle.battlers" />
+      </template>
     </template>
   </main>
 </template>

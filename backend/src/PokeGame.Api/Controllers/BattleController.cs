@@ -49,4 +49,11 @@ public class BattleController : ControllerBase
     SearchResults<BattleModel> battles = await _battleService.SearchAsync(payload, cancellationToken);
     return Ok(battles);
   }
+
+  [HttpPatch("{id}/start")]
+  public async Task<ActionResult<BattleModel>> StartAsync(Guid id, CancellationToken cancellationToken)
+  {
+    BattleModel? battle = await _battleService.StartAsync(id, cancellationToken);
+    return battle is null ? NotFound() : Ok(battle);
+  }
 }

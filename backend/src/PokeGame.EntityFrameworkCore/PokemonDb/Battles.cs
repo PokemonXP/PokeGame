@@ -22,6 +22,8 @@ internal static class Battles
   public static readonly ColumnId Name = new(nameof(BattleEntity.Name), Table);
   public static readonly ColumnId Notes = new(nameof(BattleEntity.Notes), Table);
   public static readonly ColumnId OpponentCount = new(nameof(BattleEntity.OpponentCount), Table);
+  public static readonly ColumnId StartedBy = new(nameof(BattleEntity.StartedBy), Table);
+  public static readonly ColumnId StartedOn = new(nameof(BattleEntity.StartedOn), Table);
   public static readonly ColumnId Status = new(nameof(BattleEntity.Status), Table);
   public static readonly ColumnId Url = new(nameof(BattleEntity.Url), Table);
 }

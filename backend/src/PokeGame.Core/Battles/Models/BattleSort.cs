@@ -5,5 +5,6 @@ public enum BattleSort
   CreatedOn,
   Location,
   Name,
+  StartedOn,
   UpdatedOn
 }

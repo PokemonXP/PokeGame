@@ -1,4 +1,4 @@
-﻿using PokeGame.Core.Pokemon.Models;
+﻿using Krakenar.Contracts.Actors;
 using PokeGame.Core.Trainers.Models;
 using AggregateModel = Krakenar.Contracts.Aggregate;
 
@@ -9,16 +9,19 @@ public class BattleModel : AggregateModel
   public BattleKind Kind { get; set; }
   public BattleStatus Status { get; set; }
 
+  public Actor? StartedBy { get; set; }
+  public DateTime? StartedOn { get; set; }
+
   public string Name { get; set; } = string.Empty;
   public string Location { get; set; } = string.Empty;
   public string? Url { get; set; }
   public string? Notes { get; set; }
 
   public int ChampionCount { get; set; }
-  public List<TrainerModel> Champions { get; set; } = [];
   public int OpponentCount { get; set; }
-  public List<TrainerModel> OpponentTrainers { get; set; } = [];
-  public List<PokemonModel> OpponentPokemon { get; set; } = [];
+  public List<TrainerModel> Champions { get; set; } = [];
+  public List<TrainerModel> Opponents { get; set; } = [];
+  public List<BattlerModel> Battlers { get; set; } = [];
 
   public override string ToString() => $"{Name} | {base.ToString()}";
 }
