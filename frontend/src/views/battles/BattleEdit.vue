@@ -18,6 +18,7 @@ import { StatusCodes, type ApiFailure } from "@/types/api";
 import { handleErrorKey } from "@/inject";
 import { readBattle } from "@/api/battle";
 import { useToastStore } from "@/stores/toast";
+import ResetBattle from "@/components/battle/ResetBattle.vue";
 
 const handleError = inject(handleErrorKey) as (e: unknown) => void;
 const route = useRoute();
@@ -37,6 +38,10 @@ const breadcrumb = computed<Breadcrumb>(() => ({ to: { name: "BattleList" }, tex
 function onCancelled(cancelled: Battle): void {
   battle.value = cancelled;
   toasts.success("battle.cancelled.success");
+}
+function onReset(reset: Battle): void {
+  battle.value = reset;
+  toasts.success("battle.reset.success");
 }
 
 function onDeleted(): void {
@@ -120,7 +125,10 @@ onMounted(async () => {
         <RouterLink v-else-if="battle.status === 'Started'" :to="{ name: 'BattleView', params: { id: battle.id } }" class="btn btn-primary">
           <font-awesome-icon icon="fas fa-door-open" /> {{ t("battle.rejoin") }}
         </RouterLink>
-        <CancelBattle v-if="battle.status === 'Started'" :battle="battle" @cancelled="onCancelled" @error="handleError" />
+        <template v-if="battle.status === 'Started'">
+          <ResetBattle v-if="battle.status === 'Started'" :battle="battle" @error="handleError" @reset="onReset" />
+          <CancelBattle :battle="battle" @cancelled="onCancelled" @error="handleError" />
+        </template>
       </div>
       <TarTabs>
         <TarTab active id="general" :title="t('general')">
