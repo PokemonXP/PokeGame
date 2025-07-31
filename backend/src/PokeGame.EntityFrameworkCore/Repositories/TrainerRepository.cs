@@ -91,4 +91,8 @@ internal class TrainerRepository : Repository, ITrainerRepository
   {
     await base.SaveAsync(storage, cancellationToken);
   }
+  public async Task SaveAsync(IEnumerable<PokemonStorage> storages, CancellationToken cancellationToken)
+  {
+    await base.SaveAsync(storages, cancellationToken);
+  }
 }

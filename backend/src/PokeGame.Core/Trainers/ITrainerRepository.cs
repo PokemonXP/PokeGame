@@ -21,4 +21,5 @@ public interface ITrainerRepository
   Task SaveAsync(TrainerInventory inventory, CancellationToken cancellationToken = default);
 
   Task SaveAsync(PokemonStorage storage, CancellationToken cancellationToken = default);
+  Task SaveAsync(IEnumerable<PokemonStorage> storages, CancellationToken cancellationToken = default);
 }

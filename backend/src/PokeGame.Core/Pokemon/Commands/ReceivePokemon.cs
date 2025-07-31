@@ -80,11 +80,14 @@ internal class ReceivePokemonHandler : ICommandHandler<ReceivePokemon, PokemonMo
 
     await _pokemonManager.SaveAsync(pokemon, cancellationToken);
 
-    if (previousStorage is not null)
+    if (previousStorage is null)
     {
-      await _trainerRepository.SaveAsync(previousStorage, cancellationToken);
+      await _trainerRepository.SaveAsync(storage, cancellationToken);
     }
-    await _trainerRepository.SaveAsync(storage, cancellationToken);
+    else
+    {
+      await _trainerRepository.SaveAsync([previousStorage, storage], cancellationToken);
+    }
 
     return await _pokemonQuerier.ReadAsync(pokemon, cancellationToken);
   }
