@@ -12,17 +12,65 @@ namespace PokeGame.Core.Battles;
 
 public class Battle : AggregateRoot
 {
+  private BattleUpdated _updated = new();
+  private bool HasUpdates => _updated.Name is not null || _updated.Location is not null || _updated.Url is not null || _updated.Notes is not null;
+
   public new BattleId Id => new(base.Id);
 
   public BattleKind Kind { get; private set; }
   public BattleStatus Status { get; private set; }
 
   private DisplayName? _name = null;
-  public DisplayName Name => _name ?? throw new InvalidOperationException("The battle has not been initialized.");
+  public DisplayName Name
+  {
+    get => _name ?? throw new InvalidOperationException("The battle has not been initialized.");
+    set
+    {
+      if (_name != value)
+      {
+        _name = value;
+        _updated.Name = value;
+      }
+    }
+  }
   private Location? _location = null;
-  public Location Location => _location ?? throw new InvalidOperationException("The battle has not been initialized.");
-  public Url? Url { get; private set; }
-  public Notes? Notes { get; private set; }
+  public Location Location
+  {
+    get => _location ?? throw new InvalidOperationException("The battle has not been initialized.");
+    set
+    {
+      if (_location != value)
+      {
+        _location = value;
+        _updated.Location = value;
+      }
+    }
+  }
+  private Url? _url = null;
+  public Url? Url
+  {
+    get => _url;
+    set
+    {
+      if (_url != value)
+      {
+        _url = value;
+        _updated.Url = new Change<Url>(value);
+      }
+    }
+  }
+  private Notes? _notes = null;
+  public Notes? Notes
+  {
+    get => _notes;
+    set
+    {
+      if (_notes != value)
+      {
+        _updated.Notes = new Change<Notes>(value);
+      }
+    }
+  }
 
   private readonly HashSet<TrainerId> _champions = [];
   public IReadOnlyCollection<TrainerId> Champions => _champions.ToList().AsReadOnly();
@@ -157,8 +205,8 @@ public class Battle : AggregateRoot
 
     _name = @event.Name;
     _location = @event.Location;
-    Url = @event.Url;
-    Notes = @event.Notes;
+    _url = @event.Url;
+    _notes = @event.Notes;
 
     _champions.Clear();
     _champions.AddRange(@event.ChampionIds);
@@ -259,6 +307,34 @@ public class Battle : AggregateRoot
     foreach (KeyValuePair<PokemonId, bool> pokemon in @event.PokemonIds)
     {
       _pokemon[pokemon.Key] = pokemon.Value;
+    }
+  }
+
+  public void Update(ActorId? actorId = null)
+  {
+    if (HasUpdates)
+    {
+      Raise(_updated, actorId, DateTime.Now);
+      _updated = new();
+    }
+  }
+  protected virtual void Handle(BattleUpdated @event)
+  {
+    if (@event.Name is not null)
+    {
+      _name = @event.Name;
+    }
+    if (@event.Location is not null)
+    {
+      _location = @event.Location;
+    }
+    if (@event.Url is not null)
+    {
+      _url = @event.Url.Value;
+    }
+    if (@event.Notes is not null)
+    {
+      _notes = @event.Notes.Value;
     }
   }
 

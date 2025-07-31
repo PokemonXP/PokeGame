@@ -85,6 +85,28 @@ internal class BattleEntity : AggregateEntity
     }
   }
 
+  public void Update(BattleUpdated @event)
+  {
+    base.Update(@event);
+
+    if (@event.Name is not null)
+    {
+      Name = @event.Name.Value;
+    }
+    if (@event.Location is not null)
+    {
+      Location = @event.Location.Value;
+    }
+    if (@event.Url is not null)
+    {
+      Url = @event.Url.Value?.Value;
+    }
+    if (@event.Notes is not null)
+    {
+      Notes = @event.Notes.Value?.Value;
+    }
+  }
+
   private void AddChampions(IEnumerable<TrainerEntity> champions)
   {
     foreach (TrainerEntity champion in champions)
