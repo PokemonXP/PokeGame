@@ -385,6 +385,83 @@ public class Battle : AggregateRoot
     }
   }
 
+  public void Switch(Specimen active, Specimen inactive, ActorId? actorId = null)
+  {
+    if (Status != BattleStatus.Started)
+    {
+      ValidationFailure failure = new("BattleId", "The battle must have started, but not ended.", Id.ToGuid())
+      {
+        CustomState = new { Status },
+        ErrorCode = "StatusValidator"
+      };
+      throw new ValidationException([failure]);
+    }
+
+    List<ValidationFailure> failures = new(capacity: 3);
+    if (active.Ownership is null || inactive.Ownership is null || active.Ownership.TrainerId != inactive.Ownership.TrainerId)
+    {
+      Guid[] pokemonIds = [active.Id.ToGuid(), inactive.Id.ToGuid()];
+      failures.Add(new ValidationFailure("PokemonIds", "Both Pokémon must be owned by the same trainer.", pokemonIds)
+      {
+        CustomState = new
+        {
+          ActiveTrainerId = active.Ownership?.TrainerId.ToGuid(),
+          InactiveTrainerId = inactive.Ownership?.TrainerId.ToGuid()
+        },
+        ErrorCode = "TrainerValidator"
+      });
+    }
+
+    if (!_pokemon.TryGetValue(active.Id, out bool isActive))
+    {
+      failures.Add(new ValidationFailure("Active", "The Pokémon must be a registered battler.", active.Id.ToGuid())
+      {
+        ErrorCode = "BattlerValidator"
+      });
+    }
+    else if (!isActive)
+    {
+      failures.Add(new ValidationFailure("Active", "The active Pokémon must be active on the battle field.", active.Id.ToGuid())
+      {
+        ErrorCode = "ActiveValidator"
+      });
+    }
+
+    if (!_pokemon.TryGetValue(inactive.Id, out isActive))
+    {
+      failures.Add(new ValidationFailure("Inactive", "The Pokémon must be a registered battler.", inactive.Id.ToGuid())
+      {
+        ErrorCode = "BattlerValidator"
+      });
+    }
+    else if (isActive)
+    {
+      failures.Add(new ValidationFailure("Inactive", "The inactive Pokémon must not be active on the battle field.", inactive.Id.ToGuid())
+      {
+        ErrorCode = "InactiveValidator"
+      });
+    }
+    else if (inactive.HasFainted)
+    {
+      failures.Add(new ValidationFailure("Inactive", "The inactive Pokémon must not have fainted.", inactive.Id.ToGuid())
+      {
+        ErrorCode = "FaintedValidator"
+      });
+    }
+
+    if (failures.Count > 0)
+    {
+      throw new ValidationException(failures);
+    }
+
+    Raise(new BattlePokemonSwitched(active.Id, inactive.Id), actorId);
+  }
+  protected virtual void Handle(BattlePokemonSwitched @event)
+  {
+    _pokemon[@event.ActiveId] = false;
+    _pokemon[@event.InactiveId] = true;
+  }
+
   public void Update(ActorId? actorId = null)
   {
     if (HasUpdates)

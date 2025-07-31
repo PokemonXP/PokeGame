@@ -67,10 +67,10 @@ defineEmits<{
           <TarButton v-else-if="mode === 'evolve'" icon="fas fa-dna" :text="t('pokemon.evolve.submit')" @click="$emit('evolve', evolution)" />
         </td>
         <td v-if="!isOutgoing">
-          <PokemonFormBlock :form="evolution.source" />
+          <PokemonFormBlock external :form="evolution.source" />
         </td>
         <td v-if="!isIncoming">
-          <PokemonFormBlock :form="evolution.target" />
+          <PokemonFormBlock external :form="evolution.target" />
         </td>
         <td>
           <ItemBlock v-if="evolution.item" :item="evolution.item" />

@@ -181,12 +181,12 @@ watch(
           <tr v-for="form in forms" :key="form.id">
             <td><PokemonFormBlock :form="form" /></td>
             <td>
-              <RouterLink :to="{ name: 'VarietyEdit', params: { id: form.variety.id } }">
+              <RouterLink :to="{ name: 'VarietyEdit', params: { id: form.variety.id } }" target="_blank">
                 <VarietyIcon /> {{ form.variety.displayName ?? form.variety.uniqueName }}
                 <template v-if="form.isDefault || form.variety.displayName">
                   <br />
                   <DefaultBadge v-if="form.isDefault" />
-                  <template v-else>{{ form.variety.uniqueName }}</template>
+                  <template v-else><VarietyIcon /> {{ form.variety.uniqueName }}</template>
                 </template>
               </RouterLink>
             </td>

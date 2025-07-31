@@ -103,6 +103,7 @@ public class Specimen : AggregateRoot
       }
     }
   }
+  public bool HasFainted => Vitality < 1;
   private StatusCondition? _statusCondition = null;
   public StatusCondition? StatusCondition
   {

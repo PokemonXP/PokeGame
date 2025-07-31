@@ -5,6 +5,7 @@ import { parsingUtils } from "logitar-js";
 
 import EditIcon from "@/components/icons/EditIcon.vue";
 import ExternalIcon from "@/components/icons/ExternalIcon.vue";
+import ItemIcon from "@/components/icons/ItemIcon.vue";
 import type { Item } from "@/types/items";
 
 const { parseBoolean } = parsingUtils;
@@ -46,7 +47,7 @@ const target = computed<string | undefined>(() => (isExternal.value ? "_blank" :
             {{ displayName }}
             <template v-if="item.displayName">
               <br />
-              {{ item.uniqueName }}
+              <ItemIcon /> {{ item.uniqueName }}
             </template>
           </RouterLink>
         </slot>

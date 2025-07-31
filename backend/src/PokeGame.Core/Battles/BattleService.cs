@@ -17,6 +17,7 @@ public interface IBattleService
   Task<BattleModel?> ResetAsync(Guid id, CancellationToken cancellationToken = default);
   Task<SearchResults<BattleModel>> SearchAsync(SearchBattlesPayload payload, CancellationToken cancellationToken = default);
   Task<BattleModel?> StartAsync(Guid id, CancellationToken cancellationToken = default);
+  Task<BattleModel?> SwitchPokemonAsync(Guid id, SwitchBattlePokemonPayload payload, CancellationToken cancellationToken = default);
   Task<BattleModel?> UpdateAsync(Guid id, UpdateBattlePayload payload, CancellationToken cancellationToken = default);
 }
 
@@ -31,6 +32,7 @@ internal class BattleService : IBattleService
     services.AddTransient<ICommandHandler<EscapeBattle, BattleModel?>, EscapeBattleHandler>();
     services.AddTransient<ICommandHandler<ResetBattle, BattleModel?>, ResetBattleHandler>();
     services.AddTransient<ICommandHandler<StartBattle, BattleModel?>, StartBattleHandler>();
+    services.AddTransient<ICommandHandler<SwitchBattlePokemon, BattleModel?>, SwitchBattlePokemonHandler>();
     services.AddTransient<ICommandHandler<UpdateBattle, BattleModel?>, UpdateBattleHandler>();
     services.AddTransient<IQueryHandler<ReadBattle, BattleModel?>, ReadBattleHandler>();
     services.AddTransient<IQueryHandler<SearchBattles, SearchResults<BattleModel>>, SearchBattlesHandler>();
@@ -90,6 +92,12 @@ internal class BattleService : IBattleService
   public async Task<BattleModel?> StartAsync(Guid id, CancellationToken cancellationToken)
   {
     StartBattle command = new(id);
+    return await _commandBus.ExecuteAsync(command, cancellationToken);
+  }
+
+  public async Task<BattleModel?> SwitchPokemonAsync(Guid id, SwitchBattlePokemonPayload payload, CancellationToken cancellationToken)
+  {
+    SwitchBattlePokemon command = new(id, payload);
     return await _commandBus.ExecuteAsync(command, cancellationToken);
   }
 

@@ -13,6 +13,7 @@ import CreateMove from "@/components/moves/CreateMove.vue";
 import EditIcon from "@/components/icons/EditIcon.vue";
 import MoveCategoryBadge from "@/components/moves/MoveCategoryBadge.vue";
 import MoveCategoryFilter from "@/components/moves/MoveCategoryFilter.vue";
+import MoveIcon from "@/components/icons/MoveIcon.vue";
 import PokemonTypeFilter from "@/components/pokemon/PokemonTypeFilter.vue";
 import PokemonTypeImage from "@/components/pokemon/PokemonTypeImage.vue";
 import RefreshButton from "@/components/shared/RefreshButton.vue";
@@ -187,7 +188,7 @@ watch(
                 <EditIcon /> {{ move.displayName ?? move.uniqueName }}
                 <template v-if="move.displayName">
                   <br />
-                  {{ move.uniqueName }}
+                  <MoveIcon /> {{ move.uniqueName }}
                 </template>
               </RouterLink>
             </td>

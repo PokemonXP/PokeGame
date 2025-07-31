@@ -121,6 +121,18 @@ internal class BattleEntity : AggregateEntity
     }
   }
 
+  public void SwitchPokemon(BattlePokemonSwitched @event)
+  {
+    Update(@event);
+
+    BattlePokemonEntity? active = Pokemon.SingleOrDefault(x => x.Pokemon?.StreamId == @event.ActiveId.Value);
+    BattlePokemonEntity? inactive = Pokemon.SingleOrDefault(x => x.Pokemon?.StreamId == @event.InactiveId.Value);
+    if (active is not null && inactive is not null)
+    {
+      active.Switch(inactive);
+    }
+  }
+
   public void Update(BattleUpdated @event)
   {
     base.Update(@event);

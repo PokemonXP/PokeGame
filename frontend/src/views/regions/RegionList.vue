@@ -12,6 +12,7 @@ import CountSelect from "@/components/shared/CountSelect.vue";
 import CreateRegion from "@/components/regions/CreateRegion.vue";
 import EditIcon from "@/components/icons/EditIcon.vue";
 import RefreshButton from "@/components/shared/RefreshButton.vue";
+import RegionIcon from "@/components/icons/RegionIcon.vue";
 import SearchInput from "@/components/shared/SearchInput.vue";
 import SortSelect from "@/components/shared/SortSelect.vue";
 import StatusBlock from "@/components/shared/StatusBlock.vue";
@@ -162,7 +163,7 @@ watch(
                 <EditIcon /> {{ region.displayName ?? region.uniqueName }}
                 <template v-if="region.displayName">
                   <br />
-                  {{ region.uniqueName }}
+                  <RegionIcon /> {{ region.uniqueName }}
                 </template>
               </RouterLink>
             </td>

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { TarButton } from "logitar-vue3-ui";
 import { arrayUtils } from "logitar-js";
 import { computed, inject, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
@@ -8,6 +9,7 @@ import AbilityIcon from "@/components/icons/AbilityIcon.vue";
 import AdminBreadcrumb from "@/components/admin/AdminBreadcrumb.vue";
 import CancelBattle from "@/components/battle/CancelBattle.vue";
 import EscapeBattle from "@/components/battle/EscapeBattle.vue";
+import ExternalIcon from "@/components/icons/ExternalIcon.vue";
 import ExternalLink from "@/components/battle/ExternalLink.vue";
 import ItemBlock from "@/components/items/ItemBlock.vue";
 import PokemonBlock from "@/components/pokemon/PokemonBlock.vue";
@@ -15,10 +17,10 @@ import ResetBattle from "@/components/battle/ResetBattle.vue";
 import StaminaBar from "@/components/pokemon/StaminaBar.vue";
 import StartBattle from "@/components/battle/StartBattle.vue";
 import StatusConditionIcon from "@/components/pokemon/StatusConditionIcon.vue";
+import SwitchPokemonModal from "./SwitchPokemonModal.vue";
 import TrainerBlock from "@/components/trainers/TrainerBlock.vue";
 import VitalityBar from "@/components/pokemon/VitalityBar.vue";
-import type { Ability } from "@/types/abilities";
-import type { Battle, Battler } from "@/types/battle";
+import type { Battle, BattlerDetail } from "@/types/battle";
 import type { Breadcrumb } from "@/types/components";
 import { StatusCodes, type ApiFailure } from "@/types/api";
 import { getAbility, getUrl } from "@/helpers/pokemon";
@@ -33,28 +35,32 @@ const toasts = useToastStore();
 const { orderByDescending } = arrayUtils;
 const { t } = useI18n();
 
-type BattlerInfo = Battler & {
-  order: number;
-  ability: Ability;
-  url?: string;
+type PokemonSwitch = {
+  active: BattlerDetail;
+  inactive: BattlerDetail[];
 };
 
 const battle = ref<Battle>();
 const isLoading = ref<boolean>(false);
+const switchRef = ref<InstanceType<typeof SwitchPokemonModal> | null>(null);
+const switching = ref<PokemonSwitch>();
 
-const activeBattlers = computed<BattlerInfo[]>(() =>
+const battlers = computed<BattlerDetail[]>(
+  () =>
+    battle.value?.battlers.map((battler) => ({
+      ...battler,
+      order: battler.pokemon.statistics.speed.value,
+      ability: getAbility(battler.pokemon),
+      url: getUrl(battler.pokemon),
+    })) ?? [],
+);
+const activeBattlers = computed<BattlerDetail[]>(() =>
   orderByDescending(
-    battle.value?.battlers
-      .filter(({ isActive }) => isActive)
-      .map((battler) => ({
-        ...battler,
-        order: battler.pokemon.statistics.speed.value,
-        ability: getAbility(battler.pokemon),
-        url: getUrl(battler.pokemon),
-      })) ?? [],
+    battlers.value.filter(({ isActive }) => isActive),
     "order",
   ),
 );
+
 const breadcrumb = computed<Breadcrumb[]>(() => {
   const breadcrumb: Breadcrumb[] = [{ to: { name: "BattleList" }, text: t("battle.title") }];
   if (battle.value) {
@@ -80,6 +86,21 @@ function onStarted(started: Battle): void {
   toasts.success("battle.started");
 }
 
+function onSwitch(active: BattlerDetail): void {
+  if (battle.value && active.pokemon.ownership) {
+    switching.value = {
+      active,
+      inactive: battlers.value.filter(
+        ({ isActive, pokemon }) => !isActive && pokemon.ownership?.currentTrainer.id === active.pokemon.ownership?.currentTrainer.id,
+      ),
+    };
+    setTimeout(() => switchRef.value?.show(), 1);
+  }
+}
+function onSwitched(updated: Battle): void {
+  battle.value = updated;
+}
+
 onMounted(async () => {
   isLoading.value = true;
   try {
@@ -103,7 +124,7 @@ onMounted(async () => {
     <template v-if="battle">
       <h1 class="text-center">{{ battle.name }}</h1>
       <div class="d-flex justify-content-center">
-        <AdminBreadcrumb :current="t('battle.action')" :parent="breadcrumb" />
+        <AdminBreadcrumb :current="t('battle.action', 1)" :parent="breadcrumb" />
       </div>
       <div class="mb-3 d-flex gap-2">
         <RouterLink :to="{ name: 'BattleEdit', params: { id: battle.id } }" class="btn btn-secondary">
@@ -125,6 +146,7 @@ onMounted(async () => {
             <th scope="col">{{ t("items.held.label") }}</th>
             <th scope="col">{{ t("pokemon.status.label") }}</th>
             <th scope="col">{{ t("trainers.select.label") }}</th>
+            <th scope="col">{{ t("battle.action", 3) }}</th>
           </tr>
         </thead>
         <tbody>
@@ -140,10 +162,10 @@ onMounted(async () => {
             </td>
             <td>
               <RouterLink :to="{ name: 'AbilityEdit', params: { id: battler.ability.id } }" target="_blank">
-                <AbilityIcon /> {{ battler.ability.displayName ?? battler.ability.uniqueName }}
+                <ExternalIcon /> {{ battler.ability.displayName ?? battler.ability.uniqueName }}
                 <template v-if="battler.ability.displayName">
                   <br />
-                  {{ battler.ability.uniqueName }}
+                  <AbilityIcon /> {{ battler.ability.uniqueName }}
                 </template>
               </RouterLink>
               <template v-if="battler.ability.url">
@@ -184,11 +206,23 @@ onMounted(async () => {
               </TrainerBlock>
               <span v-else class="text-muted">{{ t("pokemon.wild") }}</span>
             </td>
+            <td>
+              <TarButton v-if="battler.pokemon.ownership" icon="fas fa-rotate" :text="t('battle.switch.label')" @click="onSwitch(battler)" />
+            </td>
           </tr>
         </tbody>
       </table>
       <p v-else-if="battle.status === 'Created'">{{ t("battle.notStarted") }}</p>
       <p v-else>{{ t("battle.ended") }}</p>
+      <SwitchPokemonModal
+        v-if="switching"
+        :active="switching.active"
+        :battle="battle"
+        :inactive="switching.inactive"
+        ref="switchRef"
+        @error="handleError"
+        @switched="onSwitched"
+      />
     </template>
   </main>
 </template>
