@@ -6,6 +6,7 @@ using Logitar.EventSourcing;
 using PokeGame.Core.Battles.Events;
 using PokeGame.Core.Pokemon;
 using PokeGame.Core.Regions;
+using PokeGame.Core.Storage;
 using PokeGame.Core.Trainers;
 
 namespace PokeGame.Core.Battles;
@@ -352,9 +353,9 @@ public class Battle : AggregateRoot
           ErrorCode = "NotEmptyPartyValidator"
         });
       }
-      else if (trainer.Value.Count > Storage.PartySize)
+      else if (trainer.Value.Count > PokemonStorage.PartySize)
       {
-        failures.Add(new ValidationFailure("TrainerId", $"The trainer party has exceeded the limit ({Storage.PartySize}).", trainer.Key.ToGuid())
+        failures.Add(new ValidationFailure("TrainerId", $"The trainer party has exceeded the limit ({PokemonStorage.PartySize}).", trainer.Key.ToGuid())
         {
           CustomState = new { Party = trainer.Value.Select(x => x.Id.ToGuid()) },
           ErrorCode = "TrainerValidator"

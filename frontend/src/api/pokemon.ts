@@ -113,7 +113,7 @@ export async function swapPokemon(payload: SwapPokemonPayload): Promise<Pokemon[
 }
 
 export async function swapPokemonMoves(id: string, payload: SwapPokemonMovesPayload): Promise<Pokemon> {
-  const url: string = new urlUtils.UrlBuilder({ path: "/pokemon/{id}/moves/switch" }).setParameter("id", id).buildRelative();
+  const url: string = new urlUtils.UrlBuilder({ path: "/pokemon/{id}/moves/swap" }).setParameter("id", id).buildRelative();
   return (await patch<SwapPokemonMovesPayload, Pokemon>(url, payload)).data;
 }
 
