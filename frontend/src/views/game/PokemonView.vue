@@ -13,7 +13,7 @@ import PokemonGameSummary from "@/components/pokemon/PokemonGameSummary.vue";
 import PokemonSprite from "@/components/pokemon/PokemonSprite.vue";
 import type { Breadcrumb } from "@/types/components";
 import type { InventoryItem, MoveSummary, PokemonCard, PokemonSummary } from "@/types/game";
-import { depositPokemon, getPokemon, getSummary, swapPokemon } from "@/api/game/pokemon";
+import { depositPokemon, getPokemon, getSummary, swapPokemon, withdrawPokemon } from "@/api/game/pokemon";
 import { handleErrorKey } from "@/inject";
 import { onMounted, ref } from "vue";
 import { useToastStore } from "@/stores/toast";
@@ -103,6 +103,21 @@ async function deposit(): Promise<void> {
     }
   }
 }
+async function withdraw(): Promise<void> {
+  if (!isLoading.value && selected.value) {
+    isLoading.value = true;
+    try {
+      await withdrawPokemon(selected.value.id);
+      refresh();
+      // TODO(fpion): refresh boxes?
+      toasts.success("pokemon.boxes.withdrawn");
+    } catch (e: unknown) {
+      handleError(e); // TODO(fpion): handle full party error
+    } finally {
+      isLoading.value = false;
+    }
+  }
+}
 
 async function swap(pokemon: PokemonCard): Promise<void> {
   if (!isLoading.value && selected.value) {
@@ -181,16 +196,26 @@ onMounted(() => {
           :text="t('pokemon.position.swap.label')"
           @click="isSwapping = !isSwapping"
         />
-        <TarButton
-          v-if="isBoxes"
-          :disabled="isLoading"
-          icon="fas fa-box-archive"
-          :loading="isLoading"
-          size="large"
-          :status="t('loading')"
-          :text="t('pokemon.boxes.deposit')"
-          @click="deposit"
-        />
+        <template v-if="isBoxes">
+          <TarButton
+            :disabled="isLoading"
+            icon="fas fa-box-archive"
+            :loading="isLoading"
+            size="large"
+            :status="t('loading')"
+            :text="t('pokemon.boxes.deposit')"
+            @click="deposit"
+          />
+          <TarButton
+            :disabled="isLoading"
+            icon="fas fa-hand"
+            :loading="isLoading"
+            size="large"
+            :status="t('loading')"
+            :text="t('pokemon.boxes.withdraw')"
+            @click="withdraw"
+          />
+        </template>
       </template>
     </div>
     <p v-if="isSwapping">
@@ -210,7 +235,7 @@ onMounted(() => {
       </section>
       <section class="col-9">
         <div v-if="view === 'pokemon'">
-          <PokemonBoxes v-if="isBoxes && trainerId" :trainer="trainerId" />
+          <PokemonBoxes v-if="isBoxes && trainerId" :selected="selected" :trainer="trainerId" @selected="select($event)" />
           <div v-else class="row">
             <div v-for="pokemon in party" :key="pokemon.id" class="col-4">
               <PokemonSprite class="img-fluid mb-2 mx-auto" clickable :pokemon="pokemon" :selected="selected?.id === pokemon.id" @click="select(pokemon)" />

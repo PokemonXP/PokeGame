@@ -12,6 +12,7 @@ import { getPokemon } from "@/api/game/pokemon";
 const { t } = useI18n();
 
 const props = defineProps<{
+  selected?: PokemonCard;
   trainer: string;
 }>();
 
@@ -30,6 +31,7 @@ const isLast = computed<boolean>(() => box.value >= BOX_COUNT - 1);
 
 const emit = defineEmits<{
   (e: "error", error: unknown): void;
+  (e: "selected", pokemon: PokemonCard): void;
 }>();
 
 function first(): void {
@@ -43,6 +45,13 @@ function next(): void {
 }
 function previous(): void {
   box.value = Math.max(box.value - 1, 0);
+}
+
+function select(position: number): void {
+  const pokemon: PokemonCard | undefined = index.value.get(position);
+  if (pokemon) {
+    emit("selected", pokemon);
+  }
 }
 
 function submit(): void {
@@ -85,7 +94,12 @@ watch(
     </div>
     <div class="row">
       <div v-for="i in BOX_SIZE" :key="i" class="col-2 mb-2">
-        <BoxPokemonCard :clickable="index.has(i - 1)" :pokemon="index.get(i - 1)" />
+        <BoxPokemonCard
+          :clickable="index.has(i - 1)"
+          :pokemon="index.get(i - 1)"
+          :selected="selected && selected.id === index.get(i - 1)?.id"
+          @click="select(i - 1)"
+        />
       </div>
     </div>
   </div>

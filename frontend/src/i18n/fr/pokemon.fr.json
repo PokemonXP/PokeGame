@@ -6,7 +6,9 @@
     "format": "Boîte {box}",
     "label": "Boîte",
     "open": "Ouvrir les boîtes",
-    "title": "Boîtes"
+    "title": "Boîtes",
+    "withdraw": "Retirer",
+    "withdrawn": "Le Pokémon a été retiré des boîtes."
   },
   "create": "Create Pokémon",
   "created": "The Pokémon has been created.",
@@ -77,8 +79,7 @@
   "memories": {
     "box": {
       "move": "Move",
-      "release": "Release",
-      "withdraw": "Withdraw"
+      "release": "Release"
     },
     "characteristic": {
       "label": "Characteristic",
