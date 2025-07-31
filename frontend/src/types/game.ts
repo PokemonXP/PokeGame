@@ -90,6 +90,8 @@ export type PokemonCard = PokemonBase & {
   vitality: number;
   stamina: number;
   heldItem?: ItemCard;
+  position: number;
+  box?: number | null;
 };
 
 export type PokemonSummary = PokemonBase & {
