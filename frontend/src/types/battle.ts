@@ -1,4 +1,4 @@
-import type { Actor, Aggregate } from "./aggregate";
+import type { Actor, Aggregate, Change } from "./aggregate";
 import type { Pokemon } from "./pokemon";
 import type { SearchPayload, SortOption } from "./search";
 import type { Species } from "./species";
@@ -68,4 +68,11 @@ export type SearchBattlesPayload = SearchPayload & {
 export type TrainerFilter = {
   search: string;
   kind?: TrainerKind;
+};
+
+export type UpdateBattlePayload = {
+  name?: string;
+  location?: string;
+  url?: Change<string>;
+  notes?: Change<string>;
 };

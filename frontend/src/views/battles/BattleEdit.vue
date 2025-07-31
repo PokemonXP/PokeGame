@@ -58,7 +58,7 @@ function onGeneralUpdated(updated: Battle): void {
     battle.value.url = updated.url;
     battle.value.notes = updated.notes;
   }
-  toasts.success("battles.updated");
+  toasts.success("battle.updated");
 }
 
 watch(

@@ -65,5 +65,6 @@
     },
     "placeholder": "Select a battle status"
   },
-  "title": "Battles"
+  "title": "Battles",
+  "updated": "The battle has been updated."
 }
