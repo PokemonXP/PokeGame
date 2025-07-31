@@ -232,5 +232,7 @@ public class BattleTests
       && e.ErrorCode == "EggValidator" && e.ErrorMessage == "The Pokémon must not be an egg.");
   }
 
+  // TODO(fpion): Cancel
   // TODO(fpion): Start
+  // TODO(fpion): Update
 }

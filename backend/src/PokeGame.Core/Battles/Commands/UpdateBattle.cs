@@ -3,7 +3,6 @@ using Krakenar.Core;
 using Logitar.EventSourcing;
 using PokeGame.Core.Battles.Models;
 using PokeGame.Core.Battles.Validators;
-using PokeGame.Core.Pokemon;
 using PokeGame.Core.Regions;
 
 namespace PokeGame.Core.Battles.Commands;
@@ -16,18 +15,12 @@ internal class UpdateBattleHandler : ICommandHandler<UpdateBattle, BattleModel?>
   private readonly IApplicationContext _applicationContext;
   private readonly IBattleQuerier _battleQuerier;
   private readonly IBattleRepository _battleRepository;
-  private readonly IPokemonRepository _pokemonRepository;
 
-  public UpdateBattleHandler(
-    IApplicationContext applicationContext,
-    IBattleQuerier battleQuerier,
-    IBattleRepository battleRepository,
-    IPokemonRepository pokemonRepository)
+  public UpdateBattleHandler(IApplicationContext applicationContext, IBattleQuerier battleQuerier, IBattleRepository battleRepository)
   {
     _applicationContext = applicationContext;
     _battleQuerier = battleQuerier;
     _battleRepository = battleRepository;
-    _pokemonRepository = pokemonRepository;
   }
 
   public async Task<BattleModel?> HandleAsync(UpdateBattle command, CancellationToken cancellationToken)

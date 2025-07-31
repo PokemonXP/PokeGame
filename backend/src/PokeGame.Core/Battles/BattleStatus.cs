@@ -3,5 +3,6 @@
 public enum BattleStatus
 {
   Created = 0,
-  Started
+  Started = 1,
+  Cancelled = 2
 }

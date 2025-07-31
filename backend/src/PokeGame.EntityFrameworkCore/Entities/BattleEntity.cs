@@ -15,9 +15,6 @@ internal class BattleEntity : AggregateEntity
   public BattleKind Kind { get; private set; }
   public BattleStatus Status { get; private set; }
 
-  public string? StartedBy { get; private set; }
-  public DateTime? StartedOn { get; private set; }
-
   public string Name { get; private set; } = string.Empty;
   public string Location { get; private set; } = string.Empty;
   public string? Url { get; private set; }
@@ -25,6 +22,11 @@ internal class BattleEntity : AggregateEntity
 
   public int ChampionCount { get; private set; }
   public int OpponentCount { get; private set; }
+
+  public string? StartedBy { get; private set; }
+  public DateTime? StartedOn { get; private set; }
+  public string? CancelledBy { get; private set; }
+  public DateTime? CancelledOn { get; private set; }
 
   public List<BattlePokemonEntity> Pokemon { get; private set; } = [];
   public List<BattleTrainerEntity> Trainers { get; private set; } = [];
@@ -67,6 +69,16 @@ internal class BattleEntity : AggregateEntity
 
   private BattleEntity() : base()
   {
+  }
+
+  public void Cancel(BattleCancelled @event)
+  {
+    Update(@event);
+
+    Status = BattleStatus.Cancelled;
+
+    CancelledBy = @event.ActorId?.Value;
+    CancelledOn = @event.OccurredOn.AsUniversalTime();
   }
 
   public void Start(IEnumerable<PokemonEntity> pokemon, BattleStarted @event)
