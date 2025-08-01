@@ -232,10 +232,5 @@ public class BattleTests
       && e.ErrorCode == "EggValidator" && e.ErrorMessage == "The Pokémon must not be an egg.");
   }
 
-  // TODO(fpion): Cancel
-  // TODO(fpion): Escape
-  // TODO(fpion): Reset
-  // TODO(fpion): Start
-  // TODO(fpion): Switch
-  // TODO(fpion): Update
+  // TASK: [POKEGAME-264](https://logitar.atlassian.net/browse/POKEGAME-264)
 }

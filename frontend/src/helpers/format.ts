@@ -48,5 +48,3 @@ export function formatUser(user: UserSummary): string {
 export function formatVariety(variety: Variety): string {
   return variety.displayName ? `${variety.displayName} (${variety.uniqueName})` : variety.uniqueName;
 }
-
-// TODO(fpion): unit tests

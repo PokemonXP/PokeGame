@@ -234,5 +234,3 @@ export function getAbility(pokemon: Pokemon): Ability {
 export function getUrl(pokemon: Pokemon): string | undefined {
   return pokemon.url ?? pokemon.form.url ?? pokemon.form.variety.url ?? pokemon.form.variety.species.url ?? undefined;
 }
-
-// TODO(fpion): unit tests

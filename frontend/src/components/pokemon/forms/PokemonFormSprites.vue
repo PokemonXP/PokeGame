@@ -51,7 +51,6 @@ watch(
 <template>
   <section>
     <form @submit.prevent="submit">
-      <!-- TODO(fpion): should all be different -->
       <SpriteInput id="default" label="forms.sprites.default.label" required v-model="sprites.default" />
       <SpriteInput id="shiny" label="forms.sprites.default.shiny" required v-model="sprites.shiny" />
       <SpriteInput

@@ -52,11 +52,11 @@ public class PokemonStorage : AggregateRoot
 
     IReadOnlyCollection<PokemonId> partyIds = GetParty();
 
-    #region TODO(fpion): refactor
+    #region TASK: [POKEGAME-263](https://logitar.atlassian.net/browse/POKEGAME-263)
     bool isValid = partyIds.Any(id => id != pokemon.Id && !party[id].IsEgg);
     if (!isValid)
     {
-      throw new NotImplementedException(); // TODO(fpion): implement
+      throw new NotImplementedException(); // TASK: [POKEGAME-263](https://logitar.atlassian.net/browse/POKEGAME-263)
     }
     #endregion
 
@@ -123,11 +123,11 @@ public class PokemonStorage : AggregateRoot
 
     if ((source.IsEggInBox && destination.IsHatchedInParty) || (destination.IsEggInBox && source.IsHatchedInParty))
     {
-      #region TODO(fpion): refactor
+      #region TASK: [POKEGAME-263](https://logitar.atlassian.net/browse/POKEGAME-263)
       bool isValid = GetParty().Any(id => id != source.Id && id != destination.Id && !party[id].IsEgg);
       if (!isValid)
       {
-        throw new NotImplementedException(); // TODO(fpion): implement
+        throw new NotImplementedException(); // TASK: [POKEGAME-263](https://logitar.atlassian.net/browse/POKEGAME-263)
       }
       #endregion
     }
@@ -158,7 +158,7 @@ public class PokemonStorage : AggregateRoot
       throw new ArgumentException($"The Pokémon '{pokemon}' is already in trainer's 'Id={TrainerId}' party.", nameof(pokemon));
     }
 
-    Position position = FindFirstPartyAvailable() ?? throw new NotImplementedException(); // TODO(fpion): implement
+    Position position = FindFirstPartyAvailable() ?? throw new NotImplementedException(); // TASK: [POKEGAME-263](https://logitar.atlassian.net/browse/POKEGAME-263)
     pokemon.Withdraw(position, actorId);
     Raise(new PokemonStored(pokemon.Id, new PokemonSlot(position)), actorId);
   }
@@ -188,6 +188,6 @@ public class PokemonStorage : AggregateRoot
         }
       }
     }
-    throw new NotImplementedException(); // TODO(fpion): implement
+    throw new NotImplementedException(); // TASK: [POKEGAME-263](https://logitar.atlassian.net/browse/POKEGAME-263)
   }
 }

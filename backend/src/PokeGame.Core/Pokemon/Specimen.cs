@@ -805,7 +805,7 @@ public class Specimen : AggregateRoot
 
     ItemId pokeBallId = Ownership is null ? pokeBall.Id : Ownership.PokeBallId;
     level ??= new(Level);
-    slot ??= new(new Position(0)); // TODO(fpion): remove slot
+    slot ??= new(new Position(0));
 
     switch (kind)
     {

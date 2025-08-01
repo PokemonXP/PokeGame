@@ -42,7 +42,7 @@ public record PokemonSlot
     {
       if (Position.Value == (PartySize - 1))
       {
-        throw new NotImplementedException(); // TODO(fpion): implement
+        throw new InvalidOperationException(); // TASK: [POKEGAME-261](https://logitar.atlassian.net/browse/POKEGAME-261)
       }
       return new PokemonSlot(new Position(Position.Value + 1));
     }
@@ -50,7 +50,7 @@ public record PokemonSlot
     {
       if (Box.Value == (BoxCount - 1))
       {
-        throw new NotImplementedException(); // TODO(fpion): implement
+        throw new InvalidOperationException(); // TASK: [POKEGAME-261](https://logitar.atlassian.net/browse/POKEGAME-261)
       }
       return new PokemonSlot(new Position(0), new Box(Box.Value + 1));
     }
@@ -63,7 +63,7 @@ public record PokemonSlot
     {
       if (Position.Value == 0)
       {
-        throw new NotImplementedException(); // TODO(fpion): implement
+        throw new InvalidOperationException(); // TASK: [POKEGAME-261](https://logitar.atlassian.net/browse/POKEGAME-261)
       }
       return new PokemonSlot(new Position(Position.Value - 1));
     }
@@ -71,7 +71,7 @@ public record PokemonSlot
     {
       if (Box.Value == 0)
       {
-        throw new NotImplementedException(); // TODO(fpion): implement
+        throw new InvalidOperationException();
       }
       return new PokemonSlot(new Position(BoxSize - 1), new Box(Box.Value - 1));
     }
@@ -82,7 +82,7 @@ public record PokemonSlot
   {
     public Validator()
     {
-      // TODO(fpion): implement
+      // TASK: [POKEGAME-261](https://logitar.atlassian.net/browse/POKEGAME-261)
     }
   }
 }
