@@ -135,18 +135,6 @@ onMounted(async () => {
           <BattleGeneral :battle="battle" @error="handleError" @updated="onGeneralUpdated" />
         </TarTab>
       </TarTabs>
-      <!-- TODO(fpion): other tabs
-      <h2 class="h3">{{ t("battle.champions.title") }}</h2>
-      <TrainerTable :trainers="battle.champions" />
-      <template v-if="battle.opponents.length">
-        <h2 class="h3">{{ t("battle.opponents.title") }}</h2>
-        <TrainerTable :trainers="battle.opponents" />
-      </template>
-      <template v-if="battle.battlers.length">
-        <h2 class="h3">{{ t("pokemon.title") }}</h2>
-        <PokemonTable :battlers="battle.battlers" />
-      </template>
-      -->
     </template>
   </main>
 </template>

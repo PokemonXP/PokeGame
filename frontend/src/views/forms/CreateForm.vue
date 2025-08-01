@@ -142,14 +142,11 @@ async function submit(): Promise<void> {
         <WeightInput class="col" required v-model="weight" />
       </div>
       <h2 class="h5">{{ t("pokemon.type.title") }}</h2>
-      <!-- TODO(fpion): should be different -->
       <div class="row">
         <PokemonTypeSelect class="col" id="primary-type" label="pokemon.type.primary" required v-model="primaryType" />
         <PokemonTypeSelect class="col" id="secondary-type" label="pokemon.type.secondary" v-model="secondaryType" />
       </div>
       <h2 class="h5">{{ t("abilities.title") }}</h2>
-      <!-- TODO(fpion): should all be different -->
-      <!-- TODO(fpion): refactor, should not load abilities thrice -->
       <div class="row">
         <AbilitySelect
           class="col"
@@ -185,7 +182,6 @@ async function submit(): Promise<void> {
         />
       </div>
       <h3 class="h5">{{ t("pokemon.statistic.yield") }}</h3>
-      <!-- TODO(fpion): 1 <= total EVs <= 3 -->
       <div class="row">
         <StatisticYieldInput
           v-for="statistic in statistics"
@@ -197,7 +193,6 @@ async function submit(): Promise<void> {
         />
       </div>
       <h2 class="h3">{{ t("forms.sprites.title") }}</h2>
-      <!-- TODO(fpion): should all be different -->
       <SpriteInput id="default" label="forms.sprites.default.label" required v-model="sprites.default" />
       <SpriteInput id="shiny" label="forms.sprites.default.shiny" required v-model="sprites.shiny" />
       <SpriteInput

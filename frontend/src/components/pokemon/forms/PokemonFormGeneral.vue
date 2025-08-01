@@ -151,14 +151,11 @@ watch(
         <WeightInput class="col" required v-model="weight" />
       </div>
       <h2 class="h5">{{ t("pokemon.type.title") }}</h2>
-      <!-- TODO(fpion): should be different -->
       <div class="row">
         <PokemonTypeSelect class="col" id="primary-type" label="pokemon.type.primary" required v-model="primaryType" />
         <PokemonTypeSelect class="col" id="secondary-type" label="pokemon.type.secondary" v-model="secondaryType" />
       </div>
       <h2 class="h5">{{ t("abilities.title") }}</h2>
-      <!-- TODO(fpion): should all be different -->
-      <!-- TODO(fpion): refactor, should not load abilities thrice -->
       <div class="row">
         <AbilitySelect
           class="col"

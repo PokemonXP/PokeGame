@@ -120,7 +120,6 @@ async function deposit(): Promise<void> {
           const deposited: Pokemon = await depositPokemon(id);
           pokemon.value.set(deposited.id, deposited);
           await refresh();
-          // TODO(fpion): toast
         }
         selected.value.clear();
       }
@@ -168,7 +167,6 @@ async function move(): Promise<void> {
           if (source.ownership && typeof source.ownership.box !== "number") {
             await refresh();
           }
-          // TODO(fpion): toast
         }
         selected.value.clear();
       }
@@ -199,7 +197,6 @@ async function release(): Promise<void> {
         if (id) {
           const released: Pokemon = await releasePokemon(id);
           pokemon.value.delete(released.id);
-          // TODO(fpion): toast
         }
         selected.value.clear();
       }
@@ -248,7 +245,6 @@ async function swap(): Promise<void> {
           };
           const swapped: Pokemon[] = await swapPokemon(payload);
           swapped.forEach((swapped) => pokemon.value.set(swapped.id, swapped));
-          // TODO(fpion): toast
         }
         selected.value.clear();
       }
@@ -281,7 +277,6 @@ async function withdraw(): Promise<void> {
         if (id) {
           const withdrawed: Pokemon = await withdrawPokemon(id);
           pokemon.value.set(withdrawed.id, withdrawed);
-          // TODO(fpion): toast
         }
         selected.value.clear();
       }
@@ -314,12 +309,6 @@ watch(() => props.trainer, refresh, { deep: true, immediate: true });
 
 <template>
   <section>
-    <!--
-      TODO(fpion): actions
-      - Check summary (when only one Pokémon is selected)
-      - Restore (when only one Pokémon is selected)
-      - Held item (when only one Pokémon is selected)
-    -->
     <div class="mb-3">
       <TarButton
         class="me-1"

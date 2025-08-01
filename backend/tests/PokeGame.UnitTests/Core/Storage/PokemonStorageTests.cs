@@ -6,7 +6,7 @@ using PokeGame.Core.Trainers;
 namespace PokeGame.Core.Storage;
 
 [Trait(Traits.Category, Categories.Unit)]
-public class PokemonStorageTests
+public class PokemonStorageTests // TASK: [POKEGAME-263](https://logitar.atlassian.net/browse/POKEGAME-263)
 {
   private readonly ActorId _actorId = ActorId.NewId();
   private readonly Faker _faker = new();
@@ -20,11 +20,4 @@ public class PokemonStorageTests
     _trainer = _faker.Trainer();
     _storage = new PokemonStorage(_trainer);
   }
-
-  // TODO(fpion): Deposit
-  // TODO(fpion): GetParty
-  // TODO(fpion): Remove
-  // TODO(fpion): Store
-  // TODO(fpion): Swap
-  // TODO(fpion): Withdraw
 }

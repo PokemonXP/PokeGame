@@ -86,7 +86,6 @@ watch(
         />
       </div>
       <h3 class="h5">{{ t("pokemon.statistic.yield") }}</h3>
-      <!-- TODO(fpion): 1 <= total EVs <= 3 -->
       <div class="row">
         <StatisticYieldInput
           v-for="statistic in statistics"
