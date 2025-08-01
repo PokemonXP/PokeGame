@@ -31,7 +31,7 @@ public interface IPokemonService
 
   Task<PokemonModel?> ChangeFormAsync(Guid id, ChangePokemonFormPayload payload, CancellationToken cancellationToken = default);
   Task<PokemonModel?> EvolveAsync(Guid pokemonId, Guid evolutionId, CancellationToken cancellationToken = default);
-  Task<PokemonModel?> HealAsync(Guid id, CancellationToken cancellationToken = default);
+  Task<PokemonModel?> RestoreAsync(Guid id, CancellationToken cancellationToken = default);
 }
 
 internal class PokemonService : IPokemonService
@@ -41,17 +41,17 @@ internal class PokemonService : IPokemonService
     services.AddTransient<IPokemonService, PokemonService>();
     services.AddTransient<IPokemonManager, PokemonManager>();
     services.AddTransient<ICommandHandler<CatchPokemon, PokemonModel?>, CatchPokemonHandler>();
-    services.AddTransient<ICommandHandler<ChangePokemonItem, PokemonModel?>, ChangePokemonItemHandler>();
     services.AddTransient<ICommandHandler<ChangePokemonForm, PokemonModel?>, ChangePokemonFormHandler>();
+    services.AddTransient<ICommandHandler<ChangePokemonItem, PokemonModel?>, ChangePokemonItemHandler>();
     services.AddTransient<ICommandHandler<CreatePokemon, PokemonModel>, CreatePokemonHandler>();
     services.AddTransient<ICommandHandler<DeletePokemon, PokemonModel?>, DeletePokemonHandler>();
     services.AddTransient<ICommandHandler<DepositPokemon, PokemonModel?>, DepositPokemonHandler>();
     services.AddTransient<ICommandHandler<EvolvePokemon, PokemonModel?>, EvolvePokemonHandler>();
-    services.AddTransient<ICommandHandler<HealPokemon, PokemonModel?>, HealPokemonHandler>();
     services.AddTransient<ICommandHandler<MovePokemon, PokemonModel?>, MovePokemonHandler>();
     services.AddTransient<ICommandHandler<ReceivePokemon, PokemonModel?>, ReceivePokemonHandler>();
     services.AddTransient<ICommandHandler<ReleasePokemon, PokemonModel?>, ReleasePokemonHandler>();
     services.AddTransient<ICommandHandler<RememberPokemonMove, PokemonModel?>, RememberPokemonMoveHandler>();
+    services.AddTransient<ICommandHandler<RestorePokemon, PokemonModel?>, RestorePokemonHandler>();
     services.AddTransient<ICommandHandler<SwapPokemon, IReadOnlyCollection<PokemonModel>>, SwapPokemonHandler>();
     services.AddTransient<ICommandHandler<SwapPokemonMoves, PokemonModel?>, SwapPokemonMovesHandler>();
     services.AddTransient<ICommandHandler<UpdatePokemon, PokemonModel?>, UpdatePokemonHandler>();
@@ -171,9 +171,9 @@ internal class PokemonService : IPokemonService
     return await _commandBus.ExecuteAsync(command, cancellationToken);
   }
 
-  public async Task<PokemonModel?> HealAsync(Guid id, CancellationToken cancellationToken)
+  public async Task<PokemonModel?> RestoreAsync(Guid id, CancellationToken cancellationToken)
   {
-    HealPokemon command = new(id);
+    RestorePokemon command = new(id);
     return await _commandBus.ExecuteAsync(command, cancellationToken);
   }
 }
