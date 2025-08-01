@@ -17,6 +17,7 @@ internal record CreateBattle(CreateBattlePayload Payload) : ICommand<BattleModel
 internal class CreateBattleHandler : ICommandHandler<CreateBattle, BattleModel>
 {
   private readonly IApplicationContext _applicationContext;
+  private readonly IBattleManager _battleManager;
   private readonly IBattleQuerier _battleQuerier;
   private readonly IBattleRepository _battleRepository;
   private readonly IPokemonQuerier _pokemonQuerier;
@@ -26,6 +27,7 @@ internal class CreateBattleHandler : ICommandHandler<CreateBattle, BattleModel>
 
   public CreateBattleHandler(
     IApplicationContext applicationContext,
+    IBattleManager battleManager,
     IBattleQuerier battleQuerier,
     IBattleRepository battleRepository,
     IPokemonQuerier pokemonQuerier,
@@ -34,6 +36,7 @@ internal class CreateBattleHandler : ICommandHandler<CreateBattle, BattleModel>
     ITrainerRepository trainerRepository)
   {
     _applicationContext = applicationContext;
+    _battleManager = battleManager;
     _battleQuerier = battleQuerier;
     _battleRepository = battleRepository;
     _pokemonQuerier = pokemonQuerier;
@@ -106,44 +109,9 @@ internal class CreateBattleHandler : ICommandHandler<CreateBattle, BattleModel>
     Notes? notes = Notes.TryCreate(payload.Notes);
 
     IReadOnlyCollection<Trainer> champions = (await LoadTrainersAsync(payload.Champions, nameof(payload.Champions), cancellationToken)).Values.ToList().AsReadOnly();
-    IReadOnlyCollection<Specimen> opponents = (await LoadPokemonAsync(payload.Opponents, nameof(payload.Opponents), cancellationToken)).Values.ToList().AsReadOnly();
+    IReadOnlyCollection<Specimen> opponents = (await _battleManager.FindPokemonAsync(payload.Opponents, nameof(payload.Opponents), cancellationToken)).Values.ToList().AsReadOnly();
 
     return Battle.WildPokemon(name, location, champions, opponents, url, notes, _applicationContext.ActorId, battleId);
-  }
-
-  private async Task<IReadOnlyDictionary<string, Specimen>> LoadPokemonAsync(IEnumerable<string> idOrUniqueNames, string propertyName, CancellationToken cancellationToken)
-  {
-    IReadOnlyCollection<PokemonKey> keys = await _pokemonQuerier.GetKeysAsync(cancellationToken);
-    Dictionary<Guid, PokemonId> pokemonByIds = new(capacity: keys.Count);
-    Dictionary<string, PokemonId> pokemonByNames = new(capacity: keys.Count);
-    foreach (PokemonKey key in keys)
-    {
-      pokemonByIds[key.Id] = key.PokemonId;
-      pokemonByNames[Normalize(key.UniqueName)] = key.PokemonId;
-    }
-
-    int capacity = idOrUniqueNames.Count();
-    Dictionary<string, PokemonId> foundPokemon = new(capacity);
-    HashSet<string> missingPokemon = new(capacity);
-    foreach (string idOrUniqueName in idOrUniqueNames)
-    {
-      if ((Guid.TryParse(idOrUniqueName, out Guid id) && pokemonByIds.TryGetValue(id, out PokemonId pokemonId))
-        || pokemonByNames.TryGetValue(Normalize(idOrUniqueName), out pokemonId))
-      {
-        foundPokemon[idOrUniqueName] = pokemonId;
-      }
-      else
-      {
-        missingPokemon.Add(idOrUniqueName);
-      }
-    }
-    if (missingPokemon.Count > 0)
-    {
-      throw new PokemonNotFoundException(missingPokemon, propertyName);
-    }
-
-    Dictionary<PokemonId, Specimen> pokemon = (await _pokemonRepository.LoadAsync(foundPokemon.Values, cancellationToken)).ToDictionary(x => x.Id, x => x);
-    return foundPokemon.ToDictionary(x => x.Key, x => pokemon[x.Value]).AsReadOnly();
   }
 
   private async Task<IReadOnlyDictionary<string, Trainer>> LoadTrainersAsync(IEnumerable<string> idOrUniqueNames, CancellationToken cancellationToken)

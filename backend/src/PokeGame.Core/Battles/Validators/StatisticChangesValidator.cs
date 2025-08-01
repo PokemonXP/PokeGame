@@ -1,11 +1,11 @@
 ﻿using FluentValidation;
-using PokeGame.Core.Items.Properties;
+using PokeGame.Core.Battles.Models;
 
-namespace PokeGame.Core.Items.Validators;
+namespace PokeGame.Core.Battles.Validators;
 
-internal class BattleItemValidator : AbstractValidator<IBattleItemProperties>
+internal class StatisticChangesValidator : AbstractValidator<StatisticChangesPayload>
 {
-  public BattleItemValidator()
+  public StatisticChangesValidator()
   {
     RuleFor(x => x.Attack).InclusiveBetween(-6, 6);
     RuleFor(x => x.Defense).InclusiveBetween(-6, 6);
@@ -15,6 +15,5 @@ internal class BattleItemValidator : AbstractValidator<IBattleItemProperties>
     RuleFor(x => x.Accuracy).InclusiveBetween(-6, 6);
     RuleFor(x => x.Evasion).InclusiveBetween(-6, 6);
     RuleFor(x => x.Critical).InclusiveBetween(0, 4);
-    RuleFor(x => x.GuardTurns).InclusiveBetween(0, 10);
   } // TASK: [POKEGAME-287](https://logitar.atlassian.net/browse/POKEGAME-287)
 }

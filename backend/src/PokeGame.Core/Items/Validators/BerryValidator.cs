@@ -27,5 +27,5 @@ internal class BerryValidator : AbstractValidator<IBerryProperties>
     RuleFor(x => x.Critical).InclusiveBetween(0, 4);
 
     RuleFor(x => x.LowerEffortValues).IsInEnum();
-  }
+  } // TASK: [POKEGAME-287](https://logitar.atlassian.net/browse/POKEGAME-287)
 }

@@ -26,6 +26,7 @@ internal class BattleService : IBattleService
   public static void RegisterServices(IServiceCollection services)
   {
     services.AddTransient<IBattleService, BattleService>();
+    services.AddTransient<IBattleManager, BattleManager>();
     services.AddTransient<ICommandHandler<CancelBattle, BattleModel?>, CancelBattleHandler>();
     services.AddTransient<ICommandHandler<CreateBattle, BattleModel>, CreateBattleHandler>();
     services.AddTransient<ICommandHandler<DeleteBattle, BattleModel?>, DeleteBattleHandler>();

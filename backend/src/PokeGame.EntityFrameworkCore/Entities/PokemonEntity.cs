@@ -174,14 +174,10 @@ internal class PokemonEntity : AggregateEntity
   {
     Update(@event);
 
-    int constitution = GetStatistics().HP.Value;
-    Vitality = constitution;
-    Stamina = constitution;
-    StatusCondition = null;
-
-    foreach (PokemonMoveEntity move in Moves)
+    Vitality += @event.Healing;
+    if (@event.StatusCondition)
     {
-      move.RestorePowerPoints();
+      StatusCondition = null;
     }
   }
 
@@ -258,6 +254,21 @@ internal class PokemonEntity : AggregateEntity
     HeldItemUid = null;
   }
 
+  public void Restore(PokemonRestored @event)
+  {
+    Update(@event);
+
+    int constitution = GetStatistics().HP.Value;
+    Vitality = constitution;
+    Stamina = constitution;
+    StatusCondition = null;
+
+    foreach (PokemonMoveEntity move in Moves)
+    {
+      move.RestorePowerPoints();
+    }
+  }
+
   public void SetNickname(PokemonNicknamed @event)
   {
     Update(@event);
@@ -331,11 +342,32 @@ internal class PokemonEntity : AggregateEntity
     }
   }
 
+  public void UseMove(PokemonMoveUsed @event)
+  {
+    Update(@event);
+
+    if (@event.PowerPointCost is not null)
+    {
+      PokemonMoveEntity? move = Moves.SingleOrDefault(m => m.MoveUid == @event.MoveId.ToGuid());
+      move?.Use(@event.PowerPointCost);
+    }
+
+    Stamina -= @event.StaminaCost;
+  }
+
   public void Withdraw(PokemonWithdrew @event)
   {
     Update(@event);
 
     SetSlot(@event.Slot);
+  }
+
+  public void Wound(PokemonWounded @event)
+  {
+    Update(@event);
+
+    Vitality -= @event.Damage;
+    StatusCondition = Vitality > 0 ? (@event.StatusCondition ?? StatusCondition) : null;
   }
 
   private void RemoveMove(int? position)
