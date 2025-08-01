@@ -126,9 +126,6 @@ watch(
 );
 
 // TODO(fpion): 8 statistic changes
-// TODO(fpion): volatile conditions (remove/inflict)
-
-// TODO(fpion): damage calculation ignores negative stat stages for a critical hit
 </script>
 
 <template>
@@ -185,11 +182,9 @@ watch(
             @update:model-value="updateTarget"
           />
           <InflictedStatusCondition class="col" :id="`${target.id}-status`" :model-value="target" @update:model-value="updateTarget" />
-          <!-- TODO(fpion): Volatile Conditions -->
           <div class="col"></div>
           <div class="col"></div>
         </div>
-        <!-- TODO(fpion): 8x Statistic Change -->
       </div>
     </form>
     <TarButton icon="fas fa-arrow-left" :text="t('actions.previous')" @click="$emit('previous')" />

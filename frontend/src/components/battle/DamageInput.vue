@@ -79,6 +79,8 @@ watch(
     }
   },
 );
+
+// TODO(fpion): damage calculation ignores negative stat stages for a critical hit
 </script>
 
 <template>
