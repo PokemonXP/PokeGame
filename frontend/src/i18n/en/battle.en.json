@@ -23,6 +23,10 @@
   },
   "create": "Create Battle",
   "created": "The battle has been created.",
+  "critical": {
+    "is": "Is Critical",
+    "multiplier": "Critical Multiplier"
+  },
   "empty": "This list is empty.",
   "delete": {
     "confirm": "To delete the battle, enter its name in the field below.",

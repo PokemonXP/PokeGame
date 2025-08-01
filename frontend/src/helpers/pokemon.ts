@@ -238,3 +238,19 @@ export function getUrl(pokemon: Pokemon): string | undefined {
 export function calculateStamina(powerPoints: number): number {
   return Math.round(714 / 4 / powerPoints); // NOTE(fpion): highest HP possible value divided by maximum number of Pokémon moves.
 }
+
+export function calculateCriticalChance(stage: number): number {
+  switch (stage) {
+    case 0:
+      return 1 / 20;
+    case 1:
+      return 2 / 20;
+    case 2:
+      return 5 / 20;
+    case 3:
+      return 10 / 20;
+    case 4:
+      return 1;
+  }
+  return stage < 0 ? 0 : 1;
+}

@@ -42,6 +42,9 @@
   "title": "Moves",
   "updated": "The move has been updated.",
   "use": {
+    "effects": {
+      "help": "Fill the move effects form below."
+    },
     "select": {
       "help": "Select one of the moves below."
     },

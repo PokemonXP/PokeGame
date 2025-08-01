@@ -5,17 +5,11 @@ import { useI18n } from "vue-i18n";
 
 import BattlerTable from "./BattlerTable.vue";
 import CircleInfoIcon from "@/components/icons/CircleInfoIcon.vue";
-import SelectedMove from "./SelectedMove.vue";
 import type { BattlerDetail } from "@/types/battle";
 import { useBattleActionStore } from "@/stores/battle/action";
-import type { PokemonMove } from "@/types/pokemon";
 
 const battle = useBattleActionStore();
 const { t } = useI18n();
-
-defineProps<{
-  attack: PokemonMove;
-}>();
 
 const selected = ref<Set<string>>(new Set());
 
@@ -44,7 +38,6 @@ defineEmits<{
 
 <template>
   <div>
-    <SelectedMove :attack="attack" />
     <h2 class="h6">{{ t("moves.use.target.title") }}</h2>
     <div class="d-flex align-items-center justify-content-between mb-3">
       <p>

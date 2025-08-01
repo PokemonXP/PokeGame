@@ -108,7 +108,7 @@ watch(
             <span v-else class="text-muted">{{ "—" }}</span>
           </td>
           <td class="wide-col">
-            <TarButton icon="fas fa-wand-sparkles" :text="t('actions.select')" @click="$emit('selected', attack)" />
+            <TarButton :disabled="attack.powerPoints.current <= 0" icon="fas fa-wand-sparkles" :text="t('actions.select')" @click="$emit('selected', attack)" />
           </td>
         </tr>
       </tbody>

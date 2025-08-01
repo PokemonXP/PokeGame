@@ -42,6 +42,9 @@
   "title": "Attaques",
   "updated": "L’attaque a été mise à jour.",
   "use": {
+    "effects": {
+      "help": "Remplissez le formulaire d’effets de l’attaque ci-dessous."
+    },
     "select": {
       "help": "Sélectionnez une des attaques ci-dessous."
     },
