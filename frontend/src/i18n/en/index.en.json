@@ -12,7 +12,9 @@
     "refresh": "Refresh",
     "remove": "Remove",
     "reset": "Reset",
-    "save": "Save"
+    "save": "Save",
+    "select": "Select",
+    "unselect": "Unselect"
   },
   "admin": "Administration",
   "any": "Any",

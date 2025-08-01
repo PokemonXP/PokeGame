@@ -7,16 +7,24 @@ import ExternalIcon from "@/components/icons/ExternalIcon.vue";
 import ExternalLink from "@/components/battle/ExternalLink.vue";
 import ItemBlock from "@/components/items/ItemBlock.vue";
 import PokemonBlock from "@/components/pokemon/PokemonBlock.vue";
+import SelectTargetButton from "./SelectTargetButton.vue";
 import StaminaBar from "@/components/pokemon/StaminaBar.vue";
 import StatusConditionIcon from "@/components/pokemon/StatusConditionIcon.vue";
 import TrainerBlock from "@/components/trainers/TrainerBlock.vue";
 import VitalityBar from "@/components/pokemon/VitalityBar.vue";
+import type { BattlerDetail } from "@/types/battle";
 import { useBattleActionStore } from "@/stores/battle/action";
 
 const battle = useBattleActionStore();
 const { t } = useI18n();
 
-// TODO(fpion): move handler
+defineProps<{
+  selected?: string[];
+}>();
+
+defineEmits<{
+  (e: "toggle", target: BattlerDetail): void;
+}>();
 </script>
 
 <template>
@@ -29,7 +37,9 @@ const { t } = useI18n();
         <th scope="col">{{ t("items.held.label") }}</th>
         <th scope="col">{{ t("pokemon.status.label") }}</th>
         <th scope="col">{{ t("trainers.select.label") }}</th>
-        <th scope="col">{{ t("battle.action", 3) }}</th>
+        <th scope="col">
+          <template v-if="!Array.isArray(selected)">{{ t("battle.action", 3) }}</template>
+        </th>
       </tr>
     </thead>
     <tbody>
@@ -89,12 +99,13 @@ const { t } = useI18n();
           </TrainerBlock>
           <span v-else class="text-muted">{{ t("pokemon.wild") }}</span>
         </td>
-        <td>
-          <div class="d-flex gap-2">
+        <td class="text-end">
+          <SelectTargetButton v-if="selected" :selected="selected" :target="battler" @click="$emit('toggle', battler)" />
+          <div v-else class="d-flex gap-2">
             <TarButton
               :disabled="battler.pokemon.vitality < 1 || battler.pokemon.moves.length < 1"
               icon="fas fa-wand-sparkles"
-              :text="t('moves.use.action')"
+              :text="t('moves.select.label')"
               @click="battle.useMove(battler)"
             />
             <TarButton v-if="battler.pokemon.ownership" icon="fas fa-rotate" :text="t('battle.switch.label')" @click="battle.startSwitch(battler)" />

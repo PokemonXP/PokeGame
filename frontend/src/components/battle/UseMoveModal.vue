@@ -4,6 +4,8 @@ import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 
 import BattleMoveTable from "./BattleMoveTable.vue";
+import BattleTargetTable from "./BattleTargetTable.vue";
+import SelectedMove from "./SelectedMove.vue";
 import type { PokemonMove } from "@/types/pokemon";
 import { useBattleActionStore } from "@/stores/battle/action";
 
@@ -30,8 +32,12 @@ defineExpose({ hide, show });
 </script>
 
 <template>
-  <TarModal :close="t('actions.close')" id="use-move" ref="modalRef" size="x-large" :title="t('moves.use.action')">
-    <BattleMoveTable v-if="!selected" @selected="selected = $event" />
+  <TarModal :close="t('actions.close')" fullscreen id="use-move" ref="modalRef" :title="t('moves.use.title')">
+    <template v-if="selected">
+      <SelectedMove :attack="selected" />
+      <BattleTargetTable />
+    </template>
+    <BattleMoveTable v-else @selected="selected = $event" />
     <template #footer>
       <TarButton icon="fas fa-ban" :text="t('actions.cancel')" variant="secondary" @click="cancel" />
       <TarButton

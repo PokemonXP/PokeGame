@@ -42,10 +42,14 @@
   "title": "Moves",
   "updated": "The move has been updated.",
   "use": {
-    "action": "Use Move",
     "select": {
-      "help": "Select one of the moves below.",
-      "label": "Select"
-    }
+      "help": "Select one of the moves below."
+    },
+    "selected": "Selected Move",
+    "target": {
+      "help": "Select one or more targets below.",
+      "title": "Targets"
+    },
+    "title": "Use Move"
   }
 }

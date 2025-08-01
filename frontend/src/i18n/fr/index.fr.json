@@ -12,7 +12,9 @@
     "refresh": "Rafraîchir",
     "remove": "Retirer",
     "reset": "Réinitialiser",
-    "save": "Enregistrer"
+    "save": "Enregistrer",
+    "select": "Sélectionner",
+    "unselect": "Désélectionner"
   },
   "admin": "Administration",
   "any": "Tous",
