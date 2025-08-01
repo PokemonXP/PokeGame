@@ -75,7 +75,7 @@ async function submit(): Promise<void> {
         heldItem: selected.value?.id,
       };
       await changeHeldItem(props.pokemon.id, payload);
-      store.setHeldItem(props.pokemon.id, selected.value);
+      store.setHeldItem(selected.value);
       if (message) {
         toasts.success(message);
       }

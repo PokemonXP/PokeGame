@@ -24,7 +24,7 @@ async function takeItem(): Promise<void> {
     try {
       const payload: ChangePokemonItemPayload = {};
       await changeHeldItem(props.pokemon.id, payload);
-      store.setHeldItem(props.pokemon.id);
+      store.setHeldItem();
       toasts.success("items.held.taken");
     } catch (e: unknown) {
       store.setError(e);
