@@ -1,6 +1,6 @@
 import type { Ability } from "./abilities";
 import type { Actor, Aggregate, Change } from "./aggregate";
-import type { Pokemon } from "./pokemon";
+import type { Pokemon, StatusCondition } from "./pokemon";
 import type { SearchPayload, SortOption } from "./search";
 import type { Species } from "./species";
 import type { Trainer, TrainerKind } from "./trainers";
@@ -76,6 +76,14 @@ export type CreateBattlePayload = {
   opponents: string[];
 };
 
+export type DamageArgs = {
+  level: number;
+  targets: number;
+  critical: number;
+  random: number;
+  stab: number;
+};
+
 export type PokemonFilter = {
   search: string;
   species?: Species;
@@ -91,6 +99,22 @@ export type SearchBattlesPayload = SearchPayload & {
 export type SwitchBattlePokemonPayload = {
   active: string;
   inactive: string;
+};
+
+export type TargetEffects = {
+  id: string;
+  battler: BattlerDetail;
+  power: number;
+  attack: number;
+  defense: number;
+  effectiveness: number;
+  other: number;
+  damage: number;
+  isPercentage: boolean;
+  isHealing: boolean;
+  status?: StatusCondition;
+  allConditions: boolean;
+  removeCondition: boolean;
 };
 
 export type TrainerFilter = {

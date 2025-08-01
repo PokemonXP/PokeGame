@@ -43,6 +43,9 @@
   "updated": "L’attaque a été mise à jour.",
   "use": {
     "attacker": "Attaquant",
+    "damage": {
+      "label": "Dégâts"
+    },
     "effects": {
       "help": "Remplissez le formulaire d’effets de l’attaque ci-dessous."
     },

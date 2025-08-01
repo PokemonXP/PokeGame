@@ -43,6 +43,9 @@
   "updated": "The move has been updated.",
   "use": {
     "attacker": "Attacker",
+    "damage": {
+      "label": "Damage"
+    },
     "effects": {
       "help": "Fill the move effects form below."
     },

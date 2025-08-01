@@ -267,3 +267,33 @@ export function calculateCriticalChance(stage: number): number {
 export function getTypeEffectiveness(attacker: PokemonType, defender: PokemonType): number {
   return effectivenessChart[attacker][defender];
 }
+
+export function calculateDamage(
+  level: number,
+  power: number,
+  attack: number,
+  defense: number,
+  targets: number,
+  critical: number,
+  random: number,
+  stab: number,
+  effectiveness: number,
+  other: number,
+): number {
+  // NOTE(fpion): base damage calculation
+  let damage: number = (2 * level) / 5 + 2;
+  damage *= power;
+  damage *= attack;
+  damage /= defense;
+  damage /= 50;
+  damage += 2;
+  // NOTE(fpion): multipliers
+  damage *= targets;
+  damage *= critical;
+  damage *= random;
+  damage *= stab;
+  damage *= effectiveness;
+  damage *= other;
+  // NOTE(fpion): final step
+  return Math.max(Math.floor(damage), 0);
+}
