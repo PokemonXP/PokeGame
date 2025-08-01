@@ -124,8 +124,8 @@ export type TargetEffects = {
   isPercentage: boolean;
   isHealing: boolean;
   status?: StatusCondition;
-  allConditions: boolean;
   removeCondition: boolean;
+  allConditions: boolean;
   statistics: StatisticChanges;
 };
 

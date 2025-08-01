@@ -100,8 +100,8 @@ watch(
         damage: 0,
         isPercentage: false,
         isHealing: false,
-        allConditions: false,
         removeCondition: false,
+        allConditions: false,
         statistics: { attack: 0, defense: 0, specialAttack: 0, specialDefense: 0, speed: 0, accuracy: 0, evasion: 0, critical: 0 },
       }));
   },

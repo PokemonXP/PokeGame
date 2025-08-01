@@ -28,6 +28,8 @@ const isSelection = computed<boolean>(() => typeof props.selected !== "undefined
 defineEmits<{
   (e: "toggle", target: BattlerDetail): void;
 }>();
+
+// TODO(fpion): Unconscious image?
 </script>
 
 <template>
@@ -106,7 +108,7 @@ defineEmits<{
           <SelectTargetButton v-if="selected" :selected="selected.has(battler.pokemon.id)" :target="battler" @click="$emit('toggle', battler)" />
           <div v-else class="d-flex gap-2">
             <TarButton
-              :disabled="battler.pokemon.vitality < 1 || battler.pokemon.moves.length < 1"
+              :disabled="battler.pokemon.vitality < 1 || battler.pokemon.stamina < 1 || battler.pokemon.moves.length < 1"
               icon="fas fa-wand-sparkles"
               :text="t('moves.select.label')"
               @click="battle.useMove(battler)"
