@@ -44,3 +44,8 @@ export async function swapPokemonMoves(id: string, payload: SwapPokemonMovesPayl
   const url: string = new urlUtils.UrlBuilder({ path: "/game/pokemon/{id}/moves/swap" }).setParameter("id", id).buildRelative();
   await patch<SwapPokemonMovesPayload, void>(url, payload);
 }
+
+export async function withdrawPokemon(id: string): Promise<void> {
+  const url: string = new urlUtils.UrlBuilder({ path: "/game/pokemon/{id}/withdraw" }).setParameter("id", id).buildRelative();
+  await patch<void, void>(url);
+}

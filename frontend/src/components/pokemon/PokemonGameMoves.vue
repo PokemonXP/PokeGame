@@ -9,7 +9,11 @@ import PokemonTypeImage from "./PokemonTypeImage.vue";
 import type { MoveSummary, PokemonSummary } from "@/types/game";
 import type { SwapPokemonMovesPayload } from "@/types/pokemon";
 import { swapPokemonMoves } from "@/api/game/pokemon";
+import { usePokemonStore } from "@/stores/pokemon";
+import { useToastStore } from "@/stores/toast";
 
+const store = usePokemonStore();
+const toasts = useToastStore();
 const { n, t } = useI18n();
 
 const props = defineProps<{
@@ -22,11 +26,6 @@ const selected = ref<number>();
 
 const selectedMove = computed<MoveSummary | undefined>(() => (typeof selected.value === "number" ? props.pokemon.moves[selected.value] : undefined));
 
-const emit = defineEmits<{
-  (e: "error", error: unknown): void;
-  (e: "swapped", indices: number[]): void;
-}>();
-
 async function swap(destination: number): Promise<void> {
   if (!isLoading.value && typeof selected.value === "number" && selected.value !== destination) {
     isLoading.value = true;
@@ -37,15 +36,17 @@ async function swap(destination: number): Promise<void> {
       };
       await swapPokemonMoves(props.pokemon.id, payload);
       setTimeout(() => (selected.value = destination), 1);
+      store.swapMoves(selected.value, destination);
       isSwapping.value = false;
-      emit("swapped", [selected.value, destination]);
+      toasts.success("pokemon.move.swapped");
     } catch (e: unknown) {
-      emit("error", e);
+      store.setError(e);
     } finally {
       isLoading.value = false;
     }
   }
 }
+
 function select(index: number): void {
   if (selected.value === index) {
     selected.value = undefined;

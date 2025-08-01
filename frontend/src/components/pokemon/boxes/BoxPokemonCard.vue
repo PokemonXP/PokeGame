@@ -13,12 +13,16 @@ const { t } = useI18n();
 const props = defineProps<{
   clickable?: boolean | string;
   pokemon?: PokemonCard;
+  selected?: boolean | string;
 }>();
 
 const classes = computed<string[]>(() => {
   const classes: string[] = ["text-center"];
   if (parseBoolean(props.clickable)) {
     classes.push("clickable");
+  }
+  if (parseBoolean(props.selected)) {
+    classes.push("selected");
   }
   return classes;
 });
@@ -36,12 +40,14 @@ const heldItem = computed<ItemCard | undefined>(() => props.pokemon?.heldItem);
           <strong>{{ t("pokemon.egg.label") }}</strong>
         </template>
         <template v-else>
-          <strong>{{ pokemon.name }} {{ t("pokemon.level.format", { level: pokemon.level }) }}</strong>
-          <template v-if="heldItem">
-            <img v-if="heldItem.sprite" :src="heldItem.sprite" :alt="t('sprite.alt', { name: heldItem.name })" />
+          <div>
+            <strong>{{ pokemon.name }} {{ t("pokemon.level.format", { level: pokemon.level }) }}</strong>
+          </div>
+          <div v-if="heldItem">
+            <img v-if="heldItem.sprite" :src="heldItem.sprite" :alt="t('sprite.alt', { name: heldItem.name })" height="20" />
             <ItemIcon v-else />
             {{ heldItem.name }}
-          </template>
+          </div>
         </template>
       </div>
     </template>

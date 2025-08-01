@@ -2,14 +2,16 @@
 import { TarButton, TarModal } from "logitar-vue3-ui";
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { useRoute } from "vue-router";
 
 import TrainerGameBag from "@/components/inventory/TrainerGameBag.vue";
 import type { ChangePokemonItemPayload, Inventory, InventoryItem, ItemSummary, PokemonSummary } from "@/types/game";
-import { getInventory } from "@/api/game/trainers";
 import { changeHeldItem } from "@/api/game/pokemon";
+import { getInventory } from "@/api/game/trainers";
+import { usePokemonStore } from "@/stores/pokemon";
+import { useToastStore } from "@/stores/toast";
 
-const route = useRoute();
+const store = usePokemonStore();
+const toasts = useToastStore();
 const { t } = useI18n();
 
 const props = withDefaults(
@@ -31,11 +33,6 @@ const heldItem = computed<ItemSummary | undefined>(() => props.pokemon.heldItem 
 const icon = computed<string>(() => (heldItem.value ? "fas fa-rotate" : "fas fa-hand"));
 const text = computed<string>(() => (heldItem.value ? "items.held.swap" : "items.held.give"));
 
-const emit = defineEmits<{
-  (e: "changed", item?: InventoryItem): void;
-  (e: "error", error: unknown): void;
-}>();
-
 function hide(): void {
   modalRef.value?.hide();
 }
@@ -48,20 +45,14 @@ function cancel(): void {
   hide();
 }
 async function open(): Promise<void> {
-  if (!isLoading.value) {
-    if (!inventory.value) {
-      isLoading.value = true;
-      try {
-        const trainerId: string = route.params.trainer.toString();
-        if (!trainerId) {
-          throw new Error("ChangeHeldItem: a trainer ID is required.");
-        }
-        inventory.value = await getInventory(trainerId);
-      } catch (e: unknown) {
-        emit("error", e);
-      } finally {
-        isLoading.value = false;
-      }
+  if (store.trainerId && !isLoading.value) {
+    isLoading.value = true;
+    try {
+      inventory.value = await getInventory(store.trainerId);
+    } catch (e: unknown) {
+      store.setError(e);
+    } finally {
+      isLoading.value = false;
     }
     show();
   }
@@ -79,14 +70,18 @@ async function submit(): Promise<void> {
   if (!isLoading.value) {
     isLoading.value = true;
     try {
+      const message: string | undefined = store.summary ? (store.summary.heldItem ? "items.held.swapped" : "items.held.given") : undefined;
       const payload: ChangePokemonItemPayload = {
         heldItem: selected.value?.id,
       };
       await changeHeldItem(props.pokemon.id, payload);
-      emit("changed", selected.value);
+      store.setHeldItem(selected.value);
+      if (message) {
+        toasts.success(message);
+      }
       cancel();
     } catch (e: unknown) {
-      emit("error", e);
+      store.setError(e);
     } finally {
       isLoading.value = false;
     }

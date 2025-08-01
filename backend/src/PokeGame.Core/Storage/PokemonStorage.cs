@@ -45,6 +45,10 @@ public class PokemonStorage : AggregateRoot
     {
       throw new ArgumentException($"The Pokémon '{pokemon}' was not found in trainer's 'Id={TrainerId}' storage.", nameof(pokemon));
     }
+    else if (previousSlot.Box is not null)
+    {
+      throw new ArgumentException($"The Pokémon '{pokemon}' is not in trainer's 'Id={TrainerId}' party.", nameof(pokemon));
+    }
 
     IReadOnlyCollection<PokemonId> partyIds = GetParty();
 
@@ -141,6 +145,22 @@ public class PokemonStorage : AggregateRoot
 
     _slots[@event.SourceId] = destinationSlot;
     _slots[@event.DestinationId] = sourceSlot;
+  }
+
+  public void Withdraw(Specimen pokemon, ActorId? actorId = null)
+  {
+    if (!_slots.TryGetValue(pokemon.Id, out PokemonSlot? previousSlot))
+    {
+      throw new ArgumentException($"The Pokémon '{pokemon}' was not found in trainer's 'Id={TrainerId}' storage.", nameof(pokemon));
+    }
+    else if (previousSlot.Box is null)
+    {
+      throw new ArgumentException($"The Pokémon '{pokemon}' is already in trainer's 'Id={TrainerId}' party.", nameof(pokemon));
+    }
+
+    Position position = FindFirstPartyAvailable() ?? throw new NotImplementedException(); // TODO(fpion): implement
+    pokemon.Withdraw(position, actorId);
+    Raise(new PokemonStored(pokemon.Id, new PokemonSlot(position)), actorId);
   }
 
   private PokemonSlot FindFirstAvailable()

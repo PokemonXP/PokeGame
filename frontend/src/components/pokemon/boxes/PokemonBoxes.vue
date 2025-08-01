@@ -7,42 +7,38 @@ import BoxInput from "./BoxInput.vue";
 import BoxPokemonCard from "./BoxPokemonCard.vue";
 import type { PokemonCard } from "@/types/game";
 import { BOX_COUNT, BOX_SIZE } from "@/types/pokemon";
-import { getPokemon } from "@/api/game/pokemon";
+import { usePokemonStore } from "@/stores/pokemon";
 
+const store = usePokemonStore();
 const { t } = useI18n();
-
-const props = defineProps<{
-  trainer: string;
-}>();
 
 const box = ref<number>(0);
 const boxInput = ref<number>(1);
-const isLoading = ref<boolean>(false);
-const pokemon = ref<PokemonCard[]>([]);
 
 const index = computed<Map<number, PokemonCard>>(() => {
   const index: Map<number, PokemonCard> = new Map();
-  pokemon.value.forEach((pokemon) => index.set(pokemon.position, pokemon));
+  store.box?.pokemon.forEach((pokemon) => index.set(pokemon.position, pokemon));
   return index;
 });
 const isFirst = computed<boolean>(() => box.value <= 0);
 const isLast = computed<boolean>(() => box.value >= BOX_COUNT - 1);
-
-const emit = defineEmits<{
-  (e: "error", error: unknown): void;
-}>();
+const isLoading = computed<boolean>(() => store.isLoading);
 
 function first(): void {
   box.value = 0;
+  boxInput.value = box.value + 1;
 }
 function last(): void {
   box.value = BOX_COUNT - 1;
+  boxInput.value = box.value + 1;
 }
 function next(): void {
   box.value = Math.min(box.value + 1, BOX_COUNT - 1);
+  boxInput.value = box.value + 1;
 }
 function previous(): void {
   box.value = Math.max(box.value - 1, 0);
+  boxInput.value = box.value + 1;
 }
 
 function submit(): void {
@@ -50,21 +46,14 @@ function submit(): void {
   box.value = boxInput.value - 1;
 }
 
-watch(
-  box,
-  async (box) => {
-    isLoading.value = true;
-    try {
-      pokemon.value = await getPokemon(props.trainer, box);
-    } catch (e: unknown) {
-      emit("error", e);
-    } finally {
-      isLoading.value = false;
-      boxInput.value = box + 1;
-    }
-  },
-  { immediate: true },
-);
+function toggle(position: number): void {
+  const pokemon: PokemonCard | undefined = index.value.get(position);
+  if (pokemon) {
+    store.select(pokemon);
+  }
+}
+
+watch(box, store.loadBox, { immediate: true });
 </script>
 
 <template>
@@ -85,7 +74,12 @@ watch(
     </div>
     <div class="row">
       <div v-for="i in BOX_SIZE" :key="i" class="col-2 mb-2">
-        <BoxPokemonCard :clickable="index.has(i - 1)" :pokemon="index.get(i - 1)" />
+        <BoxPokemonCard
+          :clickable="index.has(i - 1)"
+          :pokemon="index.get(i - 1)"
+          :selected="store.selected && store.selected.id === index.get(i - 1)?.id"
+          @click="toggle(i - 1)"
+        />
       </div>
     </div>
   </div>

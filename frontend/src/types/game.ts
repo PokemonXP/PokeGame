@@ -8,6 +8,11 @@ export type AbilitySummary = {
   description?: string | null;
 };
 
+export type Box = {
+  number: number;
+  pokemon: PokemonCard[];
+};
+
 export type ChangePokemonItemPayload = {
   heldItem?: string;
 };
@@ -118,6 +123,8 @@ export type PokemonSummary = PokemonBase & {
   ownership: OwnershipSummary;
   characteristic?: string | null;
 };
+
+export type PokemonView = "party" | "boxes" | "summary";
 
 export type StatisticsSummary = {
   hp: number;

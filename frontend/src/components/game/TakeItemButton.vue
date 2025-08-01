@@ -5,7 +5,11 @@ import { useI18n } from "vue-i18n";
 
 import type { ChangePokemonItemPayload, PokemonBase } from "@/types/game";
 import { changeHeldItem } from "@/api/game/pokemon";
+import { usePokemonStore } from "@/stores/pokemon";
+import { useToastStore } from "@/stores/toast";
 
+const store = usePokemonStore();
+const toasts = useToastStore();
 const { t } = useI18n();
 
 const props = defineProps<{
@@ -14,20 +18,16 @@ const props = defineProps<{
 
 const isLoading = ref<boolean>(false);
 
-const emit = defineEmits<{
-  (e: "error", error: unknown): void;
-  (e: "success"): void;
-}>();
-
 async function takeItem(): Promise<void> {
   if (!isLoading.value) {
     isLoading.value = true;
     try {
       const payload: ChangePokemonItemPayload = {};
       await changeHeldItem(props.pokemon.id, payload);
-      emit("success");
+      store.setHeldItem();
+      toasts.success("items.held.taken");
     } catch (e: unknown) {
-      emit("error", e);
+      store.setError(e);
     } finally {
       isLoading.value = false;
     }
