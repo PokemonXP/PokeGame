@@ -10,7 +10,8 @@ import EscapeBattle from "@/components/battle/EscapeBattle.vue";
 import ResetBattle from "@/components/battle/ResetBattle.vue";
 import StartBattle from "@/components/battle/StartBattle.vue";
 import SwitchPokemonModal from "./SwitchPokemonModal.vue";
-import type { Battle, BattleStatus } from "@/types/battle";
+import UseMoveModal from "@/components/battle/UseMoveModal.vue";
+import type { Battle, BattleMove, BattleStatus, BattleSwitch } from "@/types/battle";
 import type { Breadcrumb } from "@/types/components";
 import { StatusCodes, type ApiFailure } from "@/types/api";
 import { handleErrorKey } from "@/inject";
@@ -22,6 +23,7 @@ const router = useRouter();
 const store = useBattleActionStore();
 const { t } = useI18n();
 
+const moveRef = ref<InstanceType<typeof UseMoveModal> | null>(null);
 const switchRef = ref<InstanceType<typeof SwitchPokemonModal> | null>(null);
 
 const battle = computed<Battle | undefined>(() => store.data);
@@ -37,7 +39,7 @@ const breadcrumb = computed<Breadcrumb[]>(() => {
 
 watch(
   () => store.error,
-  (e) => {
+  (e: unknown) => {
     const { status } = e as ApiFailure;
     if (status === StatusCodes.NotFound) {
       router.push("/not-found");
@@ -48,8 +50,19 @@ watch(
   },
 );
 watch(
+  () => store.move,
+  (data: BattleMove | undefined) => {
+    if (data) {
+      moveRef.value?.show();
+    } else {
+      moveRef.value?.hide();
+    }
+  },
+  { deep: true },
+);
+watch(
   () => store.switchData,
-  (data) => {
+  (data: BattleSwitch | undefined) => {
     if (data) {
       switchRef.value?.show();
     } else {
@@ -84,6 +97,7 @@ onMounted(async () => store.load(route.params.id as string));
       <p v-else-if="status === 'Created'">{{ t("battle.notStarted") }}</p>
       <p v-else>{{ t("battle.ended") }}</p>
       <SwitchPokemonModal ref="switchRef" />
+      <UseMoveModal ref="moveRef" />
     </template>
   </main>
 </template>

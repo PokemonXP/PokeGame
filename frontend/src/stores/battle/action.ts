@@ -2,7 +2,7 @@ import { arrayUtils } from "logitar-js";
 import { computed, ref } from "vue";
 import { defineStore } from "pinia";
 
-import type { Battle, BattlerDetail, BattleSwitch } from "@/types/battle";
+import type { Battle, BattleMove, BattlerDetail, BattleSwitch } from "@/types/battle";
 import { getAbility, getUrl } from "@/helpers/pokemon";
 import { readBattle } from "@/api/battle";
 
@@ -12,6 +12,7 @@ export const useBattleActionStore = defineStore("battle-action", () => {
   const data = ref<Battle>();
   const error = ref<unknown>();
   const isLoading = ref<boolean>(false);
+  const move = ref<BattleMove>();
   const switchData = ref<BattleSwitch>();
 
   const battlers = computed<BattlerDetail[]>(
@@ -66,6 +67,10 @@ export const useBattleActionStore = defineStore("battle-action", () => {
     data.value = battle;
   }
 
+  function useMove(attacker: BattlerDetail): void {
+    move.value = { attacker };
+  }
+
   function setError(e?: unknown): void {
     error.value = e;
   }
@@ -76,6 +81,7 @@ export const useBattleActionStore = defineStore("battle-action", () => {
     data,
     error,
     isLoading,
+    move,
     switchData,
     cancel,
     escape,
@@ -85,5 +91,6 @@ export const useBattleActionStore = defineStore("battle-action", () => {
     start,
     startSwitch,
     switched,
+    useMove,
   };
 });

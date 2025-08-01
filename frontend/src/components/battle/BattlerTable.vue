@@ -91,7 +91,12 @@ const { t } = useI18n();
         </td>
         <td>
           <div class="d-flex gap-2">
-            <TarButton :disabled="battler.pokemon.vitality < 1" icon="fas fa-wand-sparkles" :text="t('moves.use.action')" />
+            <TarButton
+              :disabled="battler.pokemon.vitality < 1 || battler.pokemon.moves.length < 1"
+              icon="fas fa-wand-sparkles"
+              :text="t('moves.use.action')"
+              @click="battle.useMove(battler)"
+            />
             <TarButton v-if="battler.pokemon.ownership" icon="fas fa-rotate" :text="t('battle.switch.label')" @click="battle.startSwitch(battler)" />
           </div>
         </td>

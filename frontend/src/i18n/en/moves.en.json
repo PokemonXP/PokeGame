@@ -23,6 +23,7 @@
   "known": "Known Move",
   "power": "Power",
   "powerPoints": {
+    "abbreviation": "PP",
     "format": "Base: {powerPoints}",
     "label": "Power Points"
   },
@@ -41,6 +42,10 @@
   "title": "Moves",
   "updated": "The move has been updated.",
   "use": {
-    "action": "Use Move"
+    "action": "Use Move",
+    "select": {
+      "help": "Select one of the moves below.",
+      "label": "Select"
+    }
   }
 }

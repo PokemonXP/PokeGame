@@ -56,6 +56,10 @@ export type BattleSortOption = SortOption & {
 
 export type BattleStatus = "Cancelled" | "Completed" | "Created" | "Started";
 
+export type BattleMove = {
+  attacker: BattlerDetail;
+};
+
 export type BattleSwitch = {
   active: BattlerDetail;
   inactive: BattlerDetail[];
