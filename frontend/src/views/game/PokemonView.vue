@@ -12,16 +12,14 @@ import PokemonGameSummary from "@/components/pokemon/PokemonGameSummary.vue";
 import PokemonSprite from "@/components/pokemon/PokemonSprite.vue";
 import type { Breadcrumb } from "@/types/components";
 import type { PokemonCard } from "@/types/game";
-import { depositPokemon, swapPokemon, withdrawPokemon } from "@/api/game/pokemon";
+import { PARTY_SIZE } from "@/types/pokemon";
 import { handleErrorKey } from "@/inject";
 import { onMounted, ref } from "vue";
 import { usePokemonStore } from "@/stores/pokemon";
-import { useToastStore } from "@/stores/toast";
 
 const handleError = inject(handleErrorKey) as (e: unknown) => void;
 const route = useRoute();
 const store = usePokemonStore();
-const toasts = useToastStore();
 const { t } = useI18n();
 
 const parent = ref<Breadcrumb>({ text: t("menu"), to: { name: "GameMenu" } });
@@ -30,64 +28,15 @@ const isBoxes = computed<boolean>(() => store.view === "boxes");
 const isLoading = computed<boolean>(() => store.isLoading);
 const selected = computed<PokemonCard | undefined>(() => store.selected);
 
-async function deposit(): Promise<void> {
-  if (!isLoading.value && selected.value) {
-    try {
-      await depositPokemon(selected.value.id);
-      refresh();
-      // TODO(fpion): refresh boxes?
-      toasts.success("pokemon.boxes.deposited");
-    } catch (e: unknown) {
-      handleError(e); // TODO(fpion): handle non-empty party error
-    }
-  }
-}
-async function withdraw(): Promise<void> {
-  if (!isLoading.value && selected.value) {
-    try {
-      await withdrawPokemon(selected.value.id);
-      refresh();
-      // TODO(fpion): refresh boxes?
-      toasts.success("pokemon.boxes.withdrawn");
-    } catch (e: unknown) {
-      handleError(e); // TODO(fpion): handle full party error
-    }
-  }
-}
-
-async function swap(pokemon: PokemonCard): Promise<void> {
-  if (!isLoading.value && selected.value) {
-    try {
-      await swapPokemon(selected.value.id, pokemon.id);
-      store.toggleSwapping(); // TODO(fpion): implement
-      refresh();
-      toasts.success("pokemon.position.swap.success");
-    } catch (e: unknown) {
-      handleError(e);
-    }
-  }
-}
-
-function select(pokemon: PokemonCard): void {
-  if (selected.value?.id === pokemon.id) {
-    store.toggleSelected(pokemon);
-  } else if (store.isSwapping) {
-    swap(pokemon);
-  } else {
-    store.toggleSelected(pokemon);
-  }
-} // TODO(fpion): implement this
-
-async function refresh(): Promise<void> {
-  store.loadParty();
-} // TODO(fpion): remove this (5 calls remaining)
+const canDeposit = computed<boolean>(() => Boolean(store.selected && typeof store.selected.box !== "number" && store.party.length > 1));
+const canWithdraw = computed<boolean>(() => Boolean(store.selected && typeof store.selected.box === "number" && store.party.length < PARTY_SIZE));
 
 watch(
   () => store.error,
   (error) => {
     if (error) {
       handleError(error);
-      store.clearError();
+      store.error = undefined;
     }
   },
 );
@@ -95,7 +44,6 @@ watch(
 onMounted(() => {
   const trainerId: string = route.params.trainer.toString();
   store.initialize(trainerId);
-  store.loadParty();
 });
 </script>
 
@@ -133,22 +81,24 @@ onMounted(() => {
         />
         <template v-if="isBoxes">
           <TarButton
+            v-if="canDeposit"
             :disabled="isLoading"
             icon="fas fa-box-archive"
             :loading="isLoading"
             size="large"
             :status="t('loading')"
             :text="t('pokemon.boxes.deposit')"
-            @click="deposit"
+            @click="store.deposit"
           />
           <TarButton
+            v-if="canWithdraw"
             :disabled="isLoading"
             icon="fas fa-hand"
             :loading="isLoading"
             size="large"
             :status="t('loading')"
             :text="t('pokemon.boxes.withdraw')"
-            @click="withdraw"
+            @click="store.withdraw"
           />
         </template>
       </template>
@@ -165,13 +115,13 @@ onMounted(() => {
           class="mb-2"
           :pokemon="pokemon"
           :selected="selected?.id === pokemon.id"
-          @click="select(pokemon)"
+          @click="store.select(pokemon)"
         />
       </section>
       <section class="col-9">
         <div v-if="store.view === 'party'" class="row">
           <div v-for="pokemon in store.party" :key="pokemon.id" class="col-4">
-            <PokemonSprite class="img-fluid mb-2 mx-auto" clickable :pokemon="pokemon" :selected="selected?.id === pokemon.id" @click="select(pokemon)" />
+            <PokemonSprite class="img-fluid mb-2 mx-auto" clickable :pokemon="pokemon" :selected="selected?.id === pokemon.id" @click="store.select(pokemon)" />
           </div>
         </div>
         <PokemonBoxes v-else-if="store.view === 'boxes' && store.trainerId" />

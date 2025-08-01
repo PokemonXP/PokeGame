@@ -8,6 +8,11 @@ export type AbilitySummary = {
   description?: string | null;
 };
 
+export type Box = {
+  number: number;
+  pokemon: PokemonCard[];
+};
+
 export type ChangePokemonItemPayload = {
   heldItem?: string;
 };

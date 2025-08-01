@@ -14,15 +14,15 @@ const { t } = useI18n();
 
 const box = ref<number>(0);
 const boxInput = ref<number>(1);
-const isLoading = ref<boolean>(false);
 
 const index = computed<Map<number, PokemonCard>>(() => {
   const index: Map<number, PokemonCard> = new Map();
-  store.box.forEach((pokemon) => index.set(pokemon.position, pokemon));
+  store.box?.pokemon.forEach((pokemon) => index.set(pokemon.position, pokemon));
   return index;
 });
 const isFirst = computed<boolean>(() => box.value <= 0);
 const isLast = computed<boolean>(() => box.value >= BOX_COUNT - 1);
+const isLoading = computed<boolean>(() => store.isLoading);
 
 function first(): void {
   box.value = 0;
@@ -49,7 +49,7 @@ function submit(): void {
 function toggle(position: number): void {
   const pokemon: PokemonCard | undefined = index.value.get(position);
   if (pokemon) {
-    store.toggleSelected(pokemon);
+    store.select(pokemon);
   }
 }
 
