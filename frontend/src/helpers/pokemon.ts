@@ -234,3 +234,7 @@ export function getAbility(pokemon: Pokemon): Ability {
 export function getUrl(pokemon: Pokemon): string | undefined {
   return pokemon.url ?? pokemon.form.url ?? pokemon.form.variety.url ?? pokemon.form.variety.species.url ?? undefined;
 }
+
+export function calculateStamina(powerPoints: number): number {
+  return Math.round(714 / 4 / powerPoints); // NOTE(fpion): highest HP possible value divided by maximum number of Pokémon moves.
+}

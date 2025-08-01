@@ -9,6 +9,7 @@ import MoveCategoryBadge from "@/components/moves/MoveCategoryBadge.vue";
 import MoveIcon from "@/components/icons/MoveIcon.vue";
 import PokemonTypeImage from "@/components/pokemon/PokemonTypeImage.vue";
 import type { PokemonMove } from "@/types/pokemon";
+import { calculateStamina } from "@/helpers/pokemon";
 
 const { n, t } = useI18n();
 
@@ -18,10 +19,6 @@ defineProps<{
 
 type Mode = "description" | "notes";
 const mode = ref<Mode>("description");
-
-function calculateStaminaCost(powerPoints: number): number {
-  return Math.round(714 / 4 / powerPoints); // NOTE(fpion): highest HP possible value divided by maximum number of Pokémon moves.
-} // TODO(fpion): refactor
 </script>
 
 <template>
@@ -83,7 +80,7 @@ function calculateStaminaCost(powerPoints: number): number {
           <td>
             {{ attack.move.powerPoints }}
             <br />
-            {{ calculateStaminaCost(attack.move.powerPoints) }}
+            {{ calculateStamina(attack.move.powerPoints) }}
           </td>
           <td class="description">
             <template v-if="mode === 'description' && attack.move.description">{{ attack.move.description }}</template>

@@ -4,14 +4,15 @@ import { arrayUtils } from "logitar-js";
 import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 
+import CircleInfoIcon from "@/components/icons/CircleInfoIcon.vue";
 import ExternalIcon from "@/components/icons/ExternalIcon.vue";
 import ExternalLink from "./ExternalLink.vue";
 import MoveCategoryBadge from "@/components/moves/MoveCategoryBadge.vue";
 import MoveIcon from "@/components/icons/MoveIcon.vue";
 import PokemonTypeImage from "@/components/pokemon/PokemonTypeImage.vue";
 import type { PokemonMove } from "@/types/pokemon";
+import { calculateStamina } from "@/helpers/pokemon";
 import { useBattleActionStore } from "@/stores/battle/action";
-import CircleInfoIcon from "../icons/CircleInfoIcon.vue";
 
 const battle = useBattleActionStore();
 const { n, t } = useI18n();
@@ -21,10 +22,6 @@ type Mode = "description" | "notes";
 const mode = ref<Mode>("description");
 
 const moves = computed<PokemonMove[]>(() => orderBy(battle.move?.attacker.pokemon.moves.filter((move) => typeof move.position === "number") ?? [], "position"));
-
-function calculateStaminaCost(powerPoints: number): number {
-  return Math.round(714 / 4 / powerPoints); // NOTE(fpion): highest HP possible value divided by maximum number of Pokémon moves.
-} // TODO(fpion): refactor
 
 const emit = defineEmits<{
   (e: "selected", attack: PokemonMove): void;
@@ -103,7 +100,7 @@ watch(
           <td class="narrow-col">
             {{ attack.move.powerPoints }}
             <br />
-            {{ calculateStaminaCost(attack.move.powerPoints) }}
+            {{ calculateStamina(attack.move.powerPoints) }}
           </td>
           <td class="description">
             <template v-if="mode === 'description' && attack.move.description">{{ attack.move.description }}</template>
