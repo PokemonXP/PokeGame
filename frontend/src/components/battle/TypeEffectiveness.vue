@@ -29,7 +29,7 @@ const props = withDefaults(
   {
     id: "type-effectiveness",
     label: "pokemon.type.effectiveness",
-    min: 0.001,
+    min: 0,
     step: 0.001,
     type: "number",
   },

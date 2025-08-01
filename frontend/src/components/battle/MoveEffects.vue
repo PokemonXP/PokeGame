@@ -6,6 +6,7 @@ import { useI18n } from "vue-i18n";
 import AttackInput from "./AttackInput.vue";
 import CircleInfoIcon from "@/components/icons/CircleInfoIcon.vue";
 import CriticalMultiplier from "./CriticalMultiplier.vue";
+import CriticalStageInput from "./CriticalStageInput.vue";
 import DamageInput from "./DamageInput.vue";
 import DefenseInput from "./DefenseInput.vue";
 import InflictedStatusCondition from "./InflictedStatusCondition.vue";
@@ -17,6 +18,7 @@ import PowerPointsCost from "./PowerPointsCost.vue";
 import RandomMultiplier from "./RandomMultiplier.vue";
 import SameTypeAttackBonus from "./SameTypeAttackBonus.vue";
 import StaminaCost from "./StaminaCost.vue";
+import StatisticStageInput from "./StatisticStageInput.vue";
 import TargetAccuracy from "./TargetAccuracy.vue";
 import TargetsMultiplier from "./TargetsMultiplier.vue";
 import TypeEffectiveness from "./TypeEffectiveness.vue";
@@ -26,7 +28,6 @@ import type { PokemonMove } from "@/types/pokemon";
 import { calculateStamina } from "@/helpers/pokemon";
 import { formatPokemon } from "@/helpers/format";
 import { useBattleActionStore } from "@/stores/battle/action";
-import { useForm } from "@/forms";
 
 const battle = useBattleActionStore();
 const { t } = useI18n();
@@ -38,7 +39,6 @@ const props = defineProps<{
 
 const category = ref<string>("");
 const criticalMultiplier = ref<number>(0);
-const isLoading = ref<boolean>(false);
 const powerPoints = ref<number>(0);
 const randomDie = ref<number>(1);
 const stab = ref<number>(1);
@@ -75,23 +75,6 @@ function updateTarget(target: TargetEffects): void {
   }
 }
 
-const { isValid, validate } = useForm();
-async function submit(): Promise<void> {
-  if (!isLoading.value) {
-    isLoading.value = true;
-    try {
-      validate();
-      if (isValid.value) {
-        // TODO(fpion): submit!
-      }
-    } catch (e: unknown) {
-      battle.setError(e);
-    } finally {
-      isLoading.value = false;
-    }
-  }
-}
-
 watch(
   () => props.attack,
   (attack: PokemonMove) => {
@@ -110,8 +93,8 @@ watch(
         id: battler.pokemon.id,
         battler,
         power: props.attack.move.power ?? 0,
-        attack: 0,
-        defense: 0,
+        attack: 5,
+        defense: 5,
         effectiveness: 0,
         other: 1,
         damage: 0,
@@ -124,8 +107,6 @@ watch(
   },
   { deep: true, immediate: true },
 );
-
-// TODO(fpion): 8 statistic changes
 </script>
 
 <template>
@@ -133,60 +114,57 @@ watch(
     <p>
       <i><CircleInfoIcon />{{ t("moves.use.effects.help") }}</i>
     </p>
-    <form @submit.prevent="submit">
-      <h2 class="h6">{{ t("moves.use.attacker") }}</h2>
+    <h2 class="h6">{{ t("moves.use.attacker") }}</h2>
+    <div class="row">
+      <PowerPointsCost class="col" :power-points="attack.powerPoints" required v-model="powerPoints" />
+      <StaminaCost class="col" required v-model="stamina" />
+      <MoveCategorySelect class="col" :disabled="move.category === 'Status'" :required="move.category !== 'Status'" v-model="category" />
+    </div>
+    <div v-if="!isStatus" class="row">
+      <TargetsMultiplier class="col" required :targets="targetCount" v-model="targetMultiplier" />
+      <RandomMultiplier class="col" required v-model="randomDie" />
+      <CriticalMultiplier class="col" v-model="criticalMultiplier" />
+      <SameTypeAttackBonus class="col" :move="move" required v-model="stab" />
+    </div>
+    <div v-for="target in targetEffects" :key="target.id" :id="target.id">
+      <h2 class="h6">
+        <PokemonGenderIcon :gender="target.battler.pokemon.gender" />
+        {{ formatPokemon(target.battler.pokemon) }}
+        {{ t("pokemon.level.format", { level: target.battler.pokemon.level }) }}
+      </h2>
+      <div v-if="!isStatus" class="row">
+        <PowerInput class="col" :id="`${target.id}-power`" v-model="target.power" />
+        <AttackInput :attacker="attacker" class="col" :category="categoryValue" :id="`${target.id}-attack`" required v-model="target.attack" />
+        <DefenseInput class="col" :category="categoryValue" :id="`${target.id}-defense`" required :target="target.battler" v-model="target.defense" />
+        <TypeEffectiveness class="col" :id="`${target.id}-type-effectiveness`" :move="move" required :target="target.battler" v-model="target.effectiveness" />
+        <OtherMultiplier class="col" :id="`${target.id}-other-multiplier`" v-model="target.other" />
+      </div>
       <div class="row">
-        <PowerPointsCost class="col" :power-points="attack.powerPoints" required v-model="powerPoints" />
-        <StaminaCost class="col" required v-model="stamina" />
-        <MoveCategorySelect class="col" :disabled="move.category === 'Status'" :required="move.category !== 'Status'" v-model="category" />
-      </div>
-      <div v-if="!isStatus" class="row">
-        <TargetsMultiplier class="col" required :targets="targetCount" v-model="targetMultiplier" />
-        <RandomMultiplier class="col" required v-model="randomDie" />
-        <CriticalMultiplier class="col" v-model="criticalMultiplier" />
-      </div>
-      <div v-if="!isStatus" class="row">
-        <SameTypeAttackBonus class="col" :move="move" required v-model="stab" />
+        <TargetAccuracy class="col" :id="`${target.id}-accuracy`" :move="move" />
+        <DamageInput
+          :args="damageArgs"
+          class="col"
+          :category="categoryValue"
+          :id="`${target.id}-damage`"
+          :model-value="target"
+          :required="!isStatus"
+          @update:model-value="updateTarget"
+        />
+        <InflictedStatusCondition class="col" :id="`${target.id}-status`" :model-value="target" @update:model-value="updateTarget" />
         <div class="col"></div>
         <div class="col"></div>
       </div>
-      <div v-for="target in targetEffects" :key="target.id" :id="target.id">
-        <h2 class="h6">
-          <PokemonGenderIcon :gender="target.battler.pokemon.gender" />
-          {{ formatPokemon(target.battler.pokemon) }}
-          {{ t("pokemon.level.format", { level: target.battler.pokemon.level }) }}
-        </h2>
-        <div v-if="!isStatus" class="row">
-          <PowerInput class="col" :id="`${target.id}-power`" v-model="target.power" />
-          <AttackInput :attacker="attacker" class="col" :category="categoryValue" :id="`${target.id}-attack`" required v-model="target.attack" />
-          <DefenseInput class="col" :category="categoryValue" :id="`${target.id}-defense`" required :target="target.battler" v-model="target.defense" />
-          <TypeEffectiveness
-            class="col"
-            :id="`${target.id}-type-effectiveness`"
-            :move="move"
-            required
-            :target="target.battler"
-            v-model="target.effectiveness"
-          />
-          <OtherMultiplier class="col" :id="`${target.id}-other-multiplier`" v-model="target.other" />
-        </div>
-        <div class="row">
-          <TargetAccuracy class="col" :id="`${target.id}-accuracy`" :move="move" />
-          <DamageInput
-            :args="damageArgs"
-            class="col"
-            :category="categoryValue"
-            :id="`${target.id}-damage`"
-            :model-value="target"
-            :required="!isStatus"
-            @update:model-value="updateTarget"
-          />
-          <InflictedStatusCondition class="col" :id="`${target.id}-status`" :model-value="target" @update:model-value="updateTarget" />
-          <div class="col"></div>
-          <div class="col"></div>
-        </div>
+      <div class="row">
+        <StatisticStageInput class="col" :id="target.id" required statistic="Attack" v-model="target.statistics.attack" />
+        <StatisticStageInput class="col" :id="target.id" required statistic="Defense" v-model="target.statistics.defense" />
+        <StatisticStageInput class="col" :id="target.id" required statistic="SpecialAttack" v-model="target.statistics.specialAttack" />
+        <StatisticStageInput class="col" :id="target.id" required statistic="SpecialDefense" v-model="target.statistics.specialDefense" />
+        <StatisticStageInput class="col" :id="target.id" required statistic="Speed" v-model="target.statistics.speed" />
+        <StatisticStageInput class="col" :id="target.id" required statistic="Accuracy" v-model="target.statistics.accuracy" />
+        <StatisticStageInput class="col" :id="target.id" required statistic="Evasion" v-model="target.statistics.evasion" />
+        <CriticalStageInput class="col" :id="`${target.id}-critical-stages`" required v-model="target.statistics.critical" />
       </div>
-    </form>
+    </div>
     <TarButton icon="fas fa-arrow-left" :text="t('actions.previous')" @click="$emit('previous')" />
   </div>
 </template>
