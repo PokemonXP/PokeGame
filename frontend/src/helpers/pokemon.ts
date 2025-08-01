@@ -1,3 +1,11 @@
+type TypeEffectiveness = {
+  [attackingType in PokemonType]: {
+    [defendingType in PokemonType]: number;
+  };
+};
+import effectiveness from "@/resources/type-effectiveness.json" assert { type: "json" };
+const effectivenessChart: TypeEffectiveness = effectiveness;
+
 import { EFFORT_VALUE_MAXIMUM, EFFORT_VALUE_MINIMUM, INDIVIDUAL_VALUE_MAXIMUM, INDIVIDUAL_VALUE_MINIMUM, LEVEL_MAXIMUM, LEVEL_MINIMUM } from "@/types/pokemon";
 import type { Ability } from "@/types/abilities";
 import type { BaseStatistics, Form, FormAbilities, Sprites } from "@/types/pokemon-forms";
@@ -10,6 +18,7 @@ import type {
   PokemonSizeCategory,
   PokemonStatistic,
   PokemonStatistics,
+  PokemonType,
   StatisticValues,
 } from "@/types/pokemon";
 import type { GrowthRate } from "@/types/species";
@@ -253,4 +262,8 @@ export function calculateCriticalChance(stage: number): number {
       return 1;
   }
   return stage < 0 ? 0 : 1;
+}
+
+export function getTypeEffectiveness(attacker: PokemonType, defender: PokemonType): number {
+  return effectivenessChart[attacker][defender];
 }

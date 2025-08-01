@@ -42,15 +42,22 @@
   "title": "Attaques",
   "updated": "L’attaque a été mise à jour.",
   "use": {
+    "attacker": "Attaquant",
     "effects": {
       "help": "Remplissez le formulaire d’effets de l’attaque ci-dessous."
     },
+    "other": {
+      "multiplier": "Autre facteur"
+    },
+    "random": "Facteur aléatoire",
     "select": {
       "help": "Sélectionnez une des attaques ci-dessous."
     },
     "selected": "Attaque sélectionnée",
+    "stab": "Bonus d’attaque de même type (STAB)",
     "target": {
       "help": "Sélectionnez une ou plusieurs cibles ci-dessous.",
+      "multiplier": "Facteur de cibles",
       "title": "Cibles"
     },
     "title": "Utiliser une attaque"

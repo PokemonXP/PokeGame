@@ -49,6 +49,15 @@ const emit = defineEmits<{
   (e: "saved", pokemon: Pokemon): void;
 }>();
 
+function getText(statistic: string): string {
+  switch (statistic) {
+    case "hp":
+      return "pokemon.statistic.select.options.HP";
+    default:
+      return `pokemon.statistic.select.options.${statistic[0].toUpperCase() + statistic.substring(1)}`;
+  }
+}
+
 const { isValid, reinitialize, validate } = useForm();
 async function submit(): Promise<void> {
   if (!isLoading.value) {
@@ -94,6 +103,7 @@ watch(
     <table class="table table-striped">
       <thead>
         <tr>
+          <th scope="col">{{ t("pokemon.statistic.select.label") }}</th>
           <th scope="col">{{ t("pokemon.statistic.base") }}</th>
           <th scope="col">{{ t("pokemon.statistic.individual.title") }}</th>
           <th scope="col">{{ t("pokemon.statistic.effort.title") }}</th>
@@ -102,6 +112,7 @@ watch(
       </thead>
       <tbody>
         <tr v-for="statistic in statistics" :key="statistic">
+          <td>{{ t(getText(statistic)) }}</td>
           <td>{{ pokemon.statistics[statistic].base }}</td>
           <td>{{ pokemon.statistics[statistic].individualValue }}</td>
           <td>{{ pokemon.statistics[statistic].effortValue }}</td>

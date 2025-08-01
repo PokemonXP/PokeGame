@@ -30,7 +30,7 @@ withDefaults(
 );
 
 defineEmits<{
-  (e: "update:model-value", level: number): void;
+  (e: "update:model-value", power: number): void;
 }>();
 </script>
 

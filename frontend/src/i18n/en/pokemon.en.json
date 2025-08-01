@@ -343,6 +343,7 @@
   },
   "title": "Pokémon",
   "type": {
+    "effectiveness": "Type Effectiveness",
     "label": "Type",
     "none": "None",
     "options": {

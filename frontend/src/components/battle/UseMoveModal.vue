@@ -38,7 +38,7 @@ defineExpose({ hide, show });
   <TarModal :close="t('actions.close')" fullscreen id="use-move" ref="modalRef" :title="t('moves.use.title')">
     <template v-if="attack">
       <SelectedMove :attack="attack" />
-      <MoveEffects v-if="targets.size > 0" :attack="attack" />
+      <MoveEffects v-if="targets.size > 0" :attack="attack" :targets="targets" />
       <TargetSelection v-else-if="attack" @next="targets = new Set<string>($event)" @previous="attack = undefined" />
     </template>
     <BattleMoveTable v-else @selected="attack = $event" />

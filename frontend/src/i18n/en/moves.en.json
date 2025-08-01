@@ -42,15 +42,22 @@
   "title": "Moves",
   "updated": "The move has been updated.",
   "use": {
+    "attacker": "Attacker",
     "effects": {
       "help": "Fill the move effects form below."
+    },
+    "other": {
+      "multiplier": "Other Multiplier"
     },
     "select": {
       "help": "Select one of the moves below."
     },
+    "random": "Random Multiplier",
     "selected": "Selected Move",
+    "stab": "Same Type Attack Bonus (STAB)",
     "target": {
       "help": "Select one or more targets below.",
+      "multiplier": "Target Multiplier",
       "title": "Targets"
     },
     "title": "Use Move"
