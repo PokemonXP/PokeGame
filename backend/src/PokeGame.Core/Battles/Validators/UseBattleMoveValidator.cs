@@ -1,8 +1,7 @@
 ﻿using FluentValidation;
 using PokeGame.Core.Battles.Models;
-using PokeGame.Core.Battles.Validators;
 
-namespace PokeGame.Core.Items.Validators;
+namespace PokeGame.Core.Battles.Validators;
 
 internal class UseBattleMoveValidator : AbstractValidator<UseBattleMovePayload>
 {

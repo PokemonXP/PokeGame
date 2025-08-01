@@ -2,7 +2,7 @@
 using Krakenar.Core;
 using Logitar.EventSourcing;
 using PokeGame.Core.Battles.Models;
-using PokeGame.Core.Items.Validators;
+using PokeGame.Core.Battles.Validators;
 using PokeGame.Core.Moves;
 using PokeGame.Core.Pokemon;
 
