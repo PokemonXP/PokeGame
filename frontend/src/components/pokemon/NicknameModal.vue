@@ -4,10 +4,14 @@ import { ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 
 import NicknameInput from "./NicknameInput.vue";
-import { useForm } from "@/forms";
 import type { NicknamePokemonPayload, PokemonSummary } from "@/types/game";
 import { nicknamePokemon } from "@/api/game/pokemon";
+import { useForm } from "@/forms";
+import { usePokemonStore } from "@/stores/pokemon";
+import { useToastStore } from "@/stores/toast";
 
+const store = usePokemonStore();
+const toasts = useToastStore();
 const { t } = useI18n();
 
 const props = withDefaults(
@@ -41,11 +45,6 @@ function resetModel(): void {
   nickname.value = props.pokemon.nickname ?? "";
 }
 
-const emit = defineEmits<{
-  (e: "error", error: unknown): void;
-  (e: "nicknamed", nickname: string): void;
-}>();
-
 const { isValid, reset, validate } = useForm();
 async function submit(): Promise<void> {
   if (!isLoading.value) {
@@ -57,12 +56,13 @@ async function submit(): Promise<void> {
           nickname: nickname.value,
         };
         await nicknamePokemon(props.pokemon.id, payload);
-        emit("nicknamed", nickname.value);
+        store.setNickname(nickname.value);
+        toasts.success("pokemon.nickname.success");
         reset();
         hide();
       }
     } catch (e: unknown) {
-      emit("error", e);
+      store.setError(e);
     } finally {
       isLoading.value = false;
     }

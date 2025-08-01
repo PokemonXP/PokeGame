@@ -119,6 +119,8 @@ export type PokemonSummary = PokemonBase & {
   characteristic?: string | null;
 };
 
+export type PokemonView = "party" | "boxes" | "summary";
+
 export type StatisticsSummary = {
   hp: number;
   attack: number;

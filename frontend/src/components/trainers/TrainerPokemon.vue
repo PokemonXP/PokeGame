@@ -336,7 +336,7 @@ watch(() => props.trainer, refresh, { deep: true, immediate: true });
         icon="fas fa-hand"
         :loading="isLoading"
         :status="t('loading')"
-        :text="t('pokemon.memories.box.withdraw')"
+        :text="t('pokemon.boxes.withdraw')"
         @click="withdraw"
       />
       <TarButton
