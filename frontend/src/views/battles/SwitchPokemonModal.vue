@@ -6,23 +6,14 @@ import { useI18n } from "vue-i18n";
 import SwitchPokemonCard from "./SwitchPokemonCard.vue";
 import type { Battle, BattlerDetail, SwitchBattlePokemonPayload } from "@/types/battle";
 import { switchBattlePokemon } from "@/api/battle";
+import { useBattleActionStore } from "@/stores/battle/action";
 
+const battle = useBattleActionStore();
 const { t } = useI18n();
-
-const props = defineProps<{
-  active: BattlerDetail;
-  battle: Battle;
-  inactive: BattlerDetail[];
-}>();
 
 const isLoading = ref<boolean>(false);
 const modalRef = ref<InstanceType<typeof TarModal> | null>(null);
 const selected = ref<BattlerDetail>();
-
-const emit = defineEmits<{
-  (e: "error", error: unknown): void;
-  (e: "switched", battle: Battle): void;
-}>();
 
 function hide(): void {
   modalRef.value?.hide();
@@ -32,11 +23,10 @@ function show(): void {
 }
 
 function cancel(): void {
-  hide();
+  battle.switchData = undefined;
 }
 
 function toggle(battler: BattlerDetail): void {
-  console.log("toggle");
   if (selected.value?.pokemon.id === battler.pokemon.id) {
     selected.value = undefined;
   } else if (battler.pokemon.vitality > 0) {
@@ -45,18 +35,18 @@ function toggle(battler: BattlerDetail): void {
 }
 
 async function onSwitch(): Promise<void> {
-  if (!isLoading.value && selected.value) {
+  if (battle.data && battle.switchData && !isLoading.value && selected.value) {
     isLoading.value = true;
     try {
       const payload: SwitchBattlePokemonPayload = {
-        active: props.active.pokemon.id,
+        active: battle.switchData.active.pokemon.id,
         inactive: selected.value.pokemon.id,
       };
-      const battle: Battle = await switchBattlePokemon(props.battle.id, payload);
-      emit("switched", battle);
+      const updated: Battle = await switchBattlePokemon(battle.data.id, payload);
+      battle.switched(updated);
       cancel();
     } catch (e: unknown) {
-      emit("error", e);
+      battle.setError(e);
     } finally {
       isLoading.value = false;
     }
@@ -68,13 +58,13 @@ defineExpose({ hide, show });
 
 <template>
   <TarModal :close="t('actions.close')" id="switch-pokemon" ref="modalRef" size="large" :title="t('battle.switch.title')">
-    <div>
+    <div v-if="battle.switchData">
       <h2 class="h6">{{ t("battle.active") }}</h2>
-      <SwitchPokemonCard :battler="active" class="mb-2" />
-      <h2 class="h6">{{ t("battle.inactive", inactive.length) }}</h2>
-      <template v-if="inactive.length">
+      <SwitchPokemonCard :battler="battle.switchData.active" class="mb-2" />
+      <h2 class="h6">{{ t("battle.inactive", battle.switchData.inactive.length) }}</h2>
+      <template v-if="battle.switchData.inactive.length">
         <SwitchPokemonCard
-          v-for="battler in inactive"
+          v-for="battler in battle.switchData.inactive"
           :key="battler.pokemon.id"
           :battler="battler"
           class="mb-2"

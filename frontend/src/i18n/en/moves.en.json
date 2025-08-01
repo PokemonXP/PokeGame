@@ -39,5 +39,8 @@
     }
   },
   "title": "Moves",
-  "updated": "The move has been updated."
+  "updated": "The move has been updated.",
+  "use": {
+    "action": "Use Move"
+  }
 }

@@ -1,0 +1,101 @@
+<script setup lang="ts">
+import { TarButton } from "logitar-vue3-ui";
+import { useI18n } from "vue-i18n";
+
+import AbilityIcon from "@/components/icons/AbilityIcon.vue";
+import ExternalIcon from "@/components/icons/ExternalIcon.vue";
+import ExternalLink from "@/components/battle/ExternalLink.vue";
+import ItemBlock from "@/components/items/ItemBlock.vue";
+import PokemonBlock from "@/components/pokemon/PokemonBlock.vue";
+import StaminaBar from "@/components/pokemon/StaminaBar.vue";
+import StatusConditionIcon from "@/components/pokemon/StatusConditionIcon.vue";
+import TrainerBlock from "@/components/trainers/TrainerBlock.vue";
+import VitalityBar from "@/components/pokemon/VitalityBar.vue";
+import { useBattleActionStore } from "@/stores/battle/action";
+
+const battle = useBattleActionStore();
+const { t } = useI18n();
+
+// TODO(fpion): move handler
+</script>
+
+<template>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th scope="col">{{ t("pokemon.statistic.battle.Speed") }}</th>
+        <th scope="col">{{ t("pokemon.title") }}</th>
+        <th scope="col">{{ t("abilities.label") }}</th>
+        <th scope="col">{{ t("items.held.label") }}</th>
+        <th scope="col">{{ t("pokemon.status.label") }}</th>
+        <th scope="col">{{ t("trainers.select.label") }}</th>
+        <th scope="col">{{ t("battle.action", 3) }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr v-for="battler in battle.activeBattlers" :key="battler.pokemon.id">
+        <td>{{ battler.pokemon.statistics.speed.value }}</td>
+        <td>
+          <PokemonBlock external level :pokemon="battler.pokemon" :size="battler.url ? 60 : undefined">
+            <template v-if="battler.url" #after>
+              <br />
+              <ExternalLink :href="battler.url" />
+            </template>
+          </PokemonBlock>
+        </td>
+        <td>
+          <RouterLink :to="{ name: 'AbilityEdit', params: { id: battler.ability.id } }" target="_blank">
+            <ExternalIcon /> {{ battler.ability.displayName ?? battler.ability.uniqueName }}
+            <template v-if="battler.ability.displayName">
+              <br />
+              <AbilityIcon /> {{ battler.ability.uniqueName }}
+            </template>
+          </RouterLink>
+          <template v-if="battler.ability.url">
+            <br />
+            <ExternalLink :href="battler.ability.url" />
+          </template>
+        </td>
+        <td>
+          <ItemBlock v-if="battler.pokemon.heldItem" :item="battler.pokemon.heldItem" external :size="battler.pokemon.heldItem.url ? 60 : undefined">
+            <template v-if="battler.pokemon.heldItem.url" #after>
+              <br />
+              <ExternalLink :href="battler.pokemon.heldItem.url" />
+            </template>
+          </ItemBlock>
+          <span v-else class="text-muted">{{ "—" }}</span>
+        </td>
+        <td>
+          <div class="d-flex align-items-center">
+            <span class="text-danger me-2 text-nowrap"> {{ battler.pokemon.vitality }}/{{ battler.pokemon.statistics.hp.value }} </span>
+            <div class="flex-grow-1">
+              <VitalityBar :current="battler.pokemon.vitality" :maximum="battler.pokemon.statistics.hp.value" />
+            </div>
+          </div>
+          <div class="d-flex align-items-center">
+            <span class="text-primary me-2 text-nowrap"> {{ battler.pokemon.stamina }}/{{ battler.pokemon.statistics.hp.value }} </span>
+            <div class="flex-grow-1">
+              <StaminaBar :current="battler.pokemon.stamina" :maximum="battler.pokemon.statistics.hp.value" />
+            </div>
+          </div>
+          <StatusConditionIcon v-if="battler.pokemon.statusCondition" :status="battler.pokemon.statusCondition" height="20" />
+        </td>
+        <td>
+          <TrainerBlock v-if="battler.pokemon.ownership" external :size="battler.url ? 60 : undefined" :trainer="battler.pokemon.ownership.currentTrainer">
+            <template v-if="battler.pokemon.ownership.currentTrainer.url" #after>
+              <br />
+              <ExternalLink :href="battler.pokemon.ownership.currentTrainer.url" />
+            </template>
+          </TrainerBlock>
+          <span v-else class="text-muted">{{ t("pokemon.wild") }}</span>
+        </td>
+        <td>
+          <div class="d-flex gap-2">
+            <TarButton :disabled="battler.pokemon.vitality < 1" icon="fas fa-wand-sparkles" :text="t('moves.use.action')" />
+            <TarButton v-if="battler.pokemon.ownership" icon="fas fa-rotate" :text="t('battle.switch.label')" @click="battle.startSwitch(battler)" />
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</template>

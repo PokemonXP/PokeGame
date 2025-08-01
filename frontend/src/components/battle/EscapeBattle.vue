@@ -5,12 +5,12 @@ import { useI18n } from "vue-i18n";
 
 import type { Battle } from "@/types/battle";
 import { escapeBattle } from "@/api/battle";
+import { useToastStore } from "@/stores/toast";
+import { useBattleActionStore } from "@/stores/battle/action";
 
+const battle = useBattleActionStore();
+const toasts = useToastStore();
 const { t } = useI18n();
-
-const props = defineProps<{
-  battle: Battle;
-}>();
 
 const isDeleting = ref<boolean>(false);
 const modalRef = ref<InstanceType<typeof TarModal> | null>(null);
@@ -20,32 +20,28 @@ const status = computed<InputStatus | undefined>(() => {
   if (!name.value) {
     return undefined;
   }
-  return name.value === props.battle.name ? "valid" : "invalid";
+  return battle.data && battle.data.name === name.value ? "valid" : "invalid";
 });
+
+function hide(): void {
+  modalRef.value?.hide();
+}
 
 function cancel(): void {
   name.value = "";
   hide();
 }
 
-function hide(): void {
-  modalRef.value?.hide();
-}
-
-const emit = defineEmits<{
-  (e: "error", value: unknown): void;
-  (e: "escaped", value: Battle): void;
-}>();
-
 async function doEscape(): Promise<void> {
-  if (!isDeleting.value) {
+  if (battle.data && !isDeleting.value) {
     isDeleting.value = true;
     try {
-      const battle: Battle = await escapeBattle(props.battle.id);
-      emit("escaped", battle);
+      const updated: Battle = await escapeBattle(battle.data.id);
+      battle.escape(updated);
+      toasts.success("battle.escaped");
       hide();
     } catch (e: unknown) {
-      emit("error", e);
+      battle.setError(e);
     } finally {
       isDeleting.value = false;
     }
@@ -57,10 +53,10 @@ async function doEscape(): Promise<void> {
   <span>
     <TarButton icon="fas fa-person-running" :text="t('battle.escape.label')" variant="warning" data-bs-toggle="modal" data-bs-target="#escape-battle" />
     <TarModal :close="t('actions.close')" id="escape-battle" ref="modalRef" :title="t('battle.escape.title')">
-      <p>
+      <p v-if="battle.data">
         {{ t("battle.escape.confirm") }}
         <br />
-        <span class="text-warning">{{ battle.name }}</span>
+        <span class="text-warning">{{ battle.data.name }}</span>
       </p>
       <TarInput floating id="escape-battle-name" :label="t('name.label')" :placeholder="t('name.label')" required :status="status" v-model="name" />
       <template #footer>

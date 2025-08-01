@@ -39,5 +39,8 @@
     }
   },
   "title": "Attaques",
-  "updated": "L’attaque a été mise à jour."
+  "updated": "L’attaque a été mise à jour.",
+  "use": {
+    "action": "Utiliser une attaque"
+  }
 }
