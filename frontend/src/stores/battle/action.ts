@@ -23,7 +23,7 @@ export const useBattleActionStore = defineStore("battle-action", () => {
         ability: getAbility(battler.pokemon),
         url: getUrl(battler.pokemon),
       })) ?? [],
-  );
+  ); // TODO(fpion): compute statistics using stat changes!
   const activeBattlers = computed<BattlerDetail[]>(() =>
     orderByDescending(
       battlers.value.filter(({ isActive }) => isActive),

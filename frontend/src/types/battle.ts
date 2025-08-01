@@ -96,6 +96,17 @@ export type SearchBattlesPayload = SearchPayload & {
   sort: BattleSortOption[];
 };
 
+export type StatisticChanges = {
+  attack: number;
+  defense: number;
+  specialAttack: number;
+  specialDefense: number;
+  speed: number;
+  accuracy: number;
+  evasion: number;
+  critical: number;
+};
+
 export type SwitchBattlePokemonPayload = {
   active: string;
   inactive: string;
@@ -115,6 +126,7 @@ export type TargetEffects = {
   status?: StatusCondition;
   allConditions: boolean;
   removeCondition: boolean;
+  statistics: StatisticChanges;
 };
 
 export type TrainerFilter = {

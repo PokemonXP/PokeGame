@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { TarButton } from "logitar-vue3-ui";
 import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 
@@ -16,6 +17,7 @@ import PowerPointsCost from "./PowerPointsCost.vue";
 import RandomMultiplier from "./RandomMultiplier.vue";
 import SameTypeAttackBonus from "./SameTypeAttackBonus.vue";
 import StaminaCost from "./StaminaCost.vue";
+import TargetAccuracy from "./TargetAccuracy.vue";
 import TargetsMultiplier from "./TargetsMultiplier.vue";
 import TypeEffectiveness from "./TypeEffectiveness.vue";
 import type { BattlerDetail, DamageArgs, TargetEffects } from "@/types/battle";
@@ -62,8 +64,8 @@ const damageArgs = computed<DamageArgs | undefined>(() =>
     : undefined,
 );
 
-const emit = defineEmits<{
-  (e: "error", error: unknown): void;
+defineEmits<{
+  (e: "previous"): void;
 }>();
 
 function updateTarget(target: TargetEffects): void {
@@ -83,7 +85,7 @@ async function submit(): Promise<void> {
         // TODO(fpion): submit!
       }
     } catch (e: unknown) {
-      emit("error", e);
+      battle.setError(e);
     } finally {
       isLoading.value = false;
     }
@@ -117,19 +119,16 @@ watch(
         isHealing: false,
         allConditions: false,
         removeCondition: false,
+        statistics: { attack: 0, defense: 0, specialAttack: 0, specialDefense: 0, speed: 0, accuracy: 0, evasion: 0, critical: 0 },
       }));
   },
   { deep: true, immediate: true },
 );
 
-// TODO(fpion): accuracy, taking account evasion & statistic changes
-// TODO(fpion): 7 statistic changes
-// TODO(fpion): status condition (remove/inflict)
+// TODO(fpion): 8 statistic changes
 // TODO(fpion): volatile conditions (remove/inflict)
 
 // TODO(fpion): damage calculation ignores negative stat stages for a critical hit
-
-// TODO(fpion): <TarButton icon="fas fa-arrow-left" :text="t('actions.previous')" @click="targets.clear()" />
 </script>
 
 <template>
@@ -175,7 +174,7 @@ watch(
           <OtherMultiplier class="col" :id="`${target.id}-other-multiplier`" v-model="target.other" />
         </div>
         <div class="row">
-          <!-- TODO(fpion): Accuracy -->
+          <TargetAccuracy class="col" :id="`${target.id}-accuracy`" :move="move" />
           <DamageInput
             :args="damageArgs"
             class="col"
@@ -189,10 +188,10 @@ watch(
           <!-- TODO(fpion): Volatile Conditions -->
           <div class="col"></div>
           <div class="col"></div>
-          <div class="col"></div>
         </div>
         <!-- TODO(fpion): 8x Statistic Change -->
       </div>
     </form>
+    <TarButton icon="fas fa-arrow-left" :text="t('actions.previous')" @click="$emit('previous')" />
   </div>
 </template>
