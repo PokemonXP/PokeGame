@@ -5,35 +5,46 @@ import { useI18n } from "vue-i18n";
 
 import BattlerTable from "./BattlerTable.vue";
 import CircleInfoIcon from "@/components/icons/CircleInfoIcon.vue";
+import SelectedMove from "./SelectedMove.vue";
 import type { BattlerDetail } from "@/types/battle";
 import { useBattleActionStore } from "@/stores/battle/action";
+import type { PokemonMove } from "@/types/pokemon";
 
 const battle = useBattleActionStore();
 const { t } = useI18n();
 
-const selected = ref<string[]>([]);
+defineProps<{
+  attack: PokemonMove;
+}>();
 
-const canSelectAll = computed<boolean>(() => selected.value.length < battle.activeBattlers.length);
-const canUnselectAll = computed<boolean>(() => selected.value.length > 0);
+const selected = ref<Set<string>>(new Set());
+
+const canSelectAll = computed<boolean>(() => selected.value.size < battle.activeBattlers.length);
+const canUnselectAll = computed<boolean>(() => selected.value.size > 0);
 
 function selectAll(): void {
-  selected.value = [...battle.activeBattlers.map(({ pokemon }) => pokemon.id)];
+  selected.value = new Set(battle.activeBattlers.map(({ pokemon }) => pokemon.id));
 }
 function unselectAll(): void {
-  selected.value = [];
+  selected.value.clear();
 }
 function toggle(target: BattlerDetail): void {
-  const index: number = selected.value.findIndex((id) => id === target.pokemon.id);
-  if (index < 0) {
-    selected.value.push(target.pokemon.id);
+  if (selected.value.has(target.pokemon.id)) {
+    selected.value.delete(target.pokemon.id);
   } else {
-    selected.value.splice(index, 1);
+    selected.value.add(target.pokemon.id);
   }
 }
+
+defineEmits<{
+  (e: "next", targets: string[]): void;
+  (e: "previous"): void;
+}>();
 </script>
 
 <template>
   <div>
+    <SelectedMove :attack="attack" />
     <h2 class="h6">{{ t("moves.use.target.title") }}</h2>
     <div class="d-flex align-items-center justify-content-between mb-3">
       <p>
@@ -45,5 +56,9 @@ function toggle(target: BattlerDetail): void {
       </div>
     </div>
     <BattlerTable :selected="selected" @toggle="toggle" />
+    <div class="mb-3">
+      <TarButton class="float-start" icon="fas fa-arrow-left" :text="t('actions.previous')" @click="$emit('previous')" />
+      <TarButton class="float-end" :disabled="!selected.size" icon="fas fa-arrow-right" :text="t('actions.next')" @click="$emit('next', [...selected])" />
+    </div>
   </div>
 </template>

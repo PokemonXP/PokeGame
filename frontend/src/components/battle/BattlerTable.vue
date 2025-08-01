@@ -14,13 +14,16 @@ import TrainerBlock from "@/components/trainers/TrainerBlock.vue";
 import VitalityBar from "@/components/pokemon/VitalityBar.vue";
 import type { BattlerDetail } from "@/types/battle";
 import { useBattleActionStore } from "@/stores/battle/action";
+import { computed } from "vue";
 
 const battle = useBattleActionStore();
 const { t } = useI18n();
 
-defineProps<{
-  selected?: string[];
+const props = defineProps<{
+  selected?: Set<string>;
 }>();
+
+const isSelection = computed<boolean>(() => typeof props.selected !== "undefined");
 
 defineEmits<{
   (e: "toggle", target: BattlerDetail): void;
@@ -38,7 +41,7 @@ defineEmits<{
         <th scope="col">{{ t("pokemon.status.label") }}</th>
         <th scope="col">{{ t("trainers.select.label") }}</th>
         <th scope="col">
-          <template v-if="!Array.isArray(selected)">{{ t("battle.action", 3) }}</template>
+          <template v-if="!isSelection">{{ t("battle.action", 3) }}</template>
         </th>
       </tr>
     </thead>
@@ -100,7 +103,7 @@ defineEmits<{
           <span v-else class="text-muted">{{ t("pokemon.wild") }}</span>
         </td>
         <td class="text-end">
-          <SelectTargetButton v-if="selected" :selected="selected" :target="battler" @click="$emit('toggle', battler)" />
+          <SelectTargetButton v-if="selected" :selected="selected.has(battler.pokemon.id)" :target="battler" @click="$emit('toggle', battler)" />
           <div v-else class="d-flex gap-2">
             <TarButton
               :disabled="battler.pokemon.vitality < 1 || battler.pokemon.moves.length < 1"
