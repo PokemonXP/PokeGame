@@ -107,16 +107,25 @@ internal class PokemonMapper
       }
     }
 
-    foreach (BattlePokemonEntity pokemon in source.Pokemon)
+    foreach (BattlePokemonEntity battler in source.Pokemon)
     {
-      if (pokemon.Pokemon is null)
+      if (battler.Pokemon is null)
       {
         throw new ArgumentException("The Pokémon is required.", nameof(source));
       }
+      PokemonModel pokemon = ToPokemon(battler.Pokemon);
       destination.Battlers.Add(new BattlerModel
       {
-        Pokemon = ToPokemon(pokemon.Pokemon),
-        IsActive = pokemon.IsActive
+        Pokemon = pokemon,
+        IsActive = battler.IsActive,
+        Attack = new BattleStatisticModel(pokemon.Statistics.Attack.Value, battler.Attack),
+        Defense = new BattleStatisticModel(pokemon.Statistics.Defense.Value, battler.Defense),
+        SpecialAttack = new BattleStatisticModel(pokemon.Statistics.SpecialAttack.Value, battler.SpecialAttack),
+        SpecialDefense = new BattleStatisticModel(pokemon.Statistics.SpecialDefense.Value, battler.SpecialDefense),
+        Speed = new BattleStatisticModel(pokemon.Statistics.Speed.Value, battler.Speed),
+        AccuracyStages = battler.Accuracy,
+        EvasionStages = battler.Evasion,
+        Critical = new CriticalModel(battler.Critical)
       });
     }
 
