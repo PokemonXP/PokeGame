@@ -497,22 +497,23 @@ public class Battle : AggregateRoot
 
   public void UseMove(Specimen attacker, Move move, Specimen target, StatisticChanges? statistics = null, ActorId? actorId = null)
   {
+    // TASK: [POKEGAME-289](https://logitar.atlassian.net/browse/POKEGAME-289)
     if (!_pokemon.TryGetValue(attacker.Id, out Battler? attackerBattler))
     {
-      throw new NotImplementedException(); // TODO(fpion): implement
+      throw new NotImplementedException();
     }
     else if (!attackerBattler.IsActive)
     {
-      throw new NotImplementedException(); // TODO(fpion): implement
+      throw new NotImplementedException();
     }
 
     if (!_pokemon.TryGetValue(target.Id, out Battler? targetBattler))
     {
-      throw new NotImplementedException(); // TODO(fpion): implement
+      throw new NotImplementedException();
     }
     else if (!targetBattler.IsActive && attacker.Ownership?.TrainerId != target.Ownership?.TrainerId)
     {
-      throw new NotImplementedException(); // TODO(fpion): implement
+      throw new NotImplementedException();
     }
 
     if (!attacker.Changes.Any(change => change is PokemonMoveUsed used && used.MoveId == move.Id))
