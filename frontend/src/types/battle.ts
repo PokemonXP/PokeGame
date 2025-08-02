@@ -41,9 +41,9 @@ export type BattleKind = "WildPokemon" | "Trainer";
 
 export type BattleMove = {
   attacker: BattlerDetail;
-  attack?: PokemonMove; // TODO(fpion): set
-  powerPointCost: number; // TODO(fpion): set
-  staminaCost: number; // TODO(fpion): set
+  attack?: PokemonMove;
+  powerPointCost: number;
+  staminaCost: number;
 };
 
 export type BattleMoveTargetPayload = {
