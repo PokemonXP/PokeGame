@@ -23,6 +23,10 @@
   },
   "create": "Nouvelle bataille",
   "created": "La bataille a été créée.",
+  "critical": {
+    "is": "Coup critique",
+    "multiplier": "Facteur critique"
+  },
   "delete": {
     "confirm": "Afin de supprimer la bataille, veuillez entrer son nom dans le champs suivant.",
     "title": "Supprimer la bataille"

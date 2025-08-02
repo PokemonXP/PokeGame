@@ -112,7 +112,7 @@ public class PokemonOwnershipTests
     Assert.Equal(healBall.Id, _pokemon.Ownership.PokeBallId);
 
     Assert.True(_pokemon.HasChanges);
-    Assert.Contains(_pokemon.Changes, change => change is PokemonHealed healed && healed.ActorId == _actorId);
+    Assert.Contains(_pokemon.Changes, change => change is PokemonRestored restored && restored.ActorId == _actorId);
 
     int constitution = _pokemon.Statistics.HP;
     Assert.Equal(constitution, _pokemon.Vitality);

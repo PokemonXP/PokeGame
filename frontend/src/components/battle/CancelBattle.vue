@@ -5,12 +5,12 @@ import { useI18n } from "vue-i18n";
 
 import type { Battle } from "@/types/battle";
 import { cancelBattle } from "@/api/battle";
+import { useBattleActionStore } from "@/stores/battle/action";
+import { useToastStore } from "@/stores/toast";
 
+const battle = useBattleActionStore();
+const toasts = useToastStore();
 const { t } = useI18n();
-
-const props = defineProps<{
-  battle: Battle;
-}>();
 
 const isDeleting = ref<boolean>(false);
 const modalRef = ref<InstanceType<typeof TarModal> | null>(null);
@@ -20,32 +20,28 @@ const status = computed<InputStatus | undefined>(() => {
   if (!name.value) {
     return undefined;
   }
-  return name.value === props.battle.name ? "valid" : "invalid";
+  return battle.data && battle.data.name === name.value ? "valid" : "invalid";
 });
+
+function hide(): void {
+  modalRef.value?.hide();
+}
 
 function cancel(): void {
   name.value = "";
   hide();
 }
 
-function hide(): void {
-  modalRef.value?.hide();
-}
-
-const emit = defineEmits<{
-  (e: "cancelled", value: Battle): void;
-  (e: "error", value: unknown): void;
-}>();
-
 async function doCancel(): Promise<void> {
-  if (!isDeleting.value) {
+  if (battle.data && !isDeleting.value) {
     isDeleting.value = true;
     try {
-      const battle: Battle = await cancelBattle(props.battle.id);
-      emit("cancelled", battle);
+      const updated: Battle = await cancelBattle(battle.data.id);
+      battle.cancel(updated);
+      toasts.success("battle.cancelled.success");
       hide();
     } catch (e: unknown) {
-      emit("error", e);
+      battle.setError(e);
     } finally {
       isDeleting.value = false;
     }
@@ -57,10 +53,10 @@ async function doCancel(): Promise<void> {
   <span>
     <TarButton icon="fas fa-ban" :text="t('actions.cancel')" variant="warning" data-bs-toggle="modal" data-bs-target="#cancel-battle" />
     <TarModal :close="t('actions.close')" id="cancel-battle" ref="modalRef" :title="t('battle.cancel.title')">
-      <p>
+      <p v-if="battle.data">
         {{ t("battle.cancel.confirm") }}
         <br />
-        <span class="text-warning">{{ battle.name }}</span>
+        <span class="text-warning">{{ battle.data.name }}</span>
       </p>
       <TarInput floating id="cancel-battle-name" :label="t('name.label')" :placeholder="t('name.label')" required :status="status" v-model="name" />
       <template #footer>

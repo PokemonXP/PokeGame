@@ -23,6 +23,7 @@
   "known": "Known Move",
   "power": "Power",
   "powerPoints": {
+    "abbreviation": "PP",
     "format": "Base: {powerPoints}",
     "label": "Power Points"
   },
@@ -39,5 +40,30 @@
     }
   },
   "title": "Moves",
-  "updated": "The move has been updated."
+  "updated": "The move has been updated.",
+  "use": {
+    "attacker": "Attacker",
+    "damage": {
+      "label": "Damage"
+    },
+    "effects": {
+      "help": "Fill the move effects form below."
+    },
+    "other": {
+      "multiplier": "Other Multiplier"
+    },
+    "select": {
+      "help": "Select one of the moves below."
+    },
+    "random": "Random Multiplier",
+    "selected": "Selected Move",
+    "stab": "Same Type Attack Bonus (STAB)",
+    "success": "The move has been used. The effects have been applied to target Pokémon.",
+    "target": {
+      "help": "Select one or more targets below.",
+      "multiplier": "Target Multiplier",
+      "title": "Targets"
+    },
+    "title": "Use Move"
+  }
 }

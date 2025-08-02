@@ -155,6 +155,14 @@ internal class BattleEntity : AggregateEntity
     }
   }
 
+  public void UseMove(BattleMoveUsed @event)
+  {
+    Update(@event);
+
+    BattlePokemonEntity? target = Pokemon.SingleOrDefault(x => x.PokemonUid == @event.TargetId.ToGuid());
+    target?.Apply(@event.StatisticChanges);
+  }
+
   private void AddChampions(IEnumerable<TrainerEntity> champions)
   {
     foreach (TrainerEntity champion in champions)

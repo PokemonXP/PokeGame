@@ -6,7 +6,6 @@ import { useRoute, useRouter } from "vue-router";
 
 import AdminBreadcrumb from "@/components/admin/AdminBreadcrumb.vue";
 import DeletePokemon from "@/components/pokemon/DeletePokemon.vue";
-import HealButton from "@/components/pokemon/HealButton.vue";
 import PokemonEvolution from "@/components/pokemon/PokemonEvolution.vue";
 import PokemonFormModal from "@/components/pokemon/PokemonFormModal.vue";
 import PokemonMemories from "@/components/pokemon/PokemonMemories.vue";
@@ -14,6 +13,7 @@ import PokemonMetadata from "@/components/pokemon/PokemonMetadata.vue";
 import PokemonMoves from "@/components/pokemon/PokemonMoves.vue";
 import PokemonStatistics from "@/components/pokemon/PokemonStatistics.vue";
 import PokemonSummary from "@/components/pokemon/PokemonSummary.vue";
+import RestoreButton from "@/components/pokemon/RestoreButton.vue";
 import StatusDetail from "@/components/shared/StatusDetail.vue";
 import type { Breadcrumb } from "@/types/components";
 import type { Pokemon } from "@/types/pokemon";
@@ -49,10 +49,6 @@ function onFormChanged(updated: Pokemon): void {
   pokemon.value = { ...updated };
   toasts.success("pokemon.updated");
 }
-function onHealed(updated: Pokemon): void {
-  pokemon.value = { ...updated };
-  toasts.success("pokemon.healed");
-}
 function onMetadataUpdated(updated: Pokemon): void {
   updateAggregate(updated);
   if (pokemon.value) {
@@ -75,6 +71,10 @@ function onMovesUpdated(updated: Pokemon): void {
     pokemon.value.moves = [...updated.moves];
   }
   toasts.success("pokemon.updated");
+}
+function onRestored(updated: Pokemon): void {
+  pokemon.value = { ...updated };
+  toasts.success("pokemon.restored");
 }
 function onStatisticsUpdated(updated: Pokemon): void {
   updateAggregate(updated);
@@ -126,10 +126,10 @@ onMounted(async () => {
       <h1>{{ title }}</h1>
       <AdminBreadcrumb :current="title" :parent="breadcrumb" />
       <StatusDetail :aggregate="pokemon" />
-      <div class="mb-3">
-        <DeletePokemon class="me-1" :pokemon="pokemon" @deleted="onDeleted" @error="handleError" />
-        <PokemonFormModal v-if="pokemon.form.variety.canChangeForm" class="ms-1" :pokemon="pokemon" @error="handleError" @updated="onFormChanged" />
-        <HealButton class="ms-1" :pokemon="pokemon" @error="handleError" @healed="onHealed" />
+      <div class="mb-3 d-flex gap-2">
+        <DeletePokemon :pokemon="pokemon" @deleted="onDeleted" @error="handleError" />
+        <PokemonFormModal v-if="pokemon.form.variety.canChangeForm" :pokemon="pokemon" @error="handleError" @updated="onFormChanged" />
+        <RestoreButton :pokemon="pokemon" @error="handleError" @restored="onRestored" />
       </div>
       <TarTabs>
         <TarTab active id="summary" :title="t('pokemon.summary.title')">

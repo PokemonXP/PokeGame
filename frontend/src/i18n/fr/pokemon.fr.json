@@ -67,8 +67,6 @@
     },
     "unknown": "Inconnu"
   },
-  "heal": "Soigner",
-  "healed": "Le Pokémon a été complètement rétabli.",
   "identification": {
     "title": "Identification"
   },
@@ -229,6 +227,8 @@
   "progress": {
     "title": "Progress"
   },
+  "restore": "Restaurer",
+  "restored": "La santé du Pokémon a été complètement rétablie.",
   "shiny": {
     "label": "Is Shiny"
   },
@@ -343,6 +343,7 @@
   },
   "title": "Pokémon",
   "type": {
+    "effectiveness": "Efficacité du type",
     "label": "Type",
     "none": "None",
     "options": {

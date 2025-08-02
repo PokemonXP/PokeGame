@@ -31,21 +31,22 @@ const props = withDefaults(
 );
 
 const inputId = computed<string>(() => {
+  const values: string[] = [];
   if (props.id) {
-    return props.id;
+    values.push(props.id);
   }
-  let formatted: string = "";
   switch (props.statistic) {
     case "SpecialAttack":
-      formatted = "special-attack";
+      values.push("special-attack");
       break;
     case "SpecialDefense":
-      formatted = "special-defense";
+      values.push("special-defense");
       break;
     default:
-      formatted = props.statistic.toLowerCase();
+      values.push(props.statistic.toLowerCase());
   }
-  return [formatted, "stages"].join("-");
+  values.push("stages");
+  return values.join("-");
 });
 const inputLabel = computed<string>(() => {
   let label: string | undefined = props.label;

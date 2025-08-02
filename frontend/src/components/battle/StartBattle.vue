@@ -3,30 +3,26 @@ import { TarButton } from "logitar-vue3-ui";
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 
-import { startBattle } from "@/api/battle";
 import type { Battle } from "@/types/battle";
+import { startBattle } from "@/api/battle";
+import { useBattleActionStore } from "@/stores/battle/action";
+import { useToastStore } from "@/stores/toast";
 
+const battle = useBattleActionStore();
+const toasts = useToastStore();
 const { t } = useI18n();
-
-const props = defineProps<{
-  battle: Battle;
-}>();
 
 const isLoading = ref<boolean>(false);
 
-const emit = defineEmits<{
-  (e: "error", error: unknown): void;
-  (e: "started", battle: Battle): void;
-}>();
-
 async function start(): Promise<void> {
-  if (!isLoading.value) {
+  if (battle.data && !isLoading.value) {
     isLoading.value = true;
     try {
-      const battle: Battle = await startBattle(props.battle.id);
-      emit("started", battle);
+      const updated: Battle = await startBattle(battle.data.id);
+      battle.start(updated);
+      toasts.success("battle.started");
     } catch (e: unknown) {
-      emit("error", e);
+      battle.setError(e);
     } finally {
       isLoading.value = false;
     }

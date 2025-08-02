@@ -16,5 +16,5 @@ internal class BattleItemValidator : AbstractValidator<IBattleItemProperties>
     RuleFor(x => x.Evasion).InclusiveBetween(-6, 6);
     RuleFor(x => x.Critical).InclusiveBetween(0, 4);
     RuleFor(x => x.GuardTurns).InclusiveBetween(0, 10);
-  }
+  } // TASK: [POKEGAME-287](https://logitar.atlassian.net/browse/POKEGAME-287)
 }

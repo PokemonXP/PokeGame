@@ -78,6 +78,13 @@ public class BattleController : ControllerBase
     return battle is null ? NotFound() : Ok(battle);
   }
 
+  [HttpPatch("{id}/moves/use")]
+  public async Task<ActionResult<BattleModel>> UseMoveAsync(Guid id, [FromBody] UseBattleMovePayload payload, CancellationToken cancellationToken)
+  {
+    BattleModel? battle = await _battleService.UseMoveAsync(id, payload, cancellationToken);
+    return battle is null ? NotFound() : Ok(battle);
+  }
+
   [HttpPatch("{id}/pokemon/switch")]
   public async Task<ActionResult<BattleModel>> SwitchPokemonAsync(Guid id, [FromBody] SwitchBattlePokemonPayload payload, CancellationToken cancellationToken)
   {

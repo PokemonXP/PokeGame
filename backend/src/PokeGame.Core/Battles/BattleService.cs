@@ -19,6 +19,7 @@ public interface IBattleService
   Task<BattleModel?> StartAsync(Guid id, CancellationToken cancellationToken = default);
   Task<BattleModel?> SwitchPokemonAsync(Guid id, SwitchBattlePokemonPayload payload, CancellationToken cancellationToken = default);
   Task<BattleModel?> UpdateAsync(Guid id, UpdateBattlePayload payload, CancellationToken cancellationToken = default);
+  Task<BattleModel?> UseMoveAsync(Guid id, UseBattleMovePayload payload, CancellationToken cancellationToken = default);
 }
 
 internal class BattleService : IBattleService
@@ -26,6 +27,7 @@ internal class BattleService : IBattleService
   public static void RegisterServices(IServiceCollection services)
   {
     services.AddTransient<IBattleService, BattleService>();
+    services.AddTransient<IBattleManager, BattleManager>();
     services.AddTransient<ICommandHandler<CancelBattle, BattleModel?>, CancelBattleHandler>();
     services.AddTransient<ICommandHandler<CreateBattle, BattleModel>, CreateBattleHandler>();
     services.AddTransient<ICommandHandler<DeleteBattle, BattleModel?>, DeleteBattleHandler>();
@@ -34,6 +36,7 @@ internal class BattleService : IBattleService
     services.AddTransient<ICommandHandler<StartBattle, BattleModel?>, StartBattleHandler>();
     services.AddTransient<ICommandHandler<SwitchBattlePokemon, BattleModel?>, SwitchBattlePokemonHandler>();
     services.AddTransient<ICommandHandler<UpdateBattle, BattleModel?>, UpdateBattleHandler>();
+    services.AddTransient<ICommandHandler<UseBattleMove, BattleModel?>, UseBattleMoveHandler>();
     services.AddTransient<IQueryHandler<ReadBattle, BattleModel?>, ReadBattleHandler>();
     services.AddTransient<IQueryHandler<SearchBattles, SearchResults<BattleModel>>, SearchBattlesHandler>();
   }
@@ -104,6 +107,12 @@ internal class BattleService : IBattleService
   public async Task<BattleModel?> UpdateAsync(Guid id, UpdateBattlePayload payload, CancellationToken cancellationToken)
   {
     UpdateBattle command = new(id, payload);
+    return await _commandBus.ExecuteAsync(command, cancellationToken);
+  }
+
+  public async Task<BattleModel?> UseMoveAsync(Guid id, UseBattleMovePayload payload, CancellationToken cancellationToken)
+  {
+    UseBattleMove command = new(id, payload);
     return await _commandBus.ExecuteAsync(command, cancellationToken);
   }
 }

@@ -2,4 +2,4 @@
 
 namespace PokeGame.Core.Pokemon.Events;
 
-public record PokemonHealed : DomainEvent;
+public record PokemonHealed(int Healing, bool StatusCondition) : DomainEvent;

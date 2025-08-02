@@ -252,14 +252,38 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
                     b.Property<int>("PokemonId")
                         .HasColumnType("integer");
 
+                    b.Property<int>("Accuracy")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Attack")
+                        .HasColumnType("integer");
+
                     b.Property<Guid>("BattleUid")
                         .HasColumnType("uuid");
+
+                    b.Property<int>("Critical")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Defense")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Evasion")
+                        .HasColumnType("integer");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("boolean");
 
                     b.Property<Guid>("PokemonUid")
                         .HasColumnType("uuid");
+
+                    b.Property<int>("SpecialAttack")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("SpecialDefense")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Speed")
+                        .HasColumnType("integer");
 
                     b.HasKey("BattleId", "PokemonId");
 

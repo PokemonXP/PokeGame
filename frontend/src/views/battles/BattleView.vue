@@ -1,122 +1,78 @@
 <script setup lang="ts">
-import { TarButton } from "logitar-vue3-ui";
-import { arrayUtils } from "logitar-js";
-import { computed, inject, onMounted, ref } from "vue";
+import { computed, inject, onMounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 
-import AbilityIcon from "@/components/icons/AbilityIcon.vue";
 import AdminBreadcrumb from "@/components/admin/AdminBreadcrumb.vue";
+import BattlerTable from "@/components/battle/BattlerTable.vue";
 import CancelBattle from "@/components/battle/CancelBattle.vue";
 import EscapeBattle from "@/components/battle/EscapeBattle.vue";
-import ExternalIcon from "@/components/icons/ExternalIcon.vue";
-import ExternalLink from "@/components/battle/ExternalLink.vue";
-import ItemBlock from "@/components/items/ItemBlock.vue";
-import PokemonBlock from "@/components/pokemon/PokemonBlock.vue";
 import ResetBattle from "@/components/battle/ResetBattle.vue";
-import StaminaBar from "@/components/pokemon/StaminaBar.vue";
 import StartBattle from "@/components/battle/StartBattle.vue";
-import StatusConditionIcon from "@/components/pokemon/StatusConditionIcon.vue";
 import SwitchPokemonModal from "./SwitchPokemonModal.vue";
-import TrainerBlock from "@/components/trainers/TrainerBlock.vue";
-import VitalityBar from "@/components/pokemon/VitalityBar.vue";
-import type { Battle, BattlerDetail } from "@/types/battle";
+import UseMoveModal from "@/components/battle/UseMoveModal.vue";
+import type { Battle, BattleMove, BattleStatus, BattleSwitch } from "@/types/battle";
 import type { Breadcrumb } from "@/types/components";
 import { StatusCodes, type ApiFailure } from "@/types/api";
-import { getAbility, getUrl } from "@/helpers/pokemon";
 import { handleErrorKey } from "@/inject";
-import { readBattle } from "@/api/battle";
-import { useToastStore } from "@/stores/toast";
+import { useBattleActionStore } from "@/stores/battle/action";
 
 const handleError = inject(handleErrorKey) as (e: unknown) => void;
 const route = useRoute();
 const router = useRouter();
-const toasts = useToastStore();
-const { orderByDescending } = arrayUtils;
+const store = useBattleActionStore();
 const { t } = useI18n();
 
-type PokemonSwitch = {
-  active: BattlerDetail;
-  inactive: BattlerDetail[];
-};
-
-const battle = ref<Battle>();
-const isLoading = ref<boolean>(false);
+const moveRef = ref<InstanceType<typeof UseMoveModal> | null>(null);
 const switchRef = ref<InstanceType<typeof SwitchPokemonModal> | null>(null);
-const switching = ref<PokemonSwitch>();
 
-const battlers = computed<BattlerDetail[]>(
-  () =>
-    battle.value?.battlers.map((battler) => ({
-      ...battler,
-      order: battler.pokemon.statistics.speed.value,
-      ability: getAbility(battler.pokemon),
-      url: getUrl(battler.pokemon),
-    })) ?? [],
-);
-const activeBattlers = computed<BattlerDetail[]>(() =>
-  orderByDescending(
-    battlers.value.filter(({ isActive }) => isActive),
-    "order",
-  ),
-);
+const battle = computed<Battle | undefined>(() => store.data);
+const status = computed<BattleStatus>(() => store.data?.status ?? "Created");
 
 const breadcrumb = computed<Breadcrumb[]>(() => {
   const breadcrumb: Breadcrumb[] = [{ to: { name: "BattleList" }, text: t("battle.title") }];
-  if (battle.value) {
-    breadcrumb.push({ to: { name: "BattleEdit", params: { id: battle.value.id } }, text: battle.value.name });
+  if (store.data) {
+    breadcrumb.push({ to: { name: "BattleEdit", params: { id: store.data.id } }, text: store.data.name });
   }
   return breadcrumb;
 });
 
-function onCancelled(cancelled: Battle): void {
-  battle.value = cancelled;
-  toasts.success("battle.cancelled.success");
-}
-function onEscaped(escaped: Battle): void {
-  battle.value = escaped;
-  toasts.success("battle.escaped");
-}
-function onReset(reset: Battle): void {
-  battle.value = reset;
-  toasts.success("battle.reset.success");
-}
-function onStarted(started: Battle): void {
-  battle.value = started;
-  toasts.success("battle.started");
-}
-
-function onSwitch(active: BattlerDetail): void {
-  if (battle.value && active.pokemon.ownership) {
-    switching.value = {
-      active,
-      inactive: battlers.value.filter(
-        ({ isActive, pokemon }) => !isActive && pokemon.ownership?.currentTrainer.id === active.pokemon.ownership?.currentTrainer.id,
-      ),
-    };
-    setTimeout(() => switchRef.value?.show(), 1);
-  }
-}
-function onSwitched(updated: Battle): void {
-  battle.value = updated;
-}
-
-onMounted(async () => {
-  isLoading.value = true;
-  try {
-    const id = route.params.id as string;
-    battle.value = await readBattle(id);
-  } catch (e: unknown) {
+watch(
+  () => store.error,
+  (e: unknown) => {
     const { status } = e as ApiFailure;
     if (status === StatusCodes.NotFound) {
       router.push("/not-found");
     } else {
       handleError(e);
     }
-  } finally {
-    isLoading.value = false;
-  }
-});
+    store.error = undefined;
+  },
+);
+watch(
+  () => store.move,
+  (move: BattleMove | undefined) => {
+    if (move) {
+      moveRef.value?.show();
+    } else {
+      moveRef.value?.hide();
+    }
+  },
+  { deep: true },
+);
+watch(
+  () => store.switchData,
+  (data: BattleSwitch | undefined) => {
+    if (data) {
+      switchRef.value?.show();
+    } else {
+      switchRef.value?.hide();
+    }
+  },
+  { deep: true },
+);
+
+onMounted(async () => store.load(route.params.id as string));
 </script>
 
 <template>
@@ -130,99 +86,18 @@ onMounted(async () => {
         <RouterLink :to="{ name: 'BattleEdit', params: { id: battle.id } }" class="btn btn-secondary">
           <font-awesome-icon icon="fas fa-door-closed" /> {{ t("battle.leave") }}
         </RouterLink>
-        <StartBattle v-if="battle.status === 'Created'" :battle="battle" @error="handleError" @started="onStarted" />
-        <template v-if="battle.status === 'Started'">
-          <ResetBattle :battle="battle" @error="handleError" @reset="onReset" />
-          <CancelBattle :battle="battle" @cancelled="onCancelled" @error="handleError" />
-          <EscapeBattle v-if="battle.kind === 'WildPokemon'" :battle="battle" @error="handleError" @escaped="onEscaped" />
+        <StartBattle v-if="status === 'Created'" />
+        <template v-if="status === 'Started'">
+          <ResetBattle />
+          <CancelBattle />
+          <EscapeBattle v-if="battle.kind === 'WildPokemon'" />
         </template>
       </div>
-      <table v-if="battle.status === 'Started'" class="table table-striped">
-        <thead>
-          <tr>
-            <th scope="col">{{ t("pokemon.statistic.battle.Speed") }}</th>
-            <th scope="col">{{ t("pokemon.title") }}</th>
-            <th scope="col">{{ t("abilities.label") }}</th>
-            <th scope="col">{{ t("items.held.label") }}</th>
-            <th scope="col">{{ t("pokemon.status.label") }}</th>
-            <th scope="col">{{ t("trainers.select.label") }}</th>
-            <th scope="col">{{ t("battle.action", 3) }}</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="battler in activeBattlers" :key="battler.pokemon.id">
-            <td>{{ battler.pokemon.statistics.speed.value }}</td>
-            <td>
-              <PokemonBlock external level :pokemon="battler.pokemon" :size="battler.url ? 60 : undefined">
-                <template v-if="battler.url" #after>
-                  <br />
-                  <ExternalLink :href="battler.url" />
-                </template>
-              </PokemonBlock>
-            </td>
-            <td>
-              <RouterLink :to="{ name: 'AbilityEdit', params: { id: battler.ability.id } }" target="_blank">
-                <ExternalIcon /> {{ battler.ability.displayName ?? battler.ability.uniqueName }}
-                <template v-if="battler.ability.displayName">
-                  <br />
-                  <AbilityIcon /> {{ battler.ability.uniqueName }}
-                </template>
-              </RouterLink>
-              <template v-if="battler.ability.url">
-                <br />
-                <ExternalLink :href="battler.ability.url" />
-              </template>
-            </td>
-            <td>
-              <ItemBlock v-if="battler.pokemon.heldItem" :item="battler.pokemon.heldItem" external :size="battler.pokemon.heldItem.url ? 60 : undefined">
-                <template v-if="battler.pokemon.heldItem.url" #after>
-                  <br />
-                  <ExternalLink :href="battler.pokemon.heldItem.url" />
-                </template>
-              </ItemBlock>
-              <span v-else class="text-muted">{{ "—" }}</span>
-            </td>
-            <td>
-              <div class="d-flex align-items-center">
-                <span class="text-danger me-2 text-nowrap"> {{ battler.pokemon.vitality }}/{{ battler.pokemon.statistics.hp.value }} </span>
-                <div class="flex-grow-1">
-                  <VitalityBar :current="battler.pokemon.vitality" :maximum="battler.pokemon.statistics.hp.value" />
-                </div>
-              </div>
-              <div class="d-flex align-items-center">
-                <span class="text-primary me-2 text-nowrap"> {{ battler.pokemon.stamina }}/{{ battler.pokemon.statistics.hp.value }} </span>
-                <div class="flex-grow-1">
-                  <StaminaBar :current="battler.pokemon.stamina" :maximum="battler.pokemon.statistics.hp.value" />
-                </div>
-              </div>
-              <StatusConditionIcon v-if="battler.pokemon.statusCondition" :status="battler.pokemon.statusCondition" height="20" />
-            </td>
-            <td>
-              <TrainerBlock v-if="battler.pokemon.ownership" external :size="battler.url ? 60 : undefined" :trainer="battler.pokemon.ownership.currentTrainer">
-                <template v-if="battler.pokemon.ownership.currentTrainer.url" #after>
-                  <br />
-                  <ExternalLink :href="battler.pokemon.ownership.currentTrainer.url" />
-                </template>
-              </TrainerBlock>
-              <span v-else class="text-muted">{{ t("pokemon.wild") }}</span>
-            </td>
-            <td>
-              <TarButton v-if="battler.pokemon.ownership" icon="fas fa-rotate" :text="t('battle.switch.label')" @click="onSwitch(battler)" />
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <p v-else-if="battle.status === 'Created'">{{ t("battle.notStarted") }}</p>
+      <BattlerTable v-if="status === 'Started'" />
+      <p v-else-if="status === 'Created'">{{ t("battle.notStarted") }}</p>
       <p v-else>{{ t("battle.ended") }}</p>
-      <SwitchPokemonModal
-        v-if="switching"
-        :active="switching.active"
-        :battle="battle"
-        :inactive="switching.inactive"
-        ref="switchRef"
-        @error="handleError"
-        @switched="onSwitched"
-      />
+      <SwitchPokemonModal ref="switchRef" />
+      <UseMoveModal ref="moveRef" />
     </template>
   </main>
 </template>

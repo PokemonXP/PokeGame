@@ -49,11 +49,6 @@ export async function evolvePokemon(pokemonId: string, evolutionId: string): Pro
   return (await patch<void, Pokemon>(url)).data;
 }
 
-export async function healPokemon(id: string): Promise<Pokemon> {
-  const url: string = new urlUtils.UrlBuilder({ path: "/pokemon/{id}/heal" }).setParameter("id", id).buildRelative();
-  return (await patch<void, Pokemon>(url)).data;
-}
-
 export async function movePokemon(id: string, payload: MovePokemonPayload): Promise<Pokemon> {
   const url: string = new urlUtils.UrlBuilder({ path: "/pokemon/{id}/move" }).setParameter("id", id).buildRelative();
   return (await patch<MovePokemonPayload, Pokemon>(url, payload)).data;
@@ -80,6 +75,11 @@ export async function rememberPokemonMove(pokemonId: string, moveId: string, pay
     .setParameter("moveId", moveId)
     .buildRelative();
   return (await patch<RememberPokemonMovePayload, Pokemon>(url, payload)).data;
+}
+
+export async function restorePokemon(id: string): Promise<Pokemon> {
+  const url: string = new urlUtils.UrlBuilder({ path: "/pokemon/{id}/restore" }).setParameter("id", id).buildRelative();
+  return (await patch<void, Pokemon>(url)).data;
 }
 
 export async function searchPokemon(payload: SearchPokemonPayload): Promise<SearchResults<Pokemon>> {

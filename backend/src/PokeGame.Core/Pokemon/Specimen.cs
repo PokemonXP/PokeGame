@@ -87,6 +87,7 @@ public class Specimen : AggregateRoot
       }
     }
   }
+  public bool HasFainted => Vitality < 1;
   private int _stamina = 0;
   public int Stamina
   {
@@ -103,7 +104,7 @@ public class Specimen : AggregateRoot
       }
     }
   }
-  public bool HasFainted => Vitality < 1;
+  public bool IsUnconscious => Stamina < 1;
   private StatusCondition? _statusCondition = null;
   public StatusCondition? StatusCondition
   {
@@ -342,7 +343,7 @@ public class Specimen : AggregateRoot
     PokeBallProperties properties = (PokeBallProperties)pokeBall.Properties;
     if (properties.Heal)
     {
-      Heal(actorId);
+      Restore(actorId);
     }
     if (properties.BaseFriendship > Friendship.Value)
     {
@@ -496,25 +497,43 @@ public class Specimen : AggregateRoot
     _baseStatistics = @event.BaseStatistics;
   }
 
-  public void Heal(ActorId? actorId = null)
+  public void Heal(int? healing, bool allConditions, ActorId? actorId = null)
   {
-    int constitution = Statistics.HP;
-    if (Vitality != constitution || Stamina != constitution || StatusCondition.HasValue || LearnedMoves.Values.Any(move => move.CurrentPowerPoints < move.MaximumPowerPoints))
+    if (healing < 0)
     {
-      Raise(new PokemonHealed(), actorId);
+      throw new ArgumentOutOfRangeException(nameof(healing));
+    }
+    Heal(healing, allConditions ? StatusCondition : null, actorId);
+  }
+  public void Heal(int? healing = null, StatusCondition? condition = null, ActorId? actorId = null)
+  {
+    if (healing < 0)
+    {
+      throw new ArgumentOutOfRangeException(nameof(healing));
+    }
+    else if (healing.HasValue)
+    {
+      healing = Math.Min(healing.Value, Statistics.HP - Vitality);
+    }
+
+    if (condition.HasValue && !Enum.IsDefined(condition.Value))
+    {
+      throw new ArgumentOutOfRangeException(nameof(condition));
+    }
+
+    healing ??= 0;
+    bool statusCondition = condition.HasValue && condition.Value == StatusCondition;
+    if (healing > 0 || statusCondition)
+    {
+      Raise(new PokemonHealed(healing.Value, statusCondition), actorId);
     }
   }
-  protected virtual void Handle(PokemonHealed _)
+  protected virtual void Handle(PokemonHealed @event)
   {
-    int constitution = Statistics.HP;
-    _vitality = constitution;
-    _stamina = constitution;
-    _statusCondition = null;
-
-    List<KeyValuePair<MoveId, PokemonMove>> moves = _learnedMoves.ToList();
-    foreach (KeyValuePair<MoveId, PokemonMove> move in moves)
+    _vitality += @event.Healing;
+    if (@event.StatusCondition)
     {
-      _learnedMoves[move.Key] = move.Value.RestorePowerPoints();
+      _statusCondition = null;
     }
   }
 
@@ -652,6 +671,28 @@ public class Specimen : AggregateRoot
     HeldItemId = null;
   }
 
+  public void Restore(ActorId? actorId = null)
+  {
+    int constitution = Statistics.HP;
+    if (Vitality != constitution || Stamina != constitution || StatusCondition.HasValue || LearnedMoves.Values.Any(move => move.CurrentPowerPoints < move.MaximumPowerPoints))
+    {
+      Raise(new PokemonRestored(), actorId);
+    }
+  }
+  protected virtual void Handle(PokemonRestored _)
+  {
+    int constitution = Statistics.HP;
+    _vitality = constitution;
+    _stamina = constitution;
+    _statusCondition = null;
+
+    List<KeyValuePair<MoveId, PokemonMove>> moves = _learnedMoves.ToList();
+    foreach (KeyValuePair<MoveId, PokemonMove> move in moves)
+    {
+      _learnedMoves[move.Key] = move.Value.RestorePowerPoints();
+    }
+  }
+
   public void SetNickname(Nickname? nickname, ActorId? actorId = null)
   {
     if (Nickname != nickname)
@@ -770,6 +811,78 @@ public class Specimen : AggregateRoot
     }
   }
 
+  public void UseMove(Move move, PowerPoints? powerPointCost = null, int staminaCost = 0, ActorId? actorId = null)
+  {
+    List<ValidationFailure> failures = new(capacity: 4);
+
+    if (HasFainted)
+    {
+      failures.Add(new ValidationFailure("PokemonId", "A fainted Pokémon cannot use moves.", Id.ToGuid())
+      {
+        ErrorCode = "FaintedValidator"
+      });
+    }
+    if (IsUnconscious)
+    {
+      failures.Add(new ValidationFailure("PokemonId", "An unconscious Pokémon cannot use moves.", Id.ToGuid())
+      {
+        ErrorCode = "UnconsciousValidator"
+      });
+    }
+
+    if (!_learnedMoves.TryGetValue(move.Id, out PokemonMove? pokemonMove))
+    {
+      failures.Add(new ValidationFailure("MoveId", "The Pokémon has never learned the move.", move.Id.ToGuid())
+      {
+        CustomState = new { PokemonId = Id.ToGuid() },
+        ErrorCode = "LearnedMoveValidator"
+      });
+    }
+    else if (!_currentMoves.Contains(move.Id))
+    {
+      failures.Add(new ValidationFailure("MoveId", "The Pokémon has learned the move, but it does not know it currently.", move.Id.ToGuid())
+      {
+        CustomState = new { PokemonId = Id.ToGuid() },
+        ErrorCode = "CurrentMoveValidator"
+      });
+    }
+
+    ArgumentOutOfRangeException.ThrowIfNegative(staminaCost, nameof(staminaCost));
+
+    if (powerPointCost is not null && pokemonMove is not null && powerPointCost.Value > pokemonMove.CurrentPowerPoints)
+    {
+      failures.Add(new ValidationFailure("PowerPointCost", "The Pokémon does not have enough remaining power points for this move.", powerPointCost.Value)
+      {
+        CustomState = new
+        {
+          PokemonId = Id.ToGuid(),
+          MoveId = move.Id.ToGuid(),
+          pokemonMove.CurrentPowerPoints,
+          PowerPointCost = powerPointCost.Value
+        },
+        ErrorCode = "CurrentPowerPointsValidator"
+      });
+    }
+
+    if (failures.Count > 0)
+    {
+      throw new ValidationException(failures);
+    }
+
+    staminaCost = Math.Min(staminaCost, Stamina);
+    Raise(new PokemonMoveUsed(move.Id, powerPointCost, staminaCost), actorId);
+  }
+  protected virtual void Handle(PokemonMoveUsed @event)
+  {
+    if (@event.PowerPointCost is not null)
+    {
+      PokemonMove move = _learnedMoves[@event.MoveId];
+      _learnedMoves[@event.MoveId] = move.Use(@event.PowerPointCost);
+    }
+
+    _stamina -= @event.StaminaCost;
+  }
+
   public void Withdraw(Position position, ActorId? actorId = null)
   {
     if (Ownership is null)
@@ -786,6 +899,38 @@ public class Specimen : AggregateRoot
   protected virtual void Handle(PokemonWithdrew @event)
   {
     Slot = @event.Slot;
+  }
+
+  public void Wound(int? damage = null, StatusCondition? condition = null, ActorId? actorId = null)
+  {
+    if (damage < 0)
+    {
+      throw new ArgumentOutOfRangeException(nameof(damage));
+    }
+    else if (damage.HasValue)
+    {
+      damage = Math.Min(Vitality, damage.Value);
+    }
+
+    if (condition.HasValue && !Enum.IsDefined(condition.Value))
+    {
+      throw new ArgumentOutOfRangeException(nameof(condition));
+    }
+
+    damage ??= 0;
+    if (damage >= Vitality || StatusCondition.HasValue)
+    {
+      condition = null;
+    }
+    if (damage > 0 || condition.HasValue)
+    {
+      Raise(new PokemonWounded(damage.Value, condition), actorId);
+    }
+  }
+  protected virtual void Handle(PokemonWounded @event)
+  {
+    _vitality -= @event.Damage;
+    _statusCondition = _vitality > 0 ? (@event.StatusCondition ?? _statusCondition) : null;
   }
 
   private void SetOwnership(OwnershipKind kind, Trainer trainer, Item pokeBall, Location location, Level? level, DateTime? metOn, Description? description, PokemonSlot? slot, ActorId? actorId)

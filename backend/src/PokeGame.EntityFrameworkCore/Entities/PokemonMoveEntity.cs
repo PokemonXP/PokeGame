@@ -82,6 +82,11 @@ internal class PokemonMoveEntity
     }
   }
 
+  public void Use(PowerPoints cost)
+  {
+    CurrentPowerPoints = (byte)(CurrentPowerPoints < cost.Value ? 0 : (CurrentPowerPoints - cost.Value));
+  }
+
   public override bool Equals(object? obj) => obj is PokemonMoveEntity entity && entity.PokemonId == PokemonId && entity.MoveId == MoveId;
   public override int GetHashCode() => HashCode.Combine(PokemonId, MoveId);
   public override string ToString() => $"{GetType()} (PokemonId={PokemonId}, MoveId={MoveId})";

@@ -17,4 +17,17 @@ public record PokemonMove(
   {
     return new PokemonMove(CurrentPowerPoints: MaximumPowerPoints, MaximumPowerPoints, ReferencePowerPoints, IsMastered, Level, Method, ItemId, Notes);
   }
+
+  public PokemonMove Use(PowerPoints powerPointCost)
+  {
+    return new PokemonMove(
+      (byte)(CurrentPowerPoints < powerPointCost.Value ? 0 : (CurrentPowerPoints - powerPointCost.Value)),
+      MaximumPowerPoints,
+      ReferencePowerPoints,
+      IsMastered,
+      Level,
+      Method,
+      ItemId,
+      Notes);
+  }
 }

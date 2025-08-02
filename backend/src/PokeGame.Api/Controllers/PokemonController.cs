@@ -77,13 +77,6 @@ public class PokemonController : ControllerBase
     return pokemon is null ? NotFound() : Ok(pokemon);
   }
 
-  [HttpPatch("{id}/heal")]
-  public async Task<ActionResult<PokemonModel>> HealAsync(Guid id, CancellationToken cancellationToken)
-  {
-    PokemonModel? pokemon = await _pokemonService.HealAsync(id, cancellationToken);
-    return pokemon is null ? NotFound() : Ok(pokemon);
-  }
-
   [HttpPatch("{id}/item/held")]
   public async Task<ActionResult<PokemonModel>> ChangeItemAsync(Guid id, [FromBody] ChangePokemonItemPayload payload, CancellationToken cancellationToken)
   {
@@ -109,6 +102,13 @@ public class PokemonController : ControllerBase
   public async Task<ActionResult<PokemonModel>> ReleaseAsync(Guid id, CancellationToken cancellationToken)
   {
     PokemonModel? pokemon = await _pokemonService.ReleaseAsync(id, cancellationToken);
+    return pokemon is null ? NotFound() : Ok(pokemon);
+  }
+
+  [HttpPatch("{id}/restore")]
+  public async Task<ActionResult<PokemonModel>> RestoreAsync(Guid id, CancellationToken cancellationToken)
+  {
+    PokemonModel? pokemon = await _pokemonService.RestoreAsync(id, cancellationToken);
     return pokemon is null ? NotFound() : Ok(pokemon);
   }
 

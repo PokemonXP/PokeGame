@@ -70,8 +70,8 @@ public class BattleTests
     Assert.Equal(BattleStatus.Started, battle.Status);
 
     Assert.Equal(2, battle.Pokemon.Count);
-    Assert.True(battle.Pokemon[_pokemon.Id]);
-    Assert.True(battle.Pokemon[fuckOff.Id]);
+    Assert.True(battle.Pokemon[_pokemon.Id].IsActive);
+    Assert.True(battle.Pokemon[fuckOff.Id].IsActive);
 
     Assert.True(battle.HasChanges);
     Assert.Contains(battle.Changes, change => change is BattleStarted started && started.ActorId == _actorId);
@@ -94,9 +94,9 @@ public class BattleTests
     Assert.Equal(BattleStatus.Started, battle.Status);
 
     Assert.Equal(3, battle.Pokemon.Count);
-    Assert.True(battle.Pokemon[_pokemon.Id]);
-    Assert.True(battle.Pokemon[fuckOff.Id]);
-    Assert.False(battle.Pokemon[other.Id]);
+    Assert.True(battle.Pokemon[_pokemon.Id].IsActive);
+    Assert.True(battle.Pokemon[fuckOff.Id].IsActive);
+    Assert.False(battle.Pokemon[other.Id].IsActive);
 
     Assert.True(battle.HasChanges);
     Assert.Contains(battle.Changes, change => change is BattleStarted started && started.ActorId == _actorId);
@@ -190,7 +190,7 @@ public class BattleTests
     Assert.Equal(_trainer.Id, battle.Champions.Single());
     Assert.Empty(battle.Opponents);
     Assert.Single(battle.Pokemon);
-    Assert.True(battle.Pokemon[_pokemon.Id]);
+    Assert.True(battle.Pokemon[_pokemon.Id].IsActive);
   }
 
   [Fact(DisplayName = "WildPokemon: it should throw ArgumentException when champions are empty.")]

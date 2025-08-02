@@ -4,22 +4,22 @@ using PokeGame.Core.Pokemon.Models;
 
 namespace PokeGame.Core.Pokemon.Commands;
 
-internal record HealPokemon(Guid Id) : ICommand<PokemonModel?>;
+internal record RestorePokemon(Guid Id) : ICommand<PokemonModel?>;
 
-internal class HealPokemonHandler : ICommandHandler<HealPokemon, PokemonModel?>
+internal class RestorePokemonHandler : ICommandHandler<RestorePokemon, PokemonModel?>
 {
   private readonly IApplicationContext _applicationContext;
   private readonly IPokemonQuerier _pokemonQuerier;
   private readonly IPokemonRepository _pokemonRepository;
 
-  public HealPokemonHandler(IApplicationContext applicationContext, IPokemonQuerier pokemonQuerier, IPokemonRepository pokemonRepository)
+  public RestorePokemonHandler(IApplicationContext applicationContext, IPokemonQuerier pokemonQuerier, IPokemonRepository pokemonRepository)
   {
     _applicationContext = applicationContext;
     _pokemonQuerier = pokemonQuerier;
     _pokemonRepository = pokemonRepository;
   }
 
-  public async Task<PokemonModel?> HandleAsync(HealPokemon command, CancellationToken cancellationToken)
+  public async Task<PokemonModel?> HandleAsync(RestorePokemon command, CancellationToken cancellationToken)
   {
     ActorId? actorId = _applicationContext.ActorId;
 
@@ -30,7 +30,7 @@ internal class HealPokemonHandler : ICommandHandler<HealPokemon, PokemonModel?>
       return null;
     }
 
-    pokemon.Heal(actorId);
+    pokemon.Restore(actorId);
 
     await _pokemonRepository.SaveAsync(pokemon, cancellationToken);
 

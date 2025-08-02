@@ -23,6 +23,7 @@
   "known": "Attaque connue",
   "power": "Puissance",
   "powerPoints": {
+    "abbreviation": "PP",
     "format": "Base : {powerPoints}",
     "label": "Points de pouvoir"
   },
@@ -39,5 +40,30 @@
     }
   },
   "title": "Attaques",
-  "updated": "L’attaque a été mise à jour."
+  "updated": "L’attaque a été mise à jour.",
+  "use": {
+    "attacker": "Attaquant",
+    "damage": {
+      "label": "Dégâts"
+    },
+    "effects": {
+      "help": "Remplissez le formulaire d’effets de l’attaque ci-dessous."
+    },
+    "other": {
+      "multiplier": "Autre facteur"
+    },
+    "random": "Facteur aléatoire",
+    "select": {
+      "help": "Sélectionnez une des attaques ci-dessous."
+    },
+    "selected": "Attaque sélectionnée",
+    "stab": "Bonus d’attaque de même type (STAB)",
+    "success": "L’attaque a été utilisée. Les effets ont été appliqués au Pokémon ciblés.",
+    "target": {
+      "help": "Sélectionnez une ou plusieurs cibles ci-dessous.",
+      "multiplier": "Facteur de cibles",
+      "title": "Cibles"
+    },
+    "title": "Utiliser une attaque"
+  }
 }

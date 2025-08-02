@@ -11,6 +11,7 @@ namespace PokeGame.EntityFrameworkCore.Handlers;
 internal class BattleEvents : IEventHandler<BattleCancelled>,
   IEventHandler<BattleDeleted>,
   IEventHandler<BattleEscaped>,
+  IEventHandler<BattleMoveUsed>,
   IEventHandler<BattlePokemonSwitched>,
   IEventHandler<BattleReset>,
   IEventHandler<BattleStarted>,
@@ -23,6 +24,7 @@ internal class BattleEvents : IEventHandler<BattleCancelled>,
     services.AddScoped<IEventHandler<BattleCancelled>, BattleEvents>();
     services.AddScoped<IEventHandler<BattleDeleted>, BattleEvents>();
     services.AddScoped<IEventHandler<BattleEscaped>, BattleEvents>();
+    services.AddScoped<IEventHandler<BattleMoveUsed>, BattleEvents>();
     services.AddScoped<IEventHandler<BattlePokemonSwitched>, BattleEvents>();
     services.AddScoped<IEventHandler<BattleReset>, BattleEvents>();
     services.AddScoped<IEventHandler<BattleStarted>, BattleEvents>();
@@ -164,6 +166,23 @@ internal class BattleEvents : IEventHandler<BattleCancelled>,
     }
 
     battle.Update(@event);
+
+    await _context.SaveChangesAsync(cancellationToken);
+    _logger.LogSuccess(@event);
+  }
+
+  public async Task HandleAsync(BattleMoveUsed @event, CancellationToken cancellationToken)
+  {
+    BattleEntity? battle = await _context.Battles
+      .Include(x => x.Pokemon)
+      .SingleOrDefaultAsync(x => x.StreamId == @event.StreamId.Value, cancellationToken);
+    if (battle is null || (battle.Version != (@event.Version - 1)))
+    {
+      _logger.LogUnexpectedVersion(@event, battle);
+      return;
+    }
+
+    battle.UseMove(@event);
 
     await _context.SaveChangesAsync(cancellationToken);
     _logger.LogSuccess(@event);

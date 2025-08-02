@@ -240,18 +240,6 @@ export type SearchPokemonPayload = SearchPayload & {
   sort: PokemonSortOption[];
 };
 
-export type StatisticChanges = {
-  hp: number;
-  attack: number;
-  defense: number;
-  specialAttack: number;
-  specialDefense: number;
-  speed: number;
-  accuracy: number;
-  evasion: number;
-  critical: number;
-};
-
 export type StatisticValues = {
   base: number;
   individualValue: number;

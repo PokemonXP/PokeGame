@@ -1,4 +1,6 @@
-﻿namespace PokeGame.EntityFrameworkCore.Entities;
+﻿using PokeGame.Core.Battles;
+
+namespace PokeGame.EntityFrameworkCore.Entities;
 
 internal class BattlePokemonEntity
 {
@@ -11,6 +13,15 @@ internal class BattlePokemonEntity
   public Guid PokemonUid { get; private set; }
 
   public bool IsActive { get; private set; }
+
+  public int Attack { get; private set; }
+  public int Defense { get; private set; }
+  public int SpecialAttack { get; private set; }
+  public int SpecialDefense { get; private set; }
+  public int Speed { get; private set; }
+  public int Accuracy { get; private set; }
+  public int Evasion { get; private set; }
+  public int Critical { get; private set; }
 
   public BattlePokemonEntity(BattleEntity battle, PokemonEntity pokemon, bool isActive)
   {
@@ -29,9 +40,42 @@ internal class BattlePokemonEntity
   {
   }
 
+  public void Apply(StatisticChanges statisticChanges)
+  {
+    if (IsActive)
+    {
+      Attack = CalculateStages(Attack, statisticChanges.Attack);
+      Defense = CalculateStages(Defense, statisticChanges.Defense);
+      SpecialAttack = CalculateStages(SpecialAttack, statisticChanges.SpecialAttack);
+      SpecialDefense = CalculateStages(SpecialDefense, statisticChanges.SpecialDefense);
+      Speed = CalculateStages(Speed, statisticChanges.Speed);
+      Accuracy = CalculateStages(Accuracy, statisticChanges.Accuracy);
+      Evasion = CalculateStages(Evasion, statisticChanges.Evasion);
+
+      int critical = Critical + statisticChanges.Critical;
+      Critical = critical < StatisticChanges.MinimumCritical ? StatisticChanges.MinimumCritical
+        : critical > StatisticChanges.MaximumCritical ? StatisticChanges.MaximumCritical : critical;
+    }
+  }
+  private static int CalculateStages(int current, int change)
+  {
+    int result = current + change;
+    return result < StatisticChanges.MinimumStage ? StatisticChanges.MinimumStage
+      : (result > StatisticChanges.MaximumStage ? StatisticChanges.MaximumStage : result);
+  }
+
   public void Switch(BattlePokemonEntity other)
   {
     (other.IsActive, IsActive) = (IsActive, other.IsActive);
+
+    Attack = 0;
+    Defense = 0;
+    SpecialAttack = 0;
+    SpecialDefense = 0;
+    Speed = 0;
+    Accuracy = 0;
+    Evasion = 0;
+    Critical = 0;
   }
 
   public override bool Equals(object? obj) => obj is BattlePokemonEntity entity && entity.BattleId == BattleId && entity.PokemonId == PokemonId;

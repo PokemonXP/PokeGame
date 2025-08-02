@@ -1,6 +1,6 @@
 import { urlUtils } from "logitar-js";
 
-import type { CreateBattlePayload, Battle, SearchBattlesPayload, UpdateBattlePayload, SwitchBattlePokemonPayload } from "@/types/battle";
+import type { CreateBattlePayload, Battle, SearchBattlesPayload, UpdateBattlePayload, SwitchBattlePokemonPayload, UseBattleMovePayload } from "@/types/battle";
 import { _delete, get, patch, post } from ".";
 import type { SearchResults } from "@/types/search";
 
@@ -68,4 +68,9 @@ export async function switchBattlePokemon(id: string, payload: SwitchBattlePokem
 export async function updateBattle(id: string, payload: UpdateBattlePayload): Promise<Battle> {
   const url: string = new urlUtils.UrlBuilder({ path: "/battles/{id}" }).setParameter("id", id).buildRelative();
   return (await patch<UpdateBattlePayload, Battle>(url, payload)).data;
+}
+
+export async function useBattleMove(id: string, payload: UseBattleMovePayload): Promise<Battle> {
+  const url: string = new urlUtils.UrlBuilder({ path: "/battles/{id}/moves/use" }).setParameter("id", id).buildRelative();
+  return (await patch<UseBattleMovePayload, Battle>(url, payload)).data;
 }

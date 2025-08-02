@@ -33,7 +33,7 @@ const props = withDefaults(
 const neverMisses = computed<boolean>(() => parseNumber(props.modelValue) === 0);
 
 defineEmits<{
-  (e: "update:model-value", level: number): void;
+  (e: "update:model-value", accuracy: number): void;
 }>();
 </script>
 

@@ -1,6 +1,6 @@
 import type { Ability } from "./abilities";
 import type { Actor, Aggregate, Change } from "./aggregate";
-import type { Pokemon } from "./pokemon";
+import type { Pokemon, PokemonMove, StatusCondition } from "./pokemon";
 import type { SearchPayload, SortOption } from "./search";
 import type { Species } from "./species";
 import type { Trainer, TrainerKind } from "./trainers";
@@ -26,8 +26,6 @@ export type Battle = Aggregate & {
   completedOn?: string | null;
 };
 
-export type BattleKind = "WildPokemon" | "Trainer";
-
 export type Battler = {
   pokemon: Pokemon;
   isActive: boolean;
@@ -37,6 +35,22 @@ export type BattlerDetail = Battler & {
   order: number;
   ability: Ability;
   url?: string;
+};
+
+export type BattleKind = "WildPokemon" | "Trainer";
+
+export type BattleMove = {
+  attacker: BattlerDetail;
+  attack?: PokemonMove;
+  powerPointCost: number;
+  staminaCost: number;
+};
+
+export type BattleMoveTargetPayload = {
+  targetId: string;
+  damage?: DamagePayload;
+  status?: StatusConditionPayload;
+  statistics: StatisticChangesPayload;
 };
 
 export type BattleProperties = {
@@ -56,6 +70,11 @@ export type BattleSortOption = SortOption & {
 
 export type BattleStatus = "Cancelled" | "Completed" | "Created" | "Started";
 
+export type BattleSwitch = {
+  active: BattlerDetail;
+  inactive: BattlerDetail[];
+};
+
 export type CreateBattlePayload = {
   id?: string;
   kind: BattleKind;
@@ -65,6 +84,20 @@ export type CreateBattlePayload = {
   notes?: string;
   champions: string[];
   opponents: string[];
+};
+
+export type DamageArgs = {
+  level: number;
+  targets: number;
+  critical: number;
+  random: number;
+  stab: number;
+};
+
+export type DamagePayload = {
+  value: number;
+  isPercentage: boolean;
+  isHealing: boolean;
 };
 
 export type PokemonFilter = {
@@ -79,9 +112,43 @@ export type SearchBattlesPayload = SearchPayload & {
   sort: BattleSortOption[];
 };
 
+export type StatisticChangesPayload = {
+  attack: number;
+  defense: number;
+  specialAttack: number;
+  specialDefense: number;
+  speed: number;
+  accuracy: number;
+  evasion: number;
+  critical: number;
+};
+
+export type StatusConditionPayload = {
+  condition?: StatusCondition;
+  removeCondition: boolean;
+  allConditions: boolean;
+};
+
 export type SwitchBattlePokemonPayload = {
   active: string;
   inactive: string;
+};
+
+export type TargetEffects = {
+  id: string;
+  battler: BattlerDetail;
+  power: number;
+  attack: number;
+  defense: number;
+  effectiveness: number;
+  other: number;
+  damage: number;
+  isPercentage: boolean;
+  isHealing: boolean;
+  status?: StatusCondition;
+  removeCondition: boolean;
+  allConditions: boolean;
+  statistics: StatisticChangesPayload;
 };
 
 export type TrainerFilter = {
@@ -94,4 +161,12 @@ export type UpdateBattlePayload = {
   location?: string;
   url?: Change<string>;
   notes?: Change<string>;
+};
+
+export type UseBattleMovePayload = {
+  attackerId: string;
+  move: string;
+  powerPointCost: number;
+  staminaCost: number;
+  targets: BattleMoveTargetPayload[];
 };
