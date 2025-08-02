@@ -180,7 +180,7 @@ watch(
         <OtherMultiplier class="col" :id="`${target.id}-other-multiplier`" v-model="target.other" />
       </div>
       <div class="row">
-        <TargetAccuracy class="col" :id="`${target.id}-accuracy`" :move="move" />
+        <TargetAccuracy :attacker="attacker" class="col" :id="`${target.id}-accuracy`" :move="move" :target="target.battler" />
         <DamageInput
           :args="damageArgs"
           class="col"
@@ -206,6 +206,6 @@ watch(
       </div>
     </div>
     <TarButton icon="fas fa-arrow-left" :text="t('actions.previous')" @click="$emit('previous')" />
-    <SubmitButton class="float-end" icon="fas fa-wand-sparkles" :loading="isLoading" :text="t('moves.use.title')" />
+    <SubmitButton class="float-end" icon="fas fa-wand-sparkles" :loading="isLoading" text="moves.use.title" />
   </form>
 </template>

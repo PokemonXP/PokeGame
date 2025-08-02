@@ -29,14 +29,14 @@ export type Battle = Aggregate & {
 export type Battler = {
   pokemon: Pokemon;
   isActive: boolean;
-  attack: BattleStatistic
-  defense: BattleStatistic
-  specialAttack: BattleStatistic
-  specialDefense: BattleStatistic
-  speed: BattleStatistic
-  accuracyStages: number
-  evasionStages: number
-  critical: Critical
+  attack: BattleStatistic;
+  defense: BattleStatistic;
+  specialAttack: BattleStatistic;
+  specialDefense: BattleStatistic;
+  speed: BattleStatistic;
+  accuracyStages: number;
+  evasionStages: number;
+  critical: Critical;
 };
 
 export type BattlerDetail = Battler & {
@@ -77,10 +77,10 @@ export type BattleSortOption = SortOption & {
 };
 
 export type BattleStatistic = {
-  unmodified: number
-  modified: number
-  stages: number
-}
+  unmodified: number;
+  modified: number;
+  stages: number;
+};
 
 export type BattleStatus = "Cancelled" | "Completed" | "Created" | "Started";
 
@@ -101,9 +101,9 @@ export type CreateBattlePayload = {
 };
 
 export type Critical = {
-  stages: number
-  chance: number
-}
+  stages: number;
+  chance: number;
+};
 
 export type DamageArgs = {
   level: number;

@@ -252,6 +252,29 @@ export function getTypeEffectiveness(attacker: PokemonType, defender: PokemonTyp
   return effectivenessChart[attacker][defender];
 }
 
+/**
+ * Calculates the accuracy of a move
+ * @param move The accuracy of the move, a number between 1 and 100 (inclusive).
+ * @param accuracy The attacker accuracy stages, a number between -6 and +6 (inclusive).
+ * @param evasion The target evasion stages, a number between -6 and +6 (inclusive).
+ */
+export function calculateAccuracy(move: number, accuracy: number, evasion: number): number {
+  if (move < 1 || move > 100 || accuracy === evasion) {
+    return move;
+  }
+
+  let result: number = 0;
+  const stages: number = accuracy - evasion;
+  if (stages > 0) {
+    result = (move * Math.min(3 + stages, 9)) / 3;
+  } else {
+    result = (move * 3) / Math.min(3 - stages, 9);
+  }
+  result = Math.floor(result);
+
+  return result < 1 ? 1 : result > 100 ? 100 : result;
+}
+
 export function calculateDamage(
   level: number,
   power: number,
