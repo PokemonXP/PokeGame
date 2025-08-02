@@ -58,6 +58,7 @@
     },
     "selected": "Attaque sélectionnée",
     "stab": "Bonus d’attaque de même type (STAB)",
+    "success": "L’attaque a été utilisée. Les effets ont été appliqués au Pokémon ciblés.",
     "target": {
       "help": "Sélectionnez une ou plusieurs cibles ci-dessous.",
       "multiplier": "Facteur de cibles",

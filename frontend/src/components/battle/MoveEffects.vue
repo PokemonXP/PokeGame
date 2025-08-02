@@ -30,8 +30,10 @@ import { calculateStamina } from "@/helpers/pokemon";
 import { formatPokemon } from "@/helpers/format";
 import { useBattleActionStore } from "@/stores/battle/action";
 import { useForm } from "@/forms";
+import { useToastStore } from "@/stores/toast";
 
 const battle = useBattleActionStore();
+const toasts = useToastStore();
 const { t } = useI18n();
 
 const props = defineProps<{
@@ -84,13 +86,14 @@ async function submit(): Promise<void> {
     validate();
     if (isValid.value) {
       const targets: BattleMoveTargetPayload[] = targetEffects.value.map((e) => ({
-        target: e.battler.pokemon.id,
+        targetId: e.battler.pokemon.id,
         damage: e.damage > 0 ? { value: e.damage, isPercentage: e.isPercentage, isHealing: e.isHealing } : undefined,
         status: e.status || e.allConditions ? { condition: e.status, removeCondition: e.removeCondition, allConditions: e.allConditions } : undefined,
         statistics: e.statistics,
       }));
       const result: boolean = await battle.useMove(targets);
       if (result) {
+        toasts.success("moves.use.success");
         emit("success");
       }
     }

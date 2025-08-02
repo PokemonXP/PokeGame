@@ -52,16 +52,28 @@ internal class UseBattleMoveHandler : ICommandHandler<UseBattleMove, BattleModel
       return null;
     }
 
-    Specimen attacker = await _pokemonRepository.LoadAsync(payload.Attacker, cancellationToken) ?? throw new PokemonNotFoundException([payload.Attacker], nameof(payload.Attacker));
-    IReadOnlyDictionary<string, Specimen> targets = await _battleManager.FindPokemonAsync(payload.Targets.Select(x => x.Target), nameof(payload.Targets), cancellationToken);
+    IEnumerable<PokemonId> pokemonIds = new PokemonId[] { new(payload.AttackerId) }
+      .Concat(payload.Targets.Select(x => new PokemonId(x.TargetId))).Distinct();
+    Dictionary<Guid, Specimen> pokemonByIds = (await _pokemonRepository.LoadAsync(pokemonIds, cancellationToken))
+      .ToDictionary(x => x.Id.ToGuid(), x => x);
+
+    if (!pokemonByIds.TryGetValue(payload.AttackerId, out Specimen? attacker))
+    {
+      throw new PokemonNotFoundException([payload.AttackerId], nameof(payload.AttackerId));
+    }
 
     Move move = await _moveRepository.LoadAsync(payload.Move, cancellationToken) ?? throw new MoveNotFoundException(payload.Move, nameof(payload.Move));
     PowerPoints? powerPointCost = payload.PowerPointCost < 1 ? null : new(payload.PowerPointCost);
     attacker.UseMove(move, powerPointCost, payload.StaminaCost, actorId);
 
+    HashSet<Guid> missing = new(capacity: payload.Targets.Count);
     foreach (BattleMoveTargetPayload target in payload.Targets)
     {
-      Specimen pokemon = targets[target.Target];
+      if (!pokemonByIds.TryGetValue(target.TargetId, out Specimen? pokemon))
+      {
+        missing.Add(target.TargetId);
+        continue;
+      }
 
       int? damage = null;
       int? healing = null;
@@ -115,8 +127,12 @@ internal class UseBattleMoveHandler : ICommandHandler<UseBattleMove, BattleModel
       StatisticChanges statistics = new(target.Statistics);
       battle.UseMove(attacker, move, pokemon, statistics, actorId);
     }
+    if (missing.Count > 0)
+    {
+      throw new PokemonNotFoundException(missing, nameof(payload.Targets));
+    }
 
-    await _pokemonRepository.SaveAsync(new Specimen[] { attacker }.Concat(targets.Values), cancellationToken);
+    await _pokemonRepository.SaveAsync(pokemonByIds.Values, cancellationToken);
     await _battleRepository.SaveAsync(battle, cancellationToken);
 
     return await _battleQuerier.ReadAsync(battle, cancellationToken);

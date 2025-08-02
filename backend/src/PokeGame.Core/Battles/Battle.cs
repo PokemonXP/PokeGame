@@ -436,7 +436,7 @@ public class Battle : AggregateRoot
         ErrorCode = "BattlerValidator"
       });
     }
-    else if (!battler.IsActive)
+    else if (battler.IsActive)
     {
       failures.Add(new ValidationFailure("Inactive", "The inactive Pokémon must not be active on the battle field.", inactive.Id.ToGuid())
       {

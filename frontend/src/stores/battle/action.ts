@@ -92,7 +92,7 @@ export const useBattleActionStore = defineStore("battle-action", () => {
       try {
         const { attack, attacker, powerPointCost, staminaCost } = move.value;
         const payload: UseBattleMovePayload = {
-          attacker: attacker.pokemon.id,
+          attackerId: attacker.pokemon.id,
           move: attack.move.id,
           powerPointCost,
           staminaCost,

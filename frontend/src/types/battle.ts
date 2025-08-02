@@ -47,7 +47,7 @@ export type BattleMove = {
 };
 
 export type BattleMoveTargetPayload = {
-  target: string;
+  targetId: string;
   damage?: DamagePayload;
   status?: StatusConditionPayload;
   statistics: StatisticChangesPayload;
@@ -164,7 +164,7 @@ export type UpdateBattlePayload = {
 };
 
 export type UseBattleMovePayload = {
-  attacker: string;
+  attackerId: string;
   move: string;
   powerPointCost: number;
   staminaCost: number;

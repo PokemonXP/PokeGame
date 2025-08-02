@@ -8,7 +8,6 @@ internal class BattleMoveTargetValidator : AbstractValidator<BattleMoveTargetPay
 {
   public BattleMoveTargetValidator()
   {
-    RuleFor(x => x.Target).NotEmpty();
     When(x => x.Damage is not null, () => RuleFor(x => x.Damage!).SetValidator(new DamageValidator()));
     When(x => x.Status is not null, () => RuleFor(x => x.Status!).SetValidator(new StatusConditionValidator()));
     RuleFor(x => x.Statistics).SetValidator(new StatisticChangesValidator());

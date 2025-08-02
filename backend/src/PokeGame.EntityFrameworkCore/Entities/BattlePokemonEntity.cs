@@ -46,11 +46,11 @@ internal class BattlePokemonEntity
     {
       Attack = CalculateStages(Attack, statisticChanges.Attack);
       Defense = CalculateStages(Defense, statisticChanges.Defense);
-      SpecialAttack = CalculateStages(Attack, statisticChanges.SpecialAttack);
-      SpecialDefense = CalculateStages(Defense, statisticChanges.SpecialDefense);
+      SpecialAttack = CalculateStages(SpecialAttack, statisticChanges.SpecialAttack);
+      SpecialDefense = CalculateStages(SpecialDefense, statisticChanges.SpecialDefense);
       Speed = CalculateStages(Speed, statisticChanges.Speed);
       Accuracy = CalculateStages(Accuracy, statisticChanges.Accuracy);
-      Evasion = CalculateStages(Attack, statisticChanges.Evasion);
+      Evasion = CalculateStages(Evasion, statisticChanges.Evasion);
 
       int critical = Critical + statisticChanges.Critical;
       Critical = critical < StatisticChanges.MinimumCritical ? StatisticChanges.MinimumCritical
@@ -61,7 +61,7 @@ internal class BattlePokemonEntity
   {
     int result = current + change;
     return result < StatisticChanges.MinimumStage ? StatisticChanges.MinimumStage
-      : (result > StatisticChanges.MaximumStage ? StatisticChanges.MaximumStage : current);
+      : (result > StatisticChanges.MaximumStage ? StatisticChanges.MaximumStage : result);
   }
 
   public void Switch(BattlePokemonEntity other)

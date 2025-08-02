@@ -8,7 +8,6 @@ internal class UseBattleMoveValidator : AbstractValidator<UseBattleMovePayload>
 {
   public UseBattleMoveValidator()
   {
-    RuleFor(x => x.Attacker).NotEmpty();
     RuleFor(x => x.Move).NotEmpty();
     RuleFor(x => x.PowerPointCost).InclusiveBetween((byte)0, PowerPoints.MaximumValue);
     RuleFor(x => x.StaminaCost).GreaterThanOrEqualTo(0);

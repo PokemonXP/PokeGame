@@ -2,7 +2,7 @@
 
 public record UseBattleMovePayload
 {
-  public string Attacker { get; set; } = string.Empty;
+  public Guid AttackerId { get; set; } // TODO(fpion): ID or UniqueName
   public string Move { get; set; } = string.Empty;
   public byte PowerPointCost { get; set; }
   public int StaminaCost { get; set; }

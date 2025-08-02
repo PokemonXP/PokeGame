@@ -2,7 +2,7 @@
 
 public record BattleMoveTargetPayload
 {
-  public string Target { get; set; } = string.Empty;
+  public Guid TargetId { get; set; } // TODO(fpion): ID or UniqueName
   public DamagePayload? Damage { get; set; }
   public StatusConditionPayload? Status { get; set; }
   public StatisticChangesPayload Statistics { get; set; } = new();

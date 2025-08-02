@@ -58,6 +58,7 @@
     "random": "Random Multiplier",
     "selected": "Selected Move",
     "stab": "Same Type Attack Bonus (STAB)",
+    "success": "The move has been used. The effects have been applied to target Pokémon.",
     "target": {
       "help": "Select one or more targets below.",
       "multiplier": "Target Multiplier",
