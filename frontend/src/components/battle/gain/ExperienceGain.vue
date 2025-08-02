@@ -2,7 +2,7 @@
 import { TarButton, type InputType } from "logitar-vue3-ui";
 import { parsingUtils } from "logitar-js";
 import { useI18n } from "vue-i18n";
-import { watch } from "vue";
+import { onMounted } from "vue";
 
 import FormInput from "@/components/forms/FormInput.vue";
 import type { BattlerDetail, VictoriousBattler } from "@/types/battle";
@@ -38,9 +38,9 @@ const emit = defineEmits<{
   (e: "update:model-value", level: number): void;
 }>();
 
-function calculate(battler?: VictoriousBattler): void {
-  battler ??= props.battler;
+function calculate(): void {
   const defeated: BattlerDetail | undefined = battle.gain?.defeated;
+  const battler: VictoriousBattler | undefined = props.battler;
   if (defeated && battler) {
     const experience: number = calculateExperience(
       defeated.pokemon.level,
@@ -57,7 +57,7 @@ function calculate(battler?: VictoriousBattler): void {
   }
 }
 
-watch(() => props.battler, calculate, { deep: true, immediate: true });
+onMounted(calculate);
 </script>
 
 <template>

@@ -2,10 +2,19 @@ import { arrayUtils } from "logitar-js";
 import { computed, ref } from "vue";
 import { defineStore } from "pinia";
 
-import type { Battle, BattleGain, BattleMove, BattleMoveTargetPayload, BattlerDetail, BattleSwitch, UseBattleMovePayload } from "@/types/battle";
+import type {
+  Battle,
+  BattleGain,
+  BattleMove,
+  BattleMoveTargetPayload,
+  BattlerDetail,
+  BattleSwitch,
+  GainBattleExperiencePayload,
+  UseBattleMovePayload,
+} from "@/types/battle";
 import type { PokemonMove } from "@/types/pokemon";
 import { getAbility, getUrl } from "@/helpers/pokemon";
-import { readBattle, useBattleMove } from "@/api/battle";
+import { gainBattleExperience, readBattle, useBattleMove } from "@/api/battle";
 
 const { orderByDescending } = arrayUtils;
 
@@ -79,6 +88,25 @@ export const useBattleActionStore = defineStore("battle-action", () => {
       }
     }
   }
+  async function gainExperience(): Promise<boolean> {
+    if (data.value && gain.value) {
+      isLoading.value = true;
+      try {
+        const payload: GainBattleExperiencePayload = {
+          defeated: gain.value.defeated.pokemon.id,
+          victorious: gain.value.victorious.map(({ pokemon, experienceGain }) => ({ pokemon: pokemon.id, experience: experienceGain })),
+        };
+        const battle: Battle = await gainBattleExperience(data.value.id, payload);
+        data.value = battle;
+        return true;
+      } catch (e: unknown) {
+        setError(e);
+      } finally {
+        isLoading.value = false;
+      }
+    }
+    return false;
+  }
 
   function startSwitch(active: BattlerDetail): void {
     switchData.value = {
@@ -149,6 +177,7 @@ export const useBattleActionStore = defineStore("battle-action", () => {
     switchData,
     cancel,
     escape,
+    gainExperience,
     load,
     reset,
     selectVictorious,

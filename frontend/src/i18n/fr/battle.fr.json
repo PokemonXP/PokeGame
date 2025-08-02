@@ -50,6 +50,7 @@
       "multiplier": "Autre facteur"
     },
     "submit": "Gain",
+    "success": "Les Pokémon victorieux ont gagné de l’expérience.",
     "title": "Gain",
     "victorious": {
       "help": "Sélectionnez un ou plusieurs Pokémon victorieux parmi les choix ci-dessous.",

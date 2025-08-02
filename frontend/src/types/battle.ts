@@ -126,6 +126,11 @@ export type DamagePayload = {
   isHealing: boolean;
 };
 
+export type GainBattleExperiencePayload = {
+  defeated: string;
+  victorious: VictoriousPokemonPayload[];
+};
+
 export type PokemonFilter = {
   search: string;
   species?: Species;
@@ -204,4 +209,9 @@ export type VictoriousBattler = BattlerDetail & {
   hasHighFriendship: boolean;
   otherMultiplier: number;
   experienceGain: number;
+};
+
+export type VictoriousPokemonPayload = {
+  pokemon: string;
+  experience: number;
 };

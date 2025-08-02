@@ -7,21 +7,40 @@ import ExperienceGain from "./ExperienceGain.vue";
 import ExperienceYieldInput from "@/components/pokemon/forms/ExperienceYieldInput.vue";
 import OtherMultiplier from "./OtherMultiplier.vue";
 import PokemonGenderIcon from "@/components/icons/PokemonGenderIcon.vue";
+import SubmitButton from "@/components/shared/SubmitButton.vue";
 import type { BattlerDetail } from "@/types/battle";
 import { formatPokemon } from "@/helpers/format";
 import { useBattleActionStore } from "@/stores/battle/action";
 import { useForm } from "@/forms";
+import { useToastStore } from "@/stores/toast";
 
 const battle = useBattleActionStore();
+const toasts = useToastStore();
 const { t } = useI18n();
 
-useForm();
+const emit = defineEmits<{
+  (e: "success"): void;
+}>();
+
+const { isValid, validate } = useForm();
+async function submit(): Promise<void> {
+  if (!battle.isLoading) {
+    validate();
+    if (isValid.value) {
+      const result: boolean = await battle.gainExperience();
+      if (result) {
+        toasts.success("battle.gain.success");
+        emit("success");
+      }
+    }
+  }
+}
 
 const defeated = computed<BattlerDetail | undefined>(() => battle.gain?.defeated);
 </script>
 
 <template>
-  <form>
+  <form @submit.prevent="submit">
     <ExperienceYieldInput v-if="defeated" disabled :model-value="defeated.pokemon.form.yield.experience" />
     <template v-if="battle.gain">
       <div v-for="battler in battle.gain.victorious" :key="battler.pokemon.id">
@@ -60,6 +79,7 @@ const defeated = computed<BattlerDetail | undefined>(() => battle.gain?.defeated
     </template>
     <div class="mb-3">
       <TarButton icon="fas fa-arrow-left" :text="t('actions.previous')" @click="battle.selectVictorious(new Set())" />
+      <SubmitButton class="float-end" icon="fas fa-trophy" :loading="battle.isLoading" text="battle.gain.submit" />
     </div>
   </form>
 </template>

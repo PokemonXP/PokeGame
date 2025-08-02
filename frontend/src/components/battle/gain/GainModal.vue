@@ -30,7 +30,7 @@ defineExpose({ hide, show });
 <template>
   <TarModal :close="t('actions.close')" id="gain" ref="modalRef" size="x-large" :title="t('battle.gain.title')">
     <DefeatedPokemon />
-    <VictoriousParameters v-if="battle.gain?.victorious.length" />
+    <VictoriousParameters v-if="battle.gain?.victorious.length" @success="cancel" />
     <VictoriousSelection v-else />
     <template #footer>
       <TarButton icon="fas fa-ban" :text="t('actions.cancel')" variant="secondary" @click="cancel" />
