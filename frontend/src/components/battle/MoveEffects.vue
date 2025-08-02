@@ -166,13 +166,21 @@ watch(
       </h2>
       <div v-if="!isStatus" class="row">
         <PowerInput class="col" :id="`${target.id}-power`" v-model="target.power" />
-        <AttackInput :attacker="attacker" class="col" :category="categoryValue" :id="`${target.id}-attack`" required v-model="target.attack" />
+        <AttackInput
+          :attacker="attacker"
+          class="col"
+          :category="categoryValue"
+          :critical="criticalMultiplier > 0"
+          :id="`${target.id}-attack`"
+          required
+          v-model="target.attack"
+        />
         <DefenseInput class="col" :category="categoryValue" :id="`${target.id}-defense`" required :target="target.battler" v-model="target.defense" />
         <TypeEffectiveness class="col" :id="`${target.id}-type-effectiveness`" :move="move" required :target="target.battler" v-model="target.effectiveness" />
         <OtherMultiplier class="col" :id="`${target.id}-other-multiplier`" v-model="target.other" />
       </div>
       <div class="row">
-        <TargetAccuracy class="col" :id="`${target.id}-accuracy`" :move="move" />
+        <TargetAccuracy :attacker="attacker" class="col" :id="`${target.id}-accuracy`" :move="move" :target="target.battler" />
         <DamageInput
           :args="damageArgs"
           class="col"
@@ -198,6 +206,6 @@ watch(
       </div>
     </div>
     <TarButton icon="fas fa-arrow-left" :text="t('actions.previous')" @click="$emit('previous')" />
-    <SubmitButton class="float-end" icon="fas fa-wand-sparkles" :loading="isLoading" :text="t('moves.use.title')" />
+    <SubmitButton class="float-end" icon="fas fa-wand-sparkles" :loading="isLoading" text="moves.use.title" />
   </form>
 </template>

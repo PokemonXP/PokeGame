@@ -8,13 +8,14 @@ import FormInput from "@/components/forms/FormInput.vue";
 import type { BattlerDetail } from "@/types/battle";
 import type { MoveCategory } from "@/types/moves";
 
-const { parseNumber } = parsingUtils;
+const { parseBoolean, parseNumber } = parsingUtils;
 const { t } = useI18n();
 
 const props = withDefaults(
   defineProps<{
     attacker?: BattlerDetail;
     category?: MoveCategory;
+    critical?: boolean | string;
     id?: string;
     label?: string;
     max?: number | string;
@@ -32,6 +33,7 @@ const props = withDefaults(
   },
 );
 
+const isCritical = computed<boolean>(() => parseBoolean(props.critical) ?? false);
 const isSpecial = computed<boolean>(() => props.category === "Special");
 const label = computed<string>(() => props.label ?? `pokemon.statistic.battle.${isSpecial.value ? "SpecialAttack" : "Attack"}`);
 
@@ -42,7 +44,16 @@ const emit = defineEmits<{
 function calculate(attacker?: BattlerDetail): void {
   attacker ??= props.attacker;
   if (attacker) {
-    emit("update:model-value", isSpecial.value ? attacker.pokemon.statistics.specialAttack.value : attacker.pokemon.statistics.attack.value);
+    if (isCritical.value) {
+      emit(
+        "update:model-value",
+        isSpecial.value
+          ? Math.max(attacker.specialAttack.modified, attacker.specialAttack.unmodified)
+          : Math.max(attacker.attack.modified, attacker.attack.unmodified),
+      );
+    } else {
+      emit("update:model-value", isSpecial.value ? attacker.specialAttack.modified : attacker.attack.modified);
+    }
   } else {
     emit("update:model-value", 0);
   }

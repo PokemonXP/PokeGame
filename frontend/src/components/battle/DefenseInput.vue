@@ -42,7 +42,7 @@ const emit = defineEmits<{
 function calculate(target?: BattlerDetail): void {
   target ??= props.target;
   if (target) {
-    emit("update:model-value", isSpecial.value ? target.pokemon.statistics.specialDefense.value : target.pokemon.statistics.defense.value);
+    emit("update:model-value", isSpecial.value ? target.specialDefense.modified : target.defense.modified);
   } else {
     emit("update:model-value", 0);
   }
