@@ -45,6 +45,11 @@ export type BattlerDetail = Battler & {
   url?: string;
 };
 
+export type BattleGain = {
+  defeated: BattlerDetail;
+  victorious: VictoriousBattler[];
+};
+
 export type BattleKind = "WildPokemon" | "Trainer";
 
 export type BattleMove = {
@@ -89,6 +94,8 @@ export type BattleSwitch = {
   inactive: BattlerDetail[];
 };
 
+export type BattlerTableMode = "gain";
+
 export type CreateBattlePayload = {
   id?: string;
   kind: BattleKind;
@@ -117,6 +124,11 @@ export type DamagePayload = {
   value: number;
   isPercentage: boolean;
   isHealing: boolean;
+};
+
+export type GainBattleExperiencePayload = {
+  defeated: string;
+  victorious: VictoriousPokemonPayload[];
 };
 
 export type PokemonFilter = {
@@ -188,4 +200,18 @@ export type UseBattleMovePayload = {
   powerPointCost: number;
   staminaCost: number;
   targets: BattleMoveTargetPayload[];
+};
+
+export type VictoriousBattler = BattlerDetail & {
+  didNotParticipate: boolean;
+  isHoldingLuckyEgg: boolean;
+  isPastEvolutionLevel: boolean;
+  hasHighFriendship: boolean;
+  otherMultiplier: number;
+  experienceGain: number;
+};
+
+export type VictoriousPokemonPayload = {
+  pokemon: string;
+  experience: number;
 };

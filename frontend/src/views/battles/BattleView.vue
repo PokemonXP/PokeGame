@@ -7,11 +7,12 @@ import AdminBreadcrumb from "@/components/admin/AdminBreadcrumb.vue";
 import BattlerTable from "@/components/battle/BattlerTable.vue";
 import CancelBattle from "@/components/battle/CancelBattle.vue";
 import EscapeBattle from "@/components/battle/EscapeBattle.vue";
+import GainModal from "@/components/battle/gain/GainModal.vue";
 import ResetBattle from "@/components/battle/ResetBattle.vue";
 import StartBattle from "@/components/battle/StartBattle.vue";
 import SwitchPokemonModal from "./SwitchPokemonModal.vue";
 import UseMoveModal from "@/components/battle/UseMoveModal.vue";
-import type { Battle, BattleMove, BattleStatus, BattleSwitch } from "@/types/battle";
+import type { Battle, BattleGain, BattleMove, BattleStatus, BattleSwitch } from "@/types/battle";
 import type { Breadcrumb } from "@/types/components";
 import { StatusCodes, type ApiFailure } from "@/types/api";
 import { handleErrorKey } from "@/inject";
@@ -23,6 +24,7 @@ const router = useRouter();
 const store = useBattleActionStore();
 const { t } = useI18n();
 
+const gainRef = ref<InstanceType<typeof GainModal> | null>(null);
 const moveRef = ref<InstanceType<typeof UseMoveModal> | null>(null);
 const switchRef = ref<InstanceType<typeof SwitchPokemonModal> | null>(null);
 
@@ -48,6 +50,17 @@ watch(
     }
     store.error = undefined;
   },
+);
+watch(
+  () => store.gain,
+  (gain: BattleGain | undefined) => {
+    if (gain) {
+      gainRef.value?.show();
+    } else {
+      gainRef.value?.hide();
+    }
+  },
+  { deep: true },
 );
 watch(
   () => store.move,
@@ -96,6 +109,7 @@ onMounted(async () => store.load(route.params.id as string));
       <BattlerTable v-if="status === 'Started'" />
       <p v-else-if="status === 'Created'">{{ t("battle.notStarted") }}</p>
       <p v-else>{{ t("battle.ended") }}</p>
+      <GainModal ref="gainRef" />
       <SwitchPokemonModal ref="switchRef" />
       <UseMoveModal ref="moveRef" />
     </template>

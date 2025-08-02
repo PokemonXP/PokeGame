@@ -2,16 +2,26 @@ import { arrayUtils } from "logitar-js";
 import { computed, ref } from "vue";
 import { defineStore } from "pinia";
 
-import type { Battle, BattleMove, BattleMoveTargetPayload, BattlerDetail, BattleSwitch, UseBattleMovePayload } from "@/types/battle";
+import type {
+  Battle,
+  BattleGain,
+  BattleMove,
+  BattleMoveTargetPayload,
+  BattlerDetail,
+  BattleSwitch,
+  GainBattleExperiencePayload,
+  UseBattleMovePayload,
+} from "@/types/battle";
 import type { PokemonMove } from "@/types/pokemon";
 import { getAbility, getUrl } from "@/helpers/pokemon";
-import { readBattle, useBattleMove } from "@/api/battle";
+import { gainBattleExperience, readBattle, useBattleMove } from "@/api/battle";
 
 const { orderByDescending } = arrayUtils;
 
 export const useBattleActionStore = defineStore("battle-action", () => {
   const data = ref<Battle>();
   const error = ref<unknown>();
+  const gain = ref<BattleGain>();
   const isLoading = ref<boolean>(false);
   const move = ref<BattleMove>();
   const switchData = ref<BattleSwitch>();
@@ -54,6 +64,48 @@ export const useBattleActionStore = defineStore("battle-action", () => {
   }
   function start(battle: Battle): void {
     data.value = battle;
+  }
+
+  function startGain(defeated: BattlerDetail): void {
+    gain.value = { defeated, victorious: [] };
+  }
+  function selectVictorious(ids: Set<string>): void {
+    if (gain.value) {
+      if (ids.size) {
+        gain.value.victorious = battlers.value
+          .filter(({ pokemon }) => ids.has(pokemon.id))
+          .map((battler) => ({
+            ...battler,
+            didNotParticipate: true,
+            isHoldingLuckyEgg: battler.pokemon.heldItem?.uniqueName.toLowerCase() === "lucky-egg",
+            isPastEvolutionLevel: false,
+            hasHighFriendship: battler.pokemon.friendship >= 220,
+            otherMultiplier: battler.pokemon.level,
+            experienceGain: 0,
+          }));
+      } else {
+        gain.value.victorious = [];
+      }
+    }
+  }
+  async function gainExperience(): Promise<boolean> {
+    if (data.value && gain.value) {
+      isLoading.value = true;
+      try {
+        const payload: GainBattleExperiencePayload = {
+          defeated: gain.value.defeated.pokemon.id,
+          victorious: gain.value.victorious.map(({ pokemon, experienceGain }) => ({ pokemon: pokemon.id, experience: experienceGain })),
+        };
+        const battle: Battle = await gainBattleExperience(data.value.id, payload);
+        data.value = battle;
+        return true;
+      } catch (e: unknown) {
+        setError(e);
+      } finally {
+        isLoading.value = false;
+      }
+    }
+    return false;
   }
 
   function startSwitch(active: BattlerDetail): void {
@@ -119,18 +171,22 @@ export const useBattleActionStore = defineStore("battle-action", () => {
     battlers,
     data,
     error,
+    gain,
     isLoading,
     move,
     switchData,
     cancel,
     escape,
+    gainExperience,
     load,
     reset,
+    selectVictorious,
     setAttack,
     setError,
     setPowerPointCost,
     setStaminaCost,
     start,
+    startGain,
     startMove,
     startSwitch,
     switched,

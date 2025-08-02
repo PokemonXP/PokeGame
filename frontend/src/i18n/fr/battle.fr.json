@@ -42,6 +42,25 @@
   "escaped": "Les entraîneurs se sont échappés sains et saufs.",
   "externalLink": "Lien externe",
   "filters": "Filtres",
+  "gain": {
+    "defeated": {
+      "title": "Pokémon vaincu"
+    },
+    "other": {
+      "multiplier": "Autre facteur"
+    },
+    "submit": "Gain",
+    "success": "Les Pokémon victorieux ont gagné de l’expérience.",
+    "title": "Gain",
+    "victorious": {
+      "help": "Sélectionnez un ou plusieurs Pokémon victorieux parmi les choix ci-dessous.",
+      "highFriendship": "Bonheur élevé (×1,225)",
+      "luckyEgg": "Tient un Lucky Egg (×1,5)",
+      "notParticipated": "N’a pas participé au combat (×0.5)",
+      "pastEvolution": "A dépassé son niveau d’évolution (×1,225)",
+      "title": "Pokémon victorieux"
+    }
+  },
   "help": "Choisissez le type d’adversaire.",
   "inactive": "Aucun | Inactif | Inactifs",
   "kind": {

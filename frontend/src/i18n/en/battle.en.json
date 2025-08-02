@@ -42,6 +42,25 @@
   "escaped": "The trainers escaped safely.",
   "externalLink": "External Link",
   "filters": "Filters",
+  "gain": {
+    "defeated": {
+      "title": "Defeated Pokémon"
+    },
+    "other": {
+      "multiplier": "Other Multiplier"
+    },
+    "submit": "Gain",
+    "success": "The victorious Pokémon have gained experience.",
+    "title": "Gain",
+    "victorious": {
+      "help": " Select one or more victorious Pokémon from the choices below.",
+      "highFriendship": "Has high friendship (×1,225)",
+      "luckyEgg": "Is holding a Lucky Egg (×1,5)",
+      "notParticipated": "Did not participate to battle (×0.5)",
+      "pastEvolution": "Is past it's evolution level (×1,225)",
+      "title": "Victorious Pokémon"
+    }
+  },
   "help": "Pick the opponent kind.",
   "inactive": "Inactive",
   "kind": {

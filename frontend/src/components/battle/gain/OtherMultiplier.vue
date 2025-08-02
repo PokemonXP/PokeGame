@@ -10,9 +10,9 @@ const { t } = useI18n();
 
 withDefaults(
   defineProps<{
-    disabled?: boolean | string;
     id?: string;
     label?: string;
+    max?: number | string;
     min?: number | string;
     modelValue?: number | string;
     required?: boolean | string;
@@ -20,25 +20,25 @@ withDefaults(
     type?: InputType;
   }>(),
   {
-    id: "experience-yield",
-    label: "pokemon.experience.yield",
-    min: 1,
-    step: 1,
+    id: "other-multiplier",
+    label: "battle.gain.other.multiplier",
+    min: 0.001,
+    step: 0.001,
     type: "number",
   },
 );
 
 defineEmits<{
-  (e: "update:model-value", experience: number): void;
+  (e: "update:model-value", multiplier: number): void;
 }>();
 </script>
 
 <template>
   <FormInput
-    :disabled="disabled"
     :id="id"
     :label="t(label)"
     :min="min"
+    :max="max"
     :model-value="modelValue?.toString()"
     :required="required"
     :step="step"

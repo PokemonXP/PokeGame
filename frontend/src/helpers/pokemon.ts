@@ -304,3 +304,38 @@ export function calculateDamage(
   // NOTE(fpion): final step
   return Math.max(Math.floor(damage), 0);
 }
+
+export function calculateExperience(
+  defeatedLevel: number,
+  defeatedYield: number,
+  victoriousLevel: number,
+  didNotParticipate: boolean,
+  isTraded: boolean,
+  isHoldingLuckyEgg: boolean,
+  isPastEvolutionLevel: boolean,
+  hasHighFriendship: boolean,
+  otherMultiplier: number,
+): number {
+  let experience: number = (defeatedYield * defeatedLevel) / 5;
+  if (didNotParticipate) {
+    experience /= 2;
+  }
+  experience *= Math.pow((2 * defeatedLevel + 10) / (defeatedLevel + victoriousLevel + 10), 2.5);
+  experience += 1;
+  if (isTraded) {
+    experience *= 1.5;
+  }
+  if (isHoldingLuckyEgg) {
+    experience *= 1.5;
+  }
+  if (isPastEvolutionLevel) {
+    experience *= Math.sqrt(1.5);
+  }
+  if (hasHighFriendship) {
+    experience *= Math.sqrt(1.5);
+  }
+  if (otherMultiplier > 0) {
+    experience *= otherMultiplier;
+  }
+  return Math.max(Math.floor(experience), 1);
+}

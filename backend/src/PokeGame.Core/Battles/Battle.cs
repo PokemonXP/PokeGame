@@ -271,6 +271,37 @@ public class Battle : AggregateRoot
     Resolution = BattleResolution.Escape;
   }
 
+  public void Gain(Specimen defeated, Specimen victorious, int experience, ActorId? actorId = null)
+  {
+    if (!_pokemon.ContainsKey(defeated.Id))
+    {
+      throw new NotImplementedException(); // TODO(fpion): implement
+    }
+    // TODO(fpion): validate defeated
+
+    if (!_pokemon.ContainsKey(victorious.Id))
+    {
+      throw new NotImplementedException(); // TODO(fpion): implement
+    }
+    // TODO(fpion): validate victorious
+
+    if (!victorious.Changes.Any(change => change is PokemonExperienceGained gained && gained.Experience == experience))
+    {
+      throw new NotImplementedException(); // TODO(fpion): implement
+    }
+
+    ArgumentOutOfRangeException.ThrowIfNegative(experience, nameof(experience));
+
+    if (experience > 0)
+    {
+      Raise(new BattleExperienceGained(defeated.Id, victorious.Id, experience), actorId);
+    }
+  }
+  protected virtual void Handle(BattleExperienceGained _)
+  {
+    // TODO(fpion): handle event
+  }
+
   public void Reset(IReadOnlyDictionary<PokemonId, Specimen> pokemon, ActorId? actorId = null)
   {
     if (Status != BattleStatus.Started)

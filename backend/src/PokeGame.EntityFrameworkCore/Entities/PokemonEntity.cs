@@ -170,6 +170,28 @@ internal class PokemonEntity : AggregateEntity
     SetStatistics(@event.BaseStatistics);
   }
 
+  public void Gain(PokemonExperienceGained @event)
+  {
+    Update(@event);
+
+    Experience += @event.Experience;
+
+    int level = Level;
+    Level = ExperienceTable.Instance.GetLevel(GrowthRate, Experience);
+    MaximumExperience = ExperienceTable.Instance.GetMaximumExperience(GrowthRate, Level);
+    ToNextLevel = Math.Max(MaximumExperience - Experience, 0);
+
+    if (level < Level)
+    {
+      int constitution = GetStatistics().HP.Value;
+      SetStatistics();
+
+      int delta = GetStatistics().HP.Value - constitution;
+      Vitality += delta;
+      Stamina += delta;
+    }
+  }
+
   public void Heal(PokemonHealed @event)
   {
     Update(@event);

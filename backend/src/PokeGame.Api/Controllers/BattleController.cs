@@ -71,6 +71,13 @@ public class BattleController : ControllerBase
     return battle is null ? NotFound() : Ok(battle);
   }
 
+  [HttpPatch("{id}/gain/experience")]
+  public async Task<ActionResult<BattleModel>> GainExperienceAsync(Guid id, [FromBody] GainBattleExperiencePayload payload, CancellationToken cancellationToken)
+  {
+    BattleModel? battle = await _battleService.GainExperienceAsync(id, payload, cancellationToken);
+    return battle is null ? NotFound() : Ok(battle);
+  }
+
   [HttpPatch("{id}/escape")]
   public async Task<ActionResult<BattleModel>> EscapeAsync(Guid id, CancellationToken cancellationToken)
   {

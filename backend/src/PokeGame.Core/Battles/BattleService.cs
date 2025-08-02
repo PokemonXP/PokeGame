@@ -13,6 +13,7 @@ public interface IBattleService
   Task<BattleModel> CreateAsync(CreateBattlePayload payload, CancellationToken cancellationToken = default);
   Task<BattleModel?> DeleteAsync(Guid id, CancellationToken cancellationToken = default);
   Task<BattleModel?> EscapeAsync(Guid id, CancellationToken cancellationToken = default);
+  Task<BattleModel?> GainExperienceAsync(Guid id, GainBattleExperiencePayload payload, CancellationToken cancellationToken = default);
   Task<BattleModel?> ReadAsync(Guid id, CancellationToken cancellationToken = default);
   Task<BattleModel?> ResetAsync(Guid id, CancellationToken cancellationToken = default);
   Task<SearchResults<BattleModel>> SearchAsync(SearchBattlesPayload payload, CancellationToken cancellationToken = default);
@@ -32,6 +33,7 @@ internal class BattleService : IBattleService
     services.AddTransient<ICommandHandler<CreateBattle, BattleModel>, CreateBattleHandler>();
     services.AddTransient<ICommandHandler<DeleteBattle, BattleModel?>, DeleteBattleHandler>();
     services.AddTransient<ICommandHandler<EscapeBattle, BattleModel?>, EscapeBattleHandler>();
+    services.AddTransient<ICommandHandler<GainBattleExperience, BattleModel?>, GainBattleExperienceHandler>();
     services.AddTransient<ICommandHandler<ResetBattle, BattleModel?>, ResetBattleHandler>();
     services.AddTransient<ICommandHandler<StartBattle, BattleModel?>, StartBattleHandler>();
     services.AddTransient<ICommandHandler<SwitchBattlePokemon, BattleModel?>, SwitchBattlePokemonHandler>();
@@ -71,6 +73,12 @@ internal class BattleService : IBattleService
   public async Task<BattleModel?> EscapeAsync(Guid id, CancellationToken cancellationToken)
   {
     EscapeBattle command = new(id);
+    return await _commandBus.ExecuteAsync(command, cancellationToken);
+  }
+
+  public async Task<BattleModel?> GainExperienceAsync(Guid id, GainBattleExperiencePayload payload, CancellationToken cancellationToken)
+  {
+    GainBattleExperience command = new(id, payload);
     return await _commandBus.ExecuteAsync(command, cancellationToken);
   }
 
