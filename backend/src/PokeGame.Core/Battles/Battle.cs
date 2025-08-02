@@ -4,7 +4,9 @@ using Krakenar.Core;
 using Logitar;
 using Logitar.EventSourcing;
 using PokeGame.Core.Battles.Events;
+using PokeGame.Core.Moves;
 using PokeGame.Core.Pokemon;
+using PokeGame.Core.Pokemon.Events;
 using PokeGame.Core.Regions;
 using PokeGame.Core.Trainers;
 
@@ -79,8 +81,8 @@ public class Battle : AggregateRoot
   private readonly HashSet<TrainerId> _opponents = [];
   public IReadOnlyCollection<TrainerId> Opponents => _opponents.ToList().AsReadOnly();
 
-  private readonly Dictionary<PokemonId, bool> _pokemon = [];
-  public IReadOnlyDictionary<PokemonId, bool> Pokemon => _pokemon.AsReadOnly();
+  private readonly Dictionary<PokemonId, Battler> _pokemon = [];
+  public IReadOnlyDictionary<PokemonId, Battler> Pokemon => _pokemon.AsReadOnly();
 
   public Battle() : base()
   {
@@ -196,7 +198,7 @@ public class Battle : AggregateRoot
     Handle((IBattleCreated)@event);
     foreach (PokemonId opponent in @event.OpponentIds)
     {
-      _pokemon[opponent] = true;
+      _pokemon[opponent] = new Battler();
     }
   }
 
@@ -291,7 +293,7 @@ public class Battle : AggregateRoot
     _pokemon.Clear();
     foreach (PokemonId opponent in @event.OpponentIds)
     {
-      _pokemon[opponent] = true;
+      _pokemon[opponent] = new Battler();
     }
   }
 
@@ -381,7 +383,7 @@ public class Battle : AggregateRoot
 
     foreach (KeyValuePair<PokemonId, bool> pokemon in @event.PokemonIds)
     {
-      _pokemon[pokemon.Key] = pokemon.Value;
+      _pokemon[pokemon.Key] = new Battler(pokemon.Value);
     }
   }
 
@@ -412,14 +414,14 @@ public class Battle : AggregateRoot
       });
     }
 
-    if (!_pokemon.TryGetValue(active.Id, out bool isActive))
+    if (!_pokemon.TryGetValue(active.Id, out Battler? battler))
     {
       failures.Add(new ValidationFailure("Active", "The Pokémon must be a registered battler.", active.Id.ToGuid())
       {
         ErrorCode = "BattlerValidator"
       });
     }
-    else if (!isActive)
+    else if (!battler.IsActive)
     {
       failures.Add(new ValidationFailure("Active", "The active Pokémon must be active on the battle field.", active.Id.ToGuid())
       {
@@ -427,14 +429,14 @@ public class Battle : AggregateRoot
       });
     }
 
-    if (!_pokemon.TryGetValue(inactive.Id, out isActive))
+    if (!_pokemon.TryGetValue(inactive.Id, out battler))
     {
       failures.Add(new ValidationFailure("Inactive", "The Pokémon must be a registered battler.", inactive.Id.ToGuid())
       {
         ErrorCode = "BattlerValidator"
       });
     }
-    else if (isActive)
+    else if (!battler.IsActive)
     {
       failures.Add(new ValidationFailure("Inactive", "The inactive Pokémon must not be active on the battle field.", inactive.Id.ToGuid())
       {
@@ -458,8 +460,11 @@ public class Battle : AggregateRoot
   }
   protected virtual void Handle(BattlePokemonSwitched @event)
   {
-    _pokemon[@event.ActiveId] = false;
-    _pokemon[@event.InactiveId] = true;
+    Battler active = _pokemon[@event.ActiveId];
+    _pokemon[@event.ActiveId] = active.Switch();
+
+    Battler inactive = _pokemon[@event.InactiveId];
+    _pokemon[@event.InactiveId] = inactive.Switch();
   }
 
   public void Update(ActorId? actorId = null)
@@ -488,6 +493,40 @@ public class Battle : AggregateRoot
     {
       _notes = @event.Notes.Value;
     }
+  }
+
+  public void UseMove(Specimen attacker, Move move, Specimen target, StatisticChanges? statistics = null, ActorId? actorId = null)
+  {
+    if (!_pokemon.TryGetValue(attacker.Id, out Battler? attackerBattler))
+    {
+      throw new NotImplementedException(); // TODO(fpion): implement
+    }
+    else if (!attackerBattler.IsActive)
+    {
+      throw new NotImplementedException(); // TODO(fpion): implement
+    }
+
+    if (!_pokemon.TryGetValue(target.Id, out Battler? targetBattler))
+    {
+      throw new NotImplementedException(); // TODO(fpion): implement
+    }
+    else if (!targetBattler.IsActive && attacker.Ownership?.TrainerId != target.Ownership?.TrainerId)
+    {
+      throw new NotImplementedException(); // TODO(fpion): implement
+    }
+
+    if (!attacker.Changes.Any(change => change is PokemonMoveUsed used && used.MoveId == move.Id))
+    {
+      throw new InvalidOperationException($"The attacker '{attacker}' should have used the move '{move}'.");
+    }
+
+    statistics ??= new();
+    Raise(new BattleMoveUsed(attacker.Id, move.Id, target.Id, statistics), actorId);
+  }
+  protected virtual void Handle(BattleMoveUsed @event)
+  {
+    Battler target = _pokemon[@event.TargetId];
+    _pokemon[@event.TargetId] = target.Apply(@event.StatisticChanges);
   }
 
   public override string ToString() => $"{Name} | {base.ToString()}";

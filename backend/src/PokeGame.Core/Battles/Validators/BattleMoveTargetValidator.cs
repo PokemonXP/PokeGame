@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using PokeGame.Core.Battles.Models;
+using PokeGame.Core.Pokemon.Validators;
 
 namespace PokeGame.Core.Battles.Validators;
 

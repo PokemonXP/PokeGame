@@ -112,7 +112,8 @@ internal class UseBattleMoveHandler : ICommandHandler<UseBattleMove, BattleModel
         }
       }
 
-      // TODO(fpion): apply Statistics
+      StatisticChanges statistics = new(target.Statistics);
+      battle.UseMove(attacker, move, pokemon, statistics, actorId);
     }
 
     await _pokemonRepository.SaveAsync(new Specimen[] { attacker }.Concat(targets.Values), cancellationToken);

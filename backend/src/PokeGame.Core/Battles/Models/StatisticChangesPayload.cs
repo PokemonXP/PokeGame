@@ -1,6 +1,8 @@
-﻿namespace PokeGame.Core.Battles.Models;
+﻿using PokeGame.Core.Pokemon;
 
-public record StatisticChangesPayload
+namespace PokeGame.Core.Battles.Models;
+
+public record StatisticChangesPayload : IStatisticChanges
 {
   public int Attack { get; set; }
   public int Defense { get; set; }
