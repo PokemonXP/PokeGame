@@ -19,15 +19,17 @@ import RandomMultiplier from "./RandomMultiplier.vue";
 import SameTypeAttackBonus from "./SameTypeAttackBonus.vue";
 import StaminaCost from "./StaminaCost.vue";
 import StatisticStageInput from "./StatisticStageInput.vue";
+import SubmitButton from "@/components/shared/SubmitButton.vue";
 import TargetAccuracy from "./TargetAccuracy.vue";
 import TargetsMultiplier from "./TargetsMultiplier.vue";
 import TypeEffectiveness from "./TypeEffectiveness.vue";
-import type { BattlerDetail, DamageArgs, TargetEffects } from "@/types/battle";
+import type { BattleMoveTargetPayload, BattlerDetail, DamageArgs, TargetEffects } from "@/types/battle";
 import type { Move, MoveCategory } from "@/types/moves";
 import type { PokemonMove } from "@/types/pokemon";
 import { calculateStamina } from "@/helpers/pokemon";
 import { formatPokemon } from "@/helpers/format";
 import { useBattleActionStore } from "@/stores/battle/action";
+import { useForm } from "@/forms";
 
 const battle = useBattleActionStore();
 const { t } = useI18n();
@@ -39,11 +41,10 @@ const props = defineProps<{
 
 const category = ref<string>("");
 const criticalMultiplier = ref<number>(0);
-const powerPoints = ref<number>(0);
+const isLoading = ref<boolean>(false);
 const randomDie = ref<number>(1);
 const stab = ref<number>(1);
-const stamina = ref<number>(0);
-const targetEffects = ref<TargetEffects[]>([]);
+const targetEffects = ref<TargetEffects[]>([]); // TODO(fpion): move into the store
 const targetMultiplier = ref<number>(1);
 
 const attacker = computed<BattlerDetail | undefined>(() => battle.move?.attacker);
@@ -64,8 +65,9 @@ const damageArgs = computed<DamageArgs | undefined>(() =>
     : undefined,
 );
 
-defineEmits<{
+const emit = defineEmits<{
   (e: "previous"): void;
+  (e: "success"): void;
 }>();
 
 function updateTarget(target: TargetEffects): void {
@@ -75,11 +77,32 @@ function updateTarget(target: TargetEffects): void {
   }
 }
 
+const { isValid, validate } = useForm();
+async function submit(): Promise<void> {
+  if (!isLoading.value) {
+    isLoading.value = true;
+    validate();
+    if (isValid.value) {
+      const targets: BattleMoveTargetPayload[] = targetEffects.value.map((e) => ({
+        target: e.battler.pokemon.id,
+        damage: e.damage > 0 ? { value: e.damage, isPercentage: e.isPercentage, isHealing: e.isHealing } : undefined,
+        status: e.status || e.allConditions ? { condition: e.status, removeCondition: e.removeCondition, allConditions: e.allConditions } : undefined,
+        statistics: e.statistics,
+      }));
+      const result: boolean = await battle.useMove(targets);
+      if (result) {
+        emit("success");
+      }
+    }
+    isLoading.value = false;
+  }
+}
+
 watch(
   () => props.attack,
   (attack: PokemonMove) => {
     category.value = attack.move.category;
-    stamina.value = calculateStamina(attack.powerPoints.maximum);
+    battle.setStaminaCost(calculateStamina(attack.powerPoints.maximum));
     targetEffects.value.forEach((target) => (target.power = attack.move.power ?? 0));
   },
   { deep: true, immediate: true },
@@ -110,14 +133,20 @@ watch(
 </script>
 
 <template>
-  <div>
+  <form @submit.prevent="submit">
     <p>
       <i><CircleInfoIcon />{{ t("moves.use.effects.help") }}</i>
     </p>
     <h2 class="h6">{{ t("moves.use.attacker") }}</h2>
     <div class="row">
-      <PowerPointsCost class="col" :power-points="attack.powerPoints" required v-model="powerPoints" />
-      <StaminaCost class="col" required v-model="stamina" />
+      <PowerPointsCost
+        class="col"
+        :model-value="battle.move?.powerPointCost"
+        :power-points="attack.powerPoints"
+        required
+        @update:model-value="battle.setPowerPointCost"
+      />
+      <StaminaCost class="col" :model-value="battle.move?.staminaCost" required @update:model-value="battle.setStaminaCost" />
       <MoveCategorySelect class="col" :disabled="move.category === 'Status'" :required="move.category !== 'Status'" v-model="category" />
     </div>
     <div v-if="!isStatus" class="row">
@@ -166,5 +195,6 @@ watch(
       </div>
     </div>
     <TarButton icon="fas fa-arrow-left" :text="t('actions.previous')" @click="$emit('previous')" />
-  </div>
+    <SubmitButton class="float-end" icon="fas fa-wand-sparkles" :loading="isLoading" :text="t('moves.use.title')" />
+  </form>
 </template>

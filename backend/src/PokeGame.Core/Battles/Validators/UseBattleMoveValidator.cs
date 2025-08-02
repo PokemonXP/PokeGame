@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using PokeGame.Core.Battles.Models;
+using PokeGame.Core.Moves;
 
 namespace PokeGame.Core.Battles.Validators;
 
@@ -9,7 +10,7 @@ internal class UseBattleMoveValidator : AbstractValidator<UseBattleMovePayload>
   {
     RuleFor(x => x.Attacker).NotEmpty();
     RuleFor(x => x.Move).NotEmpty();
-    RuleFor(x => x.PowerPointCost).PowerPoints();
+    RuleFor(x => x.PowerPointCost).InclusiveBetween((byte)0, PowerPoints.MaximumValue);
     RuleFor(x => x.StaminaCost).GreaterThanOrEqualTo(0);
 
     RuleFor(x => x.Targets).Must(x => x.Count > 0)

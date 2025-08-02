@@ -7,8 +7,8 @@ import { watch } from "vue";
 import FormInput from "@/components/forms/FormInput.vue";
 import type { BattleMove, BattlerDetail } from "@/types/battle";
 import type { Move } from "@/types/moves";
-import { useBattleActionStore } from "@/stores/battle/action";
 import type { PokemonType } from "@/types/pokemon";
+import { useBattleActionStore } from "@/stores/battle/action";
 
 const battle = useBattleActionStore();
 const { parseNumber } = parsingUtils;

@@ -51,8 +51,8 @@ watch(
 );
 watch(
   () => store.move,
-  (data: BattleMove | undefined) => {
-    if (data) {
+  (move: BattleMove | undefined) => {
+    if (move) {
       moveRef.value?.show();
     } else {
       moveRef.value?.hide();

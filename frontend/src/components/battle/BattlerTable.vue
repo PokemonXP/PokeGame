@@ -111,7 +111,7 @@ defineEmits<{
               :disabled="battler.pokemon.vitality < 1 || battler.pokemon.stamina < 1 || battler.pokemon.moves.length < 1"
               icon="fas fa-wand-sparkles"
               :text="t('moves.select.label')"
-              @click="battle.useMove(battler)"
+              @click="battle.startMove(battler)"
             />
             <TarButton v-if="battler.pokemon.ownership" icon="fas fa-rotate" :text="t('battle.switch.label')" @click="battle.startSwitch(battler)" />
           </div>

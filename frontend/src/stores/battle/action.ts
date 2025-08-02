@@ -2,9 +2,10 @@ import { arrayUtils } from "logitar-js";
 import { computed, ref } from "vue";
 import { defineStore } from "pinia";
 
-import type { Battle, BattleMove, BattlerDetail, BattleSwitch } from "@/types/battle";
+import type { Battle, BattleMove, BattleMoveTargetPayload, BattlerDetail, BattleSwitch, UseBattleMovePayload } from "@/types/battle";
+import type { PokemonMove } from "@/types/pokemon";
 import { getAbility, getUrl } from "@/helpers/pokemon";
-import { readBattle } from "@/api/battle";
+import { readBattle, useBattleMove } from "@/api/battle";
 
 const { orderByDescending } = arrayUtils;
 
@@ -67,8 +68,46 @@ export const useBattleActionStore = defineStore("battle-action", () => {
     data.value = battle;
   }
 
-  function useMove(attacker: BattlerDetail): void {
-    move.value = { attacker };
+  function startMove(attacker: BattlerDetail): void {
+    move.value = { attacker, powerPointCost: 0, staminaCost: 0 };
+  }
+  function setAttack(attack?: PokemonMove): void {
+    if (move.value) {
+      move.value.attack = attack;
+    }
+  }
+  function setPowerPointCost(powerPointCost: number): void {
+    if (move.value) {
+      move.value.powerPointCost = powerPointCost;
+    }
+  }
+  function setStaminaCost(staminaCost: number): void {
+    if (move.value) {
+      move.value.staminaCost = staminaCost;
+    }
+  }
+  async function useMove(targets: BattleMoveTargetPayload[]): Promise<boolean> {
+    if (move.value && move.value.attack && data.value) {
+      isLoading.value = true;
+      try {
+        const { attack, attacker, powerPointCost, staminaCost } = move.value;
+        const payload: UseBattleMovePayload = {
+          attacker: attacker.pokemon.id,
+          move: attack.move.id,
+          powerPointCost,
+          staminaCost,
+          targets,
+        };
+        const battle: Battle = await useBattleMove(data.value.id, payload);
+        data.value = battle;
+        return true;
+      } catch (e: unknown) {
+        setError(e);
+      } finally {
+        isLoading.value = false;
+      }
+    }
+    return false;
   }
 
   function setError(e?: unknown): void {
@@ -87,8 +126,12 @@ export const useBattleActionStore = defineStore("battle-action", () => {
     escape,
     load,
     reset,
+    setAttack,
     setError,
+    setPowerPointCost,
+    setStaminaCost,
     start,
+    startMove,
     startSwitch,
     switched,
     useMove,

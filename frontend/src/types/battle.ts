@@ -1,6 +1,6 @@
 import type { Ability } from "./abilities";
 import type { Actor, Aggregate, Change } from "./aggregate";
-import type { Pokemon, StatusCondition } from "./pokemon";
+import type { Pokemon, PokemonMove, StatusCondition } from "./pokemon";
 import type { SearchPayload, SortOption } from "./search";
 import type { Species } from "./species";
 import type { Trainer, TrainerKind } from "./trainers";
@@ -26,8 +26,6 @@ export type Battle = Aggregate & {
   completedOn?: string | null;
 };
 
-export type BattleKind = "WildPokemon" | "Trainer";
-
 export type Battler = {
   pokemon: Pokemon;
   isActive: boolean;
@@ -37,6 +35,22 @@ export type BattlerDetail = Battler & {
   order: number;
   ability: Ability;
   url?: string;
+};
+
+export type BattleKind = "WildPokemon" | "Trainer";
+
+export type BattleMove = {
+  attacker: BattlerDetail;
+  attack?: PokemonMove; // TODO(fpion): set
+  powerPointCost: number; // TODO(fpion): set
+  staminaCost: number; // TODO(fpion): set
+};
+
+export type BattleMoveTargetPayload = {
+  target: string;
+  damage?: DamagePayload;
+  status?: StatusConditionPayload;
+  statistics: StatisticChangesPayload;
 };
 
 export type BattleProperties = {
@@ -55,10 +69,6 @@ export type BattleSortOption = SortOption & {
 };
 
 export type BattleStatus = "Cancelled" | "Completed" | "Created" | "Started";
-
-export type BattleMove = {
-  attacker: BattlerDetail;
-};
 
 export type BattleSwitch = {
   active: BattlerDetail;
@@ -84,6 +94,12 @@ export type DamageArgs = {
   stab: number;
 };
 
+export type DamagePayload = {
+  value: number;
+  isPercentage: boolean;
+  isHealing: boolean;
+};
+
 export type PokemonFilter = {
   search: string;
   species?: Species;
@@ -96,7 +112,7 @@ export type SearchBattlesPayload = SearchPayload & {
   sort: BattleSortOption[];
 };
 
-export type StatisticChanges = {
+export type StatisticChangesPayload = {
   attack: number;
   defense: number;
   specialAttack: number;
@@ -105,6 +121,12 @@ export type StatisticChanges = {
   accuracy: number;
   evasion: number;
   critical: number;
+};
+
+export type StatusConditionPayload = {
+  condition?: StatusCondition;
+  removeCondition: boolean;
+  allConditions: boolean;
 };
 
 export type SwitchBattlePokemonPayload = {
@@ -126,7 +148,7 @@ export type TargetEffects = {
   status?: StatusCondition;
   removeCondition: boolean;
   allConditions: boolean;
-  statistics: StatisticChanges;
+  statistics: StatisticChangesPayload;
 };
 
 export type TrainerFilter = {
@@ -139,4 +161,12 @@ export type UpdateBattlePayload = {
   location?: string;
   url?: Change<string>;
   notes?: Change<string>;
+};
+
+export type UseBattleMovePayload = {
+  attacker: string;
+  move: string;
+  powerPointCost: number;
+  staminaCost: number;
+  targets: BattleMoveTargetPayload[];
 };
