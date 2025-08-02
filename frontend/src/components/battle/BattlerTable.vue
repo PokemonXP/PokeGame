@@ -47,7 +47,7 @@ defineEmits<{
     </thead>
     <tbody>
       <tr v-for="battler in battle.activeBattlers" :key="battler.pokemon.id">
-        <td>{{ battler.pokemon.statistics.speed.value }}</td>
+        <td>{{ battler.speed.modified }}</td>
         <td>
           <PokemonBlock external level :pokemon="battler.pokemon" :size="battler.url ? 60 : undefined">
             <template v-if="battler.url" #after>

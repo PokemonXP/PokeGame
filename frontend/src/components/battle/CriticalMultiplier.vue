@@ -4,9 +4,10 @@ import { parsingUtils } from "logitar-js";
 import { useI18n } from "vue-i18n";
 
 import FormInput from "@/components/forms/FormInput.vue";
-import { calculateCriticalChance } from "@/helpers/pokemon";
 import { computed } from "vue";
+import { useBattleActionStore } from "@/stores/battle/action";
 
+const battle = useBattleActionStore();
 const { parseNumber } = parsingUtils;
 const { n, t } = useI18n();
 
@@ -26,6 +27,7 @@ const props = withDefaults(
   },
 );
 
+const percentage = computed<number>(() => (battle.move?.attacker.critical.chance ?? 0) / 100);
 const isCritical = computed<boolean>(() => (parseNumber(props.modelValue) ?? 0) > 0);
 
 const emit = defineEmits<{
@@ -35,8 +37,6 @@ const emit = defineEmits<{
 function onCriticalHit(checked: boolean): void {
   emit("update:model-value", checked ? 1.5 : 0);
 }
-
-// TODO(fpion): use attacker's critical stage
 </script>
 
 <template>
@@ -52,7 +52,7 @@ function onCriticalHit(checked: boolean): void {
     @update:model-value="$emit('update:model-value', parseNumber($event) ?? 0)"
   >
     <template #prepend>
-      <span class="input-group-text">{{ n(calculateCriticalChance(0), "integer_percent") }}</span>
+      <span v-if="percentage" class="input-group-text">{{ n(percentage, "integer_percent") }}</span>
     </template>
     <template #append>
       <span class="input-group-text">

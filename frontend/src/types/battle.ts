@@ -29,6 +29,14 @@ export type Battle = Aggregate & {
 export type Battler = {
   pokemon: Pokemon;
   isActive: boolean;
+  attack: BattleStatistic
+  defense: BattleStatistic
+  specialAttack: BattleStatistic
+  specialDefense: BattleStatistic
+  speed: BattleStatistic
+  accuracyStages: number
+  evasionStages: number
+  critical: Critical
 };
 
 export type BattlerDetail = Battler & {
@@ -68,6 +76,12 @@ export type BattleSortOption = SortOption & {
   field: BattleSort;
 };
 
+export type BattleStatistic = {
+  unmodified: number
+  modified: number
+  stages: number
+}
+
 export type BattleStatus = "Cancelled" | "Completed" | "Created" | "Started";
 
 export type BattleSwitch = {
@@ -85,6 +99,11 @@ export type CreateBattlePayload = {
   champions: string[];
   opponents: string[];
 };
+
+export type Critical = {
+  stages: number
+  chance: number
+}
 
 export type DamageArgs = {
   level: number;
