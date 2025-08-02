@@ -47,6 +47,11 @@ internal class VarietyRepository : Repository, IVarietyRepository
     return await LoadAsync(varietyId, cancellationToken);
   }
 
+  public async Task<IReadOnlyCollection<Variety>> LoadAsync(IEnumerable<VarietyId> ids, CancellationToken cancellationToken)
+  {
+    return await LoadAsync<Variety>(ids.Select(id => id.StreamId), cancellationToken);
+  }
+
   public async Task SaveAsync(Variety variety, CancellationToken cancellationToken)
   {
     await base.SaveAsync(variety, cancellationToken);

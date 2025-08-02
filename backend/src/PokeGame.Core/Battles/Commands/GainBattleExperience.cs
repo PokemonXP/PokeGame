@@ -5,6 +5,7 @@ using PokeGame.Core.Battles.Models;
 using PokeGame.Core.Battles.Validators;
 using PokeGame.Core.Moves;
 using PokeGame.Core.Pokemon;
+using PokeGame.Core.Varieties;
 
 namespace PokeGame.Core.Battles.Commands;
 
@@ -20,6 +21,7 @@ internal class GainBattleExperienceHandler : ICommandHandler<GainBattleExperienc
   private readonly IBattleRepository _battleRepository;
   private readonly IMoveRepository _moveRepository;
   private readonly IPokemonRepository _pokemonRepository;
+  private readonly IVarietyRepository _varietyRepository;
 
   public GainBattleExperienceHandler(
     IApplicationContext applicationContext,
@@ -27,7 +29,8 @@ internal class GainBattleExperienceHandler : ICommandHandler<GainBattleExperienc
     IBattleQuerier battleQuerier,
     IBattleRepository battleRepository,
     IMoveRepository moveRepository,
-    IPokemonRepository pokemonRepository)
+    IPokemonRepository pokemonRepository,
+    IVarietyRepository varietyRepository)
   {
     _applicationContext = applicationContext;
     _battleManager = battleManager;
@@ -35,6 +38,7 @@ internal class GainBattleExperienceHandler : ICommandHandler<GainBattleExperienc
     _battleRepository = battleRepository;
     _moveRepository = moveRepository;
     _pokemonRepository = pokemonRepository;
+    _varietyRepository = varietyRepository;
   }
 
   public async Task<BattleModel?> HandleAsync(GainBattleExperience command, CancellationToken cancellationToken)
@@ -56,6 +60,10 @@ internal class GainBattleExperienceHandler : ICommandHandler<GainBattleExperienc
 
     IEnumerable<string> victoriousIds = payload.Victorious.Select(x => x.Pokemon).Distinct();
     IReadOnlyDictionary<string, Specimen> victorious = await _battleManager.FindPokemonAsync(victoriousIds, nameof(payload.Victorious), cancellationToken);
+
+    IEnumerable<VarietyId> varietyIds = victorious.Values.Select(x => x.VarietyId).Distinct();
+    Dictionary<VarietyId, Variety> varieties = (await _varietyRepository.LoadAsync(varietyIds, cancellationToken)).ToDictionary(x => x.Id, x => x);
+
     foreach (VictoriousPokemonPayload battler in payload.Victorious)
     {
       Specimen pokemon = victorious[battler.Pokemon];
@@ -64,10 +72,29 @@ internal class GainBattleExperienceHandler : ICommandHandler<GainBattleExperienc
         throw new NotImplementedException(); // TODO(fpion): implement
       }
 
+      int level = pokemon.Level;
       pokemon.Gain(battler.Experience, actorId);
       battle.Gain(defeated, pokemon, battler.Experience, actorId);
 
-      // TODO(fpion): learned moves
+      if (level < pokemon.Level)
+      {
+        Variety variety = varieties[pokemon.VarietyId];
+
+        IEnumerable<MoveId> moveIds = variety.Moves.Where(x => x.Value is null || x.Value.Value <= pokemon.Level).Select(x => x.Key).Distinct();
+        Dictionary<MoveId, Move> moves = (await _moveRepository.LoadAsync(moveIds, cancellationToken)).ToDictionary(x => x.Id, x => x);
+
+        foreach (KeyValuePair<MoveId, Level?> varietyMove in variety.Moves)
+        {
+          if (varietyMove.Value is null || varietyMove.Value.Value <= pokemon.Level)
+          {
+            if (!moves.TryGetValue(varietyMove.Key, out Move? move))
+            {
+              throw new InvalidOperationException($"The move 'Id={varietyMove.Key}' has not been loaded.");
+            }
+            pokemon.LearnMove(move, level: varietyMove.Value, actorId: actorId);
+          }
+        }
+      }
     }
 
     await _battleRepository.SaveAsync(battle, cancellationToken);
