@@ -4,7 +4,7 @@ namespace PokeGame.Core.Battles;
 
 internal interface IBattleManager
 {
-  Task<IReadOnlyDictionary<string, Specimen>> FindPokemonAsync(IEnumerable<string> idOrUniqueNames, string propertyName, CancellationToken cancellationToken);
+  Task<IReadOnlyDictionary<string, Specimen>> FindPokemonAsync(IEnumerable<string> idOrUniqueNames, string propertyName, CancellationToken cancellationToken = default);
 }
 
 internal class BattleManager : IBattleManager

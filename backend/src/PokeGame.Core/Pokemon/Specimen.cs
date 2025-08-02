@@ -497,6 +497,30 @@ public class Specimen : AggregateRoot
     _baseStatistics = @event.BaseStatistics;
   }
 
+  public void Gain(int experience, ActorId? actorId = null)
+  {
+    ArgumentOutOfRangeException.ThrowIfNegative(experience, nameof(experience));
+
+    if (experience > 0)
+    {
+      Raise(new PokemonExperienceGained(experience), actorId);
+    }
+  }
+  protected virtual void Handle(PokemonExperienceGained @event)
+  {
+    int level = Level;
+    int constitution = Statistics.HP;
+
+    Experience += @event.Experience;
+
+    if (level < Level)
+    {
+      int delta = Statistics.HP - constitution;
+      _vitality += delta;
+      _stamina += delta;
+    }
+  }
+
   public void Heal(int? healing, bool allConditions, ActorId? actorId = null)
   {
     if (healing < 0)
