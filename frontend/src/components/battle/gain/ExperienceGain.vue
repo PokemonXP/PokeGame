@@ -46,7 +46,7 @@ function calculate(battler?: VictoriousBattler): void {
       defeated.pokemon.level,
       defeated.pokemon.form.yield.experience,
       battler.pokemon.level,
-      battler.hasNotParticipated,
+      battler.didNotParticipate,
       Boolean(battler.pokemon.ownership && battler.pokemon.ownership.currentTrainer.id !== battler.pokemon.ownership.originalTrainer.id),
       battler.isHoldingLuckyEgg,
       battler.isPastEvolutionLevel,

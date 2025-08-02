@@ -309,7 +309,7 @@ export function calculateExperience(
   defeatedLevel: number,
   defeatedYield: number,
   victoriousLevel: number,
-  hasNotParticipated: boolean,
+  didNotParticipate: boolean,
   isTraded: boolean,
   isHoldingLuckyEgg: boolean,
   isPastEvolutionLevel: boolean,
@@ -317,7 +317,7 @@ export function calculateExperience(
   otherMultiplier: number,
 ): number {
   let experience: number = (defeatedYield * defeatedLevel) / 5;
-  if (hasNotParticipated) {
+  if (didNotParticipate) {
     experience /= 2;
   }
   experience *= Math.pow((2 * defeatedLevel + 10) / (defeatedLevel + victoriousLevel + 10), 2.5);

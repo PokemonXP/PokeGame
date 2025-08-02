@@ -35,7 +35,7 @@ const defeated = computed<BattlerDetail | undefined>(() => battle.gain?.defeated
             <TarCheckbox
               :id="`${battler.pokemon.id}-not-participated`"
               :label="t('battle.gain.victorious.notParticipated')"
-              v-model="battler.hasNotParticipated"
+              v-model="battler.didNotParticipate"
             />
             <TarCheckbox :id="`${battler.pokemon.id}-lucky-egg`" :label="t('battle.gain.victorious.luckyEgg')" v-model="battler.isHoldingLuckyEgg" />
           </div>

@@ -198,7 +198,7 @@ export type UseBattleMovePayload = {
 };
 
 export type VictoriousBattler = BattlerDetail & {
-  hasNotParticipated: boolean;
+  didNotParticipate: boolean;
   isHoldingLuckyEgg: boolean;
   isPastEvolutionLevel: boolean;
   hasHighFriendship: boolean;

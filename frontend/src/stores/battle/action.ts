@@ -67,7 +67,7 @@ export const useBattleActionStore = defineStore("battle-action", () => {
           .filter(({ pokemon }) => ids.has(pokemon.id))
           .map((battler) => ({
             ...battler,
-            hasNotParticipated: true,
+            didNotParticipate: true,
             isHoldingLuckyEgg: battler.pokemon.heldItem?.uniqueName.toLowerCase() === "lucky-egg",
             isPastEvolutionLevel: false,
             hasHighFriendship: battler.pokemon.friendship >= 220,
