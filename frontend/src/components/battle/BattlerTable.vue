@@ -28,8 +28,6 @@ const isSelection = computed<boolean>(() => typeof props.selected !== "undefined
 defineEmits<{
   (e: "toggle", target: BattlerDetail): void;
 }>();
-
-// TODO(fpion): Unconscious image?
 </script>
 
 <template>

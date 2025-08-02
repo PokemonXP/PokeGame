@@ -46,7 +46,7 @@ const criticalMultiplier = ref<number>(0);
 const isLoading = ref<boolean>(false);
 const randomDie = ref<number>(1);
 const stab = ref<number>(1);
-const targetEffects = ref<TargetEffects[]>([]); // TODO(fpion): move into the store
+const targetEffects = ref<TargetEffects[]>([]);
 const targetMultiplier = ref<number>(1);
 
 const attacker = computed<BattlerDetail | undefined>(() => battle.move?.attacker);

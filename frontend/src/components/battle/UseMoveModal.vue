@@ -14,7 +14,7 @@ const battle = useBattleActionStore();
 const { t } = useI18n();
 
 const modalRef = ref<InstanceType<typeof TarModal> | null>(null);
-const targets = ref<Set<string>>(new Set()); // TODO(fpion): move into the store
+const targets = ref<Set<string>>(new Set());
 
 const attack = computed<PokemonMove | undefined>(() => battle.move?.attack);
 
@@ -43,17 +43,6 @@ defineExpose({ hide, show });
     <BattleMoveTable v-else @selected="battle.setAttack" />
     <template #footer>
       <TarButton icon="fas fa-ban" :text="t('actions.cancel')" variant="secondary" @click="cancel" />
-      <!-- TODO(fpion): refactor later
-        <TarButton
-          :disabled="targets.size <= 0 || battle.isLoading"
-          icon="fas fa-wand-sparkles"
-          :loading="battle.isLoading"
-          :status="t('loading')"
-          :text="t('moves.use.title')"
-          variant="primary"
-          @click="submit"
-        />
-      -->
     </template>
   </TarModal>
 </template>
