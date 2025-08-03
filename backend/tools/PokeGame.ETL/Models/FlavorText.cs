@@ -8,5 +8,6 @@ internal record FlavorText
   [JsonPropertyName("language")]
   public Language Language { get; set; } = new();
 
-  // TODO(fpion): version_group
+  [JsonPropertyName("version_group")]
+  public VersionGroup Version { get; set; } = new();
 }

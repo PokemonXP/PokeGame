@@ -38,7 +38,7 @@ internal class ExtractAbilitiesTaskHandler : IDisposable, INotificationHandler<E
         ?? throw new InvalidOperationException($"The ability was not deserialized: '{requestUri}'.");
 
       string? displayName = ability.DisplayNames.SingleOrDefault(x => x.Language.Name == "en")?.Name;
-      FlavorText[] descriptions = ability.Descriptions.Where(x => x.Language.Name == "en").ToArray();
+      string? description = ability.Descriptions.SingleOrDefault(x => x.Language.Name == "en" && x.Version.Name == "scarlet-violet")?.Text;
     }
   }
 
