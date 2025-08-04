@@ -14,7 +14,6 @@ internal static class CsvHelper
     using StreamReader reader = new(path, encoding);
     using CsvReader csv = new(reader, culture);
 
-    csv.Context.RegisterClassMap<SeedAbilityPayload.Map>();
     csv.Context.RegisterClassMap<SeedBattleItemPayload.Map>();
     csv.Context.RegisterClassMap<SeedBerryPayload.Map>();
     csv.Context.RegisterClassMap<SeedEvolutionPayload.Map>();
