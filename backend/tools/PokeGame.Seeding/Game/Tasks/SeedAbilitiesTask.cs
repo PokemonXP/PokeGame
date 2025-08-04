@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using PokeGame.Core.Abilities;
 using PokeGame.Core.Abilities.Models;
-using PokeGame.Seeding.Game.Payloads;
+using PokeGame.Tools.Shared.Models;
 
 namespace PokeGame.Seeding.Game.Tasks;
 

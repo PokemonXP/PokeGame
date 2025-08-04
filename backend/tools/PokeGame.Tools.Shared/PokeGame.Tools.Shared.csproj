@@ -15,17 +15,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Krakenar.Infrastructure" Version="1.1.0" />
+    <PackageReference Include="CsvHelper" Version="33.1.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\PokeGame.Core\PokeGame.Core.csproj" />
+    <ProjectReference Include="..\..\src\PokeGame.Core\PokeGame.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Using Include="System.Diagnostics.CodeAnalysis" />
-    <Using Include="System.Text.Json" />
-    <Using Include="System.Text.Json.Serialization" />
+    <Using Include="System.Globalization" />
+    <Using Include="System.Text" />
   </ItemGroup>
 
 </Project>

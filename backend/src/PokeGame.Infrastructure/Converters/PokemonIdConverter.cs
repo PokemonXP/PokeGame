@@ -1,5 +1,4 @@
 ﻿using PokeGame.Core.Pokemon;
-using System.Diagnostics.CodeAnalysis;
 
 namespace PokeGame.Infrastructure.Converters;
 

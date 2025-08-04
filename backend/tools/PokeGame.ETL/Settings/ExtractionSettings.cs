@@ -1,6 +1,4 @@
-﻿using System.Text;
-
-namespace PokeGame.ETL.Settings;
+﻿namespace PokeGame.ETL.Settings;
 
 internal record ExtractionSettings
 {

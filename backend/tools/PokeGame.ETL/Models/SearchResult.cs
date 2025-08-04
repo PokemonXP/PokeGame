@@ -1,6 +1,4 @@
-﻿using System.Text.Json.Serialization;
-
-namespace PokeGame.ETL.Models;
+﻿namespace PokeGame.ETL.Models;
 
 internal record SearchResult
 {
