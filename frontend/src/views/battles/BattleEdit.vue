@@ -10,6 +10,7 @@ import BattleKindBadge from "@/components/battle/BattleKindBadge.vue";
 import BattleStatus from "@/components/battle/BattleStatus.vue";
 import CancelBattle from "@/components/battle/CancelBattle.vue";
 import DeleteBattle from "@/components/battle/DeleteBattle.vue";
+import ResetBattle from "@/components/battle/ResetBattle.vue";
 import StartBattle from "@/components/battle/StartBattle.vue";
 import StatusDetail from "@/components/shared/StatusDetail.vue";
 import type { Battle } from "@/types/battle";
@@ -17,12 +18,13 @@ import type { Breadcrumb } from "@/types/components";
 import { StatusCodes, type ApiFailure } from "@/types/api";
 import { handleErrorKey } from "@/inject";
 import { readBattle } from "@/api/battle";
+import { useBattleActionStore } from "@/stores/battle/action";
 import { useToastStore } from "@/stores/toast";
-import ResetBattle from "@/components/battle/ResetBattle.vue";
 
 const handleError = inject(handleErrorKey) as (e: unknown) => void;
 const route = useRoute();
 const router = useRouter();
+const store = useBattleActionStore();
 const toasts = useToastStore();
 const { t } = useI18n();
 
@@ -88,6 +90,7 @@ onMounted(async () => {
   try {
     const id = route.params.id as string;
     battle.value = await readBattle(id);
+    store.data = battle.value;
   } catch (e: unknown) {
     const { status } = e as ApiFailure;
     if (status === StatusCodes.NotFound) {
