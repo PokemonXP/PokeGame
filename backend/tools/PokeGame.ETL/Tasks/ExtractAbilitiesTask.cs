@@ -10,21 +10,8 @@ internal class ExtractAbilitiesTask : EtlTask
   public override string? Description => "Extract Pokémon abilities.";
 }
 
-internal class ExtractAbilitiesTaskHandler : IDisposable, INotificationHandler<ExtractAbilitiesTask>
+internal class ExtractAbilitiesTaskHandler : INotificationHandler<ExtractAbilitiesTask>
 {
-  private readonly HttpClient _client;
-
-  public ExtractAbilitiesTaskHandler()
-  {
-    _client = new HttpClient();
-  }
-
-  public void Dispose()
-  {
-    _client.Dispose();
-    GC.SuppressFinalize(this);
-  }
-
   public async Task Handle(ExtractAbilitiesTask _, CancellationToken cancellationToken)
   {
     string directory = "C:\\Users\\franc\\source\\repos\\PokeAPI\\api-data\\data\\api\\v2\\ability";
