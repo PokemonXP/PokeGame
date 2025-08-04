@@ -1,4 +1,6 @@
-﻿namespace PokeGame.ETL;
+﻿using PokeGame.ETL.Settings;
+
+namespace PokeGame.ETL;
 
 internal class Startup
 {
@@ -13,5 +15,6 @@ internal class Startup
   {
     services.AddHostedService<EtlWorker>();
     services.AddMediatR(config => config.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
+    services.AddSingleton(ExtractionSettings.Initialize(_configuration));
   }
 }
