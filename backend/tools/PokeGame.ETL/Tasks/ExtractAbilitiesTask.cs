@@ -1,5 +1,7 @@
 ﻿using MediatR;
 using PokeGame.ETL.Models;
+using System.Text;
+using System.Text.Json;
 
 namespace PokeGame.ETL.Tasks;
 
@@ -25,32 +27,22 @@ internal class ExtractAbilitiesTaskHandler : IDisposable, INotificationHandler<E
 
   public async Task Handle(ExtractAbilitiesTask _, CancellationToken cancellationToken)
   {
-    ResultPage page = await ExtractAsync(cancellationToken);
-    foreach (SearchResult result in page.Results)
+    string directory = "C:\\Users\\franc\\source\\repos\\PokeAPI\\api-data\\data\\api\\v2\\ability";
+    Encoding encoding = Encoding.UTF8;
+
+    string language = "en";
+    string version = "scarlet-violet";
+
+    string[] paths = Directory.GetFiles(directory, searchPattern: "index.json", SearchOption.AllDirectories);
+    foreach (string path in paths)
     {
-      Uri requestUri = new(result.Url, UriKind.Absolute);
-      using HttpRequestMessage request = new(HttpMethod.Get, requestUri);
-
-      using HttpResponseMessage response = await _client.SendAsync(request, cancellationToken);
-      response.EnsureSuccessStatusCode();
-
-      Ability ability = await response.Content.ReadFromJsonAsync<Ability>(cancellationToken)
-        ?? throw new InvalidOperationException($"The ability was not deserialized: '{requestUri}'.");
-
-      string? displayName = ability.DisplayNames.SingleOrDefault(x => x.Language.Name == "en")?.Name;
-      string? description = ability.Descriptions.SingleOrDefault(x => x.Language.Name == "en" && x.Version.Name == "scarlet-violet")?.Text;
+      string json = await File.ReadAllTextAsync(path, encoding, cancellationToken);
+      Ability? ability = JsonSerializer.Deserialize<Ability>(json);
+      if (ability is not null && ability.Id > 0)
+      {
+        string? displayName = ability.DisplayNames.SingleOrDefault(x => x.Language.Name == language)?.Name;
+        string? description = ability.Descriptions.SingleOrDefault(x => x.Language.Name == language && x.Version.Name == version)?.Text;
+      }
     }
-  }
-
-  private async Task<ResultPage> ExtractAsync(CancellationToken cancellationToken)
-  {
-    Uri requestUri = new("https://pokeapi.co/api/v2/ability?offset=0&limit=1000", UriKind.Absolute);
-    using HttpRequestMessage request = new(HttpMethod.Get, requestUri);
-
-    using HttpResponseMessage response = await _client.SendAsync(request, cancellationToken);
-    response.EnsureSuccessStatusCode();
-
-    return await response.Content.ReadFromJsonAsync<ResultPage>(cancellationToken)
-      ?? throw new InvalidOperationException($"The search result page was not deserialized: '{requestUri}'.");
   }
 }
