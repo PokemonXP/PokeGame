@@ -1,7 +1,8 @@
 ﻿using MediatR;
 using PokeGame.Core.Moves;
 using PokeGame.Core.Moves.Models;
-using PokeGame.Seeding.Game.Payloads;
+using PokeGame.Tools.Shared;
+using PokeGame.Tools.Shared.Models;
 
 namespace PokeGame.Seeding.Game.Tasks;
 
@@ -23,7 +24,8 @@ internal class SeedMovesTaskHandler : INotificationHandler<SeedMovesTask>
 
   public async Task Handle(SeedMovesTask task, CancellationToken cancellationToken)
   {
-    IReadOnlyCollection<SeedMovePayload> moves = await CsvHelper.ExtractAsync<SeedMovePayload>("Game/data/moves.csv", cancellationToken);
+    CsvManager csv = new([new SeedMovePayload.Map()]);
+    IReadOnlyCollection<SeedMovePayload> moves = await csv.ExtractAsync<SeedMovePayload>("Game/data/moves.csv", cancellationToken);
     foreach (SeedMovePayload move in moves)
     {
       CreateOrReplaceMoveResult result = await _moveService.CreateOrReplaceAsync(move, move.Id, cancellationToken);

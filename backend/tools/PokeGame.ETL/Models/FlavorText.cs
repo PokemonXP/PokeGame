@@ -6,7 +6,7 @@ internal record FlavorText
   public string Text { get; set; } = string.Empty;
 
   [JsonPropertyName("language")]
-  public Language Language { get; set; } = new();
+  public NamedResource Language { get; set; } = new();
 
   [JsonPropertyName("version_group")]
   public VersionGroup Version { get; set; } = new();

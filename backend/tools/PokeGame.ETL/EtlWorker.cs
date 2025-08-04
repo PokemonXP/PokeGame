@@ -41,6 +41,7 @@ internal class EtlWorker : BackgroundService
     {
       // NOTE(fpion): the order of these tasks matter.
       await ExecuteAsync(new ExtractAbilitiesTask(), cancellationToken);
+      await ExecuteAsync(new ExtractMovesTask(), cancellationToken);
     }
     catch (Exception exception)
     {

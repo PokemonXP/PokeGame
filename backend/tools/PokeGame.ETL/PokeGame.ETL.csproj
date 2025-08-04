@@ -17,10 +17,14 @@
 
   <ItemGroup>
     <None Remove="data\abilities.csv" />
+    <None Remove="data\moves.csv" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="data\abilities.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="data\moves.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

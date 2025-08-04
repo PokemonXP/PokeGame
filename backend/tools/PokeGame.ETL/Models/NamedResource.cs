@@ -1,6 +1,6 @@
 ﻿namespace PokeGame.ETL.Models;
 
-internal record Language
+internal record NamedResource
 {
   [JsonPropertyName("name")]
   public string Name { get; set; } = string.Empty;
