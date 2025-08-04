@@ -84,6 +84,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\PokeGame.EntityFrameworkCore.PostgreSQL\PokeGame.EntityFrameworkCore.PostgreSQL.csproj" />
+    <ProjectReference Include="..\PokeGame.Tools.Shared\PokeGame.Tools.Shared.csproj" />
   </ItemGroup>
 
   <ItemGroup>
