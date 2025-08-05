@@ -30,56 +30,71 @@ internal class ExtractSpeciesTaskHandler : INotificationHandler<ExtractSpeciesTa
 
   public async Task Handle(ExtractSpeciesTask _, CancellationToken cancellationToken)
   {
-    string directory = Path.Combine(_settings.Path, DirectoryPath);
-    string[] paths = Directory.GetFiles(directory, searchPattern: "index.json", SearchOption.AllDirectories);
-
     CsvManager csv = new([new SeedSpeciesPayload.Map()]);
     Dictionary<string, SeedSpeciesPayload> speciesByName = (await csv.ExtractAsync<SeedSpeciesPayload>(DataPath, cancellationToken))
       .ToDictionary(x => x.UniqueName, x => x);
     _logger.LogInformation("Retrieved {Species} species from '{Path}'.", speciesByName.Count, DataPath);
 
-    foreach (string path in paths)
+    IReadOnlyCollection<Species> extracted = await ExtractAsync(cancellationToken);
+    foreach (Species data in extracted)
     {
-      string json = await File.ReadAllTextAsync(path, _settings.Encoding, cancellationToken);
-      Species? data = JsonSerializer.Deserialize<Species>(json);
-      if (data is not null && IsValid(data))
+      string uniqueName = data.UniqueName.Trim().ToLower();
+      int? number = ExtractNumber(data);
+      PokemonCategory? category = ExtractCategory(data);
+      GrowthRate? growthRate = ExtractGrowthRate(data);
+      EggGroupsModel? eggGroups = ExtractEggGroups(data);
+      if (!number.HasValue || !category.HasValue || !growthRate.HasValue || eggGroups is null)
       {
-        string uniqueName = data.UniqueName.Trim().ToLower();
-        int? number = ExtractNumber(data);
-        PokemonCategory? category = ExtractCategory(data);
-        GrowthRate? growthRate = ExtractGrowthRate(data);
-        EggGroupsModel? eggGroups = ExtractEggGroups(data);
-        if (!number.HasValue || !category.HasValue || !growthRate.HasValue || eggGroups is null)
-        {
-          continue;
-        }
-
-        if (!speciesByName.TryGetValue(uniqueName, out SeedSpeciesPayload? species))
-        {
-          species = new SeedSpeciesPayload
-          {
-            Id = Guid.NewGuid(),
-            UniqueName = uniqueName
-          };
-          speciesByName[species.UniqueName] = species;
-        }
-        species.Number = number.Value;
-        species.Category = category.Value;
-        species.DisplayName = string.IsNullOrWhiteSpace(species.DisplayName) ? ExtractDisplayName(data) : species.DisplayName;
-        species.BaseFriendship = data.BaseFriendship;
-        species.CatchRate = data.CatchRate;
-        species.GrowthRate = growthRate.Value;
-        species.EggCycles = data.EggCycles;
-        species.EggGroups = eggGroups;
-        species.Url = string.IsNullOrWhiteSpace(species.Url) ? ToUrl(species.DisplayName) : species.Url;
+        continue;
       }
+
+      if (!speciesByName.TryGetValue(uniqueName, out SeedSpeciesPayload? species))
+      {
+        species = new SeedSpeciesPayload
+        {
+          Id = Guid.NewGuid(),
+          UniqueName = uniqueName
+        };
+        speciesByName[species.UniqueName] = species;
+      }
+      species.Number = number.Value;
+      species.Category = category.Value;
+      species.DisplayName = string.IsNullOrWhiteSpace(species.DisplayName) ? ExtractDisplayName(data) : species.DisplayName;
+      species.BaseFriendship = data.BaseFriendship;
+      species.CatchRate = data.CatchRate;
+      species.GrowthRate = growthRate.Value;
+      species.EggCycles = data.EggCycles;
+      species.EggGroups = eggGroups;
+      species.Url = string.IsNullOrWhiteSpace(species.Url) ? ToUrl(species.DisplayName) : species.Url;
     }
 
     await csv.SaveAsync(speciesByName.Values, DataPath, cancellationToken);
     _logger.LogInformation("Saved {Species} species to '{Path}'.", speciesByName.Count, DataPath);
   }
 
-  private static bool IsValid(Species species) => species.Id > 0 && species.Id < 10000 && !string.IsNullOrWhiteSpace(species.UniqueName);
+  private async Task<IReadOnlyCollection<Species>> ExtractAsync(CancellationToken cancellationToken)
+  {
+    string directory = Path.Combine(_settings.Path, DirectoryPath);
+    string[] paths = Directory.GetFiles(directory, searchPattern: "index.json", SearchOption.AllDirectories);
+    List<Species> speciesList = new(capacity: paths.Length);
+    foreach (string path in paths)
+    {
+      string json = await File.ReadAllTextAsync(path, _settings.Encoding, cancellationToken);
+      Species? species = null;
+      try
+      {
+        species = JsonSerializer.Deserialize<Species>(json);
+      }
+      catch (Exception)
+      {
+      }
+      if (species is not null && species.Id > 0 && species.Id < 10000 && !string.IsNullOrWhiteSpace(species.UniqueName))
+      {
+        speciesList.Add(species);
+      }
+    }
+    return speciesList.OrderBy(x => x.Id).ToList().AsReadOnly();
+  }
 
   private int? ExtractNumber(Species species)
   {

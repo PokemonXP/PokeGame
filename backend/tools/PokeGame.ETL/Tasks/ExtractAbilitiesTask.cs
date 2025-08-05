@@ -13,6 +13,7 @@ internal class ExtractAbilitiesTask : EtlTask
 
 internal class ExtractAbilitiesTaskHandler : INotificationHandler<ExtractAbilitiesTask>
 {
+  private const string DirectoryPath = "ability";
   private const string DataPath = "data/abilities.csv";
 
   private readonly ILogger<ExtractAbilitiesTaskHandler> _logger;
@@ -31,35 +32,51 @@ internal class ExtractAbilitiesTaskHandler : INotificationHandler<ExtractAbiliti
       .ToDictionary(x => x.UniqueName, x => x);
     _logger.LogInformation("Retrieved {Abilities} abilities from '{Path}'.", abilities.Count, DataPath);
 
-    string directory = Path.Combine(_settings.Path, "ability");
-    string[] paths = Directory.GetFiles(directory, searchPattern: "index.json", SearchOption.AllDirectories);
-    foreach (string path in paths)
+    IReadOnlyCollection<Ability> extracted = await ExtractAsync(cancellationToken);
+    foreach (Ability data in extracted)
     {
-      string json = await File.ReadAllTextAsync(path, _settings.Encoding, cancellationToken);
-      Ability? data = JsonSerializer.Deserialize<Ability>(json);
-      if (data is not null && IsValid(data))
+      string uniqueName = data.UniqueName.Trim().ToLower();
+      if (!abilities.TryGetValue(uniqueName, out SeedAbilityPayload? ability))
       {
-        string uniqueName = data.UniqueName.Trim().ToLower();
-        if (!abilities.TryGetValue(uniqueName, out SeedAbilityPayload? ability))
+        ability = new SeedAbilityPayload
         {
-          ability = new SeedAbilityPayload
-          {
-            Id = Guid.NewGuid(),
-            UniqueName = uniqueName
-          };
-          abilities[ability.UniqueName] = ability;
-        }
-        ability.DisplayName ??= ExtractDisplayName(data);
-        ability.Description ??= ExtractDescription(data);
-        ability.Url ??= ToUrl(ability.DisplayName);
+          Id = Guid.NewGuid(),
+          UniqueName = uniqueName
+        };
+        abilities[ability.UniqueName] = ability;
       }
+      ability.DisplayName ??= ExtractDisplayName(data);
+      ability.Description ??= ExtractDescription(data);
+      ability.Url ??= ToUrl(ability.DisplayName);
     }
 
     await csv.SaveAsync(abilities.Values, DataPath, cancellationToken);
     _logger.LogInformation("Saved {Abilities} abilities to '{Path}'.", abilities.Count, DataPath);
   }
 
-  private static bool IsValid(Ability ability) => ability.Id > 0 && ability.Id < 10000 && !string.IsNullOrWhiteSpace(ability.UniqueName);
+  private async Task<IReadOnlyCollection<Ability>> ExtractAsync(CancellationToken cancellationToken)
+  {
+    string directory = Path.Combine(_settings.Path, DirectoryPath);
+    string[] paths = Directory.GetFiles(directory, searchPattern: "index.json", SearchOption.AllDirectories);
+    List<Ability> abilities = new(capacity: paths.Length);
+    foreach (string path in paths)
+    {
+      string json = await File.ReadAllTextAsync(path, _settings.Encoding, cancellationToken);
+      Ability? ability = null;
+      try
+      {
+        ability = JsonSerializer.Deserialize<Ability>(json);
+      }
+      catch (Exception)
+      {
+      }
+      if (ability is not null && ability.Id > 0 && ability.Id < 10000 && !string.IsNullOrWhiteSpace(ability.UniqueName))
+      {
+        abilities.Add(ability);
+      }
+    }
+    return abilities.OrderBy(x => x.Id).ToList().AsReadOnly();
+  }
 
   private string? ExtractDisplayName(Ability ability)
   {

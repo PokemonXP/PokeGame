@@ -17,6 +17,7 @@ internal class ExtractVarietiesTask : EtlTask
 
 internal class ExtractVarietiesTaskHandler : INotificationHandler<ExtractVarietiesTask>
 {
+  private const string DirectoryPath = "pokemon";
   private const string DataPath = "data/varieties.csv";
 
   private readonly ILogger<ExtractVarietiesTaskHandler> _logger;
@@ -35,52 +36,61 @@ internal class ExtractVarietiesTaskHandler : INotificationHandler<ExtractVarieti
       .ToDictionary(x => x.UniqueName, x => x);
     _logger.LogInformation("Retrieved {Varieties} varieties from '{Path}'.", varieties.Count, DataPath);
 
-    string directory = Path.Combine(_settings.Path, "pokemon");
-    string[] paths = Directory.GetFiles(directory, searchPattern: "index.json", SearchOption.AllDirectories);
-    foreach (string path in paths)
+    IReadOnlyCollection<Variety> extracted = await ExtractAsync(cancellationToken);
+    foreach (Variety data in extracted)
     {
-      string json = await File.ReadAllTextAsync(path, _settings.Encoding, cancellationToken);
-      Variety? data = null;
-      try
+      Species? species = await ExtractSpeciesAsync(data, cancellationToken);
+      if (species is null)
       {
-        data = JsonSerializer.Deserialize<Variety>(json);
+        continue;
       }
-      catch (Exception)
-      {
-      }
-      if (data is not null && IsValid(data))
-      {
-        Species? species = await ExtractSpeciesAsync(data, cancellationToken);
-        if (species is null)
-        {
-          continue;
-        }
 
-        string uniqueName = data.UniqueName.Trim().ToLower();
-        if (!varieties.TryGetValue(uniqueName, out SeedVarietyPayload? variety))
+      string uniqueName = data.UniqueName.Trim().ToLower();
+      if (!varieties.TryGetValue(uniqueName, out SeedVarietyPayload? variety))
+      {
+        variety = new SeedVarietyPayload
         {
-          variety = new SeedVarietyPayload
-          {
-            Id = Guid.NewGuid(),
-            UniqueName = uniqueName
-          };
-          varieties[variety.UniqueName] = variety;
-        }
-        variety.Species = species.UniqueName;
-        variety.IsDefault = data.IsDefault;
-        variety.DisplayName ??= ExtractDisplayName(species);
-        variety.Genus ??= ExtractGenus(species);
-        variety.GenderRatio = species.GenderRatio < 0 ? null : (GenderRatio.MaximumValue - species.GenderRatio);
-        variety.CanChangeForm = species.CanChangeForm;
-        variety.Url ??= ToUrl(variety.DisplayName);
+          Id = Guid.NewGuid(),
+          UniqueName = uniqueName
+        };
+        varieties[variety.UniqueName] = variety;
       }
+      variety.Species = species.UniqueName;
+      variety.IsDefault = data.IsDefault;
+      variety.DisplayName ??= ExtractDisplayName(species);
+      variety.Genus ??= ExtractGenus(species);
+      variety.GenderRatio = species.GenderRatio < 0 ? null : (GenderRatio.MaximumValue - species.GenderRatio);
+      variety.CanChangeForm = species.CanChangeForm;
+      variety.Url ??= ToUrl(variety.DisplayName);
     }
 
     await csv.SaveAsync(varieties.Values, DataPath, cancellationToken);
     _logger.LogInformation("Saved {Varieties} varieties to '{Path}'.", varieties.Count, DataPath);
   }
 
-  private static bool IsValid(Variety variety) => variety.Id > 0 && variety.Id < 10000 && variety.IsDefault && !string.IsNullOrWhiteSpace(variety.UniqueName);
+  private async Task<IReadOnlyCollection<Variety>> ExtractAsync(CancellationToken cancellationToken)
+  {
+    string directory = Path.Combine(_settings.Path, DirectoryPath);
+    string[] paths = Directory.GetFiles(directory, searchPattern: "index.json", SearchOption.AllDirectories);
+    List<Variety> varieties = new(capacity: paths.Length);
+    foreach (string path in paths)
+    {
+      string json = await File.ReadAllTextAsync(path, _settings.Encoding, cancellationToken);
+      Variety? variety = null;
+      try
+      {
+        variety = JsonSerializer.Deserialize<Variety>(json);
+      }
+      catch (Exception)
+      {
+      }
+      if (variety is not null && variety.Id > 0 && variety.Id < 10000 && variety.IsDefault && !string.IsNullOrWhiteSpace(variety.UniqueName))
+      {
+        varieties.Add(variety);
+      }
+    }
+    return varieties.OrderBy(x => x.Id).ToList().AsReadOnly();
+  }
 
   private async Task<Species?> ExtractSpeciesAsync(Variety variety, CancellationToken cancellationToken)
   {
