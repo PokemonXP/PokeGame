@@ -18,6 +18,7 @@
   <ItemGroup>
     <None Remove="data\abilities.csv" />
     <None Remove="data\moves.csv" />
+    <None Remove="data\species.csv" />
   </ItemGroup>
 
   <ItemGroup>
@@ -25,6 +26,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="data\moves.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="data\species.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

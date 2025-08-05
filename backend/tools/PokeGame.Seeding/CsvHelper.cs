@@ -22,7 +22,6 @@ internal static class CsvHelper
     csv.Context.RegisterClassMap<SeedMedicinePayload.Map>();
     csv.Context.RegisterClassMap<SeedPokeBallPayload.Map>();
     csv.Context.RegisterClassMap<SeedRegionPayload.Map>();
-    csv.Context.RegisterClassMap<SeedSpeciesPayload.Map>();
     csv.Context.RegisterClassMap<SeedTechnicalMachinePayload.Map>();
     csv.Context.RegisterClassMap<SeedTrainerPayload.Map>();
     csv.Context.RegisterClassMap<SeedVarietyMovePayload.Map>();

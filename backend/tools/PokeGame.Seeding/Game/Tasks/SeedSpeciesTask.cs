@@ -1,7 +1,8 @@
 ﻿using MediatR;
 using PokeGame.Core.Species;
 using PokeGame.Core.Species.Models;
-using PokeGame.Seeding.Game.Payloads;
+using PokeGame.Tools.Shared;
+using PokeGame.Tools.Shared.Models;
 
 namespace PokeGame.Seeding.Game.Tasks;
 
@@ -23,7 +24,8 @@ internal class SeedSpeciesTaskHandler : INotificationHandler<SeedSpeciesTask>
 
   public async Task Handle(SeedSpeciesTask task, CancellationToken cancellationToken)
   {
-    IReadOnlyCollection<SeedSpeciesPayload> speciesList = await CsvHelper.ExtractAsync<SeedSpeciesPayload>("Game/data/species.csv", cancellationToken);
+    CsvManager csv = new([new SeedSpeciesPayload.Map()]);
+    IReadOnlyCollection<SeedSpeciesPayload> speciesList = await csv.ExtractAsync<SeedSpeciesPayload>("Game/data/species.csv", cancellationToken);
     foreach (SeedSpeciesPayload species in speciesList)
     {
       CreateOrReplaceSpeciesResult result = await _speciesService.CreateOrReplaceAsync(species, species.Id, cancellationToken);
