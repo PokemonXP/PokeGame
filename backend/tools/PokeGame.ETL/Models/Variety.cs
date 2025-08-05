@@ -14,16 +14,6 @@ internal record Variety
   [JsonPropertyName("name")]
   public string UniqueName { get; set; } = string.Empty;
 
-  // TODO(fpion): DisplayName (species.names)
-
-  // TODO(fpion): Genus (species.genera)
-
-  // TODO(fpion): Description (species.flavor_text_entries)
-
-  // TODO(fpion): GenderRatio (species.gender_rate)
-
-  // TODO(fpion): CanChangeForm (species.forms_switchable)
-
   /*
    * Unmapped fields:
    * abilities
