@@ -16,6 +16,7 @@ internal class ExtractSpeciesTask : EtlTask
 
 internal class ExtractSpeciesTaskHandler : INotificationHandler<ExtractSpeciesTask>
 {
+  public const string DirectoryPath = "pokemon-species";
   private const string DataPath = "data/species.csv";
 
   private readonly ILogger<ExtractSpeciesTask> _logger;
@@ -29,7 +30,7 @@ internal class ExtractSpeciesTaskHandler : INotificationHandler<ExtractSpeciesTa
 
   public async Task Handle(ExtractSpeciesTask _, CancellationToken cancellationToken)
   {
-    string directory = Path.Combine(_settings.Path, "pokemon-species");
+    string directory = Path.Combine(_settings.Path, DirectoryPath);
     string[] paths = Directory.GetFiles(directory, searchPattern: "index.json", SearchOption.AllDirectories);
 
     CsvManager csv = new([new SeedSpeciesPayload.Map()]);
@@ -78,7 +79,7 @@ internal class ExtractSpeciesTaskHandler : INotificationHandler<ExtractSpeciesTa
     _logger.LogInformation("Saved {Species} species to '{Path}'.", speciesByName.Count, DataPath);
   }
 
-  private static bool IsValid(Species species) => species.Id > 0 && !string.IsNullOrWhiteSpace(species.UniqueName);
+  private static bool IsValid(Species species) => species.Id > 0 && species.Id < 10000 && !string.IsNullOrWhiteSpace(species.UniqueName);
 
   private int? ExtractNumber(Species species)
   {

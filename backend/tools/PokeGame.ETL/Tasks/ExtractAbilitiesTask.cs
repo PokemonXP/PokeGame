@@ -59,7 +59,7 @@ internal class ExtractAbilitiesTaskHandler : INotificationHandler<ExtractAbiliti
     _logger.LogInformation("Saved {Abilities} abilities to '{Path}'.", abilities.Count, DataPath);
   }
 
-  private static bool IsValid(Ability ability) => ability.Id > 0 && !string.IsNullOrWhiteSpace(ability.UniqueName);
+  private static bool IsValid(Ability ability) => ability.Id > 0 && ability.Id < 10000 && !string.IsNullOrWhiteSpace(ability.UniqueName);
 
   private string? ExtractDisplayName(Ability ability)
   {

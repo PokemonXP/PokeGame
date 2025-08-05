@@ -20,6 +20,9 @@ internal class Species
   [JsonPropertyName("names")]
   public List<LocalizedName> DisplayNames { get; set; } = [];
 
+  [JsonPropertyName("genera")]
+  public List<Genus> Genera { get; set; } = [];
+
   [JsonPropertyName("base_happiness")]
   public byte BaseFriendship { get; set; }
 
@@ -38,6 +41,12 @@ internal class Species
   [JsonPropertyName("pokedex_numbers")]
   public List<PokedexNumber> PokedexNumbers { get; set; } = [];
 
+  [JsonPropertyName("gender_rate")]
+  public int GenderRatio { get; set; }
+
+  [JsonPropertyName("forms_switchable")]
+  public bool CanChangeForm { get; set; }
+
   /*
    * Unmapped fields:
    * color
@@ -45,9 +54,6 @@ internal class Species
    * evolves_from_species
    * flavor_text_entries
    * form_descriptions
-   * forms_switchable
-   * gender_rate
-   * genera
    * generation
    * habitat
    * has_gender_differences

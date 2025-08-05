@@ -24,8 +24,6 @@ internal static class CsvHelper
     csv.Context.RegisterClassMap<SeedRegionPayload.Map>();
     csv.Context.RegisterClassMap<SeedTechnicalMachinePayload.Map>();
     csv.Context.RegisterClassMap<SeedTrainerPayload.Map>();
-    csv.Context.RegisterClassMap<SeedVarietyMovePayload.Map>();
-    csv.Context.RegisterClassMap<SeedVarietyPayload.Map>();
 
     IAsyncEnumerable<T> records = csv.GetRecordsAsync<T>(cancellationToken);
 

@@ -84,7 +84,7 @@ internal class ExtractMovesTaskHandler : INotificationHandler<ExtractMovesTask>
     _logger.LogInformation("Saved {Moves} moves to '{Path}'.", moves.Count, DataPath);
   }
 
-  private static bool IsValid(Move move) => move.Id > 0 && !string.IsNullOrWhiteSpace(move.UniqueName);
+  private static bool IsValid(Move move) => move.Id > 0 && move.Id < 10000 && !string.IsNullOrWhiteSpace(move.UniqueName);
 
   private string? ExtractDisplayName(Move move)
   {
