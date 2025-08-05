@@ -1,6 +1,8 @@
-﻿namespace PokeGame.Core.Items.Properties;
+﻿using PokeGame.Core.Battles;
 
-public interface IBerryProperties
+namespace PokeGame.Core.Items.Properties;
+
+public interface IBerryProperties : IStatisticChanges
 {
   int Healing { get; }
   bool IsHealingPercentage { get; }
@@ -10,15 +12,6 @@ public interface IBerryProperties
   bool CureConfusion { get; }
 
   int PowerPoints { get; }
-
-  int Attack { get; }
-  int Defense { get; }
-  int SpecialAttack { get; }
-  int SpecialDefense { get; }
-  int Speed { get; }
-  int Accuracy { get; }
-  int Evasion { get; }
-  int Critical { get; }
 
   PokemonStatistic? LowerEffortValues { get; }
   bool RaiseFriendship { get; }

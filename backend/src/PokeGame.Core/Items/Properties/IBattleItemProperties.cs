@@ -1,14 +1,8 @@
-﻿namespace PokeGame.Core.Items.Properties;
+﻿using PokeGame.Core.Battles;
 
-public interface IBattleItemProperties
+namespace PokeGame.Core.Items.Properties;
+
+public interface IBattleItemProperties : IStatisticChanges
 {
-  int Attack { get; }
-  int Defense { get; }
-  int SpecialAttack { get; }
-  int SpecialDefense { get; }
-  int Speed { get; }
-  int Accuracy { get; }
-  int Evasion { get; }
-  int Critical { get; }
   int GuardTurns { get; }
 }
