@@ -2,6 +2,8 @@
 using PokeGame.Core.Varieties;
 using PokeGame.Core.Varieties.Models;
 using PokeGame.Seeding.Game.Payloads;
+using PokeGame.Tools.Shared;
+using PokeGame.Tools.Shared.Models;
 
 namespace PokeGame.Seeding.Game.Tasks;
 
@@ -23,10 +25,11 @@ internal class SeedVarietiesTaskHandler : INotificationHandler<SeedVarietiesTask
 
   public async Task Handle(SeedVarietiesTask task, CancellationToken cancellationToken)
   {
-    IReadOnlyCollection<SeedVarietyMovePayload> varietyMoves = await CsvHelper.ExtractAsync<SeedVarietyMovePayload>("Game/data/varieties/moves.csv", cancellationToken);
+    CsvManager csv = new([new SeedVarietyPayload.Map(), new SeedVarietyMovePayload.Map()]);
+    IReadOnlyCollection<SeedVarietyMovePayload> varietyMoves = await csv.ExtractAsync<SeedVarietyMovePayload>("Game/data/varieties/moves.csv", cancellationToken);
     Dictionary<string, SeedVarietyMovePayload[]> groupedMoves = varietyMoves.GroupBy(x => Normalize(x.Variety)).ToDictionary(x => x.Key, x => x.ToArray());
 
-    IReadOnlyCollection<SeedVarietyPayload> varieties = await CsvHelper.ExtractAsync<SeedVarietyPayload>("Game/data/varieties.csv", cancellationToken);
+    IReadOnlyCollection<SeedVarietyPayload> varieties = await csv.ExtractAsync<SeedVarietyPayload>("Game/data/varieties.csv", cancellationToken);
 
     foreach (SeedVarietyPayload variety in varieties)
     {

@@ -37,6 +37,7 @@ internal class EtlWorker : BackgroundService
       await ExecuteAsync(new ExtractAbilitiesTask(), cancellationToken);
       await ExecuteAsync(new ExtractMovesTask(), cancellationToken);
       await ExecuteAsync(new ExtractSpeciesTask(), cancellationToken);
+      await ExecuteAsync(new ExtractVarietiesTask(), cancellationToken);
     }
     catch (Exception exception)
     {
