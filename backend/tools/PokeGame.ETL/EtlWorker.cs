@@ -7,7 +7,6 @@ internal class EtlWorker : BackgroundService
 {
   private const string GenericErrorMessage = "An unhanded exception occurred.";
 
-  private readonly IConfiguration _configuration;
   private readonly IHostApplicationLifetime _hostApplicationLifetime;
   private readonly ILogger<EtlWorker> _logger;
   private readonly IServiceProvider _serviceProvider;
@@ -17,13 +16,8 @@ internal class EtlWorker : BackgroundService
 
   private LogLevel _result = LogLevel.Information; // NOTE(fpion): "Information" means success.
 
-  public EtlWorker(
-    IConfiguration configuration,
-    IHostApplicationLifetime hostApplicationLifetime,
-    ILogger<EtlWorker> logger,
-    IServiceProvider serviceProvider)
+  public EtlWorker(IHostApplicationLifetime hostApplicationLifetime, ILogger<EtlWorker> logger, IServiceProvider serviceProvider)
   {
-    _configuration = configuration;
     _hostApplicationLifetime = hostApplicationLifetime;
     _logger = logger;
     _serviceProvider = serviceProvider;
@@ -42,6 +36,7 @@ internal class EtlWorker : BackgroundService
       // NOTE(fpion): the order of these tasks matter.
       await ExecuteAsync(new ExtractAbilitiesTask(), cancellationToken);
       await ExecuteAsync(new ExtractMovesTask(), cancellationToken);
+      await ExecuteAsync(new ExtractSpeciesTask(), cancellationToken);
     }
     catch (Exception exception)
     {
