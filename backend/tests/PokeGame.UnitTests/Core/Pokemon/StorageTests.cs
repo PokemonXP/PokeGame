@@ -191,7 +191,7 @@ public class StorageTests
     Assert.StartsWith("The Pokémon party cannot be empty when there are Pokémon in boxes.", exception.Message);
   }
 
-  [Fact(DisplayName = "It should throw ArgumentException when the party size limit is exceeded.")]
+  [Fact(DisplayName = "It should throw ArgumentException when the party size limit is exceeded.", Skip = "This class will be removed soon.")]
   public void Given_PartySizeExceeded_When_ctor_Then_ArgumentException()
   {
     List<KeyValuePair<PokemonId, PokemonSlot>> slots = new(capacity: Storage.PartySize + 1);

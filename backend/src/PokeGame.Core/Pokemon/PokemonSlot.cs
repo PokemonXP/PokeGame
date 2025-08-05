@@ -42,7 +42,7 @@ public record PokemonSlot
     {
       if (Position.Value == (PartySize - 1))
       {
-        throw new InvalidOperationException(); // TASK: [POKEGAME-261](https://logitar.atlassian.net/browse/POKEGAME-261)
+        throw new InvalidOperationException("The current slot is the last party slot.");
       }
       return new PokemonSlot(new Position(Position.Value + 1));
     }
@@ -50,7 +50,7 @@ public record PokemonSlot
     {
       if (Box.Value == (BoxCount - 1))
       {
-        throw new InvalidOperationException(); // TASK: [POKEGAME-261](https://logitar.atlassian.net/browse/POKEGAME-261)
+        throw new InvalidOperationException("The current slot is the last box slot.");
       }
       return new PokemonSlot(new Position(0), new Box(Box.Value + 1));
     }
@@ -63,7 +63,7 @@ public record PokemonSlot
     {
       if (Position.Value == 0)
       {
-        throw new InvalidOperationException(); // TASK: [POKEGAME-261](https://logitar.atlassian.net/browse/POKEGAME-261)
+        throw new InvalidOperationException("The current slot is the first party slot.");
       }
       return new PokemonSlot(new Position(Position.Value - 1));
     }
@@ -71,7 +71,7 @@ public record PokemonSlot
     {
       if (Box.Value == 0)
       {
-        throw new InvalidOperationException();
+        throw new InvalidOperationException("The current slot is the first box slot.");
       }
       return new PokemonSlot(new Position(BoxSize - 1), new Box(Box.Value - 1));
     }
@@ -82,7 +82,9 @@ public record PokemonSlot
   {
     public Validator()
     {
-      // TASK: [POKEGAME-261](https://logitar.atlassian.net/browse/POKEGAME-261)
+      When(x => x.Box is null, () => RuleFor(x => x.Position.Value).LessThan(PartySize)
+        .WithErrorCode("PositionValidator")
+        .WithMessage($"The position must be inferior to '{PartySize}' when the Pokémon is in the party."));
     }
   }
 }
