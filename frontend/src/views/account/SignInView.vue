@@ -29,7 +29,12 @@ const username = ref<string>("");
 
 function redirect(): void {
   const redirect: string | undefined = route.query.redirect?.toString();
-  router.push(redirect ?? { name: "Home" });
+  if (redirect) {
+    router.push(redirect);
+  } else {
+    const name: string = account.currentUser?.isAdmin ? "Admin" : "Home";
+    router.push({ name });
+  }
 }
 function onError(e: unknown): void {
   if (isError(e, StatusCodes.BadRequest, ErrorCodes.InvalidCredentials)) {
