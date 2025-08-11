@@ -443,6 +443,173 @@ public class PokemonStorageTests
       && e.CustomState is not null);
   }
 
+  [Fact(DisplayName = "Release: it should move the Pokémon after the released Pokémon in the previous party slot.")]
+  public void Given_InPartyAfter_When_Release_Then_MovedToPrevious()
+  {
+    Specimen rowlet = new PokemonBuilder(_faker).WithSpecies("rowlet").Build();
+    rowlet.Receive(_trainer, _pokeBall, _college);
+    _storage.Store(rowlet);
+
+    Specimen cutiefly = new PokemonBuilder(_faker).WithSpecies("cutiefly").Build();
+    cutiefly.Catch(_trainer, _pokeBall, _park);
+    _storage.Store(cutiefly);
+
+    Specimen eevee = new PokemonBuilder(_faker).WithSpecies("eevee").IsEgg().Build();
+    eevee.Receive(_trainer, _pokeBall, _college);
+    _storage.Store(eevee);
+
+    Dictionary<PokemonId, Specimen> party = new()
+    {
+      [rowlet.Id] = rowlet,
+      [cutiefly.Id] = cutiefly,
+      [eevee.Id] = eevee
+    };
+    _storage.Deposit(eevee, party, _actorId);
+    _storage.Swap(rowlet, cutiefly, party);
+
+    _storage.Release(cutiefly, party, _actorId);
+
+    Assert.Equal(new PokemonSlot(new Position(0)), rowlet.Slot);
+    Assert.True(rowlet.HasChanges);
+    Assert.Contains(rowlet.Changes, change => change is PokemonMoved moved && moved.ActorId == _actorId);
+
+    Assert.Null(cutiefly.Ownership);
+    Assert.Null(cutiefly.Slot);
+    Assert.True(cutiefly.HasChanges);
+    Assert.Contains(cutiefly.Changes, change => change is PokemonReleased released && released.ActorId == _actorId);
+
+    Assert.Equal(new PokemonSlot(new Position(0), new Box(0)), eevee.Slot);
+    Assert.True(eevee.HasChanges);
+    Assert.Contains(eevee.Changes, change => change is PokemonDeposited deposited && deposited.ActorId == _actorId && deposited.Slot == eevee.Slot);
+
+    Assert.True(_storage.HasChanges);
+    Assert.Contains(_storage.Changes, change => change is PokemonStored stored && stored.ActorId == _actorId
+      && stored.PokemonId == rowlet.Id && stored.Slot == rowlet.Slot);
+    Assert.Contains(_storage.Changes, change => change is PokemonRemoved removed && removed.PokemonId == cutiefly.Id);
+    Assert.Contains(_storage.Changes, change => change is PokemonStored stored && stored.ActorId == _actorId
+      && stored.PokemonId == eevee.Id && stored.Slot == eevee.Slot);
+  }
+
+  [Fact(DisplayName = "Release: it should release a Pokémon in a box.")]
+  public void Given_InBox_When_Release_Then_Released()
+  {
+    Specimen rowlet = new PokemonBuilder(_faker).WithSpecies("rowlet").Build();
+    rowlet.Receive(_trainer, _pokeBall, _college);
+    _storage.Store(rowlet);
+
+    Specimen cutiefly = new PokemonBuilder(_faker).WithSpecies("cutiefly").Build();
+    cutiefly.Catch(_trainer, _pokeBall, _park);
+    _storage.Store(cutiefly);
+
+    Specimen eevee = new PokemonBuilder(_faker).WithSpecies("eevee").IsEgg().Build();
+    eevee.Receive(_trainer, _pokeBall, _college);
+    _storage.Store(eevee);
+
+    rowlet.ClearChanges();
+    Dictionary<PokemonId, Specimen> party = new()
+    {
+      [rowlet.Id] = rowlet,
+      [cutiefly.Id] = cutiefly,
+      [eevee.Id] = eevee
+    };
+    _storage.Deposit(cutiefly, party);
+
+    _storage.Release(cutiefly, party, _actorId);
+
+    Assert.False(rowlet.HasChanges);
+    Assert.Empty(rowlet.Changes);
+
+    Assert.Null(cutiefly.Ownership);
+    Assert.Null(cutiefly.Slot);
+    Assert.True(cutiefly.HasChanges);
+    Assert.Contains(cutiefly.Changes, change => change is PokemonReleased released && released.ActorId == _actorId);
+
+    Assert.Equal(new PokemonSlot(new Position(1)), eevee.Slot);
+
+    Assert.True(_storage.HasChanges);
+    Assert.Contains(_storage.Changes, change => change is PokemonRemoved removed && removed.PokemonId == cutiefly.Id);
+  }
+
+  [Fact(DisplayName = "Release: it should release a Pokémon in the party.")]
+  public void Given_InParty_When_Release_Then_Released()
+  {
+    Specimen rowlet = new PokemonBuilder(_faker).WithSpecies("rowlet").Build();
+    rowlet.Receive(_trainer, _pokeBall, _college);
+    _storage.Store(rowlet);
+
+    Specimen cutiefly = new PokemonBuilder(_faker).WithSpecies("cutiefly").Build();
+    cutiefly.Catch(_trainer, _pokeBall, _park);
+    _storage.Store(cutiefly);
+
+    Specimen eevee = new PokemonBuilder(_faker).WithSpecies("eevee").IsEgg().Build();
+    eevee.Receive(_trainer, _pokeBall, _college);
+    _storage.Store(eevee);
+
+    rowlet.ClearChanges();
+    Dictionary<PokemonId, Specimen> party = new()
+    {
+      [rowlet.Id] = rowlet,
+      [cutiefly.Id] = cutiefly,
+      [eevee.Id] = eevee
+    };
+    _storage.Swap(cutiefly, eevee, party);
+
+    _storage.Release(cutiefly, party, _actorId);
+
+    Assert.False(rowlet.HasChanges);
+    Assert.Empty(rowlet.Changes);
+
+    Assert.Null(cutiefly.Ownership);
+    Assert.Null(cutiefly.Slot);
+    Assert.True(cutiefly.HasChanges);
+    Assert.Contains(cutiefly.Changes, change => change is PokemonReleased released && released.ActorId == _actorId);
+
+    Assert.Equal(new PokemonSlot(new Position(1)), eevee.Slot);
+
+    Assert.True(_storage.HasChanges);
+    Assert.Contains(_storage.Changes, change => change is PokemonRemoved removed && removed.PokemonId == cutiefly.Id);
+  }
+
+  [Fact(DisplayName = "Release: it should throw ArgumentException when the Pokémon is not in storage.")]
+  public void Given_NotStored_When_Release_Then_ArgumentException()
+  {
+    Specimen pokemon = new PokemonBuilder(_faker).Build();
+    Dictionary<PokemonId, Specimen> party = [];
+    var exception = Assert.Throws<ArgumentException>(() => _storage.Release(pokemon, party));
+    Assert.Equal("pokemon", exception.ParamName);
+    Assert.StartsWith($"The Pokémon '{pokemon}' was not found in trainer's 'Id={_trainer.Id}' storage.", exception.Message);
+  }
+
+  [Fact(DisplayName = "Release: it should throw ValidationException when the operation would leave the party empty.")]
+  public void Given_EmptyPartyOtherwise_When_Release_Then_ValidationException()
+  {
+    Specimen rowlet = new PokemonBuilder(_faker).WithSpecies("rowlet").Build();
+    rowlet.Receive(_trainer, _pokeBall, _college);
+    _storage.Store(rowlet);
+
+    Specimen cutiefly = new PokemonBuilder(_faker).WithSpecies("cutiefly").Build();
+    cutiefly.Catch(_trainer, _pokeBall, _park);
+    _storage.Store(cutiefly);
+
+    Specimen eevee = new PokemonBuilder(_faker).WithSpecies("eevee").IsEgg().Build();
+    eevee.Receive(_trainer, _pokeBall, _college);
+    _storage.Store(eevee);
+
+    Dictionary<PokemonId, Specimen> party = new()
+    {
+      [rowlet.Id] = rowlet,
+      [cutiefly.Id] = cutiefly,
+      [eevee.Id] = eevee
+    };
+    _storage.Deposit(rowlet, party);
+
+    var exception = Assert.Throws<ValidationException>(() => _storage.Release(cutiefly, party));
+    Assert.Single(exception.Errors);
+    Assert.Contains(exception.Errors, e => e.PropertyName == "TrainerId" && e.AttemptedValue?.Equals(_trainer.Id.ToGuid()) == true
+      && e.ErrorCode == "NotEmptyPartyValidator" && e.ErrorMessage == "The operation would leave the trainer party empty of non-egg Pokémon."
+      && e.CustomState is not null);
+  }
+
   [Fact(DisplayName = "Remove: it should remove the Pokémon from storage.")]
   public void Given_Pokemon_When_Remove_Then_Removed()
   {
