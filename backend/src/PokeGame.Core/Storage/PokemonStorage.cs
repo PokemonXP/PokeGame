@@ -59,6 +59,7 @@ public class PokemonStorage : AggregateRoot
     pokemon.Deposit(newSlot, actorId);
     Raise(new PokemonStored(pokemon.Id, newSlot), actorId);
 
+    #region TODO(fpion): refactor
     foreach (PokemonId partyId in partyIds)
     {
       Specimen member = party[partyId];
@@ -72,6 +73,66 @@ public class PokemonStorage : AggregateRoot
           Raise(new PokemonStored(partyId, newSlot), actorId);
         }
       }
+    }
+    #endregion
+  }
+
+  public void Move(Specimen pokemon, PokemonSlot slot, IReadOnlyDictionary<PokemonId, Specimen> party, ActorId? actorId = null)
+  {
+    if (!_slots.TryGetValue(pokemon.Id, out PokemonSlot? previousSlot))
+    {
+      throw new ArgumentException($"The Pokémon '{pokemon}' was not found in trainer's 'Id={TrainerId}' storage.", nameof(pokemon));
+    }
+    else if (slot.Box is null)
+    {
+      throw new ArgumentException("The slot must not be in the party.", nameof(slot));
+    }
+    else if (_pokemon.TryGetValue(slot, out PokemonId pokemonId))
+    {
+      if (pokemonId == pokemon.Id)
+      {
+        return;
+      }
+
+      ValidationFailure failure = new(nameof(TrainerId), "The specified Pokémon slot is not empty.", TrainerId.ToGuid())
+      {
+        CustomState = new
+        {
+          Position = slot.Position.Value,
+          Box = slot.Box.Value
+        },
+        ErrorCode = "PokemonSlotNotEmpty"
+      };
+      throw new ValidationException([failure]);
+    }
+
+    if (pokemon.IsHatchedInParty)
+    {
+      EnsurePartyIsNotEmpty(party, [pokemon.Id]);
+    }
+
+    pokemon.Move(slot, actorId);
+    Raise(new PokemonStored(pokemon.Id, slot), actorId);
+
+    if (previousSlot.Box is null)
+    {
+      IReadOnlyCollection<PokemonId> partyIds = GetParty();
+      #region TODO(fpion): refactor
+      foreach (PokemonId partyId in partyIds)
+      {
+        Specimen member = party[partyId];
+        if (!member.Equals(pokemon))
+        {
+          PokemonSlot memberSlot = _slots[partyId];
+          if (memberSlot.IsGreaterThan(previousSlot))
+          {
+            memberSlot = memberSlot.Previous();
+            member.Move(memberSlot, actorId);
+            Raise(new PokemonStored(partyId, memberSlot), actorId);
+          }
+        }
+      }
+      #endregion
     }
   }
 
