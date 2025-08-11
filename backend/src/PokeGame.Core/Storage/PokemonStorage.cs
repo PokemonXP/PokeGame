@@ -59,22 +59,7 @@ public class PokemonStorage : AggregateRoot
     pokemon.Deposit(newSlot, actorId);
     Raise(new PokemonStored(pokemon.Id, newSlot), actorId);
 
-    #region TODO(fpion): refactor
-    foreach (PokemonId partyId in partyIds)
-    {
-      Specimen member = party[partyId];
-      if (!member.Equals(pokemon))
-      {
-        PokemonSlot slot = _slots[partyId];
-        if (slot.IsGreaterThan(previousSlot))
-        {
-          newSlot = slot.Previous();
-          member.Move(newSlot, actorId);
-          Raise(new PokemonStored(partyId, newSlot), actorId);
-        }
-      }
-    }
-    #endregion
+    ShiftPartyMembers(previousSlot, party, [pokemon.Id], partyIds, actorId);
   }
 
   public void Move(Specimen pokemon, PokemonSlot slot, IReadOnlyDictionary<PokemonId, Specimen> party, ActorId? actorId = null)
@@ -116,23 +101,7 @@ public class PokemonStorage : AggregateRoot
 
     if (previousSlot.Box is null)
     {
-      IReadOnlyCollection<PokemonId> partyIds = GetParty();
-      #region TODO(fpion): refactor
-      foreach (PokemonId partyId in partyIds)
-      {
-        Specimen member = party[partyId];
-        if (!member.Equals(pokemon))
-        {
-          PokemonSlot memberSlot = _slots[partyId];
-          if (memberSlot.IsGreaterThan(previousSlot))
-          {
-            memberSlot = memberSlot.Previous();
-            member.Move(memberSlot, actorId);
-            Raise(new PokemonStored(partyId, memberSlot), actorId);
-          }
-        }
-      }
-      #endregion
+      ShiftPartyMembers(previousSlot, party, [pokemon.Id], partyIds: null, actorId);
     }
   }
 
@@ -282,5 +251,31 @@ public class PokemonStorage : AggregateRoot
       ErrorCode = "TrainerStorageIsFull"
     };
     throw new ValidationException([failure]);
+  }
+
+  private void ShiftPartyMembers(
+    PokemonSlot previousSlot,
+    IReadOnlyDictionary<PokemonId, Specimen> party,
+    IReadOnlyCollection<PokemonId>? excludedIds = null,
+    IReadOnlyCollection<PokemonId>? partyIds = null,
+    ActorId? actorId = null)
+  {
+    excludedIds ??= [];
+    partyIds ??= GetParty();
+
+    foreach (PokemonId partyId in partyIds)
+    {
+      if (!excludedIds.Contains(partyId))
+      {
+        Specimen member = party[partyId];
+        PokemonSlot slot = _slots[partyId];
+        if (slot.IsGreaterThan(previousSlot))
+        {
+          slot = slot.Previous();
+          member.Move(slot, actorId);
+          Raise(new PokemonStored(partyId, slot), actorId);
+        }
+      }
+    }
   }
 }
