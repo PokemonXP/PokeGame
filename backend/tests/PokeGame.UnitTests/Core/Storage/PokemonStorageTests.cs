@@ -634,7 +634,7 @@ public class PokemonStorageTests
     Assert.Equal(0, pokemon.Slot.Position.Value);
     Assert.Null(pokemon.Slot.Box);
     Assert.True(pokemon.HasChanges);
-    //Assert.Contains(pokemon.Changes, change => change is PokemonMoved moved && moved.ActorId == _actorId); // TASK: [POKEGAME-262](https://logitar.atlassian.net/browse/POKEGAME-262)
+    Assert.Contains(pokemon.Changes, change => change is PokemonMoved moved && moved.ActorId == _actorId);
     Assert.True(_storage.HasChanges);
     Assert.Contains(_storage.Changes, change => change is PokemonStored stored
       && stored.ActorId == _actorId && stored.PokemonId == pokemon.Id && stored.Slot == pokemon.Slot);
