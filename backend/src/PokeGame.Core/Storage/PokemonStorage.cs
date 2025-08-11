@@ -1,4 +1,6 @@
-﻿using Logitar.EventSourcing;
+﻿using FluentValidation;
+using FluentValidation.Results;
+using Logitar.EventSourcing;
 using PokeGame.Core.Pokemon;
 using PokeGame.Core.Storage.Events;
 using PokeGame.Core.Trainers;
@@ -51,29 +53,55 @@ public class PokemonStorage : AggregateRoot
     }
 
     IReadOnlyCollection<PokemonId> partyIds = GetParty();
-
-    #region TASK: [POKEGAME-263](https://logitar.atlassian.net/browse/POKEGAME-263)
-    bool isValid = partyIds.Any(id => id != pokemon.Id && !party[id].IsEgg);
-    if (!isValid)
-    {
-      throw new NotImplementedException(); // TASK: [POKEGAME-263](https://logitar.atlassian.net/browse/POKEGAME-263)
-    }
-    #endregion
+    EnsurePartyIsNotEmpty(party, [pokemon.Id], partyIds);
 
     PokemonSlot newSlot = FindFirstBoxAvailable();
     pokemon.Deposit(newSlot, actorId);
-    Raise(new PokemonStored(pokemon.Id, newSlot));
+    Raise(new PokemonStored(pokemon.Id, newSlot), actorId);
 
-    foreach (PokemonId partyId in partyIds)
+    ShiftPartyMembers(previousSlot, party, [pokemon.Id], partyIds, actorId);
+  }
+
+  public void Move(Specimen pokemon, PokemonSlot slot, IReadOnlyDictionary<PokemonId, Specimen> party, ActorId? actorId = null)
+  {
+    if (!_slots.TryGetValue(pokemon.Id, out PokemonSlot? previousSlot))
     {
-      if (partyId != pokemon.Id)
+      throw new ArgumentException($"The Pokémon '{pokemon}' was not found in trainer's 'Id={TrainerId}' storage.", nameof(pokemon));
+    }
+    else if (slot.Box is null)
+    {
+      throw new ArgumentException("The slot must not be in the party.", nameof(slot));
+    }
+    else if (_pokemon.TryGetValue(slot, out PokemonId pokemonId))
+    {
+      if (pokemonId == pokemon.Id)
       {
-        PokemonSlot slot = _slots[partyId];
-        if (slot.IsGreaterThan(previousSlot))
-        {
-          Raise(new PokemonStored(partyId, slot.Previous()), actorId);
-        }
+        return;
       }
+
+      ValidationFailure failure = new(nameof(TrainerId), "The specified Pokémon slot is not empty.", TrainerId.ToGuid())
+      {
+        CustomState = new
+        {
+          Position = slot.Position.Value,
+          Box = slot.Box.Value
+        },
+        ErrorCode = "PokemonSlotNotEmpty"
+      };
+      throw new ValidationException([failure]);
+    }
+
+    if (pokemon.IsHatchedInParty)
+    {
+      EnsurePartyIsNotEmpty(party, [pokemon.Id]);
+    }
+
+    pokemon.Move(slot, actorId);
+    Raise(new PokemonStored(pokemon.Id, slot), actorId);
+
+    if (previousSlot.Box is null)
+    {
+      ShiftPartyMembers(previousSlot, party, [pokemon.Id], partyIds: null, actorId);
     }
   }
 
@@ -123,13 +151,7 @@ public class PokemonStorage : AggregateRoot
 
     if ((source.IsEggInBox && destination.IsHatchedInParty) || (destination.IsEggInBox && source.IsHatchedInParty))
     {
-      #region TASK: [POKEGAME-263](https://logitar.atlassian.net/browse/POKEGAME-263)
-      bool isValid = GetParty().Any(id => id != source.Id && id != destination.Id && !party[id].IsEgg);
-      if (!isValid)
-      {
-        throw new NotImplementedException(); // TASK: [POKEGAME-263](https://logitar.atlassian.net/browse/POKEGAME-263)
-      }
-      #endregion
+      EnsurePartyIsNotEmpty(party, [source.Id, destination.Id]);
     }
 
     source.Swap(destination, actorId);
@@ -158,9 +180,44 @@ public class PokemonStorage : AggregateRoot
       throw new ArgumentException($"The Pokémon '{pokemon}' is already in trainer's 'Id={TrainerId}' party.", nameof(pokemon));
     }
 
-    Position position = FindFirstPartyAvailable() ?? throw new NotImplementedException(); // TASK: [POKEGAME-263](https://logitar.atlassian.net/browse/POKEGAME-263)
+    Position? position = FindFirstPartyAvailable();
+    if (position is null)
+    {
+      ValidationFailure failure = new(nameof(TrainerId), "The specified trainer party is full.", TrainerId.ToGuid())
+      {
+        CustomState = new
+        {
+          Party = GetParty().Select(id => id.ToGuid()).ToArray()
+        },
+        ErrorCode = "TrainerPartyIsFull"
+      };
+      throw new ValidationException([failure]);
+    }
+
     pokemon.Withdraw(position, actorId);
     Raise(new PokemonStored(pokemon.Id, new PokemonSlot(position)), actorId);
+  }
+
+  private void EnsurePartyIsNotEmpty(
+    IReadOnlyDictionary<PokemonId, Specimen> party,
+    IReadOnlyCollection<PokemonId>? excludedIds = null,
+    IReadOnlyCollection<PokemonId>? partyIds = null)
+  {
+    excludedIds ??= [];
+    partyIds ??= GetParty();
+
+    if (!partyIds.Any(id => !excludedIds.Contains(id) && !party[id].IsEgg))
+    {
+      ValidationFailure failure = new(nameof(TrainerId), "The operation would leave the trainer party empty of non-egg Pokémon.", TrainerId.ToGuid())
+      {
+        CustomState = new
+        {
+          Party = GetParty().Select(id => id.ToGuid()).ToArray()
+        },
+        ErrorCode = "NotEmptyPartyValidator"
+      };
+      throw new ValidationException([failure]);
+    }
   }
 
   private PokemonSlot FindFirstAvailable()
@@ -188,6 +245,37 @@ public class PokemonStorage : AggregateRoot
         }
       }
     }
-    throw new NotImplementedException(); // TASK: [POKEGAME-263](https://logitar.atlassian.net/browse/POKEGAME-263)
+
+    ValidationFailure failure = new(nameof(TrainerId), "The specified trainer storage is full.", TrainerId.ToGuid())
+    {
+      ErrorCode = "TrainerStorageIsFull"
+    };
+    throw new ValidationException([failure]);
+  }
+
+  private void ShiftPartyMembers(
+    PokemonSlot previousSlot,
+    IReadOnlyDictionary<PokemonId, Specimen> party,
+    IReadOnlyCollection<PokemonId>? excludedIds = null,
+    IReadOnlyCollection<PokemonId>? partyIds = null,
+    ActorId? actorId = null)
+  {
+    excludedIds ??= [];
+    partyIds ??= GetParty();
+
+    foreach (PokemonId partyId in partyIds)
+    {
+      if (!excludedIds.Contains(partyId))
+      {
+        Specimen member = party[partyId];
+        PokemonSlot slot = _slots[partyId];
+        if (slot.IsGreaterThan(previousSlot))
+        {
+          slot = slot.Previous();
+          member.Move(slot, actorId);
+          Raise(new PokemonStored(partyId, slot), actorId);
+        }
+      }
+    }
   }
 }

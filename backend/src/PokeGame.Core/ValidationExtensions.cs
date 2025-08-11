@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using PokeGame.Core.Pokemon;
 using PokeGame.Core.Validators;
 
 namespace PokeGame.Core;
@@ -12,7 +13,7 @@ public static class ValidationExtensions
 
   public static IRuleBuilderOptions<T, int> Box<T>(this IRuleBuilder<T, int> ruleBuilder)
   {
-    return ruleBuilder.GreaterThanOrEqualTo(0);
+    return ruleBuilder.InclusiveBetween(0, PokemonSlot.BoxCount - 1);
   }
 
   public static IRuleBuilderOptions<T, byte> CatchRate<T>(this IRuleBuilder<T, byte> ruleBuilder)
@@ -73,6 +74,11 @@ public static class ValidationExtensions
   public static IRuleBuilderOptions<T, string> PokemonNature<T>(this IRuleBuilder<T, string> ruleBuilder)
   {
     return ruleBuilder.SetValidator(new PokemonNatureValidator<T>());
+  }
+
+  public static IRuleBuilderOptions<T, int> Position<T>(this IRuleBuilder<T, int> ruleBuilder)
+  {
+    return ruleBuilder.InclusiveBetween(0, PokemonSlot.BoxSize - 1);
   }
 
   public static IRuleBuilderOptions<T, byte> Power<T>(this IRuleBuilder<T, byte> ruleBuilder)
