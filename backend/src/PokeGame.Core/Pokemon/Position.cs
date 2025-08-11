@@ -17,7 +17,7 @@ public record Position
   {
     public Validator()
     {
-      RuleFor(x => x.Value).GreaterThanOrEqualTo(0);
+      RuleFor(x => x.Value).Position();
     }
   }
 }
