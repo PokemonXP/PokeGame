@@ -14,23 +14,35 @@ internal record Variety
   [JsonPropertyName("name")]
   public string UniqueName { get; set; } = string.Empty;
 
+  [JsonPropertyName("height")]
+  public int Height { get; set; }
+
+  [JsonPropertyName("weight")]
+  public int Weight { get; set; }
+
+  [JsonPropertyName("abilities")]
+  public List<PokemonAbilitySlot> Abilities { get; set; } = [];
+
+  [JsonPropertyName("base_experience")]
+  public int BaseExperience { get; set; }
+
+  [JsonPropertyName("stats")]
+  public List<VarietyStatistic> Statistics { get; set; } = [];
+
+  [JsonPropertyName("sprites")]
+  public VarietySprites Sprites { get; set; } = new();
+
   /*
    * Unmapped fields:
-   * abilities
-   * base_experience
    * cries
    * forms
    * game_indices
-   * height
    * held_items
    * location_area_encounters
    * moves
    * order
    * past_abilities
    * past_types
-   * sprites
-   * stats
    * types
-   * weight
    */
 }
