@@ -73,7 +73,7 @@ internal class ReceivePokemonHandler : ICommandHandler<ReceivePokemon, PokemonMo
     Location location = new(payload.Location);
     Level? level = payload.Level < 1 ? null : new(payload.Level);
     Description? description = Description.TryCreate(payload.Description);
-    pokemon.Receive(trainer, pokeBall, location, level, payload.MetOn, description, slot: null, actorId);
+    pokemon.Receive(trainer, pokeBall, location, level, payload.MetOn, description, actorId);
 
     previousStorage?.Remove(pokemon, actorId);
     storage.Store(pokemon, actorId);

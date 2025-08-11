@@ -85,10 +85,12 @@ public class BattleTests
     Specimen fuckOff = new(_species, _variety, _form, _species.UniqueName, _randomizer.PokemonSize(),
       _randomizer.PokemonNature(), _randomizer.IndividualValues(), _randomizer.PokemonGender(_variety.GenderRatio!));
     fuckOff.Catch(_trainer, _pokeBall, _location);
+    fuckOff.Move(new PokemonSlot(new Position(0)));
 
     Specimen other = new(_species, _variety, _form, _species.UniqueName, _randomizer.PokemonSize(),
       _randomizer.PokemonNature(), _randomizer.IndividualValues(), _randomizer.PokemonGender(_variety.GenderRatio!));
-    other.Catch(_trainer, _pokeBall, _location, slot: new PokemonSlot(new Position(1)));
+    other.Catch(_trainer, _pokeBall, _location);
+    other.Move(new PokemonSlot(new Position(1)));
 
     battle.Start([other, fuckOff], _actorId);
     Assert.Equal(BattleStatus.Started, battle.Status);

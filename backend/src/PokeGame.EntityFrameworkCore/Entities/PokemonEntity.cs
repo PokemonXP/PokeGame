@@ -434,8 +434,6 @@ internal class PokemonEntity : AggregateEntity
     MetLocation = @event.Location.Value;
     MetOn = (@event.MetOn ?? occurredOn).AsUniversalTime();
     MetDescription = @event.Description?.Value;
-
-    SetSlot(@event.Slot);
   }
   private void SetCurrentTrainer(TrainerEntity? trainer)
   {

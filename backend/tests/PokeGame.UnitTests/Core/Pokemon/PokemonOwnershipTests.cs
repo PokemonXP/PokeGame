@@ -63,8 +63,7 @@ public class PokemonOwnershipTests
   [Fact(DisplayName = "Catch: a Pokémon should be caught correctly.")]
   public void Given_Arguments_When_Catch_Then_Caught()
   {
-    PokemonSlot slot = new(new Position(2), new Box(1));
-    _pokemon.Catch(_trainer, _pokeBall, _location, level: null, metOn: null, description: null, slot, _actorId);
+    _pokemon.Catch(_trainer, _pokeBall, _location, level: null, metOn: null, description: null, _actorId);
     Assert.True(_pokemon.HasChanges);
     Assert.Contains(_pokemon.Changes, change => change is PokemonCaught caught && caught.ActorId == _actorId);
     DateTime metOn = ((PokemonCaught)_pokemon.Changes.Single(change => change is PokemonCaught)).OccurredOn;
@@ -80,8 +79,6 @@ public class PokemonOwnershipTests
     Assert.Equal(_location, ownership.Location);
     Assert.Equal(metOn, ownership.MetOn);
     Assert.Null(ownership.Description);
-
-    Assert.Equal(slot, _pokemon.Slot);
   }
 
   [Fact(DisplayName = "Catch: it should catch a Pokémon using a Friend Ball.")]
@@ -154,9 +151,9 @@ public class PokemonOwnershipTests
   [Fact(DisplayName = "Deposit: it should throw ArgumentException when the Pokémon is deposited in the party.")]
   public void Given_InTheParty_When_Deposit_Then_ArgumentException()
   {
-    PokemonSlot slot = new(new Position(0));
-    _pokemon.Receive(_trainer, _pokeBall, _location, slot: slot);
+    _pokemon.Receive(_trainer, _pokeBall, _location);
 
+    PokemonSlot slot = new(new Position(0));
     var exception = Assert.Throws<ArgumentException>(() => _pokemon.Deposit(slot));
     Assert.Equal("slot", exception.ParamName);
     Assert.StartsWith("The Pokémon must be deposited inside a box.", exception.Message);
@@ -179,7 +176,7 @@ public class PokemonOwnershipTests
   [Fact(DisplayName = "Move: it should move a Pokémon.")]
   public void Given_HasOwner_Move_Withdraw_Then_Moved()
   {
-    _pokemon.Receive(_trainer, _pokeBall, _location, slot: new PokemonSlot(new Position(0), new Box(0)));
+    _pokemon.Receive(_trainer, _pokeBall, _location);
 
     PokemonSlot slot = new(new Position(5), new Box(2));
     _pokemon.Move(slot, _actorId);
@@ -217,8 +214,7 @@ public class PokemonOwnershipTests
     Level level = new(5);
     DateTime metOn = new DateTime(2000, 1, 1);
     Description description = new("Received at Lv.5, at Collège de l’Épervier, on January 1st, 2000.");
-    PokemonSlot slot = new(new Position(2), new Box(1));
-    _pokemon.Receive(_trainer, _pokeBall, _location, level, metOn, description, slot, _actorId);
+    _pokemon.Receive(_trainer, _pokeBall, _location, level, metOn, description, _actorId);
     Assert.True(_pokemon.HasChanges);
     Assert.Contains(_pokemon.Changes, change => change is PokemonReceived received && received.ActorId == _actorId);
 
@@ -233,8 +229,6 @@ public class PokemonOwnershipTests
     Assert.Equal(_location, ownership.Location);
     Assert.Equal(metOn, ownership.MetOn);
     Assert.Equal(description, ownership.Description);
-
-    Assert.Equal(slot, _pokemon.Slot);
   }
 
   [Fact(DisplayName = "Receive: a Pokémon should be received using default values.")]
@@ -248,10 +242,6 @@ public class PokemonOwnershipTests
     Assert.Equal(_pokemon.Level, ownership.Level.Value);
     Assert.Equal(metOn, ownership.MetOn);
     Assert.Null(ownership.Description);
-
-    Assert.NotNull(_pokemon.Slot);
-    Assert.Equal(0, _pokemon.Slot.Position.Value);
-    Assert.Null(_pokemon.Slot.Box);
   }
 
   [Fact(DisplayName = "Receive: it should throw ArgumentException when the Poké Ball category is not valid.")]
@@ -282,8 +272,8 @@ public class PokemonOwnershipTests
   [Fact(DisplayName = "Release: it should release a Pokémon in a box.")]
   public void Given_PokemonInBox_When_Release_Then_Released()
   {
-    PokemonSlot slot = new(new Position(0), new Box(0));
-    _pokemon.Receive(_trainer, _pokeBall, _location, slot: slot);
+    _pokemon.Receive(_trainer, _pokeBall, _location);
+    _pokemon.Move(new PokemonSlot(new Position(0), new Box(0)));
 
     _pokemon.Release(_actorId);
     Assert.Null(_pokemon.OriginalTrainerId);
@@ -301,8 +291,8 @@ public class PokemonOwnershipTests
   [Fact(DisplayName = "Release: it should release a Pokémon in the party.")]
   public void Given_PokemonInParty_When_Release_Then_Released()
   {
-    PokemonSlot slot = new(new Position(0));
-    _pokemon.Receive(_trainer, _pokeBall, _location, slot: slot);
+    _pokemon.Receive(_trainer, _pokeBall, _location);
+    _pokemon.Move(new PokemonSlot(new Position(0)));
 
     _pokemon.Release(_actorId);
     Assert.Null(_pokemon.OriginalTrainerId);
@@ -333,8 +323,10 @@ public class PokemonOwnershipTests
   [Fact(DisplayName = "Swap: it should swap Pokémon owned by the same trainer.")]
   public void Given_BothOwner_When_Swap_Then_Swapped()
   {
+    _pokemon.Receive(_trainer, _pokeBall, _location);
+
     PokemonSlot currentSlot = new(new Position(0));
-    _pokemon.Receive(_trainer, _pokeBall, _location, slot: currentSlot);
+    _pokemon.Move(currentSlot);
 
     Specimen pokemon = new(
       _species,
@@ -345,8 +337,10 @@ public class PokemonOwnershipTests
       _randomizer.PokemonNature(),
       _randomizer.IndividualValues(),
       _randomizer.PokemonGender(_variety.GenderRatio!));
+    pokemon.Receive(_trainer, _pokeBall, _location);
+
     PokemonSlot otherSlot = new(new Position(1));
-    pokemon.Receive(_trainer, _pokeBall, _location, slot: otherSlot);
+    pokemon.Move(otherSlot);
 
     _pokemon.Swap(pokemon, _actorId);
 
@@ -368,6 +362,7 @@ public class PokemonOwnershipTests
   public void Given_DifferentOwners_When_Swap_Then_ArgumentException()
   {
     _pokemon.Receive(_trainer, _pokeBall, _location);
+    _pokemon.Move(new PokemonSlot(new Position(0)));
 
     Specimen pokemon = new(
       _species,
@@ -381,6 +376,7 @@ public class PokemonOwnershipTests
 
     Trainer trainer = new(new License("Q-123456-3"), new UniqueName(_uniqueNameSettings, "regina"), TrainerGender.Female);
     pokemon.Receive(trainer, _pokeBall, _location);
+    pokemon.Move(new PokemonSlot(new Position(0)));
 
     var exception = Assert.Throws<ArgumentException>(() => _pokemon.Swap(pokemon));
     Assert.Equal("pokemon", exception.ParamName);
@@ -391,6 +387,7 @@ public class PokemonOwnershipTests
   public void Given_OtherNoOwner_When_Swap_Then_ArgumentException()
   {
     _pokemon.Receive(_trainer, _pokeBall, _location);
+    _pokemon.Move(new PokemonSlot(new Position(0)));
 
     Specimen pokemon = new(
       _species,
@@ -423,9 +420,9 @@ public class PokemonOwnershipTests
   [Fact(DisplayName = "Withdraw: it should withdraw a Pokémon.")]
   public void Given_InABox_When_Withdraw_Then_Withdrew()
   {
-    Position position = new(0);
-    _pokemon.Receive(_trainer, _pokeBall, _location, slot: new PokemonSlot(position, new Box(0)));
+    _pokemon.Receive(_trainer, _pokeBall, _location);
 
+    Position position = new(0);
     _pokemon.Withdraw(position, _actorId);
     Assert.Equal(new PokemonSlot(position), _pokemon.Slot);
     Assert.True(_pokemon.HasChanges);

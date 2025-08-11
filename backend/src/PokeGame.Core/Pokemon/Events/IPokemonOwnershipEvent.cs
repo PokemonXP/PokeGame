@@ -13,5 +13,4 @@ public interface IPokemonOwnershipEvent
   Location Location { get; }
   DateTime? MetOn { get; }
   Description? Description { get; }
-  PokemonSlot Slot { get; } // TASK: [POKEGAME-262](https://logitar.atlassian.net/browse/POKEGAME-262)
 }
