@@ -1,4 +1,6 @@
-﻿using Logitar.EventSourcing;
+﻿using FluentValidation;
+using FluentValidation.Results;
+using Logitar.EventSourcing;
 using PokeGame.Core.Pokemon;
 using PokeGame.Core.Storage.Events;
 using PokeGame.Core.Trainers;
@@ -51,27 +53,23 @@ public class PokemonStorage : AggregateRoot
     }
 
     IReadOnlyCollection<PokemonId> partyIds = GetParty();
-
-    #region TASK: [POKEGAME-263](https://logitar.atlassian.net/browse/POKEGAME-263)
-    bool isValid = partyIds.Any(id => id != pokemon.Id && !party[id].IsEgg);
-    if (!isValid)
-    {
-      throw new NotImplementedException(); // TASK: [POKEGAME-263](https://logitar.atlassian.net/browse/POKEGAME-263)
-    }
-    #endregion
+    EnsurePartyIsNotEmpty(party, [pokemon.Id], partyIds);
 
     PokemonSlot newSlot = FindFirstBoxAvailable();
     pokemon.Deposit(newSlot, actorId);
-    Raise(new PokemonStored(pokemon.Id, newSlot));
+    Raise(new PokemonStored(pokemon.Id, newSlot), actorId);
 
     foreach (PokemonId partyId in partyIds)
     {
-      if (partyId != pokemon.Id)
+      Specimen member = party[partyId];
+      if (!member.Equals(pokemon))
       {
         PokemonSlot slot = _slots[partyId];
         if (slot.IsGreaterThan(previousSlot))
         {
-          Raise(new PokemonStored(partyId, slot.Previous()), actorId);
+          newSlot = slot.Previous();
+          member.Move(newSlot, actorId);
+          Raise(new PokemonStored(partyId, newSlot), actorId);
         }
       }
     }
@@ -123,13 +121,7 @@ public class PokemonStorage : AggregateRoot
 
     if ((source.IsEggInBox && destination.IsHatchedInParty) || (destination.IsEggInBox && source.IsHatchedInParty))
     {
-      #region TASK: [POKEGAME-263](https://logitar.atlassian.net/browse/POKEGAME-263)
-      bool isValid = GetParty().Any(id => id != source.Id && id != destination.Id && !party[id].IsEgg);
-      if (!isValid)
-      {
-        throw new NotImplementedException(); // TASK: [POKEGAME-263](https://logitar.atlassian.net/browse/POKEGAME-263)
-      }
-      #endregion
+      EnsurePartyIsNotEmpty(party, [source.Id, destination.Id]);
     }
 
     source.Swap(destination, actorId);
@@ -158,9 +150,44 @@ public class PokemonStorage : AggregateRoot
       throw new ArgumentException($"The Pokémon '{pokemon}' is already in trainer's 'Id={TrainerId}' party.", nameof(pokemon));
     }
 
-    Position position = FindFirstPartyAvailable() ?? throw new NotImplementedException(); // TASK: [POKEGAME-263](https://logitar.atlassian.net/browse/POKEGAME-263)
+    Position? position = FindFirstPartyAvailable();
+    if (position is null)
+    {
+      ValidationFailure failure = new(nameof(TrainerId), "The specified trainer party is full.", TrainerId.ToGuid())
+      {
+        CustomState = new
+        {
+          Party = GetParty().Select(id => id.ToGuid()).ToArray()
+        },
+        ErrorCode = "TrainerPartyIsFull"
+      };
+      throw new ValidationException([failure]);
+    }
+
     pokemon.Withdraw(position, actorId);
     Raise(new PokemonStored(pokemon.Id, new PokemonSlot(position)), actorId);
+  }
+
+  private void EnsurePartyIsNotEmpty(
+    IReadOnlyDictionary<PokemonId, Specimen> party,
+    IReadOnlyCollection<PokemonId>? excludedIds = null,
+    IReadOnlyCollection<PokemonId>? partyIds = null)
+  {
+    excludedIds ??= [];
+    partyIds ??= GetParty();
+
+    if (!partyIds.Any(id => !excludedIds.Contains(id) && !party[id].IsEgg))
+    {
+      ValidationFailure failure = new(nameof(TrainerId), "The operation would leave the trainer party empty of non-egg Pokémon.", TrainerId.ToGuid())
+      {
+        CustomState = new
+        {
+          Party = GetParty().Select(id => id.ToGuid()).ToArray()
+        },
+        ErrorCode = "NotEmptyPartyValidator"
+      };
+      throw new ValidationException([failure]);
+    }
   }
 
   private PokemonSlot FindFirstAvailable()
@@ -188,6 +215,11 @@ public class PokemonStorage : AggregateRoot
         }
       }
     }
-    throw new NotImplementedException(); // TASK: [POKEGAME-263](https://logitar.atlassian.net/browse/POKEGAME-263)
+
+    ValidationFailure failure = new(nameof(TrainerId), "The specified trainer storage is full.", TrainerId.ToGuid())
+    {
+      ErrorCode = "TrainerStorageIsFull"
+    };
+    throw new ValidationException([failure]);
   }
 }
