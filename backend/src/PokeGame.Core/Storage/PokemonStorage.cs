@@ -52,14 +52,13 @@ public class PokemonStorage : AggregateRoot
       throw new ArgumentException($"The Pokémon '{pokemon}' is not in trainer's 'Id={TrainerId}' party.", nameof(pokemon));
     }
 
-    IReadOnlyCollection<PokemonId> partyIds = GetParty();
-    EnsurePartyIsNotEmpty(party, [pokemon.Id], partyIds);
+    EnsurePartyIsNotEmpty(party, [pokemon.Id]);
 
     PokemonSlot newSlot = FindFirstBoxAvailable();
     pokemon.Deposit(newSlot, actorId);
     Raise(new PokemonStored(pokemon.Id, newSlot), actorId);
 
-    ShiftPartyMembers(previousSlot, party, [pokemon.Id], partyIds, actorId);
+    ShiftPartyMembers(previousSlot, party, [pokemon.Id], actorId);
   }
 
   public void Move(Specimen pokemon, PokemonSlot slot, IReadOnlyDictionary<PokemonId, Specimen> party, ActorId? actorId = null)
@@ -101,7 +100,7 @@ public class PokemonStorage : AggregateRoot
 
     if (previousSlot.Box is null)
     {
-      ShiftPartyMembers(previousSlot, party, [pokemon.Id], partyIds: null, actorId);
+      ShiftPartyMembers(previousSlot, party, [pokemon.Id], actorId);
     }
   }
 
@@ -121,7 +120,7 @@ public class PokemonStorage : AggregateRoot
 
     if (previousSlot.Box is null)
     {
-      ShiftPartyMembers(previousSlot, party, [pokemon.Id], partyIds: null, actorId);
+      ShiftPartyMembers(previousSlot, party, [pokemon.Id], actorId);
     }
   }
 
@@ -218,14 +217,10 @@ public class PokemonStorage : AggregateRoot
     Raise(new PokemonStored(pokemon.Id, new PokemonSlot(position)), actorId);
   }
 
-  private void EnsurePartyIsNotEmpty(
-    IReadOnlyDictionary<PokemonId, Specimen> party,
-    IReadOnlyCollection<PokemonId>? excludedIds = null,
-    IReadOnlyCollection<PokemonId>? partyIds = null)
+  private void EnsurePartyIsNotEmpty(IReadOnlyDictionary<PokemonId, Specimen> party, IReadOnlyCollection<PokemonId>? excludedIds = null)
   {
     excludedIds ??= [];
-    partyIds ??= GetParty();
-
+    IReadOnlyCollection<PokemonId> partyIds = GetParty();
     if (!partyIds.Any(id => !excludedIds.Contains(id) && !party[id].IsEgg))
     {
       ValidationFailure failure = new(nameof(TrainerId), "The operation would leave the trainer party empty of non-egg Pokémon.", TrainerId.ToGuid())
@@ -277,12 +272,10 @@ public class PokemonStorage : AggregateRoot
     PokemonSlot previousSlot,
     IReadOnlyDictionary<PokemonId, Specimen> party,
     IReadOnlyCollection<PokemonId>? excludedIds = null,
-    IReadOnlyCollection<PokemonId>? partyIds = null,
     ActorId? actorId = null)
   {
     excludedIds ??= [];
-    partyIds ??= GetParty();
-
+    IReadOnlyCollection<PokemonId> partyIds = GetParty();
     foreach (PokemonId partyId in partyIds)
     {
       if (!excludedIds.Contains(partyId))
