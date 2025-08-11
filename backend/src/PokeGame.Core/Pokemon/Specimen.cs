@@ -646,9 +646,17 @@ public class Specimen : AggregateRoot
   {
     if (Ownership is not null)
     {
-      if (Slot?.Box is null)
+      if (EggCycles is not null)
       {
-        throw new CannotReleasePartyPokemonException(this);
+        ValidationFailure failure = new("PokemonId", "An egg Pokémon cannot be released.", Id.ToGuid())
+        {
+          CustomState = new
+          {
+            EggCycles = EggCycles.Value
+          },
+          ErrorCode = "CannotReleaseEggPokemon"
+        };
+        throw new ValidationException([failure]);
       }
 
       Raise(new PokemonReleased(), actorId);
