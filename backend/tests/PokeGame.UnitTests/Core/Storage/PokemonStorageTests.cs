@@ -14,7 +14,7 @@ using ValidationException = FluentValidation.ValidationException;
 namespace PokeGame.Core.Storage;
 
 [Trait(Traits.Category, Categories.Unit)]
-public class PokemonStorageTests // TASK: [POKEGAME-263](https://logitar.atlassian.net/browse/POKEGAME-263)
+public class PokemonStorageTests
 {
   private readonly ActorId _actorId = ActorId.NewId();
   private readonly Faker _faker = new();
