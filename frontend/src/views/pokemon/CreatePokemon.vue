@@ -54,7 +54,7 @@ import type { GrowthRate, Species } from "@/types/species";
 import type { Breadcrumb } from "@/types/components";
 import type { Item } from "@/types/items";
 import type { Variety } from "@/types/varieties";
-import { LEVEL_MAXIMUM, LEVEL_MINIMUM } from "@/types/pokemon";
+import { EFFORT_VALUE_LIMIT, LEVEL_MAXIMUM, LEVEL_MINIMUM } from "@/types/pokemon";
 import { calculateStatistics, getLevel, getMaximumExperience } from "@/helpers/pokemon";
 import { createPokemon } from "@/api/pokemon";
 import { handleErrorKey } from "@/inject";
@@ -96,6 +96,16 @@ const url = ref<string>("");
 const variety = ref<Variety>();
 const vitality = ref<number>(0);
 
+const areEffortValuesValid = computed<boolean>(() => {
+  const total: number =
+    Math.max(effortValues.value.hp, 0) +
+    Math.max(effortValues.value.attack, 0) +
+    Math.max(effortValues.value.defense, 0) +
+    Math.max(effortValues.value.specialAttack, 0) +
+    Math.max(effortValues.value.specialDefense, 0) +
+    Math.max(effortValues.value.speed, 0);
+  return total <= EFFORT_VALUE_LIMIT;
+});
 const baseStatistics = computed<BaseStatistics>(
   () => form.value?.baseStatistics ?? { hp: 0, attack: 0, defense: 0, specialAttack: 0, specialDefense: 0, speed: 0 },
 );
@@ -136,7 +146,7 @@ async function submit(): Promise<void> {
     uniqueNameAlreadyUsed.value = false;
     try {
       validate();
-      if (isValid.value) {
+      if (isValid.value && areEffortValuesValid.value) {
         const payload: CreatePokemonPayload = {
           form: form.value.id,
           uniqueName: uniqueName.value,
