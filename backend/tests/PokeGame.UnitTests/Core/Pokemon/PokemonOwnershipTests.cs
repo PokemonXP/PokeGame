@@ -1,4 +1,5 @@
-﻿using Krakenar.Core;
+﻿using FluentValidation;
+using Krakenar.Core;
 using Krakenar.Core.Settings;
 using Logitar.EventSourcing;
 using PokeGame.Core.Abilities;
@@ -297,14 +298,36 @@ public class PokemonOwnershipTests
     Assert.Empty(_pokemon.Changes);
   }
 
-  [Fact(DisplayName = "Release: it should throw CannotReleasePartyPokemonException when the Pokémon is in the party.")]
-  public void Given_PokemonInParty_When_Release_Then_CannotReleasePartyPokemonException()
+  [Fact(DisplayName = "Release: it should release a Pokémon in the party.")]
+  public void Given_PokemonInParty_When_Release_Then_Released()
   {
     PokemonSlot slot = new(new Position(0));
     _pokemon.Receive(_trainer, _pokeBall, _location, slot: slot);
 
-    var exception = Assert.Throws<CannotReleasePartyPokemonException>(() => _pokemon.Release());
-    Assert.Equal(_pokemon.Id.ToGuid(), exception.PokemonId);
+    _pokemon.Release(_actorId);
+    Assert.Null(_pokemon.OriginalTrainerId);
+    Assert.Null(_pokemon.Ownership);
+    Assert.Null(_pokemon.Slot);
+    Assert.True(_pokemon.HasChanges);
+    Assert.Contains(_pokemon.Changes, change => change is PokemonReleased released && released.ActorId == _actorId);
+
+    _pokemon.ClearChanges();
+    _pokemon.Release();
+    Assert.False(_pokemon.HasChanges);
+    Assert.Empty(_pokemon.Changes);
+  }
+
+  [Fact(DisplayName = "Release: it should throw ValidationException when the Pokémon is an egg.")]
+  public void Given_PokemonInParty_When_Release_Then_CannotReleasePartyPokemonException()
+  {
+    Specimen pokemon = new PokemonBuilder().WithSpecies("eevee").IsEgg().Build();
+    pokemon.Receive(_trainer, _pokeBall, _location);
+
+    var exception = Assert.Throws<ValidationException>(() => pokemon.Release());
+    Assert.Single(exception.Errors);
+    Assert.Contains(exception.Errors, e => e.PropertyName == "PokemonId" && e.AttemptedValue?.Equals(pokemon.Id.ToGuid()) == true
+      && e.ErrorCode == "CannotReleaseEggPokemon" && e.ErrorMessage == "An egg Pokémon cannot be released."
+      && e.CustomState is not null);
   }
 
   [Fact(DisplayName = "Swap: it should swap Pokémon owned by the same trainer.")]

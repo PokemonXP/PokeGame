@@ -105,6 +105,21 @@ public class PokemonStorage : AggregateRoot
     }
   }
 
+  public void Release(Specimen pokemon, IReadOnlyDictionary<PokemonId, Specimen> party, ActorId? actorId = null)
+  {
+    if (!_slots.ContainsKey(pokemon.Id))
+    {
+      throw new ArgumentException($"The Pokémon '{pokemon}' was not found in trainer's 'Id={TrainerId}' storage.", nameof(pokemon));
+    }
+    else if (pokemon.IsHatchedInParty)
+    {
+      EnsurePartyIsNotEmpty(party, [pokemon.Id]);
+    }
+
+    pokemon.Release(actorId);
+    Remove(pokemon, actorId);
+  }
+
   public bool Remove(Specimen pokemon, ActorId? actorId = null)
   {
     if (!_slots.ContainsKey(pokemon.Id))
