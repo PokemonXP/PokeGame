@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { TarButton } from "logitar-vue3-ui";
-import { inject, ref } from "vue";
+import { computed, inject, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 
@@ -16,6 +16,7 @@ import { signIn } from "@/api/account";
 import { useAccountStore } from "@/stores/account";
 
 const account = useAccountStore();
+const googleClientId: string = import.meta.env.VITE_APP_GOOGLE_CLIENT_ID ?? "";
 const handleError = inject(handleErrorKey) as (e: unknown) => void;
 const route = useRoute();
 const router = useRouter();
@@ -26,6 +27,8 @@ const isLoading = ref<boolean>(false);
 const password = ref<string>("");
 const passwordRef = ref<InstanceType<typeof PasswordInput> | null>(null);
 const username = ref<string>("");
+
+const hasExternal = computed<boolean>(() => Boolean(googleClientId));
 
 function redirect(): void {
   const redirect: string | undefined = route.query.redirect?.toString();
@@ -87,10 +90,12 @@ async function submit(): Promise<void> {
           type="submit"
         />
       </div>
-      <hr />
-      <div>
-        <GoogleSignIn @error="onError" @signed-in="onGoogleSignIn" />
-      </div>
+      <template v-if="hasExternal">
+        <hr />
+        <div>
+          <GoogleSignIn @error="onError" @signed-in="onGoogleSignIn" />
+        </div>
+      </template>
     </form>
   </main>
 </template>
