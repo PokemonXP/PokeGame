@@ -11,8 +11,8 @@ using PokeGame.EntityFrameworkCore;
 namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
 {
     [DbContext(typeof(PokemonContext))]
-    [Migration("20250727014205_CreateEvolutionTable")]
-    partial class CreateEvolutionTable
+    [Migration("20250812202739_PokeGame_1_0_0")]
+    partial class PokeGame_1_0_0
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -107,6 +107,230 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
                     b.HasIndex("Version");
 
                     b.ToTable("Abilities", "Pokemon");
+                });
+
+            modelBuilder.Entity("PokeGame.EntityFrameworkCore.Entities.BattleEntity", b =>
+                {
+                    b.Property<int>("BattleId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("BattleId"));
+
+                    b.Property<string>("CancelledBy")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<DateTime?>("CancelledOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("ChampionCount")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("CompletedBy")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<DateTime?>("CompletedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Kind")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<string>("Location")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("text");
+
+                    b.Property<int>("OpponentCount")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Resolution")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<string>("StartedBy")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<DateTime?>("StartedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<string>("StreamId")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<DateTime>("UpdatedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Url")
+                        .HasMaxLength(2048)
+                        .HasColumnType("character varying(2048)");
+
+                    b.Property<long>("Version")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("BattleId");
+
+                    b.HasIndex("CancelledBy");
+
+                    b.HasIndex("CancelledOn");
+
+                    b.HasIndex("ChampionCount");
+
+                    b.HasIndex("CompletedBy");
+
+                    b.HasIndex("CompletedOn");
+
+                    b.HasIndex("CreatedBy");
+
+                    b.HasIndex("CreatedOn");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex("Kind");
+
+                    b.HasIndex("Location");
+
+                    b.HasIndex("Name");
+
+                    b.HasIndex("OpponentCount");
+
+                    b.HasIndex("Resolution");
+
+                    b.HasIndex("StartedBy");
+
+                    b.HasIndex("StartedOn");
+
+                    b.HasIndex("Status");
+
+                    b.HasIndex("StreamId")
+                        .IsUnique();
+
+                    b.HasIndex("UpdatedBy");
+
+                    b.HasIndex("UpdatedOn");
+
+                    b.HasIndex("Version");
+
+                    b.ToTable("Battles", "Pokemon");
+                });
+
+            modelBuilder.Entity("PokeGame.EntityFrameworkCore.Entities.BattlePokemonEntity", b =>
+                {
+                    b.Property<int>("BattleId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("PokemonId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Accuracy")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Attack")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("BattleUid")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Critical")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Defense")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Evasion")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid>("PokemonUid")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("SpecialAttack")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("SpecialDefense")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Speed")
+                        .HasColumnType("integer");
+
+                    b.HasKey("BattleId", "PokemonId");
+
+                    b.HasIndex("IsActive");
+
+                    b.HasIndex("PokemonId");
+
+                    b.HasIndex("PokemonUid");
+
+                    b.HasIndex("BattleUid", "PokemonUid")
+                        .IsUnique();
+
+                    b.ToTable("BattlePokemon", "Pokemon");
+                });
+
+            modelBuilder.Entity("PokeGame.EntityFrameworkCore.Entities.BattleTrainerEntity", b =>
+                {
+                    b.Property<int>("BattleId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("TrainerId")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("BattleUid")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("IsOpponent")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid>("TrainerUid")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("BattleId", "TrainerId");
+
+                    b.HasIndex("IsOpponent");
+
+                    b.HasIndex("TrainerId");
+
+                    b.HasIndex("TrainerUid");
+
+                    b.HasIndex("BattleUid", "TrainerUid")
+                        .IsUnique();
+
+                    b.ToTable("BattleTrainers", "Pokemon");
                 });
 
             modelBuilder.Entity("PokeGame.EntityFrameworkCore.Entities.EvolutionEntity", b =>
@@ -798,6 +1022,9 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid");
 
+                    b.Property<bool>("IsEgg")
+                        .HasColumnType("boolean");
+
                     b.Property<bool>("IsShiny")
                         .HasColumnType("boolean");
 
@@ -948,6 +1175,8 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
 
                     b.HasIndex("Id")
                         .IsUnique();
+
+                    b.HasIndex("IsEgg");
 
                     b.HasIndex("Level");
 
@@ -1342,6 +1571,9 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
                     b.Property<string>("Notes")
                         .HasColumnType("text");
 
+                    b.Property<int>("PartySize")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Sprite")
                         .HasMaxLength(2048)
                         .HasColumnType("character varying(2048)");
@@ -1401,6 +1633,8 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
                         .IsUnique();
 
                     b.HasIndex("Money");
+
+                    b.HasIndex("PartySize");
 
                     b.HasIndex("StreamId")
                         .IsUnique();
@@ -1562,6 +1796,44 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
                         .IsUnique();
 
                     b.ToTable("VarietyMoves", "Pokemon");
+                });
+
+            modelBuilder.Entity("PokeGame.EntityFrameworkCore.Entities.BattlePokemonEntity", b =>
+                {
+                    b.HasOne("PokeGame.EntityFrameworkCore.Entities.BattleEntity", "Battle")
+                        .WithMany("Pokemon")
+                        .HasForeignKey("BattleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("PokeGame.EntityFrameworkCore.Entities.PokemonEntity", "Pokemon")
+                        .WithMany("Battles")
+                        .HasForeignKey("PokemonId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Battle");
+
+                    b.Navigation("Pokemon");
+                });
+
+            modelBuilder.Entity("PokeGame.EntityFrameworkCore.Entities.BattleTrainerEntity", b =>
+                {
+                    b.HasOne("PokeGame.EntityFrameworkCore.Entities.BattleEntity", "Battle")
+                        .WithMany("Trainers")
+                        .HasForeignKey("BattleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("PokeGame.EntityFrameworkCore.Entities.TrainerEntity", "Trainer")
+                        .WithMany("Battles")
+                        .HasForeignKey("TrainerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Battle");
+
+                    b.Navigation("Trainer");
                 });
 
             modelBuilder.Entity("PokeGame.EntityFrameworkCore.Entities.EvolutionEntity", b =>
@@ -1806,6 +2078,13 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
                     b.Navigation("Forms");
                 });
 
+            modelBuilder.Entity("PokeGame.EntityFrameworkCore.Entities.BattleEntity", b =>
+                {
+                    b.Navigation("Pokemon");
+
+                    b.Navigation("Trainers");
+                });
+
             modelBuilder.Entity("PokeGame.EntityFrameworkCore.Entities.FormEntity", b =>
                 {
                     b.Navigation("Abilities");
@@ -1845,6 +2124,8 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
 
             modelBuilder.Entity("PokeGame.EntityFrameworkCore.Entities.PokemonEntity", b =>
                 {
+                    b.Navigation("Battles");
+
                     b.Navigation("Moves");
                 });
 
@@ -1864,6 +2145,8 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
 
             modelBuilder.Entity("PokeGame.EntityFrameworkCore.Entities.TrainerEntity", b =>
                 {
+                    b.Navigation("Battles");
+
                     b.Navigation("CurrentPokemon");
 
                     b.Navigation("Inventory");
