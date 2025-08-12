@@ -41,6 +41,41 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Battles",
+                schema: "Pokemon",
+                columns: table => new
+                {
+                    BattleId = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Kind = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    Status = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    Resolution = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    Name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    Location = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    Url = table.Column<string>(type: "character varying(2048)", maxLength: 2048, nullable: true),
+                    Notes = table.Column<string>(type: "text", nullable: true),
+                    ChampionCount = table.Column<int>(type: "integer", nullable: false),
+                    OpponentCount = table.Column<int>(type: "integer", nullable: false),
+                    StartedBy = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    StartedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    CancelledBy = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    CancelledOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    CompletedBy = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    CompletedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    StreamId = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    Version = table.Column<long>(type: "bigint", nullable: false),
+                    CreatedBy = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    CreatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedBy = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    UpdatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Battles", x => x.BattleId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Moves",
                 schema: "Pokemon",
                 columns: table => new
@@ -146,6 +181,7 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
                     Description = table.Column<string>(type: "text", nullable: true),
                     Gender = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
                     Money = table.Column<int>(type: "integer", nullable: false),
+                    PartySize = table.Column<int>(type: "integer", nullable: false),
                     UserId = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
                     UserUid = table.Column<Guid>(type: "uuid", nullable: true),
                     Sprite = table.Column<string>(type: "character varying(2048)", maxLength: 2048, nullable: true),
@@ -272,6 +308,66 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "BattleTrainers",
+                schema: "Pokemon",
+                columns: table => new
+                {
+                    BattleId = table.Column<int>(type: "integer", nullable: false),
+                    TrainerId = table.Column<int>(type: "integer", nullable: false),
+                    BattleUid = table.Column<Guid>(type: "uuid", nullable: false),
+                    TrainerUid = table.Column<Guid>(type: "uuid", nullable: false),
+                    IsOpponent = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_BattleTrainers", x => new { x.BattleId, x.TrainerId });
+                    table.ForeignKey(
+                        name: "FK_BattleTrainers_Battles_BattleId",
+                        column: x => x.BattleId,
+                        principalSchema: "Pokemon",
+                        principalTable: "Battles",
+                        principalColumn: "BattleId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_BattleTrainers_Trainers_TrainerId",
+                        column: x => x.TrainerId,
+                        principalSchema: "Pokemon",
+                        principalTable: "Trainers",
+                        principalColumn: "TrainerId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Inventory",
+                schema: "Pokemon",
+                columns: table => new
+                {
+                    TrainerId = table.Column<int>(type: "integer", nullable: false),
+                    ItemId = table.Column<int>(type: "integer", nullable: false),
+                    TrainerUid = table.Column<Guid>(type: "uuid", nullable: false),
+                    ItemUid = table.Column<Guid>(type: "uuid", nullable: false),
+                    Quantity = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Inventory", x => new { x.TrainerId, x.ItemId });
+                    table.ForeignKey(
+                        name: "FK_Inventory_Items_ItemId",
+                        column: x => x.ItemId,
+                        principalSchema: "Pokemon",
+                        principalTable: "Items",
+                        principalColumn: "ItemId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Inventory_Trainers_TrainerId",
+                        column: x => x.TrainerId,
+                        principalSchema: "Pokemon",
+                        principalTable: "Trainers",
+                        principalColumn: "TrainerId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Forms",
                 schema: "Pokemon",
                 columns: table => new
@@ -370,6 +466,77 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Evolutions",
+                schema: "Pokemon",
+                columns: table => new
+                {
+                    EvolutionId = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    SourceId = table.Column<int>(type: "integer", nullable: false),
+                    SourceUid = table.Column<Guid>(type: "uuid", nullable: false),
+                    TargetId = table.Column<int>(type: "integer", nullable: false),
+                    TargetUid = table.Column<Guid>(type: "uuid", nullable: false),
+                    Trigger = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    ItemId = table.Column<int>(type: "integer", nullable: true),
+                    ItemUid = table.Column<Guid>(type: "uuid", nullable: true),
+                    Level = table.Column<int>(type: "integer", nullable: false),
+                    Friendship = table.Column<bool>(type: "boolean", nullable: false),
+                    Gender = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    Location = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    TimeOfDay = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    HeldItemId = table.Column<int>(type: "integer", nullable: true),
+                    HeldItemUid = table.Column<Guid>(type: "uuid", nullable: true),
+                    KnownMoveId = table.Column<int>(type: "integer", nullable: true),
+                    KnownMoveUid = table.Column<Guid>(type: "uuid", nullable: true),
+                    StreamId = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    Version = table.Column<long>(type: "bigint", nullable: false),
+                    CreatedBy = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    CreatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedBy = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    UpdatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Evolutions", x => x.EvolutionId);
+                    table.ForeignKey(
+                        name: "FK_Evolutions_Forms_SourceId",
+                        column: x => x.SourceId,
+                        principalSchema: "Pokemon",
+                        principalTable: "Forms",
+                        principalColumn: "FormId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Evolutions_Forms_TargetId",
+                        column: x => x.TargetId,
+                        principalSchema: "Pokemon",
+                        principalTable: "Forms",
+                        principalColumn: "FormId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Evolutions_Items_HeldItemId",
+                        column: x => x.HeldItemId,
+                        principalSchema: "Pokemon",
+                        principalTable: "Items",
+                        principalColumn: "ItemId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Evolutions_Items_ItemId",
+                        column: x => x.ItemId,
+                        principalSchema: "Pokemon",
+                        principalTable: "Items",
+                        principalColumn: "ItemId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Evolutions_Moves_KnownMoveId",
+                        column: x => x.KnownMoveId,
+                        principalSchema: "Pokemon",
+                        principalTable: "Moves",
+                        principalColumn: "MoveId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "FormAbilities",
                 schema: "Pokemon",
                 columns: table => new
@@ -424,6 +591,7 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
                     AbilitySlot = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
                     Nature = table.Column<string>(type: "character varying(8)", maxLength: 8, nullable: false),
                     EggCycles = table.Column<byte>(type: "smallint", nullable: false),
+                    IsEgg = table.Column<bool>(type: "boolean", nullable: false),
                     GrowthRate = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
                     Level = table.Column<int>(type: "integer", nullable: false),
                     Experience = table.Column<int>(type: "integer", nullable: false),
@@ -512,6 +680,44 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
                         principalTable: "Varieties",
                         principalColumn: "VarietyId",
                         onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "BattlePokemon",
+                schema: "Pokemon",
+                columns: table => new
+                {
+                    BattleId = table.Column<int>(type: "integer", nullable: false),
+                    PokemonId = table.Column<int>(type: "integer", nullable: false),
+                    BattleUid = table.Column<Guid>(type: "uuid", nullable: false),
+                    PokemonUid = table.Column<Guid>(type: "uuid", nullable: false),
+                    IsActive = table.Column<bool>(type: "boolean", nullable: false),
+                    Attack = table.Column<int>(type: "integer", nullable: false),
+                    Defense = table.Column<int>(type: "integer", nullable: false),
+                    SpecialAttack = table.Column<int>(type: "integer", nullable: false),
+                    SpecialDefense = table.Column<int>(type: "integer", nullable: false),
+                    Speed = table.Column<int>(type: "integer", nullable: false),
+                    Accuracy = table.Column<int>(type: "integer", nullable: false),
+                    Evasion = table.Column<int>(type: "integer", nullable: false),
+                    Critical = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_BattlePokemon", x => new { x.BattleId, x.PokemonId });
+                    table.ForeignKey(
+                        name: "FK_BattlePokemon_Battles_BattleId",
+                        column: x => x.BattleId,
+                        principalSchema: "Pokemon",
+                        principalTable: "Battles",
+                        principalColumn: "BattleId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_BattlePokemon_Pokemon_PokemonId",
+                        column: x => x.PokemonId,
+                        principalSchema: "Pokemon",
+                        principalTable: "Pokemon",
+                        principalColumn: "PokemonId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -624,6 +830,288 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
                 column: "Version");
 
             migrationBuilder.CreateIndex(
+                name: "IX_BattlePokemon_BattleUid_PokemonUid",
+                schema: "Pokemon",
+                table: "BattlePokemon",
+                columns: new[] { "BattleUid", "PokemonUid" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_BattlePokemon_IsActive",
+                schema: "Pokemon",
+                table: "BattlePokemon",
+                column: "IsActive");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_BattlePokemon_PokemonId",
+                schema: "Pokemon",
+                table: "BattlePokemon",
+                column: "PokemonId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_BattlePokemon_PokemonUid",
+                schema: "Pokemon",
+                table: "BattlePokemon",
+                column: "PokemonUid");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Battles_CancelledBy",
+                schema: "Pokemon",
+                table: "Battles",
+                column: "CancelledBy");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Battles_CancelledOn",
+                schema: "Pokemon",
+                table: "Battles",
+                column: "CancelledOn");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Battles_ChampionCount",
+                schema: "Pokemon",
+                table: "Battles",
+                column: "ChampionCount");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Battles_CompletedBy",
+                schema: "Pokemon",
+                table: "Battles",
+                column: "CompletedBy");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Battles_CompletedOn",
+                schema: "Pokemon",
+                table: "Battles",
+                column: "CompletedOn");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Battles_CreatedBy",
+                schema: "Pokemon",
+                table: "Battles",
+                column: "CreatedBy");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Battles_CreatedOn",
+                schema: "Pokemon",
+                table: "Battles",
+                column: "CreatedOn");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Battles_Id",
+                schema: "Pokemon",
+                table: "Battles",
+                column: "Id",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Battles_Kind",
+                schema: "Pokemon",
+                table: "Battles",
+                column: "Kind");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Battles_Location",
+                schema: "Pokemon",
+                table: "Battles",
+                column: "Location");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Battles_Name",
+                schema: "Pokemon",
+                table: "Battles",
+                column: "Name");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Battles_OpponentCount",
+                schema: "Pokemon",
+                table: "Battles",
+                column: "OpponentCount");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Battles_Resolution",
+                schema: "Pokemon",
+                table: "Battles",
+                column: "Resolution");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Battles_StartedBy",
+                schema: "Pokemon",
+                table: "Battles",
+                column: "StartedBy");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Battles_StartedOn",
+                schema: "Pokemon",
+                table: "Battles",
+                column: "StartedOn");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Battles_Status",
+                schema: "Pokemon",
+                table: "Battles",
+                column: "Status");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Battles_StreamId",
+                schema: "Pokemon",
+                table: "Battles",
+                column: "StreamId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Battles_UpdatedBy",
+                schema: "Pokemon",
+                table: "Battles",
+                column: "UpdatedBy");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Battles_UpdatedOn",
+                schema: "Pokemon",
+                table: "Battles",
+                column: "UpdatedOn");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Battles_Version",
+                schema: "Pokemon",
+                table: "Battles",
+                column: "Version");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_BattleTrainers_BattleUid_TrainerUid",
+                schema: "Pokemon",
+                table: "BattleTrainers",
+                columns: new[] { "BattleUid", "TrainerUid" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_BattleTrainers_IsOpponent",
+                schema: "Pokemon",
+                table: "BattleTrainers",
+                column: "IsOpponent");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_BattleTrainers_TrainerId",
+                schema: "Pokemon",
+                table: "BattleTrainers",
+                column: "TrainerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_BattleTrainers_TrainerUid",
+                schema: "Pokemon",
+                table: "BattleTrainers",
+                column: "TrainerUid");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Evolutions_CreatedBy",
+                schema: "Pokemon",
+                table: "Evolutions",
+                column: "CreatedBy");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Evolutions_CreatedOn",
+                schema: "Pokemon",
+                table: "Evolutions",
+                column: "CreatedOn");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Evolutions_HeldItemId",
+                schema: "Pokemon",
+                table: "Evolutions",
+                column: "HeldItemId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Evolutions_HeldItemUid",
+                schema: "Pokemon",
+                table: "Evolutions",
+                column: "HeldItemUid");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Evolutions_Id",
+                schema: "Pokemon",
+                table: "Evolutions",
+                column: "Id",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Evolutions_ItemId",
+                schema: "Pokemon",
+                table: "Evolutions",
+                column: "ItemId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Evolutions_ItemUid",
+                schema: "Pokemon",
+                table: "Evolutions",
+                column: "ItemUid");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Evolutions_KnownMoveId",
+                schema: "Pokemon",
+                table: "Evolutions",
+                column: "KnownMoveId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Evolutions_KnownMoveUid",
+                schema: "Pokemon",
+                table: "Evolutions",
+                column: "KnownMoveUid");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Evolutions_Level",
+                schema: "Pokemon",
+                table: "Evolutions",
+                column: "Level");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Evolutions_SourceId",
+                schema: "Pokemon",
+                table: "Evolutions",
+                column: "SourceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Evolutions_SourceUid",
+                schema: "Pokemon",
+                table: "Evolutions",
+                column: "SourceUid");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Evolutions_StreamId",
+                schema: "Pokemon",
+                table: "Evolutions",
+                column: "StreamId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Evolutions_TargetId",
+                schema: "Pokemon",
+                table: "Evolutions",
+                column: "TargetId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Evolutions_TargetUid",
+                schema: "Pokemon",
+                table: "Evolutions",
+                column: "TargetUid");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Evolutions_UpdatedBy",
+                schema: "Pokemon",
+                table: "Evolutions",
+                column: "UpdatedBy");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Evolutions_UpdatedOn",
+                schema: "Pokemon",
+                table: "Evolutions",
+                column: "UpdatedOn");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Evolutions_Version",
+                schema: "Pokemon",
+                table: "Evolutions",
+                column: "Version");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_FormAbilities_AbilityId",
                 schema: "Pokemon",
                 table: "FormAbilities",
@@ -643,10 +1131,18 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_FormAbilities_FormUid",
+                name: "IX_FormAbilities_FormUid_AbilityUid",
                 schema: "Pokemon",
                 table: "FormAbilities",
-                column: "FormUid");
+                columns: new[] { "FormUid", "AbilityUid" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_FormAbilities_FormUid_Slot",
+                schema: "Pokemon",
+                table: "FormAbilities",
+                columns: new[] { "FormUid", "Slot" },
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Forms_CreatedBy",
@@ -752,6 +1248,37 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
                 schema: "Pokemon",
                 table: "Forms",
                 column: "YieldExperience");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Inventory_ItemId",
+                schema: "Pokemon",
+                table: "Inventory",
+                column: "ItemId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Inventory_ItemUid",
+                schema: "Pokemon",
+                table: "Inventory",
+                column: "ItemUid");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Inventory_Quantity",
+                schema: "Pokemon",
+                table: "Inventory",
+                column: "Quantity");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Inventory_TrainerUid",
+                schema: "Pokemon",
+                table: "Inventory",
+                column: "TrainerUid");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Inventory_TrainerUid_ItemUid",
+                schema: "Pokemon",
+                table: "Inventory",
+                columns: new[] { "TrainerUid", "ItemUid" },
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Items_Category",
@@ -934,6 +1461,12 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
                 column: "Version");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Pokemon_Box",
+                schema: "Pokemon",
+                table: "Pokemon",
+                column: "Box");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Pokemon_CreatedBy",
                 schema: "Pokemon",
                 table: "Pokemon",
@@ -956,6 +1489,18 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
                 schema: "Pokemon",
                 table: "Pokemon",
                 column: "CurrentTrainerUid");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Pokemon_EggCycles",
+                schema: "Pokemon",
+                table: "Pokemon",
+                column: "EggCycles");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Pokemon_Experience",
+                schema: "Pokemon",
+                table: "Pokemon",
+                column: "Experience");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Pokemon_FormId",
@@ -989,6 +1534,18 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_Pokemon_IsEgg",
+                schema: "Pokemon",
+                table: "Pokemon",
+                column: "IsEgg");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Pokemon_Level",
+                schema: "Pokemon",
+                table: "Pokemon",
+                column: "Level");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Pokemon_Nickname",
                 schema: "Pokemon",
                 table: "Pokemon",
@@ -1017,6 +1574,12 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
                 schema: "Pokemon",
                 table: "Pokemon",
                 column: "PokeBallUid");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Pokemon_Position",
+                schema: "Pokemon",
+                table: "Pokemon",
+                column: "Position");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Pokemon_SpeciesId",
@@ -1105,10 +1668,11 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
                 column: "MoveUid");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PokemonMoves_PokemonUid",
+                name: "IX_PokemonMoves_PokemonUid_MoveUid",
                 schema: "Pokemon",
                 table: "PokemonMoves",
-                column: "PokemonUid");
+                columns: new[] { "PokemonUid", "MoveUid" },
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_RegionalNumbers_RegionId_Number",
@@ -1118,16 +1682,18 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_RegionalNumbers_RegionUid",
+                name: "IX_RegionalNumbers_RegionUid_Number",
                 schema: "Pokemon",
                 table: "RegionalNumbers",
-                column: "RegionUid");
+                columns: new[] { "RegionUid", "Number" },
+                unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_RegionalNumbers_SpeciesUid",
+                name: "IX_RegionalNumbers_SpeciesUid_RegionUid",
                 schema: "Pokemon",
                 table: "RegionalNumbers",
-                column: "SpeciesUid");
+                columns: new[] { "SpeciesUid", "RegionUid" },
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Regions_CreatedBy",
@@ -1355,6 +1921,12 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
                 column: "Money");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Trainers_PartySize",
+                schema: "Pokemon",
+                table: "Trainers",
+                column: "PartySize");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Trainers_StreamId",
                 schema: "Pokemon",
                 table: "Trainers",
@@ -1504,17 +2076,34 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
                 column: "MoveUid");
 
             migrationBuilder.CreateIndex(
-                name: "IX_VarietyMoves_VarietyUid",
+                name: "IX_VarietyMoves_VarietyUid_MoveUid",
                 schema: "Pokemon",
                 table: "VarietyMoves",
-                column: "VarietyUid");
+                columns: new[] { "VarietyUid", "MoveUid" },
+                unique: true);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "BattlePokemon",
+                schema: "Pokemon");
+
+            migrationBuilder.DropTable(
+                name: "BattleTrainers",
+                schema: "Pokemon");
+
+            migrationBuilder.DropTable(
+                name: "Evolutions",
+                schema: "Pokemon");
+
+            migrationBuilder.DropTable(
                 name: "FormAbilities",
+                schema: "Pokemon");
+
+            migrationBuilder.DropTable(
+                name: "Inventory",
                 schema: "Pokemon");
 
             migrationBuilder.DropTable(
@@ -1527,6 +2116,10 @@ namespace PokeGame.EntityFrameworkCore.PostgreSQL.Migrations
 
             migrationBuilder.DropTable(
                 name: "VarietyMoves",
+                schema: "Pokemon");
+
+            migrationBuilder.DropTable(
+                name: "Battles",
                 schema: "Pokemon");
 
             migrationBuilder.DropTable(
