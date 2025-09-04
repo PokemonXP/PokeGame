@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Nothing yet.
 
+## [0.1.2] - 2025-09-04
+
+### Fixed
+
+- Trainer Pokémon experience distribution.
+
 ## [0.1.1] - 2025-08-12
 
 ### Added
@@ -46,6 +52,7 @@ Nothing yet.
 - Battle Management, with Experience Gain, Statistic Changes, using Pokémon moves, escaping and switching Pokémon in battle.
 - Data Seeding.
 
-[unreleased]: https://github.com/Krakenar/Krakenar/compare/v0.1.1...HEAD
+[unreleased]: https://github.com/Krakenar/Krakenar/compare/v0.1.2...HEAD
+[0.1.2]: https://github.com/Krakenar/Krakenar/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/Krakenar/Krakenar/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/Krakenar/Krakenar/releases/tag/v0.1.0
