@@ -95,6 +95,11 @@ internal class BattleEntity : AggregateEntity
     CompletedOn = @event.OccurredOn.AsUniversalTime();
   }
 
+  public void Gain(BattleExperienceGained @event)
+  {
+    Update(@event);
+  }
+
   public void Reset(BattleReset @event)
   {
     Update(@event);
