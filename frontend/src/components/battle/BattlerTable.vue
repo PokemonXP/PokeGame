@@ -121,7 +121,7 @@ defineEmits<{
             />
             <TarButton v-if="battler.pokemon.ownership" icon="fas fa-rotate" :text="t('battle.switch.label')" @click="battle.startSwitch(battler)" />
             <TarButton
-              v-else-if="battler.pokemon.vitality < 1 || battler.pokemon.stamina < 1"
+              :disabled="battler.pokemon.vitality > 0 && battler.pokemon.stamina > 0"
               icon="fas fa-trophy"
               :text="t('battle.gain.submit')"
               @click="battle.startGain(battler)"
